@@ -9,6 +9,7 @@ target
 MANIFEST.MF
 *.class
 *.jar
+!/lib/**/*.jar
 !/tools/**/*.jar
 !/tools/jsdoc-toolkit-2.4.0/java/classes/js.jar
 *.zip
