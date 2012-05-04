@@ -8,6 +8,85 @@
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
 	<packaging>bundle</packaging>
 
+    <distributionManagement>
+        <repository>
+            <id>raptor.releases</id>
+            <url>http://nxraptor/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>raptor.snapshots</id>
+            <url>http://nxraptor/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- Configuration of repositories for dependency resolution -->
+    <repositories>
+        <repository>
+            <id>raptor.releases</id>
+            <url>http://nxraptor/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>raptor.snapshots</id>
+            <url>http://nxraptor/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>raptor.thirdparty</id>
+            <url>http://nxraptor/content/repositories/thirdparty/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <!-- Configuration of Repositories for Maven Plugins -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>raptor.plugins</id>
+            <url>http://nxraptor/content/repositories/plugins/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>raptor.releases</id>
+            <url>http://nxraptor/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    
 	<dependencies>
 	      <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
