@@ -1,0 +1,41 @@
+<project name="RaptorJS" basedir="." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
+
+    <property name="node_modules.dir" location="node_modules"/>
+    <property name="node_modules.raptorjs.dir" location="${node_modules.dir}/raptorjs"/>
+    
+    <property name="raptorjs_modules.dir" location="src/main/resources/META-INF/resources/raptorjs_modules"/>
+    
+    <property name="dist.raptorjs-node.dir" location="dist/raptorjs-node"/>
+    <property name="dist.raptorjs-node.raptorjs_modules.dir" location="${dist.raptorjs-node.dir}/lib/raptorjs/raptorjs_modules"/>
+    
+    <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+    
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+           uri="antlib:org.apache.maven.artifact.ant"
+           classpathref="maven-ant-tasks.classpath" />
+       
+    <target name="clean">
+        <mvn:mvn pom="pom.xml">
+            <arg value="clean"/>
+        </mvn:mvn>
+    </target>
+        
+    <target name="package">
+        <echo message="PACKAGE"/>
+        <mvn:mvn pom="pom.xml">
+            <arg value="package"/>
+        </mvn:mvn>
+    </target>
+
+    <target name="dist">
+        <mkdir dir="dist" />
+        <copy todir="${dist.raptorjs-node.dir}">
+            <fileset dir="${node_modules.raptorjs.dir}" />
+        </copy>
+        
+        <copy todir="${dist.raptorjs-node.raptorjs_modules.dir}">
+            <fileset dir="${raptorjs_modules.dir}" />
+        </copy>
+    </target>
+
+</project>

@@ -53,7 +53,7 @@ createRaptor = function(override) {
         }
     }
     
-    require("raptor").createRaptor(config);
+    require("raptorjs").createRaptor(config);
 };
 
 createRaptor();
