@@ -1,10 +1,12 @@
-raptorLoggingConfig = {
-    'ROOT': {level: 'WARN'},
-    'oop-server': {level: 'WARN'},
-    'resources': {level: 'WARN'}
-};
-        
-require("./init-raptor.js");
+require("raptorjs").createRaptor({
+    logging: {
+        loggers: {
+            'ROOT': {level: 'WARN'},
+            'oop-server': {level: 'WARN'},
+            'resources': {level: 'WARN'}
+        }
+    }
+});
 raptor.resources.addSearchPathDir(__dirname + '/templates');
 
 var files = raptor.require('files'),
