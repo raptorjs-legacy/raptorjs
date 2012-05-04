@@ -1,0 +1,25 @@
+{
+    "name": "taglibs.test",
+    "version": "1.0",
+    "description": "RaptorJS Templating Module",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "taglib", "uri": "http://ebay.com/raptor/core"},
+        {"type": "taglib", "uri": "http://ebay.com/raptor/html"},
+        {"type": "taglib", "uri": "http://ebay.com/raptor/widgets"},
+        {"type": "js", "path": "SimpleHelloController.js"},
+        {"type": "js", "path": "TabController.js"},
+        {"type": "js", "path": "TabsController.js"},
+        {"type": "js", "path": "ButtonController.js"},
+        {"type": "taglib", "path": "test.rtld", "extension": "templating.compiler"},
+        {"type": "template", "path": "Tabs.rhtml"},
+        {"type": "template", "path": "Button.rhtml"}
+    ]
+}

@@ -1,5 +1,7 @@
 package org.ebayopensource.raptorjs.rhino;
 
+import java.net.URL;
+
 import org.ebayopensource.raptorjs.resources.ClasspathSearchPathEntry;
 import org.ebayopensource.raptorjs.resources.ResourceManager;
 import org.mozilla.javascript.ScriptableObject;
@@ -11,7 +13,7 @@ import org.mozilla.javascript.ScriptableObject;
 public abstract class RaptorJSEnv {
 
     private JavaScriptEngine jsEnv = new JavaScriptEngine();
-    private String coreModulesDir = "/META-INF/resources/js/raptor/modules";
+    private String coreModulesDir = null;
     
     private RhinoHelpers rhinoHelpers = null;
     private ResourceManager resourceManager = null;
@@ -27,7 +29,18 @@ public abstract class RaptorJSEnv {
         this.afterInit();
     }
 
+    private void findCoreModulesDir() {
+        this.coreModulesDir = "/raptorjs_modules";
+        URL bootstrapUrl = RaptorJSEnv.class.getResource(coreModulesDir + "/bootstrap/bootstrap_server.js");
+        if (bootstrapUrl == null) {
+            this.coreModulesDir = "/META-INF/resources/raptorjs_modules";
+        }
+    }
+    
+    
     public void init() {
+        
+        this.findCoreModulesDir();
         
         this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, this.coreModulesDir));
         this.rhinoHelpers = this.createRhinoHelpers();
