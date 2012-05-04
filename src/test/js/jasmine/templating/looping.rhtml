@@ -1,0 +1,15 @@
+<c:template 
+    xmlns:c="http://ebay.com/raptor/core" 
+    name="looping"
+    params="">
+
+    <c:for each="item in ['a', 'b', 'c']">
+        ${item}
+    </c:for>
+    <c:for each="item in ['a', 'b', 'c']" separator=", " varStatus="loop">
+        ${item} - ${loop.isFirst()} - ${loop.isLast()} - ${loop.getIndex()} - ${loop.getLength()}
+    </c:for>
+    <div c:for="item in ['red', 'green', 'blue']; separator = ', '; varStatus=loop" >
+        ${item} - ${loop.isFirst()} - ${loop.isLast()} - ${loop.getIndex()} - ${loop.getLength()}
+    </div>
+</c:template>

@@ -1,0 +1,25 @@
+{
+    "name": "resources",
+    "version": "1.0",
+    "description": "Module to find and access resources in the Raptor resource search path",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "extensions": {
+        "server": {
+            "includes": [
+                {"type": "js", "path": "SearchPathEntry.js"},
+                {"type": "js", "path": "DirSearchPathEntry.js"},
+                {"type": "js", "path": "Resource.js"},
+                {"type": "js", "path": "MissingResource.js"},
+                {"type": "js", "path": "FileResource.js"},
+                {"type": "js", "path": "resources.js"}
+            ]
+        }
+    } 
+}

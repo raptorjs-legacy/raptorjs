@@ -1,0 +1,11 @@
+<c:template 
+    xmlns:c="http://ebay.com/raptor/core" 
+    name="def">
+    
+    <c:def function="greeting(name)">
+        <p class="greeting">Hello, ${name}!</p>
+    </c:def>
+    
+    ${greeting("World")},
+    ${greeting("Frank")}
+</c:template>

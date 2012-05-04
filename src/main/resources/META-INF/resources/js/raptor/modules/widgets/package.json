@@ -1,0 +1,46 @@
+{
+    "name": "widgets",
+    "version": "1.0",
+    "description": "Raptor Module: widgets",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+
+    "includes": [
+        {"type": "module", "name": "oop"},
+        {"type": "js", "path": "widgets.js"}
+    ],
+    "extensions": [
+        {
+            "name": "server",
+            "includes": [
+                {"type": "js", "path": "widgets_server.js"}
+            ]    
+        },
+        {
+            "name": "rhino",
+            "includes": [
+                {"type": "js", "path": "widgets_rhino.js"}
+            ]    
+        },
+        {
+            "name": "browser",
+            "includes": [		        
+		        {"type": "module", "name": "listeners"},
+		        {"type": "js", "path": "widgets_browser.js"},
+		        {"type": "js", "path": "Widget.js"}
+		    ]    
+        },
+        {
+            "name": "jquery",
+            "includes": [
+                {"type": "js", "path": "Widget_jquery.js"}
+            ]
+        }
+    ]
+}

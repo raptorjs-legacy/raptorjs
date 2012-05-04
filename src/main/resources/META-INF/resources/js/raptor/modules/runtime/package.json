@@ -1,0 +1,24 @@
+{
+    "name": "runtime",
+    "version": "1.0",
+    "description": "Module to provide functions for working with the JavaScript runtime",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "extensions": {
+        "server": {
+            "includes": [
+                {"type": "js", "path": "runtime.js"},
+            ]
+        },
+        "server_node": {
+            "includes": [
+                {"type": "js", "path": "runtime_node.js"}
+            ]
+        }
+    } 
+}

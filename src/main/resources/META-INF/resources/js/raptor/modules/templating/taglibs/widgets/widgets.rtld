@@ -1,0 +1,25 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    <short-name>widgets</short-name>
+    <uri>http://ebay.com/raptor/widgets</uri>
+    
+    <tag>
+        
+        <name>*</name> 
+        <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
+        
+        <attribute>
+            <name>id</name>
+            <type>string</type>
+        </attribute>
+        
+        <!-- Compiler that applies to all tags as well -->
+        <transformer>
+            <class-name>templating.taglibs.widgets.WidgetsTagTransformer</class-name>
+            <after>templating.taglibs.core.CoreTagTransformer</after>
+        </transformer>
+    </tag>
+    
+</raptor-taglib>

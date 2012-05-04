@@ -1,0 +1,231 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    <short-name>core</short-name>
+    <uri>http://ebay.com/raptor/core</uri>
+    
+    <tag>
+        
+        <name>template</name> 
+        
+        <attribute>
+            <name>name</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        <attribute>
+            <name>params</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <node-compiler-class>templating.taglibs.core.TemplateNode</node-compiler-class>
+    </tag>
+    
+    <tag>
+        
+        <name>*</name> 
+        <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
+        
+        <attribute>
+            <name>for</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
+        <attribute>
+            <name>if</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
+            <name>attrs</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
+            <name>when</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
+            <name>otherwise</name>
+            <type>empty</type>
+        </attribute>
+        
+        <attribute>
+            <name>allowBodyExpressions</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>strip</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>content</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
+            <name>replace</name>
+            <type>expression</type>
+        </attribute>
+        
+        <!-- Compiler that applies to all tags as well -->
+        <transformer>
+            <class-name>templating.taglibs.core.CoreTagTransformer</class-name>
+        </transformer>
+    </tag>
+    
+    
+    
+    <tag>
+        
+        <name>for</name> 
+
+        <node-compiler-class>templating.taglibs.core.ForNode</node-compiler-class>
+        
+        <attribute>
+            <name>each</name>
+            <required>true</required>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>separator</name>
+            <type>string</type>
+        </attribute>
+        
+        <attribute>
+            <name>varStatus</name>
+            <type>identifier</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+    </tag>
+    
+    <tag>
+        
+        <name>write</name> 
+
+        <node-compiler-class>templating.taglibs.core.WriteNode</node-compiler-class>
+        
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <type>string</type>
+        </attribute>
+        
+        <attribute>
+            <name>escapeXml</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+    </tag>
+    
+    <tag>
+        
+        <name>if</name> 
+
+        <node-compiler-class>templating.taglibs.core.IfNode</node-compiler-class>
+
+        <attribute>
+            <name>test</name>
+            <type>expression</type>
+        </attribute>
+
+    </tag>
+    
+    <tag>
+        
+        <name>invoke</name> 
+
+        <node-compiler-class>templating.taglibs.core.InvokeNode</node-compiler-class>
+
+        <attribute>
+            <name>function</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
+    </tag>
+    
+    <tag>
+        
+        <name>choose</name> 
+
+        <node-compiler-class>templating.taglibs.core.ChooseNode</node-compiler-class>
+
+    </tag>
+
+    <tag>
+        
+        <name>when</name> 
+
+        <node-compiler-class>templating.taglibs.core.WhenNode</node-compiler-class>
+
+        <attribute>
+            <name>test</name>
+            <type>expression</type>
+        </attribute>
+        
+    </tag>
+    
+    <tag>
+        
+        <name>otherwise</name> 
+
+        <node-compiler-class>templating.taglibs.core.OtherwiseNode</node-compiler-class>
+
+    </tag>
+        
+    <tag>
+        
+        <name>def</name> 
+
+        <node-compiler-class>templating.taglibs.core.DefNode</node-compiler-class>
+
+        <attribute>
+            <name>function</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+    </tag>
+    
+    <tag>
+        
+        <name>with</name> 
+
+        <node-compiler-class>templating.taglibs.core.WithNode</node-compiler-class>
+
+        <attribute>
+            <name>vars</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+    </tag>
+    
+    <tag>
+        
+        <name>include</name> 
+
+        <node-compiler-class>templating.taglibs.core.IncludeNode</node-compiler-class>
+
+        <attribute>
+            <name>template</name>
+            <type>string</type>
+        </attribute>
+        
+        <dynamic-attributes>true</dynamic-attributes>
+        
+    </tag>
+    
+    <text-transformer>
+        <class-name>templating.taglibs.core.CoreTextTransformer</class-name>
+    </text-transformer>
+    
+</raptor-taglib>

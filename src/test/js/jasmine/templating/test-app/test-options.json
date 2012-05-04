@@ -1,0 +1,16 @@
+{
+    "preserveWhitespace": {
+        "pre": true,
+        "textarea": true
+    },
+    "allowSelfClosing": {
+        "script": false,
+        "div": false
+    },
+    "startTagOnly": {
+        "img": true,
+        "br": true,
+        "link": true
+    },
+    "xhtml": false
+}

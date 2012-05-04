@@ -1,0 +1,35 @@
+{
+    "name": "loader",
+    "version": "1.0",
+    "description": "Provides support for loading remote JS and CSS code on demand",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "includes": [
+        {"type": "module", "name": "listeners"},
+        {"type": "js", "path": "loader.js"}
+    ],
+            
+    "extensions": {
+        "browser": {
+            "includes": [
+                {"type": "js", "path": "loader_browser.js"}
+            ]
+        },
+        "jquery": {
+            "includes": [
+                {"type": "js", "path": "loader_browser_jquery.js"}
+            ]
+        },
+        "loader.requires|browser": {
+            "includes": [
+                {"type": "js", "path": "loader_browser_requires.js"}
+            ]
+        }
+    }
+}

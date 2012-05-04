@@ -1,0 +1,26 @@
+{
+    "name": "/templating/taglibs/widgets",
+    "version": "1.0",
+    "description": "RaptorJS Templating Module",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        
+    ],
+    
+    "extensions": {
+        "templating.compiler": {
+            "includes": [
+                {"type": "js", "path": "Context_widgets.js"},
+                {"type": "js", "path": "WidgetsTagTransformer.js"},
+                {"type": "taglib", "path": "widgets.rtld"}
+            ]
+        }
+    }
+}

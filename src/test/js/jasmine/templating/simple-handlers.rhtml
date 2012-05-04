@@ -1,0 +1,19 @@
+<c:template 
+    xmlns:c="http://ebay.com/raptor/core"
+    xmlns:t="http://ebay.com/raptor/test" 
+    name="simple-handlers"
+    params="dynamic">
+    
+    <ul>
+        <li>
+            <t:simpleHello name="world"/>
+        </li>
+        <li>
+            <t:simpleHello name="${dynamic}" adult="true"/>
+        </li>
+        <li>
+            <t:simpleHello name="Dynamic: ${dynamic}" adult="false"/>
+        </li>
+    </ul>
+    
+</c:template>

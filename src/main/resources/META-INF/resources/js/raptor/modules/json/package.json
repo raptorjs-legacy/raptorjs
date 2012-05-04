@@ -1,0 +1,43 @@
+{
+    "name": "json",
+    "version": "1.0",
+    "description": "Raptor Module: widgets",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "includes": [
+        {"type": "js", "path": "json.js"}
+    ],
+
+    "extensions": {
+        "jquery": {
+            "includes": [
+                {"type": "js", "path": "json_jquery.js"}
+            ]
+        },
+        "json.raptor": {
+            "includes": [
+                {"type": "module", "name": "json.parse"},
+                {"type": "module", "name": "json.stringify"},
+                {"type": "js", "path": "jsonParse_raptor.js"},
+                {"type": "js", "path": "jsonStringify_raptor.js"}
+            ]
+        },
+        "json.raptorStringify": {
+            "includes": [
+                {"type": "module", "name": "json.stringify"},
+                {"type": "js", "path": "jsonStringify_raptor.js"}
+            ]
+        },
+        "json.raptorParse": {
+            "includes": [
+                {"type": "module", "name": "json.parse"},
+                {"type": "js", "path": "jsonParse_raptor.js"}
+            ]
+        }
+    }
+}

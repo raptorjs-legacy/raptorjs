@@ -1,0 +1,16 @@
+{
+    "name": "xml.sax.objectMapper",
+    "version": "1.0",
+    "description": "Simple SAX-based object mapper to build objects from XML",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "js", "path": "objectMapper.js"}
+    ]
+}

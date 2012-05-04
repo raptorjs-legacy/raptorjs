@@ -1,0 +1,16 @@
+{
+    "name": "objects",
+    "version": "1.0",
+    "description": "Utility functions for working with JavaScript objects",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "js", "path": "objects.js"}
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "logging",
+    "version": "1.0",
+    "description": "Logging framework for Raptor",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "js", "path": "logging_stubs.js"}
+    ],
+    
+    "extensions": {
+        "logging.console": {
+            "includes": [
+	            {"type": "module", "name": "strings"},
+	            {"type": "module", "name": "objects"},
+	            {"type": "js", "path": "ConsoleLogger.js"},
+	            {"type": "js", "path": "logging.js"},
+	            {"type": "js", "path": "LogHelper.js"}
+	        ] 
+        }
+    }
+        
+}

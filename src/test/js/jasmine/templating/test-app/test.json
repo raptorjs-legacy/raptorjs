@@ -1,0 +1,14 @@
+{
+    name: "Frank",
+    count: 30, 
+    message: "something", 
+    colors: ["yellow", "green", "blue", "pink"], 
+    rootClass: "test",
+    myAttrs: {
+        class: "my-class <>",
+        width: "100%"
+    },
+    buttonAttrs: {
+        style: "font-size: 120%;"
+    }
+}

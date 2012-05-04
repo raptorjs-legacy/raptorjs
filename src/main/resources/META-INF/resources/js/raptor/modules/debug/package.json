@@ -1,0 +1,16 @@
+{
+    "name": "debug",
+    "version": "1.0",
+    "description": "Utility functions and classes for debugging",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "js", "path": "debug.js"}
+    ]
+}

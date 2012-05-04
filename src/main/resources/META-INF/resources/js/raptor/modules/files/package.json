@@ -1,0 +1,25 @@
+{
+    "name": "files",
+    "version": "1.0",
+    "description": "Utility functions for working with files on the server",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "extensions": {
+        "server": {
+            "includes": [
+                {"type": "js", "path": "files.js"}
+            ]
+        },
+        "server|node": {
+            "includes": [
+                {"type": "js", "path": "files_node.js"}
+            ]
+        }
+    }
+}

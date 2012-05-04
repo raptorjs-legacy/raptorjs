@@ -1,0 +1,8 @@
+{
+    "name": "ecma.date",
+    "version": "1.0",
+    "description": "ECMA-compatible Date object",
+    "includes": [
+        {"type": "js", "path": "Date.js"}        
+    ]
+}

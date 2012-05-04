@@ -1,0 +1,16 @@
+{
+    "name": "json.stringify",
+    "version": "1.0",
+    "description": "Raptor module which exposes a new stringify function with additional options beyond the standard JSON.stringify function",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "includes": [
+        {"type": "module", "name": "strings"},
+        {"type": "js", "path": "stringify.js"}
+    ]
+}

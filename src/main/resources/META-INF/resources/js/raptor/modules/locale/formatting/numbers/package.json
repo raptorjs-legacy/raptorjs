@@ -1,0 +1,10 @@
+{
+    "name": "locale.formatting.numbers",
+    "version": "1.0",
+    "description": "Number Formatting Modules",
+    "authors": [
+    ],
+    "includes": [
+        {"type": "js", "path": "numbers.js"}
+    ]
+}

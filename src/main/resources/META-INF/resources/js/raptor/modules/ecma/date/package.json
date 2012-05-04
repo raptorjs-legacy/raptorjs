@@ -1,0 +1,8 @@
+{
+    "name": "ecma.object",
+    "version": "1.0",
+    "description": "ECMA-compatible Object object",
+    "includes": [
+        {"type": "js", "path": "Object.js"}        
+    ]
+}

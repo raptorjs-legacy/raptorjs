@@ -1,0 +1,16 @@
+<if test="data.modifiers.length">
+    <div class="modifiers">
+        <for each="modifier" in="data.modifiers">
+            <if test="modifier == 'inherited'">
+                <span class="modifier modifier-{+modifier+}">inherited from {+data.inheritedFromLink+}</span>
+            <elseif test="modifier == 'borrowed'"/>
+                <span class="modifier modifier-{+modifier+}">borrowed from {+data.borrowedFromLink+}</span>
+            <elseif test="modifier == 'inner' && data.parentLink"/>
+                <span class="modifier modifier-{+modifier+}">inner class for {+data.parentLink+}</span>
+            <else/>
+                <span class="modifier modifier-{+modifier+}">{+modifier+}</span>
+            </if>
+        </for>
+    </div>
+    
+</if>

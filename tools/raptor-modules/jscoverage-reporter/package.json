@@ -1,0 +1,22 @@
+{
+    "name": "jscoverage-reporter",
+    "version": "1.0",
+    "description": "Module to publish the results of JSCoverage (http://siliconforks.com/jscoverage/)",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "extensions": {
+        "server": {
+            "includes": [
+                {"type": "js", "path": "DefaultHtmlPublisher.js"},
+                {"type": "js", "path": "CoverageReport.js"},
+                {"type": "js", "path": "jscoverage-reporter.js"}
+            ]
+        }
+    } 
+}

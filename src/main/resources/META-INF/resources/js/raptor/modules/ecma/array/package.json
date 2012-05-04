@@ -1,0 +1,8 @@
+{
+    "name": "ecma.array",
+    "version": "1.0",
+    "description": "ECMA-compatible Array object",
+    "includes": [
+        {"type": "js", "path": "Array.js"}        
+    ]
+}

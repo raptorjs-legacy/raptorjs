@@ -1,0 +1,33 @@
+<c:template 
+    xmlns:c="http://ebay.com/raptor/core"
+    xmlns:test="http://ebay.com/raptor/test" 
+    name="test"
+    params="rootClass,colors,message,buttonAttrs">
+    
+    <html>
+    
+        <head>
+            <title>Templating Demo</title>
+            <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap-responsive.css"/>
+        </head>
+        <body>
+        
+            <test:tabs>
+                <test:tab title="Tab 1">
+                    Tab 1 Content
+                </test:tab>
+                <test:tab title="Tab 2">
+                    Tab 2 Content
+                </test:tab>
+                <test:tab title="Tab 3" c:if="true">
+                    Tab 3 Content
+                </test:tab>
+            </test:tabs>
+            
+            <script src="http://code.jquery.com/jquery-1.7.2.js"/>
+            <script src="lib/bootstrap/js/bootstrap.js"/>
+            
+        </body>
+    </html>
+</c:template>

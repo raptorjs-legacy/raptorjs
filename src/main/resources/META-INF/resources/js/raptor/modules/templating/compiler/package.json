@@ -1,0 +1,46 @@
+{
+    "name": "templating.compiler",
+    "version": "1.0",
+    "description": "RaptorJS JavaScript Template Compiler",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "module", "name": "strings"},
+        {"type": "module", "name": "listeners"},
+        {"type": "module", "name": "xml.utils"},
+        {"type": "js", "path": "Expression.js"},
+        {"type": "js", "path": "ExpressionParser.js"},
+        {"type": "js", "path": "AttributeSplitter.js"},
+        {"type": "js", "path": "TemplateBuilder.js"},
+        {"type": "js", "path": "TemplateCompiler.js"},
+        {"type": "js", "path": "Taglib.js"},
+        {"type": "js", "path": "TaglibCollection.js"},        
+        {"type": "js", "path": "compiler.js"},
+        {"type": "js", "path": "Node.js"},
+        {"type": "js", "path": "ElementNode.js"},
+        {"type": "js", "path": "TextNode.js"},
+        {"type": "js", "path": "ParseTreeBuilder.js"}
+    ],
+    
+    "extensions": [
+        {   
+            "name": "server",
+            "includes": [
+                {"type": "js", "path": "compiler_server.js"},
+                {"type": "js", "path": "TaglibXmlLoader.js"}
+            ]
+        },
+        {   
+            "name": "rhino",
+            "includes": [
+                {"type": "js", "path": "compiler_rhino.js"}
+            ]
+        }
+    ]
+}

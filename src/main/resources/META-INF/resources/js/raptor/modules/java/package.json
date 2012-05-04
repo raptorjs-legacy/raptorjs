@@ -1,0 +1,20 @@
+{
+    "name": "java",
+    "version": "1.0",
+    "description": "Utility functions for Java",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "extensions": {
+        "rhino": {
+            "includes": [
+                {"type": "js", "path": "java_rhino.js"}
+            ]
+        }
+    }
+}
