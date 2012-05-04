@@ -2,10 +2,10 @@
 
 if [ $WORKSPACE ] 
 then
-    DOCS_DIR=$WORKSPACE/RaptorJSOpenSource/docs
-    SRC_DIR=$WORKSPACE/RaptorJSOpenSource/src
-    JSDOC_TOOLKIT_DIR=$WORKSPACE/RaptorJSOpenSource/tools/jsdoc-toolkit-2.4.0
-    TEMPLATE_DIR=$WORKSPACE/RaptorJSOpenSource/docs/jsdoc-template
+    DOCS_DIR=$WORKSPACE/docs
+    SRC_DIR=$WORKSPACE/src
+    JSDOC_TOOLKIT_DIR=$WORKSPACE/tools/jsdoc-toolkit-2.4.0
+    TEMPLATE_DIR=$WORKSPACE/docs/jsdoc-template
 fi
 
 if [ -z $WORKSPACE ] 
