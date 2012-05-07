@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- POM Information about the Project -->
 	<modelVersion>4.0.0</modelVersion>
@@ -8,334 +9,341 @@
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
 	<packaging>bundle</packaging>
 
-    <distributionManagement>
-        <repository>
-            <id>raptor.releases</id>
-            <url>http://nxraptor/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>raptor.snapshots</id>
-            <url>http://nxraptor/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>raptor.releases</id>
+			<url>http://nxraptor/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>raptor.snapshots</id>
+			<url>http://nxraptor/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
-    <!-- Configuration of repositories for dependency resolution -->
-    <repositories>
-        <repository>
-            <id>raptor.releases</id>
-            <url>http://nxraptor/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>raptor.snapshots</id>
-            <url>http://nxraptor/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>raptor.thirdparty</id>
-            <url>http://nxraptor/content/repositories/thirdparty/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
+	<!-- Configuration of repositories for dependency resolution -->
+	<repositories>
+		<repository>
+			<id>raptor.releases</id>
+			<url>http://nxraptor/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>raptor.snapshots</id>
+			<url>http://nxraptor/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>raptor.thirdparty</id>
+			<url>http://nxraptor/content/repositories/thirdparty/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
-    <!-- Configuration of Repositories for Maven Plugins -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>raptor.plugins</id>
-            <url>http://nxraptor/content/repositories/plugins/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>raptor.releases</id>
-            <url>http://nxraptor/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    
+	<!-- Configuration of Repositories for Maven Plugins -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>raptor.plugins</id>
+			<url>http://nxraptor/content/repositories/plugins/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>raptor.releases</id>
+			<url>http://nxraptor/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<dependencies>
-	      <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-servlet_3.0_spec</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
+			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
+			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-            <version>1.8.5</version>
+			<version>1.8.5</version>
 		</dependency>
-        <dependency>
-            <groupId>org.mozilla.javascript</groupId>
-            <artifactId>com.springsource.org.mozilla.javascript</artifactId>
-            <version>1.7.0.R3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.mozilla.javascript</groupId>
+			<artifactId>com.springsource.org.mozilla.javascript</artifactId>
+			<version>1.7.0.R3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Build Configration -->
 	<build>
-       
-        <!-- Inherit configuration needed for plugins -->
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>src/main</directory>
-                                <includes>
-                                    <include>**/MANIFEST.MF</include>
-                                </includes>
-                            </fileset>
-                        </filesets>
-                    </configuration>
-                </plugin>
 
-                <!-- Apache Maven Compiler Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
-                    <executions>
-                        <execution>
-                            <id>default-compile</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <source>${compileSource}</source>
-                        <target>${compileSource}</target>
-                        <skip>false</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.3.5</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <Include-Resource>{maven-resources}</Include-Resource>
-                        </instructions>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>bundle-install</id>
-                            <phase>install</phase>
-                            <goals>
-                                <goal>install</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>bundle-deploy</id>
-                            <phase>deploy</phase>
-                            <goals>
-                                <goal>deploy</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.9</version>
-                    <configuration>
-                        <forkMode>pertest</forkMode>
-                    </configuration>
-                </plugin>
-                
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
-                        <branchName>RAPTOR-${project.version}</branchName>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.7</version>
-                    <executions>
-                        <execution>
-                            <id>generate-build-id</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>parse-version</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.0-beta-2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        
+		<!-- Inherit configuration needed for plugins -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.4.1</version>
+					<configuration>
+						<filesets>
+							<fileset>
+								<directory>src/main</directory>
+								<includes>
+									<include>**/MANIFEST.MF</include>
+								</includes>
+							</fileset>
+						</filesets>
+					</configuration>
+				</plugin>
+
+				<!-- Apache Maven Compiler Plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<executions>
+						<execution>
+							<id>default-compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>compile</goal>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<source>${compileSource}</source>
+						<target>${compileSource}</target>
+						<skip>false</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.3.5</version>
+					<extensions>true</extensions>
+					<configuration>
+						<instructions>
+							<Include-Resource>{maven-resources}</Include-Resource>
+						</instructions>
+					</configuration>
+					<executions>
+						<execution>
+							<id>bundle-manifest</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>manifest</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>bundle-install</id>
+							<phase>install</phase>
+							<goals>
+								<goal>install</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>bundle-deploy</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>deploy</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<forkMode>pertest</forkMode>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.2.1</version>
+					<configuration>
+						<tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
+						<branchName>RAPTOR-${project.version}</branchName>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.7</version>
+					<executions>
+						<execution>
+							<id>generate-build-id</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>parse-version</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.0-beta-2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-<!--                 <executions> -->
-<!--                     <execution> -->
-<!--                         <id>copy-resources</id> -->
-<!--                         <phase>validate</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>copy-resources</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                             <outputDirectory>${basedir}/target/classes/META-INF/resources</outputDirectory> -->
-<!--                             <resources> -->
-<!--                                 <resource> -->
-<!--                                     <directory>src/main/javascript/</directory> -->
-<!--                                     <filtering>false</filtering> -->
-<!--                                 </resource> -->
-<!--                             </resources> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                 </executions> -->
-            </plugin>
-            <!-- Apache Felix Bundle Plugin -  For Generation of Manifest after Compile phase -->
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <!--  Configuration for generating the Manifest.mf -->
-                <configuration>
-                    <manifestLocation>src/main/resources/META-INF</manifestLocation>
-                    <!-- Manifest Headers which need to customized during manifest generation -->
-                    <instructions>
-                        <Export-Package>
-                            org.ebayopensource.raptorjs.rhino,
-                            org.ebayopensource.raptorjs.templating.rhino,
-                            org.ebayopensource.raptorjs.templating.rhino.servlet,
-                            org.ebayopensource.raptorjs.resources,
-                            org.ebayopensource.raptorjs.resources.includer,
-                            org.ebayopensource.raptorjs.resources.includer.commands,
-                            org.ebayopensource.raptorjs.resources.osgi,
-                            org.ebayopensource.raptorjs.resources.packaging
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<!-- <executions> -->
+				<!-- <execution> -->
+				<!-- <id>copy-resources</id> -->
+				<!-- <phase>validate</phase> -->
+				<!-- <goals> -->
+				<!-- <goal>copy-resources</goal> -->
+				<!-- </goals> -->
+				<!-- <configuration> -->
+				<!-- <outputDirectory>${basedir}/target/classes/META-INF/resources</outputDirectory> -->
+				<!-- <resources> -->
+				<!-- <resource> -->
+				<!-- <directory>src/main/javascript/</directory> -->
+				<!-- <filtering>false</filtering> -->
+				<!-- </resource> -->
+				<!-- </resources> -->
+				<!-- </configuration> -->
+				<!-- </execution> -->
+				<!-- </executions> -->
+			</plugin>
+			<!-- Apache Felix Bundle Plugin - For Generation of Manifest after Compile 
+				phase -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<!-- Configuration for generating the Manifest.mf -->
+				<configuration>
+					<!-- <manifestLocation>src/main/resources/META-INF</manifestLocation> -->
+					<!-- Manifest Headers which need to customized during manifest generation -->
+					<instructions>
+						<Export-Package>
+							org.ebayopensource.raptorjs.rhino,
+							org.ebayopensource.raptorjs.templating.rhino,
+							org.ebayopensource.raptorjs.templating.rhino.servlet,
+							org.ebayopensource.raptorjs.resources,
+							org.ebayopensource.raptorjs.resources.includer,
+							org.ebayopensource.raptorjs.resources.includer.commands,
+							org.ebayopensource.raptorjs.resources.osgi,
+							org.ebayopensource.raptorjs.resources.packaging
                         </Export-Package>
-                        <Import-Package>
-                            *,
-                            org.mozilla.javascript,
-                            javax.el;version="2.0";resolution:=optional,
+                        <_nouses>true</_nouses>
+						<Import-Package>
+							*,
+							org.mozilla.javascript,
+							javax.el;version="2.0";resolution:=optional,
                         </Import-Package>
-                        <X-Raptor-Resource-Search-Path>
-                            /META-INF/resources/raptorjs_modules
+						<X-Raptor-Resource-Search-Path>
+							/META-INF/resources/raptorjs_modules
                         </X-Raptor-Resource-Search-Path>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>jar</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                            <excludes>
-                            </excludes>
-                            <forceCreation>true</forceCreation>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <echo>Project Variables</echo>
-                                <echo>[project.build.outputDirectory] ${project.build.outputDirectory}</echo>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+
+						<configuration>
+							<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<excludes>
+							</excludes>
+							<forceCreation>true</forceCreation>
+							<archive>
+								<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo>Project Variables</echo>
+								<echo>[project.build.outputDirectory]
+									${project.build.outputDirectory}</echo>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
