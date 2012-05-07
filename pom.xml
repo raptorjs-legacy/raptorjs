@@ -3,7 +3,7 @@
 
 	<!-- POM Information about the Project -->
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.ebayopensource</groupId>
+	<groupId>org.ebayopensource.raptor</groupId>
 	<artifactId>raptorjs</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
@@ -127,20 +127,7 @@
 		<!-- Inherit configuration needed for plugins -->
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.4.1</version>
-					<configuration>
-						<filesets>
-							<fileset>
-								<directory>src/main</directory>
-								<includes>
-									<include>**/MANIFEST.MF</include>
-								</includes>
-							</fileset>
-						</filesets>
-					</configuration>
-				</plugin>
+				
 
 				<!-- Apache Maven Compiler Plugin -->
 				<plugin>
@@ -244,6 +231,21 @@
 		</pluginManagement>
 
 		<plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/META-INF</directory>
+                            <includes>
+                                <include>MANIFEST.MF</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+                
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
@@ -273,18 +275,19 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<!-- Configuration for generating the Manifest.mf -->
 				<configuration>
-					<!-- <manifestLocation>src/main/resources/META-INF</manifestLocation> -->
+					<manifestLocation>src/main/resources/META-INF</manifestLocation>
 					<!-- Manifest Headers which need to customized during manifest generation -->
 					<instructions>
+                        <Bundle-SymbolicName>org.ebayopensource.raptor.raptorjs</Bundle-SymbolicName>
 						<Export-Package>
-							org.ebayopensource.raptorjs.rhino,
-							org.ebayopensource.raptorjs.templating.rhino,
-							org.ebayopensource.raptorjs.templating.rhino.servlet,
-							org.ebayopensource.raptorjs.resources,
-							org.ebayopensource.raptorjs.resources.includer,
-							org.ebayopensource.raptorjs.resources.includer.commands,
-							org.ebayopensource.raptorjs.resources.osgi,
-							org.ebayopensource.raptorjs.resources.packaging
+							org.ebayopensource.raptor.raptorjs.rhino,
+							org.ebayopensource.raptor.raptorjs.templating.rhino,
+							org.ebayopensource.raptor.raptorjs.templating.rhino.servlet,
+							org.ebayopensource.raptor.raptorjs.resources,
+							org.ebayopensource.raptor.raptorjs.resources.includer,
+							org.ebayopensource.raptor.raptorjs.resources.includer.commands,
+							org.ebayopensource.raptor.raptorjs.resources.osgi,
+							org.ebayopensource.raptor.raptorjs.resources.packaging
                         </Export-Package>
                         <_nouses>true</_nouses>
 						<Import-Package>
@@ -318,7 +321,7 @@
 							</excludes>
 							<forceCreation>true</forceCreation>
 							<archive>
-								<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+								<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 							</archive>
 						</configuration>
 					</execution>
