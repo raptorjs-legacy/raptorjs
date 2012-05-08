@@ -338,6 +338,41 @@ raptor.defineEnum(
         isDefined: function(name) {
             return definitionsLookup[name] !== undefined;
         },
+        
+        alias : function(type,name) {
+            
+            var dot = name.lastIndexOf('.'),
+                path = name.substring(0,dot),
+                dir = nameSpaces[path];
+            
+            name = name.substring(dot + 1);
+            
+            if (dir) {
+                return (dir[name] = type);
+            }
+
+            var global = raptor.global;
+            
+            var idx = 0,
+                dirs = path ? path.split('.') : [], 
+                len = dirs.length,
+                key;
+                
+            dir = global;
+            
+            for (; ((idx < len) && (dir[key = dirs[idx]])); idx++) {
+                dir = dir[key];
+            }
+            
+            while (idx < len) {
+                dir = dir[key = dirs[idx++]] = {};
+            }
+            
+            nameSpaces[path] = dir;
+            
+            return (dir[name] = type);
+            
+        },
 
         /**
          * 
@@ -874,6 +909,7 @@ raptor.defineEnum(
              'defineEnum',
              'defineModule',
              'defineMixin',
+             'alias',
              'extend',
              'inherit'],
             function(methodName) {
