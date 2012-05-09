@@ -205,7 +205,7 @@
 					<version>2.2.1</version>
 					<configuration>
 						<tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
-						<branchName>RAPTOR-${project.version}</branchName>
+						<branchName>RELEASE-${project.version}</branchName>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
 				</plugin>
