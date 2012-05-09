@@ -198,40 +198,8 @@
 						<forkMode>pertest</forkMode>
 					</configuration>
 				</plugin>
-                <plugin>
-                    <groupId>bat.crimea.ua</groupId>
-                    <artifactId>maven-increment-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>increment-version</id>
-                            <phase>process-sources</phase>
-                            <goals>
-                                <goal>touch</goal>
-                            </goals>
-                            <configuration>
-                                <values>
-                                    <valueItem>
-                                        <value>${parsedVersion.minorVersion}</value>
-                                        <valueClassName>java.lang.Integer</valueClassName>
-                                        <incrementValue>1</incrementValue>
-                                        <outputPropertyName>nextMinorVersion</outputPropertyName>
-                                    </valueItem>
-                                </values>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.2.1</version>
-					<configuration>
-						<tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
-						<branchName>RELEASE-${project.version}</branchName>
-                        <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
-						<autoVersionSubmodules>true</autoVersionSubmodules>
-					</configuration>
-				</plugin>
+                
+				
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
@@ -260,6 +228,54 @@
 		</pluginManagement>
 
 		<plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>generate-build-id</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>bat.crimea.ua</groupId>
+                <artifactId>maven-increment-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>increment-version</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>touch</goal>
+                        </goals>
+                        <configuration>
+                            <values>
+                                <valueItem>
+                                    <value>${parsedVersion.minorVersion}</value>
+                                    <valueClassName>java.lang.Integer</valueClassName>
+                                    <incrementValue>1</incrementValue>
+                                    <outputPropertyName>nextMinorVersion</outputPropertyName>
+                                </valueItem>
+                            </values>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
+                    <branchName>RELEASE-${project.version}</branchName>
+                    <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.4.1</version>
