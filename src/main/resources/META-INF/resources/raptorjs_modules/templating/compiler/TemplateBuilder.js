@@ -32,7 +32,7 @@ raptor.defineClass(
         TemplateBuilder.prototype = {
                 
             getTemplateName: function() {
-                return this.templateName;
+                return (this.options ? this.options.templateName : null) || this.templateName;
             },
             
             beginPreserveWhitespace: function() {
@@ -166,7 +166,8 @@ raptor.defineClass(
             getOutput: function() {
                 var out = strings.createStringBuilder();
                 
-                if (!this.templateName) {
+                var templateName = this.getTemplateName();
+                if (!templateName) {
                     errors.throwError(new Error("Template name not defined in template"));
                 }
                 
@@ -179,7 +180,7 @@ raptor.defineClass(
                 }
                 
                 out.append('$rtmpl(');
-                out.append(stringify(this.templateName));
+                out.append(stringify(templateName));
                 out.append(',');
                 out.append('function(helpers){');
                 //Write out the static variables
