@@ -21,6 +21,11 @@ public class ResourceManager {
         
     }
     
+    /**
+     * 
+     * @param path
+     * @return The resource if found, null otherwise.
+     */
     public synchronized Resource findResource(String path) {
         for (SearchPathEntry searchPathEntry : this.searchPathEntries) {
             Resource resource = searchPathEntry.findResource(path);

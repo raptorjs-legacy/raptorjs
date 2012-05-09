@@ -38,13 +38,15 @@ public abstract class RaptorJSEnv {
     }
     
     
-    public void init() {
-        
+    public void init() { 
         this.findCoreModulesDir();
         
-        this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, this.coreModulesDir));
-        this.rhinoHelpers = this.createRhinoHelpers();
+        if (this.resourceManager.findResource("/bootstrap/bootstrap_server.js") == null) {
+            this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, this.coreModulesDir));    
+        }
         
+        this.rhinoHelpers = this.createRhinoHelpers();
+   
         jsEnv.setGlobal("__rhinoHelpers", this.rhinoHelpers);
         this.getRhinoHelpers().getBootstrap().require("/bootstrap/bootstrap_server.js");
         this.getRhinoHelpers().getBootstrap().require("/bootstrap/bootstrap_rhino.js");

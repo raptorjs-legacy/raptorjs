@@ -43,6 +43,10 @@ public class URLResource extends Resource {
     public String toString() {
         return "URLResource [url=" + url + ", isFile=" + isFile + "]";
     }
+
+    public URL getUrl() {
+        return url;
+    }
     
     
 
