@@ -8,7 +8,13 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
 	<packaging>bundle</packaging>
-
+    
+    <scm>
+        <connection>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</connection>
+        <url>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</url>
+        <developerConnection>scm:git:git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</developerConnection>
+    </scm>
+    
 	<distributionManagement>
 		<repository>
 			<id>raptor.releases</id>
