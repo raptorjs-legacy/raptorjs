@@ -363,7 +363,7 @@
 							javax.el;version="2.0";resolution:=optional,
                         </Import-Package>
 						<X-Raptor-Resource-Search-Path>
-							/META-INF/resources/raptorjs_modules
+							
                         </X-Raptor-Resource-Search-Path>
 					</instructions>
 				</configuration>
