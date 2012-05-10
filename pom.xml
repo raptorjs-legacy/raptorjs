@@ -272,7 +272,7 @@
                 <configuration>
                     <branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
                     <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
-                    <releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</releaseVersion>
+                    <releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-RELEASE</releaseVersion>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
