@@ -244,7 +244,7 @@
                     <configuration>
                         <branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
                         <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
-                        <releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-RELEASE</releaseVersion>
+<!--                         <releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-RELEASE</releaseVersion> -->
                         <tagNameFormat>@{project.version}-TAG</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
