@@ -273,6 +273,7 @@
                     <tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
                     <branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
                     <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
+                    <updateBranchVersions>true</updateBranchVersions>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
