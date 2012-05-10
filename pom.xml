@@ -270,6 +270,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.1</version>
                 <configuration>
+                    <tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
                     <branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
                     <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
