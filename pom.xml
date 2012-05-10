@@ -252,6 +252,7 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>com.ebay.osgi.build</groupId>
                     <artifactId>dependency-version-validator</artifactId>
@@ -265,6 +266,7 @@
                         </execution>
                     </executions>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>com.ebay.osgi.build</groupId>
                     <artifactId>maven-scm-build-info</artifactId>
