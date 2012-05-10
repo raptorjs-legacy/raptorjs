@@ -238,6 +238,61 @@
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.1</version>
 				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <version>2.1.2.ebay</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.ebay.osgi.build</groupId>
+                    <artifactId>dependency-version-validator</artifactId>
+                    <version>1.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>validate-dependencies</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.ebay.osgi.build</groupId>
+                    <artifactId>maven-scm-build-info</artifactId>
+                    <version>1.0.4</version>
+                    <executions>
+                        <execution>
+                            <id>build-info</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>addscminfo</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.0</version>
+                    <executions>
+                        <execution>
+                            <id>generate-build-number</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>create-timestamp</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 
