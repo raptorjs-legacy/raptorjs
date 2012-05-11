@@ -4,6 +4,8 @@ raptor.defineClass(
         var forEach = raptor.forEach,
             extend = raptor.extend,
             Taglib = raptor.require("templating.compiler.Taglib"),
+            ElementNode = raptor.require('templating.compiler.ElementNode'),
+            TextNode = raptor.require('templating.compiler.TextNode'),
             Tag = Taglib.Tag,
             Transformer = Taglib.Transformer;
         
@@ -78,7 +80,23 @@ raptor.defineClass(
                 }, this);
             },
             
+            forEachNodeTransformer: function(node, callback, thisObj) {
+                /*
+                 * Based on the type of node we have to choose how to transform it
+                 */
+                if (node instanceof ElementNode) {
+                    this.forEachTagTransformer(node.uri, node.localName, callback, thisObj);
+                }
+                else if (node instanceof TextNode) {
+                    this.forEachTextTransformer(callback, thisObj);
+                }
+            },
+            
             forEachTagTransformer: function(uri, tagName, callback, thisObj) {
+                /*
+                 * If the node is an element node then we need to find all matching
+                 * transformers based on the URI and the local name of the element.
+                 */
                 
                 if (uri == null) {
                     uri = '';
