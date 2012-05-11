@@ -471,7 +471,7 @@ function extractRaptorJSVersion() {
     var pomXmlPath = SYS.pwd + "../../../pom.xml";
     var pomXmlSource = IO.readFile(pomXmlPath);
     
-    var versionRegEx = /\<artifactId\>RaptorJS\<\/artifactId\>\s*\<version\>([\.0-9a-zA-Z-]*)\s*\<\/version\>/g;
+    var versionRegEx = /\<artifactId\>raptorjs\<\/artifactId\>\s*\<version\>([\.0-9a-zA-Z-]*)\s*\<\/version\>/g;
     var match = versionRegEx.exec(pomXmlSource);
     if (match) {
         var version = match[1];

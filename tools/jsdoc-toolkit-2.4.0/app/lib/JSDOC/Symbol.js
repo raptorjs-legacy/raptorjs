@@ -617,6 +617,10 @@ JSDOC.Symbol.prototype.hasMember = function(name) {
 }
 
 JSDOC.Symbol.prototype.addMember = function(symbol) {
+    if (symbol.isNamespace) {
+        LOG.warn("SKIPPING addMember for SYMBOL " + symbol);
+        return;
+    }
 	if (symbol.is("FUNCTION")) { this.addMethod(symbol); }
 	else if (symbol.is("OBJECT")) { this.addProperty(symbol); }
 }
@@ -656,6 +660,11 @@ JSDOC.Symbol.prototype.hasProperty = function(name) {
 }
 
 JSDOC.Symbol.prototype.addProperty = function(symbol) {
+    if (symbol.isNamespace) {
+        LOG.warn("SKIPPING addProperty for SYMBOL " + symbol.alias);
+        return;
+    }
+    
 	var propertyAlias = symbol.alias;
 	var thisProperties = this.properties;
 	for (var i = 0, l = thisProperties.length; i < l; i++) {

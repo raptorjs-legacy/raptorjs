@@ -28,6 +28,34 @@ raptor.defineModule(
         return {
 
             /**
+             * Creates a new object that can be used to compile templates with the
+             * provided options.
+             * 
+             * <p>
+             * Allowed options:
+             * <ul>
+             *  <li>
+             *      preserveWhitespace
+         *      </li>
+             *  <li>
+             *      allowSelfClosing (object): An object that defines which elements are allowed
+             *          to be self-closing. By default, all elements are allowed to be self-closing.
+             *          Some browsers do not handle certain HTML elements that are self-closing
+             *          and require a separate ending tag.
+             *          
+             *          <p>
+             *          Default value:
+<pre>
+allowSelfClosing: {
+    'script': false,
+    'div': false
+}
+</pre>
+             *  </li>
+             *  <li>
+             *      startTagOnly
+             *  </li>
+             * </ul>
              * 
              * @param options
              * @returns

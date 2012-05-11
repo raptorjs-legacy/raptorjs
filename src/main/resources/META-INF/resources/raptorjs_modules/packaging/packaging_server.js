@@ -9,7 +9,7 @@ raptorBuilder.addLoader(function(raptor) {
         _extensionsLookup = {};
     
     /**
-     * @extension Server
+     * 
      */
     raptor.defineCore('packaging', {
         config: raptor.config.create({

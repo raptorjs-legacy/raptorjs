@@ -1,8 +1,3 @@
-/**
- * 
- * @extension Raptor Stringify
- * 
- */
 raptor.defineModule(
     'json.stringify',
     function() {

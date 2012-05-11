@@ -21,4 +21,5 @@ echo Current directory: $PWD
 echo Writing RaptorJS API docs to ${DOCS_DIR}/api
 echo Source directory: ${SRC_DIR}
 
-java -jar "${JSDOC_TOOLKIT_DIR}/jsrun.jar" -opt -1 ${JSDOC_TOOLKIT_DIR}/app/run.js ${SRC_DIR}/main/resources/META-INF/resources/js/raptor -t=${TEMPLATE_DIR} -r=30 -d=${DOCS_DIR}/api -p
+#java -jar "${JSDOC_TOOLKIT_DIR}/jsrun.jar" -opt -1 ${JSDOC_TOOLKIT_DIR}/app/run.js ${SRC_DIR}/main/resources/META-INF/resources/raptorjs_modules -t=${TEMPLATE_DIR} -r=30 -d=${DOCS_DIR}/api -p
+java -jar "${JSDOC_TOOLKIT_DIR}/jsrun.jar" ${JSDOC_TOOLKIT_DIR}/app/run.js ${SRC_DIR}/main/resources/META-INF/resources/raptorjs_modules -t=${TEMPLATE_DIR} -r=30 -d=${DOCS_DIR}/api -p

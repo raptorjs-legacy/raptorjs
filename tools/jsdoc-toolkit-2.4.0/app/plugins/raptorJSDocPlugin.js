@@ -79,7 +79,8 @@ JSDOC.PluginManager.registerPlugin(
 	                "xml": "sh_xml",
 	                "javascript": "sh_javascript_dom",
 	                "js": "sh_javascript_dom"
-	        }
+	        };
+	        
 	        if (descTags.length) {
 	            var desc = descTags[0].desc;
 	            desc = desc.replace(/<(html|javascript|js|xml)>((?:.|\n|\r|\t)*?)<\/(html|javascript|js|xml)>/g, function(match, tagBegin, body, tagEnd) {
