@@ -131,13 +131,13 @@ raptor.defineClass(
              * @return {void}
              */
             compileAndLoad: function(xmlSrc, filePath) {
-                var compiledSrc = this.compile(xmlSrc, filePath);
+                var compiledSrc = this.compile(xmlSrc, filePath); //Get the compiled output for the template
                 
-                raptor.require("templating");
+                raptor.require("templating"); //Make sure the templating module is loaded before the compiled code is evaluated
                 
                 try
                 {
-                    eval(compiledSrc);
+                    eval(compiledSrc); //Evaluate the compiled code and register the template
                 }
                 catch(e) {
                     errors.throwError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);

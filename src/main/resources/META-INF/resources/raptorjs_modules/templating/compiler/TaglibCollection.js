@@ -10,8 +10,8 @@ raptor.defineClass(
             Transformer = Taglib.Transformer;
         
         var TaglibCollection = function() {
-            this.tagTransformers = {};
-            this.tagDefs = {};
+            this.tagTransformers = {}; //Tag transformers lookup
+            this.tagDefs = {}; //Tag definitions lookup
             this.textTransformers = [];
             this.taglibUris = {};
             
