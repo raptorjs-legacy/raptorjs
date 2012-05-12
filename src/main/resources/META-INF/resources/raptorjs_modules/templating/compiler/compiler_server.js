@@ -32,11 +32,11 @@ raptor.extend(
              * @returns
              */
             compileResource: function(path) {
-                var resource = resources.findResourceSync(path);
+                var resource = resources.findResource(path);
                 if (!resource.exists()) {
                     errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
-                var src = resource.readFullySync(src);
+                var src = resource.readFully(src);
                 return this.compile(src, resource.getSystemPath());
             },
             
@@ -46,11 +46,11 @@ raptor.extend(
              * @returns
              */
             compileAndLoadResource: function(path) {
-                var resource = resources.findResourceSync(path);
+                var resource = resources.findResource(path);
                 if (!resource.exists()) {
                     errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
-                var src = resource.readFullySync(src);
+                var src = resource.readFully(src);
                 this.compileAndLoad(src, resource.getSystemPath());
             },
             
@@ -60,8 +60,8 @@ raptor.extend(
              */
             discoverTaglibs: function() {
                 
-                resources.findAllResourcesSync('/taglib-registry.json', function(registryResource) {
-                    var taglibRegistry = json.parse(registryResource.readFullySync());
+                resources.findAllResources('/taglib-registry.json', function(registryResource) {
+                    var taglibRegistry = json.parse(registryResource.readFully());
                     forEachEntry(taglibRegistry, function(uri, path) {
                         registerTaglib(uri, path, registryResource);
                     }, this);
@@ -97,7 +97,7 @@ raptor.extend(
                     searchPathEntry = taglibInfo.searchPathEntry,
                     registryPath = taglibInfo.registryPath;
                 
-                var packageResource = resources.findResourceSync(packagePath, searchPathEntry);
+                var packageResource = resources.findResource(packagePath, searchPathEntry);
                 
                 if (!packageResource.exists()) {
                     errors.throwError(new Error('Taglib package not found at path "' + packagePath + '" in search path entry "' + searchPathEntry + '". This taglib was referenced in "' + registryPath + '"'));
@@ -154,7 +154,7 @@ raptor.extend(
                 }
                 //console.log('load_taglib: taglibResource "' + taglibResource.getSystemPath() + '"');
                 
-                raptor.require("templating.compiler").loadTaglibXml(taglibResource.readFullySync(), taglibResource.getSystemPath());
+                raptor.require("templating.compiler").loadTaglibXml(taglibResource.readFully(), taglibResource.getSystemPath());
             }
             else {
                 var stringify = raptor.require('json.stringify').stringify;
@@ -164,7 +164,7 @@ raptor.extend(
         
         load_template: function(include, manifest) {
             var resource = manifest.resolveResource(include.path);
-            var xmlSource = resource.readFullySync();
+            var xmlSource = resource.readFully();
             raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
         }
     });

@@ -15,7 +15,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        existsSync: function(path) {
+        exists: function(path) {
             return nodePath.existsSync(path);
         },
         
@@ -34,7 +34,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFileSync: function(path, encoding) {
+        readFile: function(path, encoding) {
             if (encoding == null) encoding = "UTF-8";
             return nodeFs.readFileSync(path, encoding);
         },
@@ -42,7 +42,7 @@ raptorBuilder.addLoader(function(raptor) {
         /**
          * 
          */
-        isDirectorySync: function(path) {
+        isDirectory: function(path) {
             return statSync(path).isDirectory();
         },
         
@@ -51,7 +51,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        isFileSync: function(path) {
+        isFile: function(path) {
             return statSync(path).isFile();
         },
         
@@ -62,12 +62,12 @@ raptorBuilder.addLoader(function(raptor) {
          * @param thisObj
          * @returns
          */
-        listFilenamesSync: function(dirPath, callback, thisObj) {
+        listFilenames: function(dirPath, callback, thisObj) {
             var files = nodeFs.readdirSync(dirPath);
             return files;
         },
         
-        writeFileSync: function(path, data, encoding) {
+        writeFile: function(path, data, encoding) {
             nodeFs.writeFileSync(path, data, encoding || "UTF-8");
         }
     });

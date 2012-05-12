@@ -38,7 +38,7 @@ raptorBuilder.addLoader(function(raptor) {
             
             var resourcePath = '/' + name.replace(/\./g, '/') + '.js';
             
-            var resource = resources.findResourceSync(resourcePath);
+            var resource = resources.findResource(resourcePath);
             if (resource.exists())
             {
                 logger.debug('Found missing class: ' + name);

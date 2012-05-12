@@ -25,11 +25,11 @@ raptorBuilder.addLoader(function(raptor) {
                  * @param path
                  * @returns
                  */
-                findResourceSync: function(path) {
+                findResource: function(path) {
                     var fullPath = files.joinPaths(this.dir, path),
                         fileResource;
                     
-                    if (files.existsSync(fullPath)) {
+                    if (files.exists(fullPath)) {
                         logger.debug('Resource "' + path + '" EXISTS in directory "' + this.dir + '"');
                         fileResource = new FileResource(this, path, fullPath);
                         return fileResource;

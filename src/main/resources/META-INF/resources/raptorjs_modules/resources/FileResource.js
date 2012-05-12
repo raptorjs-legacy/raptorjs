@@ -39,20 +39,20 @@ raptorBuilder.addLoader(function(raptor) {
                     return this.filePath;
                 },
                 
-                readFullySync: function() {
-                    return files.readFileSync(this.getFilePath());
+                readFully: function() {
+                    return files.readFile(this.getFilePath());
                 },
                 
-                isDirectorySync: function() {
-                    return files.isDirectorySync(this.filePath);
+                isDirectory: function() {
+                    return files.isDirectory(this.filePath);
                 },
                 
-                isFileSync: function() {
-                    return files.isFileSync(this.filePath);
+                isFile: function() {
+                    return files.isFile(this.filePath);
                 },
                 
-                forEachChildSync: function(callback, thisObj) {
-                    var filenames = files.listFilenamesSync(this.filePath),
+                forEachChild: function(callback, thisObj) {
+                    var filenames = files.listFilenames(this.filePath),
                         FileResource = raptor.require('resources.FileResource');
                     
                     forEach(filenames, function(filename) {

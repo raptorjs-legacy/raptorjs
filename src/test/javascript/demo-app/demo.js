@@ -20,8 +20,8 @@ require('raptorjs').createRaptor({
 var logger = raptor.require('logging').logger("demo");
 try
 {
-    var templateResource = raptor.require("resources").findResourceSync("/demo.rhtml");
-    var templateSrc = templateResource.readFullySync();
+    var templateResource = raptor.require("resources").findResource("/demo.rhtml");
+    var templateSrc = templateResource.readFully();
     var compiler = raptor.require("templating.compiler").createCompiler({templateName: "demo"});
     var compiledSrc = compiler.compile(templateSrc, "/demo.rhtml");
     console.log(compiledSrc);

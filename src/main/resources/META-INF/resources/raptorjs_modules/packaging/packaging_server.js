@@ -86,7 +86,7 @@ raptorBuilder.addLoader(function(raptor) {
                     packageDirPath,
                     resources = raptor.resources;
                 
-                packageResource = resources.findResourceSync(resourcePath);
+                packageResource = resources.findResource(resourcePath);
                 
                 
                 
@@ -102,7 +102,7 @@ raptorBuilder.addLoader(function(raptor) {
                 
                 logger.debug('Found package manifest: ' + packageResource.getSystemPath());
                 
-                var packageJson = packageResource.readFullySync();
+                var packageJson = packageResource.readFully();
                 try
                 {
                     manifest = JSON.parse(packageJson);

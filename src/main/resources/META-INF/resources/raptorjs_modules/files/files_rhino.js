@@ -13,7 +13,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        existsSync: function(path) {
+        exists: function(path) {
             return new JavaFile(path).exists();
         },
         
@@ -37,7 +37,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFileSync: function(path, encoding) {
+        readFile: function(path, encoding) {
             if (encoding == null) encoding = "UTF-8";
             return __rhinoHelpers.getFiles().readFile(new JavaFile(path), encoding);
         },
@@ -47,7 +47,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        isDirectorySync: function(path) {
+        isDirectory: function(path) {
             return new JavaFile(path).isDirectory();
         },
         
@@ -56,7 +56,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        isFileSync: function(path) {
+        isFile: function(path) {
             return new JavaFile(path).isFile();
         },
         
@@ -65,7 +65,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param dirPath
          * @returns
          */
-        listFilenamesSync: function(dirPath) {
+        listFilenames: function(dirPath) {
             var javaFile = new JavaFile(dirPath);
             var filenames = javaFile.list();
             return raptor.java.convertArray(filenames);

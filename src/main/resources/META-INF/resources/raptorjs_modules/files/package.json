@@ -10,16 +10,19 @@
         }
     ],
 
-    "extensions": {
-        "server": {
+    "extensions": [
+        {
+            "name": "server",
             "includes": [
                 {"type": "js", "path": "files.js"}
             ]
         },
-        "server|node": {
+        {
+            "name": "node",
             "includes": [
+                {"type": "js", "path": "File_node.js"},
                 {"type": "js", "path": "files_node.js"}
             ]
         }
-    }
+    ]
 }

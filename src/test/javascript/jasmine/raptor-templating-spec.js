@@ -6,7 +6,7 @@ describe('templating module', function() {
         logger = raptor.require('logging').logger('raptor-templating-spec'),
         stringify = raptor.require('json.stringify').stringify,
         readTemplate = function(path) {
-            var src = files.readFileSync(
+            var src = files.readFile(
                     files.joinPaths(templatesDir, path));
             return src;
         },

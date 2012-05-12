@@ -4,7 +4,7 @@ raptorBuilder.addLoader(function(raptor) {
     
     raptor.defineCore('runtime', {
         evaluateResource : function(resource) {
-            resource = raptor.resources.findResourceSync(resource);
+            resource = raptor.resources.findResource(resource);
             if (resource.exists() === false)
             {
                 raptor.errors.throwError(new Error('Resource not found: ' + resource.getPath()));
@@ -20,7 +20,7 @@ raptorBuilder.addLoader(function(raptor) {
             }
             else
             {
-                var source = resource.readFullySync();
+                var source = resource.readFully();
                 this.evaluateString(source, resource.getSystemPath());
             }
         }

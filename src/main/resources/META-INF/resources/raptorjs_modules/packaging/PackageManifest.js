@@ -101,7 +101,7 @@ raptorBuilder.addLoader(function(raptor) {
                 path = this.getDirPath() + '/' + path;
             }
             
-            var resource = raptor.resources.findResourceSync(path, this.getSearchPathEntry() /* Search within the same search path entry */);
+            var resource = raptor.resources.findResource(path, this.getSearchPathEntry() /* Search within the same search path entry */);
             if (resource.exists() === false) {
                 errors.throwError(new Error('Resource "' + path + '" not found for package "' + this.getPackageResource().getSystemPath()));
             }

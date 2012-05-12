@@ -4,7 +4,7 @@ raptorBuilder.addLoader(function(raptor) {
          * 
          * @param path
          */
-        existsSync : function(path) {
+        exists: function(path) {
             throw new Error('Not Implemented');
         },
         
@@ -20,7 +20,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @param encoding
          */
-        readFileSync: function(path, encoding) {
+        readFile: function(path, encoding) {
             throw new Error('Not Implemented');
         },
         
@@ -29,8 +29,8 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        isDirectorySync: function(path) {
-            return this.statSync(path).isDirectory();
+        isDirectory: function(path) {
+            throw new Error('Not Implemented');
         },
         
         /**
@@ -38,8 +38,8 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        isFileSync: function(path) {
-            return this.statSync(path).isFile();
+        isFile: function(path) {
+            throw new Error('Not Implemented');
         }
     });
 });

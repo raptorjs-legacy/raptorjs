@@ -6,7 +6,7 @@ raptorBuilder.addLoader(function(raptor) {
              * 
              * @returns
              */
-            findResourceSync: function(path) {
+            findResource: function(path) {
                 throw new Error('Not Implemented');
             }
         };

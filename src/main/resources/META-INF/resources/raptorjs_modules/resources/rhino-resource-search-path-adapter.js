@@ -29,20 +29,20 @@
                     return java.convertString(this.javaResource.getSystemPath());
                 },
                 
-                readFullySync: function() {
+                readFully: function() {
                     return java.convertString(this.javaResource.readAsString());
                 },
                 
-                isDirectorySync: function() {
+                isDirectory: function() {
                     return this.javaResource.isDirectory();
                 },
                 
-                isFileSync: function() {
+                isFile: function() {
                     return this.javaResource.isFile();
                 },
                 
-                forEachChildSync: function(callback, thisObj) {
-                    throw new Error("ebay.resources.Resource.forEachChildSync() not implemented");
+                forEachChild: function(callback, thisObj) {
+                    throw new Error("ebay.resources.Resource.forEachChild() not implemented");
                 }
             };
             
@@ -59,7 +59,7 @@
             };
             
             ResourceSearchPathEntry.prototype = {
-                findResourceSync: function(path) {
+                findResource: function(path) {
                     var javaResource = __rhinoHelpers.resources.findResource(path);
                     if (javaResource) {
                         return new Resource(javaResource, this);

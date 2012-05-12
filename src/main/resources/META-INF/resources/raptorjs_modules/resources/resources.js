@@ -72,7 +72,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @returns
          */
-        findResourceSync: function(path, searchPathEntry) {
+        findResource: function(path, searchPathEntry) {
             
             if (path instanceof Resource) {
                 return path;
@@ -86,11 +86,11 @@ raptorBuilder.addLoader(function(raptor) {
             var resource = null;
             
             if (searchPathEntry) {
-                resource = searchPathEntry.findResourceSync(path);
+                resource = searchPathEntry.findResource(path);
             }
             else {
                 forEach(searchPathEntries, function(entry) {
-                    resource = entry.findResourceSync(path);
+                    resource = entry.findResource(path);
                     if (resource != null) {
                         return false;
                     }
@@ -109,9 +109,9 @@ raptorBuilder.addLoader(function(raptor) {
          * @param callback
          * @param thisObj
          */
-        findAllResourcesSync: function(path, callback, thisObj) {
+        findAllResources: function(path, callback, thisObj) {
             forEach(searchPathEntries, function(entry) {
-                var resource = entry.findResourceSync(path);
+                var resource = entry.findResource(path);
                 if (resource != null) {
                     callback.call(thisObj, resource);
                 }
@@ -125,9 +125,9 @@ raptorBuilder.addLoader(function(raptor) {
          * @param callback
          * @param thisObj
          */
-        forEachSync: function(path, callback, thisObj) {
+        forEach: function(path, callback, thisObj) {
             forEach(searchPathEntries, function(entry) {
-                var resource = entry.findResourceSync(path);
+                var resource = entry.findResource(path);
                 if (resource != null) {
                     callback.call(thisObj, resource);
                 }

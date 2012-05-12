@@ -65,7 +65,7 @@ raptorBuilder.addLoader(function(raptor) {
              * 
              * @returns
              */
-            readFullySync: function() {
+            readFully: function() {
                 raptor.errors.throwError(new Error('Not Implemented'));
             },
             
@@ -88,10 +88,10 @@ raptorBuilder.addLoader(function(raptor) {
              * @param childPath
              * @returns
              */
-            findChildSync: function(childPath) {
+            findChild: function(childPath) {
                 var resources = raptor.resources;
                 
-                return resources.findResourceSync(
+                return resources.findResource(
                         resources.joinPaths(this.getPath(), childPath));
             },
             
@@ -111,6 +111,8 @@ raptorBuilder.addLoader(function(raptor) {
             getSearchPathEntry: function() {
                 
             }
+            
+            
         
         };
     });
