@@ -21,22 +21,42 @@ raptor.defineClass(
         };
         
         ElementNode.prototype = {
+            /**
+             * 
+             * @param startTagOnly
+             */
             setStartTagOnly: function(startTagOnly) {
                 this.startTagOnly = true;
             },
             
+            /**
+             * 
+             * @param allowSelfClosing
+             */
             setAllowSelfClosing: function(allowSelfClosing) {
                 this.allowSelfClosing = allowSelfClosing;
             },
             
+            /**
+             * 
+             * @returns {Boolean}
+             */
             isElementNode: function() {
                 return true;
             },
             
+            /**
+             * 
+             * @returns {Boolean}
+             */
             isTextNode: function() {
                 return false;
             },
             
+            /**
+             * 
+             * @returns {Array}
+             */
             getAttributes: function() {
                 var attributes = [];
                 forEachEntry(this.attributes, function(name, attr) {
@@ -45,19 +65,42 @@ raptor.defineClass(
                 return attributes;
             },
             
+            /**
+             * 
+             * @param name
+             * @returns
+             */
             getAttribute: function(name) {
                 return this.getAttributeNS(null, name);
             },
             
+            /**
+             * 
+             * @param uri
+             * @param localName
+             * @returns
+             */
             getAttributeNS: function(uri, localName) {
                 var attr = this.attributes[(uri || '') + ":" + localName];
                 return attr ? attr.value : null;
             },
             
+            /**
+             * 
+             * @param localName
+             * @param value
+             */
             setAttribute: function(localName, value) {
                 this.setAttributeNS(null, localName, value);
             },
             
+            /**
+             * 
+             * @param uri
+             * @param localName
+             * @param value
+             * @param prefix
+             */
             setAttributeNS: function(uri, localName, value, prefix) {
                 this.attributes[(uri || '') + ":" + localName] = {
                     localName: localName,
@@ -70,22 +113,43 @@ raptor.defineClass(
                 };
             },
             
+            /**
+             * 
+             * @param name
+             */
             setEmptyAttribute: function(name) {
                 this.setAttribute(name, null);
             },
             
+            /**
+             * 
+             * @param localName
+             */
             removeAttribute: function(localName) {
                 this.removeAttributeNS(null, localName);
             },
             
+            /**
+             * 
+             * @param uri
+             * @param localName
+             */
             removeAttributeNS: function(uri, localName) {
                 delete this.attributes[(uri || '') + ":" + localName];
             },
             
+            /**
+             * 
+             * @returns {Boolean}
+             */
             isPreserveSpace: function() {
                 return this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
             },
             
+            /**
+             * 
+             * @param preserve
+             */
             setPreserveSpace: function(preserve) {
                 this.removeAttributeNS(XML_URI, "space");
                 this.removeAttribute("space");
@@ -96,6 +160,10 @@ raptor.defineClass(
             },
             
             
+            /**
+             * 
+             * @param template
+             */
             doGenerateCode: function(template) {
                 var preserveSpace = this.isPreserveSpace();
                 

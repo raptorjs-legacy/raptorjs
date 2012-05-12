@@ -1,5 +1,5 @@
 /**
- * @extension Server
+ * @extension Rhino
  */
 raptor.extend(
     "templating.compiler",
@@ -13,14 +13,33 @@ raptor.extend(
         };
         
         return {
+            /**
+             * 
+             * @param src
+             * @param path
+             * @param javaOptions
+             * @returns
+             */
             rhinoCompile: function(src, path, javaOptions) {
                 return this.compile(src, path, convertJavaOptions(javaOptions));
             },
             
+            /**
+             * 
+             * @param path
+             * @param javaOptions
+             * @returns
+             */
             rhinoCompileResource: function(path, javaOptions) {
                 return this.compileResource(path, convertJavaOptions(javaOptions));
             },
             
+            /**
+             * 
+             * @param path
+             * @param javaOptions
+             * @returns
+             */
             rhinoCompileAndLoadResource: function(path, javaOptions) {
                 return this.compileAndLoadResource(path, convertJavaOptions(javaOptions));
             }

@@ -7,10 +7,16 @@ raptor.defineClass(
         };
         
         Expression.prototype = {
+            /**
+             * 
+             * @returns
+             */
             getExpression: function() {
                 return this.expression;
             },
             
+            /**
+             */
             toString: function() {
                 return this.expression;
             }

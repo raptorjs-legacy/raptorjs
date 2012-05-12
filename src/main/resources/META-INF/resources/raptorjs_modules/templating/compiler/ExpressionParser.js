@@ -87,6 +87,13 @@ raptor.defineClass(
             
         };
         
+        /**
+         * @memberOf templating.compiler$ExpressionParser
+         * 
+         * @param str
+         * @param callback
+         * @param thisObj
+         */
         ExpressionParser.parse = function(str, callback, thisObj) {
             var searchStart = 0,
                 text = '',

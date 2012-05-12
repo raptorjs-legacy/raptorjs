@@ -93,28 +93,25 @@ raptor.defineClass(
                     var rootNode = ParseTreeBuilder.parse(xmlSrc, filePath); //Build a parse tree from the input XML
                     
                     var templateBuilder = new TemplateBuilder(this); //The templateBuilder object is need to manage the compiled JavaScript output              
-                    
-                    
-                    //console.error("TRANSFORM TREE - BEFORE");
-                    
+
                     /*
-                     * Continuoul
+                     * The tree is continuously transformed until we go through an entire pass where 
+                     * there were no new nodes that needed to be transformed. This loop makes sure that
+                     * nodes added by transformers are also transformed.
                      */
                     do
                     {
-                        //console.error("TRANSFORM TREE");
-                        this._transformerApplied = false;
-                        this.transformTree(rootNode, templateBuilder);                        
+                        this._transformerApplied = false; //Reset the flag to indicate that no transforms were yet applied to any of the nodes for this pass
+                        this.transformTree(rootNode, templateBuilder); //Run the transforms on the tree                 
                     }
                     while (this._transformerApplied);
-                    //console.error("TRANSFORM TREE - AFTER");
                     
-                    //Then generate the JavaScript code against the transformed tree
+                    /*
+                     * The tree has been transformed and we can now generate
+                     */
+                    rootNode.generateCode(templateBuilder); //Generate the code and have all output be managed by the TemplateBuilder
                     
-                    rootNode.generateCode(templateBuilder);
-                    
-                    var output = templateBuilder.getOutput();
-                    
+                    var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
                     //console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                     return output;
                 }
@@ -127,6 +124,12 @@ raptor.defineClass(
                 }
             },
             
+            /**
+             * 
+             * @param xmlSrc {String} The XML source code for the template
+             * @param filePath {String} The path to the input template for debugging/error reporting only
+             * @return {void}
+             */
             compileAndLoad: function(xmlSrc, filePath) {
                 var compiledSrc = this.compile(xmlSrc, filePath);
                 
@@ -141,11 +144,21 @@ raptor.defineClass(
                 }
             },
             
+            /**
+             * 
+             * @param message
+             * @param node
+             */
             handleNodeError: function(message, node) {
                 var pos = node.pos;
                 errors.throwError(new Error(message + " (" + (pos ? (pos.filePath + ":" + pos.line + ":" + pos.column) : "unknown position") + ")"));
             },
             
+            /**
+             * Returns true if the provided object is an Expression object, false otherwise
+             * @param expression {Object} The object to test
+             * @returns {Boolean} True if the provided object is an Expression object, false otherwise
+             */
             isExpression: function(expression) {
                 return expression instanceof Expression;
             }

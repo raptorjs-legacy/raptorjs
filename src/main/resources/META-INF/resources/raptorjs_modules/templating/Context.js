@@ -7,6 +7,9 @@ raptor.defineClass(
             listeners = raptor.require('listeners'),
             nextUniqueId = 0;
         
+        /**
+         * 
+         */
         var Context = function(writer) {
             this.writer = writer;
             var _this = this;
@@ -15,10 +18,18 @@ raptor.defineClass(
         };
 
         Context.prototype = {
+            /**
+             * 
+             * @returns {Number}
+             */
             uniqueId: function() {
                 return nextUniqueId++;
             },
             
+            /**
+             * 
+             * @param str
+             */
             write: function(str) {
                 for (var args = arguments, i=0; i<args.length; i++) {
                     this.writer.write(args[i]);
@@ -26,12 +37,24 @@ raptor.defineClass(
                 
             },
             
+            /**
+             * 
+             * @param func
+             * @param thisObj
+             * @returns
+             */
             captureString: function(func, thisObj) {
                 var sb = strings.createStringBuilder();
                 this.swapWriter(sb, func, thisObj);
                 return sb.toString();
             },
             
+            /**
+             * 
+             * @param newWriter
+             * @param func
+             * @param thisObj
+             */
             swapWriter: function(newWriter, func, thisObj) {
                 var oldWriter = this.writer;
                 try
@@ -44,6 +67,12 @@ raptor.defineClass(
                 }
             },
             
+            /**
+             * 
+             * @param handler
+             * @param props
+             * @param body
+             */
             invokeHandler: function(handler, props, body) {
                 if (!props) {
                     props = {};

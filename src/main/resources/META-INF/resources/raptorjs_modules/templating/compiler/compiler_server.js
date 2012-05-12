@@ -26,6 +26,11 @@ raptor.extend(
         packaging.enableExtension("templating.compiler");
         
         return {
+            /**
+             * 
+             * @param path
+             * @returns
+             */
             compileResource: function(path) {
                 var resource = resources.findResourceSync(path);
                 if (!resource.exists()) {
@@ -35,6 +40,11 @@ raptor.extend(
                 return this.compile(src, resource.getSystemPath());
             },
             
+            /**
+             * 
+             * @param path
+             * @returns
+             */
             compileAndLoadResource: function(path) {
                 var resource = resources.findResourceSync(path);
                 if (!resource.exists()) {
@@ -98,6 +108,12 @@ raptor.extend(
                 
             },
             
+            /**
+             * 
+             * @param taglibXml
+             * @param path
+             * @returns
+             */
             loadTaglibXml: function(taglibXml, path) {
                 var TaglibXmlLoader = raptor.require("templating.compiler.TaglibXmlLoader");
                 var taglib = TaglibXmlLoader.load(taglibXml, path);
@@ -105,6 +121,12 @@ raptor.extend(
                 return taglib;
             },
             
+            /**
+             * 
+             * @param taglibXml
+             * @param path
+             * @returns
+             */
             compileTaglib: function(taglibXml, path) {
                 var TaglibXmlLoader = raptor.require("templating.compiler.TaglibXmlLoader");
                 var taglib = TaglibXmlLoader.load(taglibXml, path);

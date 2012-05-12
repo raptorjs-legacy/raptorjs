@@ -7,10 +7,20 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             regExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|[;=]/g;
         
+        /**
+         * 
+         */
         var AttributeSplitter = function() {
             
         };
         
+        /**
+         * @memberOf templating.compiler$AttributeSplitter
+         * @param attr
+         * @param types
+         * @param options
+         * @returns
+         */
         AttributeSplitter.split = function(attr, types, options) {
             
             if (!options) {
