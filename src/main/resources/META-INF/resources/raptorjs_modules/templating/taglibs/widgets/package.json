@@ -1,5 +1,5 @@
 {
-    "name": "/templating/taglibs/widgets",
+    "name": "templating.taglibs.widgets",
     "version": "1.0",
     "description": "RaptorJS Templating Module",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -19,7 +19,7 @@
             "includes": [
                 {"type": "js", "path": "Context_widgets.js"},
                 {"type": "js", "path": "WidgetsTagTransformer.js"},
-                {"type": "taglib", "path": "widgets.rtld"}
+                {"type": "rtld", "path": "widgets.rtld"}
             ]
         }
     }

@@ -11,7 +11,7 @@ public class RuntimeHelper {
     
     public void evaluateFile(String path) {
         File file = new File(path);
-        String source = this.raptorJS.getRhinoHelpers().getFiles().readFile(file, "UTF-8");
+        String source = this.raptorJS.getRhinoHelpers().getFiles().readFully(file, "UTF-8");
         this.raptorJS.getJavaScriptEngine().eval(source, path);
     }
     

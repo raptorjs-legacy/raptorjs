@@ -11,7 +11,7 @@ public class FilesHelper {
         
     }
     
-    public String readFile(File file, String charset)
+    public String readFully(File file, String charset)
     {        
         if (charset == null) charset = "UTF-8";
         

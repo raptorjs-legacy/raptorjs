@@ -12,7 +12,7 @@
     "extensions": {
         "server": {
             "includes": [
-                {"type": "js", "path": "runtime.js"},
+                {"type": "js", "path": "runtime.js"}
             ]
         },
         "server_node": {

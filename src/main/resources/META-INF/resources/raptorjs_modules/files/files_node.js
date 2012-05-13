@@ -34,7 +34,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFile: function(path, encoding) {
+        readFully: function(path, encoding) {
             if (encoding == null) encoding = "UTF-8";
             return nodeFs.readFileSync(path, encoding);
         },
@@ -67,7 +67,7 @@ raptorBuilder.addLoader(function(raptor) {
             return files;
         },
         
-        writeFile: function(path, data, encoding) {
+        writeFully: function(path, data, encoding) {
             nodeFs.writeFileSync(path, data, encoding || "UTF-8");
         }
     });

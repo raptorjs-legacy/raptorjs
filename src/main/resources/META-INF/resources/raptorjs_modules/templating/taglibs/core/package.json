@@ -1,5 +1,5 @@
 {
-    "name": "templating",
+    "name": "templating.taglibs.core",
     "version": "1.0",
     "description": "RaptorJS Templating Module",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -26,7 +26,7 @@
                 {"type": "js", "path": "WriteNode.js"},
                 {"type": "js", "path": "InvokeNode.js"},
                 {"type": "js", "path": "ScriptletNode.js"},
-                {"type": "taglib", "path": "core.rtld"}
+                {"type": "rtld", "path": "core.rtld"}
             ]
         }
     }

@@ -21,7 +21,8 @@ raptor.extend(
                         searchPathEntry: registryResource.getSearchPathEntry(),
                         registryPath: registryResource.getSystemPath()
                 };
-            };
+            },
+            searchPathListenerHandler = null;
         
         packaging.enableExtension("templating.compiler");
         
@@ -59,18 +60,24 @@ raptor.extend(
              * @returns
              */
             discoverTaglibs: function() {
-                
-                resources.findAllResources('/taglib-registry.json', function(registryResource) {
-                    var taglibRegistry = json.parse(registryResource.readFully());
-                    forEachEntry(taglibRegistry, function(uri, path) {
-                        registerTaglib(uri, path, registryResource);
-                    }, this);
+                packaging.forEachTopLevelPackageManifest(function(manifest) {
+                    var taglibs = manifest.taglibs;
+                    if (taglibs) {
+                        forEachEntry(taglibs, function(uri, path) {
+                            registerTaglib(uri, path, manifest.getPackageResource());
+                        }, this);
+                    }
                 }, this);
                 
                 forEachEntry(registeredTaglibs, function(uri) {
-                    
-                    this.loadTaglib(uri);
+                    this.loadTaglibPackage(uri);
                 }, this);
+                
+                if (!searchPathListenerHandler) {
+                    searchPathListenerHandler = raptor.resources.getSearchPath().subscribe("modified", function() {
+                        this.discoverTaglibs(); //If the search path is modified then rediscover the 
+                    }, this);
+                }
             },
             
             /**
@@ -78,7 +85,7 @@ raptor.extend(
              * @param resource
              * @returns
              */
-            loadTaglib: function(uri) {
+            loadTaglibPackage: function(uri) {
                 if (loadedTaglibs[uri] === true) {
                     return;
                 }
@@ -86,12 +93,7 @@ raptor.extend(
                 
                 //console.log('Loading taglib with URI "' + uri + '"...');
                 
-                var taglibInfo = registeredTaglibs[uri];
-                
-                
-                if (!taglibInfo) {
-                    errors.throwError(new Error('Unknown taglib "' + uri + '". The path to the package.json is not known.'));
-                }
+                var taglibInfo = this._getTaglibInfo(uri);
                 
                 var packagePath = taglibInfo.path,
                     searchPathEntry = taglibInfo.searchPathEntry,
@@ -104,8 +106,14 @@ raptor.extend(
                 }
                 
                 packaging.loadPackage(packageResource);
-                
-                
+            },
+            
+            _getTaglibInfo: function(uri) {
+                var taglibInfo = registeredTaglibs[uri];
+                if (!taglibInfo) {
+                    errors.throwError(new Error('Unknown taglib "' + uri + '". The path to the package.json is not known.'));
+                }
+                return taglibInfo;
             },
             
             /**
@@ -134,37 +142,4 @@ raptor.extend(
             }
            
         };
-    });
-
-raptor.extend(
-    raptor.packaging,
-    {
-        load_taglib: function(include, manifest) {
-            
-            if (include.uri) {
-                raptor.require("templating.compiler").loadTaglib(include.uri);
-            }
-            else if (include.path) {
-                //console.log('load_taglib: Loading taglib at path "' + include.path + '"...');
-                
-                
-                var taglibResource = manifest.resolveResource(include.path);
-                if (!taglibResource.exists()) {
-                    raptor.throwError(new Error('Taglib with path "' + include.path + '" not found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
-                }
-                //console.log('load_taglib: taglibResource "' + taglibResource.getSystemPath() + '"');
-                
-                raptor.require("templating.compiler").loadTaglibXml(taglibResource.readFully(), taglibResource.getSystemPath());
-            }
-            else {
-                var stringify = raptor.require('json.stringify').stringify;
-                raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
-            }
-        },
-        
-        load_template: function(include, manifest) {
-            var resource = manifest.resolveResource(include.path);
-            var xmlSource = resource.readFully();
-            raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
-        }
     });

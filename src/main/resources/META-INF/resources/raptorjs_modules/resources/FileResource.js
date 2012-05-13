@@ -18,7 +18,10 @@ raptorBuilder.addLoader(function(raptor) {
              * @constructs
              */
             var FileResource = function(searchPathEntry, path, filePath) {
-                FileResource.superclass.init.call(this, searchPathEntry, path);                
+                FileResource.superclass.init.call(this, searchPathEntry, path);               
+                if (!filePath) {
+                    raptor.throwError(new Error("filePath is required: " + filePath));
+                }
                 this.filePath = filePath;
             };
             
@@ -40,7 +43,7 @@ raptorBuilder.addLoader(function(raptor) {
                 },
                 
                 readFully: function() {
-                    return files.readFile(this.getFilePath());
+                    return files.readFully(this.getFilePath());
                 },
                 
                 isDirectory: function() {
@@ -57,12 +60,17 @@ raptorBuilder.addLoader(function(raptor) {
                     
                     forEach(filenames, function(filename) {
                         var childResource = new FileResource(
-                                this.getPath() + '/' + filename, 
+                                this.getSearchPathEntry(),
+                                this.getPath() == "/" ? '/' + filename : this.getPath() + '/' + filename, 
                                 files.joinPaths(this.filePath, filename));
                         
                         callback.call(thisObj, childResource);
                         
                     }, this);
+                },
+                
+                writeFully: function(str, encoding) {
+                    files.writeFile(this.filePath, str, encoding);
                 }
             };
             return FileResource;

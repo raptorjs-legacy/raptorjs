@@ -2,11 +2,14 @@ raptorBuilder.addLoader(function(raptor) {
 
     var errors = raptor.errors,
         arrays = raptor.arrays,
-        runtime = raptor.runtime,
+        forEachEntry = raptor.forEachEntry,
         logger = raptor.logging.logger('packaging-server'),
         packageManifests = {},
         loaded = {},
-        _extensionsLookup = {};
+        _extensionsLookup = {},
+        includeHandlers = {},
+        includeHandlersDiscovered = false,
+        searchPathListenerHandler = null;
     
     /**
      * 
@@ -34,43 +37,46 @@ raptorBuilder.addLoader(function(raptor) {
          * @param resourcePath {String|packaging-PackageManifest}
          */
         loadPackage: function(resourcePath) {
-            var manifest = resourcePath._isPackageManifest ? 
-                    resourcePath :
-                    this.getPackageManifest(resourcePath),
-                path = manifest.getPackageResource().getSystemPath();
-            
-            
-            if (loaded[path] === true) {
-                return;
-            }
-            loaded[path] = true;
-            
-            manifest.forEachInclude({
-                callback: function(type, include) {
-                    
-                    var loadFunc = this["load_" + type];
-                    if (!loadFunc) {
-                        raptor.errors.throwError(new Error('Unsupported include type: ' + include.type + ". Include: " + JSON.stringify(include)));
-                    }
-                    else {
-                        loadFunc.call(this, include, manifest);
-                    }
-                },
-                enabledExtensions: _extensionsLookup,
-                thisObj: this
-            });
+            this.PackageLoader.instance.loadPackage(resourcePath, {enabledExtensions: _extensionsLookup});
         },
         
-        load_js: function(include, manifest) {
-            var resource = manifest.resolveResource(include.path),
-                path = resource.getSystemPath();
+        discoverIncludeHandlers: function() {
+            this.forEachTopLevelPackageManifest(function(manifest) {
+                var includeHandlers = manifest["include-handlers"];
+                
+                if (includeHandlers) {
+                    forEachEntry(includeHandlers, function(type, handlerInfo) {
+                        if (handlerInfo.path) {
+                            raptor.runtime.evaluateResource(handlerInfo.path);
+                        }
+                        var HandlerClass = raptor.require(handlerInfo["class"]);
+                        if (!HandlerClass.instance) {
+                            HandlerClass.instance = new HandlerClass();
+                        }
+                        this.registerIncludeHandler(type, HandlerClass.instance);
+                    }, this);
+                }
+            }, this);
             
-            if (loaded[path] === true) {
-                return;
+            if (!searchPathListenerHandler) {
+                searchPathListenerHandler = raptor.resources.getSearchPath().subscribe("modified", function() {
+                    this.discoverIncludeHandlers(); //If the search path is modified then rediscover the 
+                }, this);
             }
-            loaded[path] = true;
-            
-            runtime.evaluateResource(resource);
+        },
+        
+        registerIncludeHandler: function(type, handler) {
+            includeHandlers[type] = handler; 
+        },
+        
+        getIncludeHandler: function(type) {
+            if (!includeHandlersDiscovered) {                
+                this.discoverIncludeHandlers();
+                
+                
+                includeHandlersDiscovered = true;
+            }
+            return includeHandlers[type];
         },
         
         /**
@@ -79,17 +85,25 @@ raptorBuilder.addLoader(function(raptor) {
          * @returns
          */
         getPackageManifest: function(resourcePath) {
-            var manifest = packageManifests[resourcePath];
+            
+            var resources = raptor.resources,
+                packageResource;
+            
+            if (resources.isResourceInstance(resourcePath)) {
+                packageResource = resourcePath;
+                resourcePath = packageResource.getPath();
+            }
+            else {
+                packageResource = resources.findResource(resourcePath);
+            }
+            
+            
+            
+            var manifest = packageManifests[packageResource.getSystemPath()];
             if (manifest === undefined)
             {
-                var packageResource, 
-                    packageDirPath,
-                    resources = raptor.resources;
-                
-                packageResource = resources.findResource(resourcePath);
-                
-                
-                
+                var packageDirPath;
+
                 if (!packageResource.exists())
                 {
                     return null;
@@ -114,9 +128,21 @@ raptorBuilder.addLoader(function(raptor) {
                 raptor.extend(manifest, this.PackageManifest);
                 manifest.init(packageDirPath, packageResource);
                 
-                packageManifests[resourcePath] = manifest;
+                packageManifests[packageResource.getSystemPath()] = manifest;
             }
             return manifest;
+        },
+        
+        /**
+         * 
+         * @param callback {Function}
+         * @param thisObj {Object}
+         */
+        forEachTopLevelPackageManifest: function(callback, thisObj) {
+            raptor.resources.forEach('/package.json', function(manifestResource) {
+                var manifest = this.getPackageManifest(manifestResource);
+                callback.call(thisObj, manifest);
+            }, this);
         }
     });
 

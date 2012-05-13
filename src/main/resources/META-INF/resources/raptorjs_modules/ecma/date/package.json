@@ -1,8 +1,8 @@
 {
-    "name": "ecma.object",
+    "name": "ecma.date",
     "version": "1.0",
-    "description": "ECMA-compatible Object object",
+    "description": "ECMA-compatible Date object",
     "includes": [
-        {"type": "js", "path": "Object.js"}        
+        {"type": "js", "path": "Date.js"}        
     ]
 }

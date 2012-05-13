@@ -11,15 +11,15 @@
     ],
     
     "includes": [
-        {"type": "taglib", "uri": "http://ebay.com/raptor/core"},
-        {"type": "taglib", "uri": "http://ebay.com/raptor/html"},
-        {"type": "taglib", "uri": "http://ebay.com/raptor/widgets"},
+        {"type": "rtld", "uri": "http://ebay.com/raptor/core"},
+        {"type": "rtld", "uri": "http://ebay.com/raptor/html"},
+        {"type": "rtld", "uri": "http://ebay.com/raptor/widgets"},
         {"type": "js", "path": "SimpleHelloController.js"},
         {"type": "js", "path": "TabController.js"},
         {"type": "js", "path": "TabsController.js"},
         {"type": "js", "path": "ButtonController.js"},
-        {"type": "taglib", "path": "test.rtld", "extension": "templating.compiler"},
-        {"type": "template", "path": "Tabs.rhtml"},
-        {"type": "template", "path": "Button.rhtml"}
+        {"type": "rtld", "path": "test.rtld", "extension": "templating.compiler"},
+        {"type": "rhtml", "path": "Tabs.rhtml"},
+        {"type": "rhtml", "path": "Button.rhtml"}
     ]
 }

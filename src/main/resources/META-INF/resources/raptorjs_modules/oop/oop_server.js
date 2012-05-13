@@ -97,25 +97,12 @@ raptorBuilder.addLoader(function(raptor) {
          * @returns
          */
         getModuleManifest: function(name) {
-            var moduleDirPath = getModuleDirPath(name);
-            return raptor.packaging.getPackageManifest(moduleDirPath + "/package.json");
+            return raptor.packaging.getPackageManifest(this.getModuleManifestPath(name));
+        },
+        
+        getModuleManifestPath: function(name) {
+            return getModuleDirPath(name) + "/package.json";
         }
     });
-    
-    raptor.extend(
-        raptor.packaging,
-        {
-            load_module: function(include, manifest) {
-                var moduleName = include.name;
-                
-                if (loaded[moduleName] === true || raptor.find(moduleName)) {
-                    return;
-                }
-                loaded[moduleName] = true;
-
-                var newManifest = raptor.oop.getModuleManifest(moduleName);
-                this.loadPackage(newManifest);
-            }
-        });
 });
 

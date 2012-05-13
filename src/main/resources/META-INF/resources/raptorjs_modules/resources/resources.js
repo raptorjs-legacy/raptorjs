@@ -7,7 +7,8 @@ raptorBuilder.addLoader(function(raptor) {
         Resource = raptor.require('resources.Resource'),
         MissingResource = raptor.require('resources.MissingResource'),
         FileResource = raptor.require('resources.FileResource'),
-        searchPathEntries = [],
+        SearchPath = raptor.require('resources.SearchPath'),
+        searchPath = new SearchPath(),
         config = raptor.getModuleConfig('resources'),
         _createDirSearchPathEntry = function(config) {
             var entry = new DirSearchPathEntry(config.path);
@@ -17,7 +18,7 @@ raptorBuilder.addLoader(function(raptor) {
             logger.debug('Adding search path entry (' + config.type + ": " + config.path + ')');
             if (config.type == 'dir')
             {
-                searchPathEntries.push(_createDirSearchPathEntry(config));
+                searchPath.addEntry(_createDirSearchPathEntry(config));
             }
             else
             {
@@ -32,9 +33,9 @@ raptorBuilder.addLoader(function(raptor) {
          */
         config: raptor.config.create({
             "searchPath": {
-                value: config.searchPath,
+                value: null,
                 onChange: function(value) {
-                    searchPathEntries = [];
+                    searchPath = new SearchPath();
 
                     forEach(value, function(config) {
                         _addSearchPathEntry(config);
@@ -53,7 +54,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param searchPathEntry
          */
         addSearchPathEntry: function(searchPathEntry) {
-            searchPathEntries.push(searchPathEntry);
+            this.searchPath.addEntry(searchPathEntry);
         },
         
         /**
@@ -89,7 +90,7 @@ raptorBuilder.addLoader(function(raptor) {
                 resource = searchPathEntry.findResource(path);
             }
             else {
-                forEach(searchPathEntries, function(entry) {
+                searchPath.forEachEntry(function(entry) {
                     resource = entry.findResource(path);
                     if (resource != null) {
                         return false;
@@ -109,24 +110,8 @@ raptorBuilder.addLoader(function(raptor) {
          * @param callback
          * @param thisObj
          */
-        findAllResources: function(path, callback, thisObj) {
-            forEach(searchPathEntries, function(entry) {
-                var resource = entry.findResource(path);
-                if (resource != null) {
-                    callback.call(thisObj, resource);
-                }
-            }, this);
-        },
-
-        
-        /**
-         * 
-         * @param path
-         * @param callback
-         * @param thisObj
-         */
         forEach: function(path, callback, thisObj) {
-            forEach(searchPathEntries, function(entry) {
+            searchPath.forEachEntry(function(entry) {
                 var resource = entry.findResource(path);
                 if (resource != null) {
                     callback.call(thisObj, resource);
@@ -137,19 +122,19 @@ raptorBuilder.addLoader(function(raptor) {
         /**
          */
         toString: function() {
-            return '[resources: searchPathEntries=' + JSON.stringify(searchPathEntries) + ']';
+            return '[resources: searchPath=' + JSON.stringify(searchPath.entries) + ']';
         },
         
         getSearchPath: function() {
-            return searchPathEntries;
+            return searchPath;
         },
         
         getSearchPathString: function() {
             var parts = [];
-            forEach(searchPathEntries, function(entry) {
+            searchPath.forEachEntry(function(entry) {
                 parts.push(entry.toString());
             });
-            return searchPathEntries.length > 0 ? parts.join('\n') : "(empty)";
+            return parts.length > 0 ? parts.join('\n') : "(empty)";
         },
         
         joinPaths: function(p1, p2) {
@@ -167,6 +152,12 @@ raptorBuilder.addLoader(function(raptor) {
             }
             //Example: p1="/begin", p2="/end" 
             return p1 + p2;
+        },
+        
+        isResourceInstance: function(o) {
+            return o instanceof Resource;
         }
     });    
+    
+    raptor.resources.config.set("searchPath", config.searchPath);
 });

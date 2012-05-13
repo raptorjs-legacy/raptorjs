@@ -20,7 +20,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param path
          * @param encoding
          */
-        readFile: function(path, encoding) {
+        readFully: function(path, encoding) {
             throw new Error('Not Implemented');
         },
         

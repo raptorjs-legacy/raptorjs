@@ -72,7 +72,7 @@ raptorBuilder.addLoader(function(raptor) {
             /**
              */
             toString: function() {
-                return '[' + this.className + ': path=' + this.getPath() + ', systemPath=' + this.getSystemPath() + ']';
+                return '[' + this.getClass().getName() + ': path=' + this.getPath() + ', systemPath=' + this.getSystemPath() + ']';
             },
             
             /**
@@ -109,7 +109,7 @@ raptorBuilder.addLoader(function(raptor) {
              * @returns
              */
             getSearchPathEntry: function() {
-                
+                return this.searchPathEntry;
             }
             
             

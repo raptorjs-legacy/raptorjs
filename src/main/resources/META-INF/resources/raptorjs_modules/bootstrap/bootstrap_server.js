@@ -67,7 +67,9 @@ raptorBootstrap = {
         this._require('packaging/packaging_server.js');
         this._require('packaging/ExtensionCollection.js');
         this._require('packaging/PackageManifest.js');
-        this._require('packaging/packaging_rhino.js');
+        this._require('packaging/PackageLoader.js');
+        this._require('packaging/PackageAggregator.js');
+        this._require('packaging/packaging_rhino.js', RHINO);
         
         //Classes module
         this._require('oop/oop.js');
@@ -80,6 +82,7 @@ raptorBootstrap = {
         this._require('resources/MissingResource.js');
         this._require('resources/Resource.js');
         this._require('resources/SearchPathEntry.js');
+        this._require('resources/SearchPath.js');
         this._require('resources/resources.js');
     }
 };

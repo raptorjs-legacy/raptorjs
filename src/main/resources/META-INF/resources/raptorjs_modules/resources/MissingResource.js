@@ -7,7 +7,7 @@ raptorBuilder.addLoader(function(raptor) {
         function() {
 
             var MissingResource = function(path) {
-                MissingResource.superclass.constructor.call(this, path);
+                MissingResource.superclass.constructor.call(this, null, path);
             };
             
             MissingResource.prototype = {

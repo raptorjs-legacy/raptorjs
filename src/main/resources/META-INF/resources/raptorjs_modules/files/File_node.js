@@ -5,32 +5,55 @@ raptorBuilder.addLoader(function(raptor) {
         nodeFS = require("fs");
         
     var File = function(path) {
-        this._path = path;
+        if (arguments.length === 1) {
+            this._path = path;    
+        }
+        else if (arguments.length === 2) {
+            var parentFile = arguments[0],                
+                childPath = arguments[1],
+                parentPath;
+            
+            if (parentFile instanceof File) {
+                parentPath = parent.getAbsolutePath();
+            }
+            else {
+                parentPath = '' + parentFile;
+            }
+            
+            this._path = nodePath.join(parentPath, childPath);
+        }
+        
         this._stat = null;
     };
     
     File.prototype = {
         _getStat: function() {
-            if (!this._stat) {
-                this._stat = nodeFS.statSync(this._path);
+            try
+            {
+                return nodeFS.statSync(this._path);
             }
-            return this._stat;
+            catch(e) {
+                return null;
+            }
         },
         
         exists: function() {
-            return this.nodePath.existsSync(this._path);
+            return nodePath.existsSync(this._path);
         },
         
         isDirectory: function() {
-            return this._getStat().isDirectory();
+            var stat = this._getStat();
+            return stat && stat.isDirectory();
         },
         
         isFile: function() {
-            return this._getStat().isFile();
+            var stat = this._getStat();
+            return stat && stat.isFile();
         },
         
         isSymbolicLink: function() {
-            return this._getStat().isSymbolicLink();
+            var stat = this._getStat();
+            return stat && stat.isSymbolicLink();
         },
         
         getAbsolutePath: function() {
@@ -43,6 +66,12 @@ raptorBuilder.addLoader(function(raptor) {
         
         getParent: function() {
             return nodePath.dirname(this._path);
+        },
+        
+        getParentFile: function() {
+            var parentPath = nodePath.dirname(this._path);
+            
+            return parentPath ? new File(parentPath) : null;
         },
         
         toString: function() {
@@ -84,6 +113,49 @@ raptorBuilder.addLoader(function(raptor) {
             for (var i=0, len=files.length; i<len; i++) {
                 callback.call(thisObj, files[i]);
             }
+        },
+        
+        mkdir: function() {
+            nodeFS.mkdirSync(this.getAbsolutePath());
+        },
+        
+        mkdirs: function() {
+            var file = this, 
+                missing = [];
+            
+            while ((parentFile = file.getParentFile())) {
+                if (parentFile.exists()) {
+                    break;
+                }
+                else {
+                    missing.push(parentFile);
+                    file = file.getParentFile();
+                }
+            }
+            
+            for (var i=missing.length-1; i>=0; i--) {
+                missing[i].mkdir();
+            }
+        },
+        
+        writeFully: function(str, encoding) {
+            if (this.isSymbolicLink()) {
+                this.readSymbolicLink().writeFully(str, encoding);
+                return;
+            }
+            
+            this.mkdirs();
+            
+            nodeFS.writeFileSync(this.getAbsolutePath(), str, encoding || "UTF-8");
+        },
+        
+        readFully: function(str, encoding) {
+            if (this.isSymbolicLink()) {
+                this.readSymbolicLink().readFully(encoding);
+                return;
+            }
+            
+            return nodeFs.readFileSync(this.getAbsolutePath(), encoding || "UTF-8");
         }
     };
     

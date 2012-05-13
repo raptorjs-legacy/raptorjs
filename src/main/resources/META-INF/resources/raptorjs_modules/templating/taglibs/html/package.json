@@ -1,5 +1,5 @@
 {
-    "name": "html taglib",
+    "name": "templating.taglibs.html",
     "version": "1.0",
     "description": "RaptorJS Templating Module",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -18,7 +18,7 @@
         "templating.compiler": {
             "includes": [
                 {"type": "js", "path": "HtmlTagTransformer.js"},
-                {"type": "taglib", "path": "html.rtld"}
+                {"type": "rtld", "path": "html.rtld"}
             ]
         }
     }

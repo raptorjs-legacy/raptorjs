@@ -13,11 +13,13 @@
     "extensions": {
         "server": {
             "includes": [
+	            
                 {"type": "js", "path": "SearchPathEntry.js"},
                 {"type": "js", "path": "DirSearchPathEntry.js"},
                 {"type": "js", "path": "Resource.js"},
                 {"type": "js", "path": "MissingResource.js"},
                 {"type": "js", "path": "FileResource.js"},
+                {"type": "js", "path": "SearchPath.js"},
                 {"type": "js", "path": "resources.js"}
             ]
         }

@@ -23,13 +23,13 @@ var files = raptor.require('files'),
         return useAnsi ? str : '';
     },
     readTemplate = function(path) {
-        return files.readFile(files.joinPaths(templatesPath, path));
+        return files.readFully(files.joinPaths(templatesPath, path));
     },
     readData = function() {
-        return eval("(" + files.readFile(jsonPath) + ")");
+        return eval("(" + files.readFully(jsonPath) + ")");
     },
     readOptions = function() {
-        return eval("(" + files.readFile(optionsJsonPath) + ")");
+        return eval("(" + files.readFully(optionsJsonPath) + ")");
     },
     readAndCompile = function(clear) {
         try {

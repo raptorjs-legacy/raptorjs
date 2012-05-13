@@ -37,9 +37,9 @@ raptorBuilder.addLoader(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFile: function(path, encoding) {
+        readFully: function(path, encoding) {
             if (encoding == null) encoding = "UTF-8";
-            return __rhinoHelpers.getFiles().readFile(new JavaFile(path), encoding);
+            return __rhinoHelpers.getFiles().readFully(new JavaFile(path), encoding);
         },
         
         /**

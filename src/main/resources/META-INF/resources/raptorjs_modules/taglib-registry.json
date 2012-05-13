@@ -1,5 +1,0 @@
-{
-    "http://ebay.com/raptor/core": "/templating/taglibs/core",
-    "http://ebay.com/raptor/html": "/templating/taglibs/html",
-    "http://ebay.com/raptor/widgets": "/templating/taglibs/widgets"
-}
