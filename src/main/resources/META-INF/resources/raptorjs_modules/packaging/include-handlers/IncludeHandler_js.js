@@ -5,6 +5,10 @@ raptor.defineClass(
             runtime = raptor.require('runtime');
         
         return {
+            includeKey: function(include) {
+                return "js:" + include.path;
+            },
+            
             load: function(include, manifest, loader) {
                 var resource = manifest.resolveResource(include.path),
                 path = resource.getSystemPath();

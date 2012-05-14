@@ -9,7 +9,8 @@ raptorBuilder.addLoader(function(raptor) {
         this.js = [];
         this.css = [];
         this.options = options || {};
-        this.includeDependencies = this.options.includeDependencies === true;
+        this.requires = [];
+        this.requiresLookup = {};
     };
     
     PackageAggregator.prototype = {
@@ -17,13 +18,10 @@ raptorBuilder.addLoader(function(raptor) {
          * 
          * @param resourcePath {String|packaging-PackageManifest}
          */
-        aggregatePackage: function(resourcePath) {
+        aggregatePackage: function(manifest) {
             var options = this.options;
             
-            var manifest = resourcePath._isPackageManifest ? 
-                    resourcePath :
-                    packaging.getPackageManifest(resourcePath),
-                path = manifest.getPackageResource().getSystemPath(),
+            var path = manifest.getPackageResource().getSystemPath(),
                 enabledExtensions = options.enabledExtensions;
             
             
@@ -35,21 +33,35 @@ raptorBuilder.addLoader(function(raptor) {
             
             manifest.forEachInclude({
                 callback: function(type, include) {
-                    var handler = packaging.getIncludeHandler(type);
-                    if (!handler) {
-                        raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
-                    }
-                    else {
-                        var aggregateFunc = handler.aggregate;
-                        if (!aggregateFunc) {
-                            raptor.errors.throwError(new Error('"aggregate" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
-                        }
-                        aggregateFunc.call(handler, include, manifest, this);
-                    }
+                    this.handleInclude(include, manifest);
                 },
                 enabledExtensions: options.enabledExtensions,
                 thisObj: this
             });
+        },
+        
+        handleInclude: function(include, manifest) {
+            var type = include.type;
+            
+            
+            var handler = packaging.getIncludeHandler(type);
+            
+            if (!handler) {
+                raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+            }
+            else {
+                var key = handler.includeKey(include);
+                
+                if (!this._included[key])
+                {
+                    this._included[key] = true;
+                    var aggregateFunc = handler.aggregate;
+                    if (!aggregateFunc) {
+                        raptor.errors.throwError(new Error('"aggregate" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                    }
+                    aggregateFunc.call(handler, include, manifest, this);
+                }
+            }
         },
         
         addStyleSheetCode: function(css, path) {
@@ -59,20 +71,33 @@ raptorBuilder.addLoader(function(raptor) {
         addJavaScriptCode: function(js, path) {
             this.js.push({code: js, path: path});
         },
-        
-        setIncluded: function(path) {
-            this._included[path] = true;
+
+        addRequires: function(include) {
+            var key = packaging.getIncludeHandler(type).includeKey(include);
+            
+            if (this.requiresLookup[key] !== true) {
+                this.requiresLookup[key] = true;
+                this.requires.push(include);
+            }
         },
         
-        isIncluded: function(path) {
-            return this._included[path] === true;
+        forEachRequires: function(callback, thisObj) {
+            forEach(this.requires, callback, thisObj);
         },
         
-        hasJavaScriptCode: function() {
+        isAlreadyIncluded: function(include) {
+            return this._included[packaging.getIncludeHandler(include.type).includeKey(include)] === true;
+        },
+        
+        setAlreadyIncluded: function(include) {
+            this._included[packaging.getIncludeHandler(include.type).includeKey(include)] = true;
+        },
+        
+        hasJavaScript: function() {
             return this.js.length !== 0;
         },
         
-        hasStyleSheetCode: function() {
+        hasStyleSheet: function() {
             return this.css.length !== 0;
         },
         
@@ -94,17 +119,7 @@ raptorBuilder.addLoader(function(raptor) {
         },
         
         addResourceCode: function(contentType, resource) {
-            var path = resource.getSystemPath();
-        
-            if (!this.isIncluded(path)) {
-                this.setIncluded(path);
-                
-                this.addCode(contentType, resource.readFully(), path);
-            }
-        },
-        
-        isIncludeDependenciesEnabled: function() {
-            return this.includeDependencies;
+            this.addCode(contentType, resource.readFully(), resource.getSystemPath());
         }
     };
     

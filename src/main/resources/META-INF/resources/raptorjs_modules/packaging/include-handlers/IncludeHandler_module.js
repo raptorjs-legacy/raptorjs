@@ -3,6 +3,10 @@ raptor.defineClass(
     function() {
 
         return {
+            includeKey: function(include) {
+                return "module:" + include.name;
+            },
+            
             load: function(include, manifest, loader) {
                 var moduleName = include.name;
                 
@@ -18,16 +22,15 @@ raptor.defineClass(
             },
             
             aggregate: function(include, manifest, aggregator) {
-                if (!aggregator.isIncludeDependenciesEnabled()) {
-                    return false;
-                }
-                
-                var moduleName = include.name;
-                
-                if (!aggregator.isIncluded(moduleName)) {
-                    aggregator.setIncluded(moduleName);
-                    aggregator.aggregatePackage(raptor.oop.getModuleManifestPath(moduleName));
-                }
+                aggregator.addRequires(include); //Add the module as a requires
+            },
+            
+            getManifest: function(include) {
+                return raptor.oop.getModuleManifest(include.name);
+            },
+            
+            isPackage: function() {
+                return true;
             }
         };
     });

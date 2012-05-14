@@ -2,6 +2,10 @@ raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_rhtml",
     function() {
         return {
+            includeKey: function(include) {
+                return "rhtml:" + include.path;
+            },
+            
             load: function(include, manifest) {
                 var resource = manifest.resolveResource(include.path);
                 var xmlSource = resource.readFully();

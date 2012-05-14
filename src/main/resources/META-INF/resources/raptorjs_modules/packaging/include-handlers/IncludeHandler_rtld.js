@@ -2,6 +2,10 @@ raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_rtld",
     function() {
         return {
+            includeKey: function(include) {
+                return "rtld:" + (include.uri || uri.path);
+            },
+            
             load: function(include, manifest) {
                 
                 if (include.uri) {
@@ -26,14 +30,7 @@ raptor.defineClass(
             },
             
             aggregate: function(include, manifest, aggregator) {
-                
-                if (include.uri) {
-                    if (aggregator.isIncludeDependenciesEnabled()) {
-                        var taglibInfo = raptor.require("templating.compiler")._getTaglibInfo(include.uri);
-                        aggregator.aggregatePackage(taglibInfo.path);
-                    }
-                }
-                else if (include.path) {
+                if (include.path) {
                     var taglibResource = manifest.resolveResource(include.path);
                     if (!taglibResource.exists()) {
                         raptor.throwError(new Error('Taglib with path "' + include.path + '" not found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
@@ -41,6 +38,20 @@ raptor.defineClass(
                     
                     var taglibJS = raptor.require("templating.compiler").compileTaglib(taglibResource.readFully(), taglibResource.getSystemPath());
                     aggregator.addJavaScriptCode(taglibJS, taglibResource.getSystemPath());
+                }
+                else {
+                    var stringify = raptor.require('json.stringify').stringify;
+                    raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+                }
+            },
+            
+            isPackage: function(include) {
+                return include.uri ? true : false;
+            },
+            
+            getManifest: function(include) {
+                if (include.uri) {
+                    return raptor.require("templating.compiler").getTaglibManifest(include.uri);
                 }
                 else {
                     var stringify = raptor.require('json.stringify').stringify;

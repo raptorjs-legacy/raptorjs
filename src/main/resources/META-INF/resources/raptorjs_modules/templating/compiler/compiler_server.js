@@ -12,12 +12,16 @@ raptor.extend(
             errors = raptor.errors,
             loadedTaglibs = {},
             registeredTaglibs = {},
-            registerTaglib = function(uri, path, registryResource) {
+            registerTaglib = function(uri, path, manifest) {
                 if (!strings.endsWith(path, "/package.json")) {
                     path += "/package.json";
                 }
+                
+                var registryResource = manifest.getPackageResource();
+                
                 registeredTaglibs[uri] = {
                         path: path,
+                        manifest: manifest,
                         searchPathEntry: registryResource.getSearchPathEntry(),
                         registryPath: registryResource.getSystemPath()
                 };
@@ -64,7 +68,7 @@ raptor.extend(
                     var taglibs = manifest.taglibs;
                     if (taglibs) {
                         forEachEntry(taglibs, function(uri, path) {
-                            registerTaglib(uri, path, manifest.getPackageResource());
+                            registerTaglib(uri, path, manifest);
                         }, this);
                     }
                 }, this);
@@ -114,6 +118,10 @@ raptor.extend(
                     errors.throwError(new Error('Unknown taglib "' + uri + '". The path to the package.json is not known.'));
                 }
                 return taglibInfo;
+            },
+            
+            getTaglibManifest: function(uri) {
+                return this._getTaglibInfo(uri).manifest;
             },
             
             /**
