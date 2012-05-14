@@ -1,5 +1,6 @@
 raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_css",
+    "packaging.IncludeHandler",
     function() {
         return {
             includeKey: function(include) {

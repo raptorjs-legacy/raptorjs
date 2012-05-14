@@ -12,8 +12,9 @@
     ],
     
     "includes": [
+        {"type": "js", "path": "Bundle.js"},
         {"type": "js", "path": "BundleConfig.js"},
-        {"type": "js", "path": "PackagesWriter.js"},
+        {"type": "js", "path": "BundlesWriter.js"},
         {"type": "js", "path": "raptorjs-packager.js"}
     ]
 }

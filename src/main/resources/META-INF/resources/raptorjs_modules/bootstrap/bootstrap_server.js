@@ -68,7 +68,6 @@ raptorBootstrap = {
         this._require('packaging/ExtensionCollection.js');
         this._require('packaging/PackageManifest.js');
         this._require('packaging/PackageLoader.js');
-        this._require('packaging/PackageAggregator.js');
         this._require('packaging/packaging_rhino.js', RHINO);
         
         //Classes module

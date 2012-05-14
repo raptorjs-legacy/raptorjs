@@ -1,11 +1,11 @@
 raptor.defineModule("raptorjs-packager", function(raptor) {
-    var PackagesWriter = raptor.require("raptorjs-packager.PackagesWriter");
+    var BundlesWriter = raptor.require("raptorjs-packager.BundlesWriter");
     
     return {
         
-        writePackages: function(options) {
-            var writer = new PackagesWriter(options); 
-            writer.writePackages();
+        writeBundles: function(options) {
+            var writer = new BundlesWriter(options); 
+            writer.writeBundles();
         }
     };
 });

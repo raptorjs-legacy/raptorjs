@@ -29,10 +29,12 @@ if (raptor.require('files').exists(outputDir)) {
 var packager = raptor.require('raptorjs-packager');
 
 
-packager.writePackages({
-    outputDir: outputDir,
+packager.writeBundles({
+    bundlesDir: outputDir + "/bundles",
+    pagesDir: outputDir + "/pages",
     bundles: config.bundles,
     pages: config.pages,
+    usePackageBundles: false,
     enabledExtensions: ["browser", "jquery"]
 });
 

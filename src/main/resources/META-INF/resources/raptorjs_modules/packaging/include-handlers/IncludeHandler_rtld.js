@@ -1,5 +1,6 @@
 raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_rtld",
+    "packaging.IncludeHandler",
     function() {
         return {
             includeKey: function(include) {
@@ -45,7 +46,7 @@ raptor.defineClass(
                 }
             },
             
-            isPackage: function(include) {
+            _isPackageInclude: function(include) {
                 return include.uri ? true : false;
             },
             

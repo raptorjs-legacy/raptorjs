@@ -76,7 +76,11 @@ raptorBuilder.addLoader(function(raptor) {
                 
                 includeHandlersDiscovered = true;
             }
-            return includeHandlers[type];
+            var handler = includeHandlers[type];
+            if (!handler) {
+                raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+            }
+            return handler;
         },
         
         /**
