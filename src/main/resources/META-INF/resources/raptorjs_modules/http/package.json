@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "http",
     "version": "1.0",
     "description": "Wrapper around HTTP objects",

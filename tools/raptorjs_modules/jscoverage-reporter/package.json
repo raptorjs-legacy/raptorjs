@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "jscoverage-reporter",
     "version": "1.0",
     "description": "Module to publish the results of JSCoverage (http://siliconforks.com/jscoverage/)",

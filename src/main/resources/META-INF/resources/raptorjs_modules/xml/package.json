@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "xml",
     "version": "1.0",
     "description": "XML related functions and objects",

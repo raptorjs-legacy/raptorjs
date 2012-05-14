@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "oop",
     "version": "1.0",
     "description": "Object oriented programming support for JavaScript",

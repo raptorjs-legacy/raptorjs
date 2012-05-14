@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "test/simple",
     "includes": [
         {"type": "js", "path": "simple.js"}

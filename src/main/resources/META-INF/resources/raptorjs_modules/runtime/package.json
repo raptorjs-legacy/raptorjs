@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "runtime",
     "version": "1.0",
     "description": "Module to provide functions for working with the JavaScript runtime",

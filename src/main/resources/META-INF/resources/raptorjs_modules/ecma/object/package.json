@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "ecma.object",
     "version": "1.0",
     "description": "ECMA-compatible Object",

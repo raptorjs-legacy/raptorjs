@@ -25,12 +25,12 @@ raptor.defineClass(
                 }
             },
             
-            aggregate: function(include, manifest) {
+            aggregate: function(include, manifest, aggregator) {
                 
                 if (include.uri) {
-                    if (this.isIncludeDependenciesEnabled()) {
+                    if (aggregator.isIncludeDependenciesEnabled()) {
                         var taglibInfo = raptor.require("templating.compiler")._getTaglibInfo(include.uri);
-                        this.aggregatePackage(taglibInfo.path);
+                        aggregator.aggregatePackage(taglibInfo.path);
                     }
                 }
                 else if (include.path) {
@@ -40,7 +40,7 @@ raptor.defineClass(
                     }
                     
                     var taglibJS = raptor.require("templating.compiler").compileTaglib(taglibResource.readFully(), taglibResource.getSystemPath());
-                    this.addJavaScriptCode(taglibJS, taglibResource.getSystemPath());
+                    aggregator.addJavaScriptCode(taglibJS, taglibResource.getSystemPath());
                 }
                 else {
                     var stringify = raptor.require('json.stringify').stringify;

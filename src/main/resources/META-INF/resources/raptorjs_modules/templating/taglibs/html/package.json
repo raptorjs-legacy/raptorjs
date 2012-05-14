@@ -1,4 +1,5 @@
 {
+    "type": "rtld",
     "name": "templating.taglibs.html",
     "version": "1.0",
     "description": "RaptorJS Templating Module",

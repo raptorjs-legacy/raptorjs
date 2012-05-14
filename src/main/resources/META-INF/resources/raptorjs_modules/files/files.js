@@ -40,6 +40,11 @@ raptorBuilder.addLoader(function(raptor) {
          */
         isFile: function(path) {
             throw new Error('Not Implemented');
+        },
+        
+        remove: function(path) {
+            var file = new raptor.files.File(path);
+            file.remove();
         }
     });
 });

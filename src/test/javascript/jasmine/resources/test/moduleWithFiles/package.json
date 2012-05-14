@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "test/moduleWithFiles",
     "includes": [
         {"type": "js", "path": "core/TestClass.js"},

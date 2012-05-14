@@ -35,13 +35,16 @@ raptorBuilder.addLoader(function(raptor) {
             
             manifest.forEachInclude({
                 callback: function(type, include) {
-                    
-                    var aggregatorFunc = aggregators[type];
-                    if (!aggregatorFunc) {
-                        raptor.errors.throwError(new Error('Unsupported include type: ' + include.type + ". Include: " + JSON.stringify(include)));
+                    var handler = packaging.getIncludeHandler(type);
+                    if (!handler) {
+                        raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
                     }
                     else {
-                        aggregatorFunc.call(this, include, manifest);
+                        var aggregateFunc = handler.aggregate;
+                        if (!aggregateFunc) {
+                            raptor.errors.throwError(new Error('"aggregate" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                        }
+                        aggregateFunc.call(handler, include, manifest, this);
                     }
                 },
                 enabledExtensions: options.enabledExtensions,

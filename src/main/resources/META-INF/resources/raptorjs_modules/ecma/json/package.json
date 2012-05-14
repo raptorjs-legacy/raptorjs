@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "ecma.json",
     "version": "1.0",
     "description": "ECMA-compatible JSON object",

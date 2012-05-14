@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "json",
     "version": "1.0",
     "description": "Raptor Module: widgets",

@@ -156,6 +156,26 @@ raptorBuilder.addLoader(function(raptor) {
             }
             
             return nodeFs.readFileSync(this.getAbsolutePath(), encoding || "UTF-8");
+        },
+        
+        remove: function() {
+            if (!this.exists()) {
+                raptor.throwError(new Error("Unable to delete file. File does not exist: " + this.getAbsolutePath()));
+            }
+            if (this.isSymbolicLink()) {
+                nodeFS.unlinkSync(this.getAbsolutePath());
+            }
+            else if (this.isDirectory()) {
+                //Delete all children
+                this.forEachFile(function(child) {
+                    child.remove();
+                }, this);
+                
+                nodeFS.rmdirSync(this.getAbsolutePath());
+            }
+            else if (this.isFile()) {
+                nodeFS.unlinkSync(this.getAbsolutePath());
+            }
         }
     };
     

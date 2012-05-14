@@ -20,9 +20,9 @@ raptor.defineClass(
                 runtime.evaluateResource(resource);
             },
             
-            aggregate: function(include, manifest) {
+            aggregate: function(include, manifest, aggregator) {
                 var resource = manifest.resolveResource(include.path);
-                this.addResourceCode("js", resource);
+                aggregator.addResourceCode("js", resource);
             }
         };
     });

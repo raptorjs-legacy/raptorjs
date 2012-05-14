@@ -8,11 +8,11 @@ raptor.defineClass(
                 raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
             },
             
-            aggregate: function(include, manifest) {
+            aggregate: function(include, manifest, aggregator) {
                 var resource = manifest.resolveResource(include.path);
                 var xmlSource = resource.readFully();
                 var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
-                this.addJavaScriptCode(rhtmlJs, resource.getSystemPath());
+                aggregator.addJavaScriptCode(rhtmlJs, resource.getSystemPath());
             }
         };
     });

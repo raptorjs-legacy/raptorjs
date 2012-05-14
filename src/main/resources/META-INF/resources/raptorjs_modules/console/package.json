@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "console",
     "version": "1.0",
     "description": "JavaScript code to normalize the global console object",

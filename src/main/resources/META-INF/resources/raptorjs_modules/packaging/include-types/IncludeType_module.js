@@ -17,16 +17,16 @@ raptor.defineClass(
                 raptor.packaging.loadPackage(newManifest);
             },
             
-            aggregate: function(include, manifest) {
-                if (!this.isIncludeDependenciesEnabled()) {
+            aggregate: function(include, manifest, aggregator) {
+                if (!aggregator.isIncludeDependenciesEnabled()) {
                     return false;
                 }
                 
                 var moduleName = include.name;
                 
-                if (!this.isIncluded(moduleName)) {
-                    this.setIncluded(moduleName);
-                    this.aggregatePackage(raptor.oop.getModuleManifestPath(moduleName));
+                if (!aggregator.isIncluded(moduleName)) {
+                    aggregator.setIncluded(moduleName);
+                    aggregator.aggregatePackage(raptor.oop.getModuleManifestPath(moduleName));
                 }
             }
         };

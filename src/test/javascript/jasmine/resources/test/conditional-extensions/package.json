@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "test.conditional-extensions",
     "includes": [
         {"type": "js", "path": "conditional-extensions.js"}

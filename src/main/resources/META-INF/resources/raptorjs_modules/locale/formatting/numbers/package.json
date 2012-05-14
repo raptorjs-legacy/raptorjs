@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "locale.formatting.numbers",
     "version": "1.0",
     "description": "Number Formatting Modules",

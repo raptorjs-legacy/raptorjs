@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "stacktraces",
     "version": "1.0",
     "description": "Code to normalize stacktraces across multiple JavaScript runtimes",

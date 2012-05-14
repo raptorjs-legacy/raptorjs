@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "files",
     "version": "1.0",
     "description": "Utility functions for working with files on the server",

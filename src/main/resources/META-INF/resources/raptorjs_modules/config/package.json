@@ -1,5 +1,6 @@
 {
-    "name": "config",
+    "type": "module",
+    "name": "config",    
     "version": "1.0",
     "description": "Configuration object support with getters, setters and onchange listeners",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",

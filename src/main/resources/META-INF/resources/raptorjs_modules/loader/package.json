@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "loader",
     "version": "1.0",
     "description": "Provides support for loading remote JS and CSS code on demand",
