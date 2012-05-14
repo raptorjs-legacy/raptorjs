@@ -1,0 +1,19 @@
+{
+    "type": "module",
+    "name": "raptorjs-packager",
+    "version": "1.0",
+    "description": "Build time RaptorJS packager",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"type": "js", "path": "BundleConfig.js"},
+        {"type": "js", "path": "PackagesWriter.js"},
+        {"type": "js", "path": "raptorjs-packager.js"}
+    ]
+}

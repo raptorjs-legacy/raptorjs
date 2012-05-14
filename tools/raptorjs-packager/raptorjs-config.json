@@ -1,0 +1,22 @@
+{
+    "bundles": [
+        {
+            "name": "core",
+            "includes": [
+                {"type": "module", "name": "raptorBuilder"},
+		        {"type": "module", "name": "env"},
+		        {"type": "module", "name": "logging"},
+		        {"type": "module", "name": "errors"}
+            ]
+        }
+    ],
+    
+    "pages": {
+        "test": {
+            "includes": [
+                { "type": "module", "name": "core" },
+                { "type": "module", "name": "json" }
+            ]
+        }
+    }
+}
