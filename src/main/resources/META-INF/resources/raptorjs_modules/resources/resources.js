@@ -54,7 +54,7 @@ raptorBuilder.addLoader(function(raptor) {
          * @param searchPathEntry
          */
         addSearchPathEntry: function(searchPathEntry) {
-            this.searchPath.addEntry(searchPathEntry);
+            searchPath.addEntry(searchPathEntry);
         },
         
         /**
