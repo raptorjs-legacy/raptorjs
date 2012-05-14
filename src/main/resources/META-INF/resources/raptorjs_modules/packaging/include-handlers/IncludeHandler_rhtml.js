@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packaging.include-types.IncludeType_rhtml",
+    "packaging.include-handlers.IncludeHandler_rhtml",
     function() {
         return {
             load: function(include, manifest) {

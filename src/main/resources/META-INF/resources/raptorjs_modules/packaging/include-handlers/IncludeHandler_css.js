@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packaging.include-types.IncludeType_css",
+    "packaging.include-handlers.IncludeHandler_css",
     function() {
         return {
             aggregate: function(include, manifest, aggregator) {

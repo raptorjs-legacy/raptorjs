@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packaging.include-types.IncludeType_rtld",
+    "packaging.include-handlers.IncludeHandler_rtld",
     function() {
         return {
             load: function(include, manifest) {

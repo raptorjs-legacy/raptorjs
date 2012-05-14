@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packaging.include-types.IncludeType_js",
+    "packaging.include-handlers.IncludeHandler_js",
     function() {
         var loaded = {},
             runtime = raptor.require('runtime');

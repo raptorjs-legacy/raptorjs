@@ -18,10 +18,10 @@
 	},
 	
 	"include-handlers": {
-	    "js": {"class": "packaging.include-types.IncludeType_js", "path": "/packaging/include-types/IncludeType_js.js"},
-	    "css": {"class": "packaging.include-types.IncludeType_css", "path": "/packaging/include-types/IncludeType_css.js"},
-	    "module": {"class": "packaging.include-types.IncludeType_module", "path": "/packaging/include-types/IncludeType_module.js"},
-	    "rhtml": {"class": "packaging.include-types.IncludeType_rhtml", "path": "/packaging/include-types/IncludeType_rhtml.js"},
-	    "rtld": {"class": "packaging.include-types.IncludeType_rtld", "path": "/packaging/include-types/IncludeType_rtld.js"} 
+	    "js": {"class": "packaging.include-handlers.IncludeHandler_js", "path": "/packaging/include-handlers/IncludeHandler_js.js"},
+	    "css": {"class": "packaging.include-handlers.IncludeHandler_css", "path": "/packaging/include-handlers/IncludeHandler_css.js"},
+	    "module": {"class": "packaging.include-handlers.IncludeHandler_module", "path": "/packaging/include-handlers/IncludeHandler_module.js"},
+	    "rhtml": {"class": "packaging.include-handlers.IncludeHandler_rhtml", "path": "/packaging/include-handlers/IncludeHandler_rhtml.js"},
+	    "rtld": {"class": "packaging.include-handlers.IncludeHandler_rtld", "path": "/packaging/include-handlers/IncludeHandler_rtld.js"} 
 	}
 }

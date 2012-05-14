@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packaging.include-types.IncludeType_module",
+    "packaging.include-handlers.IncludeHandler_module",
     function() {
 
         return {
