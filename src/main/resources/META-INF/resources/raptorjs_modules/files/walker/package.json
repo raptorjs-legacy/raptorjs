@@ -1,0 +1,18 @@
+{
+    "type": "module",
+    "name": "files.walker",
+    "version": "1.0",
+    "description": "Utility class for walking a directory structure",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "includes": [
+        {"type": "js", "path": "DirWalker.js"},
+        {"type": "js", "path": "walker.js"}
+    ]
+}
