@@ -90,7 +90,7 @@ raptor.defineClass(
                     /*
                      * First build the parse tree for the tempate
                      */
-                    var rootNode = ParseTreeBuilder.parse(xmlSrc, filePath); //Build a parse tree from the input XML
+                    var rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
                     
                     var templateBuilder = new TemplateBuilder(this); //The templateBuilder object is need to manage the compiled JavaScript output              
 

@@ -382,6 +382,13 @@ describe('templating module', function() {
         expect(output).toEqual('Hello Frank! You have 20 new messages.');
     });
     
+    it("should allow for <c:invoke function... />", function() {
+        compileAndLoad("invoke.rhtml");
+        
+        var output = compileAndRender("invoke.rhtml", "invoke", {}).output;
+        expect(output).toEqual('AHello World!B');
+    });
+    
 //    xit("should allow for widgets", function() {
 //        var output = compileAndRender("widgets.rhtml", "widgets", {}).output;
 //        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');

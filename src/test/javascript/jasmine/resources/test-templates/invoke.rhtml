@@ -1,0 +1,11 @@
+<c:template xmlns:c="core" name="invoke">
+    {%
+    function test(name) {
+        context.write("Hello " + name + "!");
+    }
+    %}
+    
+    A
+    <c:invoke function="test('World')"/>
+    B
+</c:template>

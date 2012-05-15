@@ -21,7 +21,7 @@ raptor.defineClass(
                     errors.throwError(new Error('"function" attribute is required'));
                 }
                 
-                template.addJavaScriptCode(func + "();");
+                template.addJavaScriptCode(func + ";");
             }
             
         };

@@ -115,24 +115,25 @@ raptor.defineClass(
                 var curWrites = this.curWrites; 
                 if (curWrites) {
                     this.curWrites = null;
-                    this.javaScriptCode.append('write(');
-                    this.javaScriptCode.append(curWrites.join(','));
-                    this.javaScriptCode.append(');\n');
+//                    this.javaScriptCode.append('write(');
+//                    this.javaScriptCode.append(curWrites.join(','));
+//                    this.javaScriptCode.append(');\n');
                     
-//                    forEach(curWrites, function(curWrite, i) {
-//                        if (i === 0)
-//                        {
-//                            this.javaScriptCode.append('write(');
-//                        }
-//                        else {
-//                            this.javaScriptCode.append('(');
-//                        }
-//                        
-//                        this.javaScriptCode.append(curWrite);
-//                        this.javaScriptCode.append(')');
-//                    }, this);
-//                    
-//                    this.javaScriptCode.append(";");
+                    this.curWrites = null;
+                    forEach(curWrites, function(curWrite, i) {
+                        if (i === 0)
+                        {
+                            this.javaScriptCode.append('write(');
+                        }
+                        else {
+                            this.javaScriptCode.append('(');
+                        }
+                        
+                        this.javaScriptCode.append(curWrite);
+                        this.javaScriptCode.append(')');
+                    }, this);
+                    
+                    this.javaScriptCode.append(";");
                 }
             },
             

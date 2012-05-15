@@ -14,6 +14,7 @@ raptor.defineClass(
             this.tagDefs = {}; //Tag definitions lookup
             this.textTransformers = [];
             this.taglibUris = {};
+            this.shortnameToUriMapping = {};
             
         };
         
@@ -28,6 +29,11 @@ raptor.defineClass(
                 //console.log("Adding taglib: ", JSON.stringify(taglib));
                 
                 this.taglibUris[taglib.uri] = true;
+                if (taglib.shortName) {
+                    this.taglibUris[taglib.shortName] = true;
+                    this.shortnameToUriMapping[taglib.shortName] = taglib.uri;
+                }
+                
                 
                 forEach(taglib.tags, function(tag) {
                     
@@ -92,6 +98,13 @@ raptor.defineClass(
                 }
             },
             
+            resolveURI: function(uri) {
+                if (!uri) {
+                    return;
+                }
+                return this.shortnameToUriMapping[uri] || uri;
+            },
+            
             forEachTagTransformer: function(uri, tagName, callback, thisObj) {
                 /*
                  * If the node is an element node then we need to find all matching
@@ -149,7 +162,13 @@ raptor.defineClass(
             },
             
             getTagDef: function(uri, localName) {
-                return this.tagDefs[uri ? uri + ":" + localName : localName];
+                if (uri) {
+                    return this.tagDefs[uri + ":" + localName];
+                }
+                else {
+                    return this.tagDefs[localName];
+                }
+                
             }
         };
         

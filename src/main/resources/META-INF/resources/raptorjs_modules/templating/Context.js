@@ -31,9 +31,10 @@ raptor.defineClass(
              * @param str
              */
             write: function(str) {
-                for (var args = arguments, i=0; i<args.length; i++) {
-                    this.writer.write(args[i]);
+                if (str == null) {
+                    return;
                 }
+                this.writer.write(str);
                 
             },
             
@@ -79,14 +80,25 @@ raptor.defineClass(
                 }
                 props.invokeBody = body;
                 handler.process(props, this);
+            },
+            
+            getHelpers: function() {
+                return this._helpers;
             }
         };
         
         Context.helpers = {
-                w: function() {
-                    this.write.apply(this, arguments);
-                    return this.w;
+                w: function(str) {
+                    this.write(str);
+                    return this.getHelpers().w;
                 },
+                
+//                w: function() {
+//                    for (var args = arguments, i=0, len=args.length; i<len; i++) {
+//                        this.write(args[i]);
+//                    }
+//                    return this.getHelpers().w;
+//                },
                 
                 h: Context.prototype.invokeHandler,
                 

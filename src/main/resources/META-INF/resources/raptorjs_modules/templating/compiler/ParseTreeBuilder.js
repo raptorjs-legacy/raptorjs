@@ -12,13 +12,18 @@ raptor.defineClass(
         var ParseTreeBuilder = function() {
         };
         
-        ParseTreeBuilder.parse = function(src, filePath) {
+        ParseTreeBuilder.parse = function(src, filePath, taglibs) {
             var builder = new ParseTreeBuilder();
-            return builder.parse(src, filePath);
+            return builder.parse(src, filePath, taglibs);
         };
         
         ParseTreeBuilder.prototype = {
-            parse: function(src, filePath) {
+            /**
+             * @param src {String} The XML source code to parse
+             * @param src {String} The file path (for debugging and error reporting purposes)
+             * @param taglibs {templating.compiler$TaglibCollection} The taglib collection. Required for resolving taglib URIs when short names are used. 
+             */
+            parse: function(src, filePath, taglibs) {
                 var logger = this.logger(),
                     parentNode = null,
                     rootNode = null,
@@ -57,14 +62,14 @@ raptor.defineClass(
                         elementNode.prefix = el.getPrefix();
                         elementNode.localName = el.getLocalName();
                         elementNode.qName = el.getQName();
-                        elementNode.uri = el.getURI();
+                        elementNode.uri = taglibs.resolveURI(el.getURI());
                         elementNode.addNamespaceMappings(el.getNamespaceMappings());
                         
                         elementNode.pos = parser.getPos();
                         
                         forEach(el.getAttributes(), function(attr) {
-                            elementNode.setAttributeNS(attr.getURI(), attr.getLocalName(), attr.getValue(), attr.getPrefix());
-                        });
+                            elementNode.setAttributeNS(taglibs.resolveURI(attr.getURI()), attr.getLocalName(), attr.getValue(), attr.getPrefix());
+                        }, this);
                         
                         if (parentNode) {
                             parentNode.appendChild(elementNode);

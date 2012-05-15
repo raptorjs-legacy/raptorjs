@@ -1,5 +1,5 @@
 <c:template 
-    xmlns:c="http://ebay.com/raptor/core"
+    xmlns:c="core"
     xmlns:t="http://ebay.com/raptor/test" 
     name="test/Tabs"
     params="tabs">
@@ -14,7 +14,7 @@
         </ul>
         <div class="tab-content">
             <div id="${tab.id}" class="${tab.divClass}" c:for="tab in tabs">
-                <c:invoke function="tab.invokeBody"/>
+                <c:invoke function="tab.invokeBody()"/>
             </div>
         </div>
     </div>
