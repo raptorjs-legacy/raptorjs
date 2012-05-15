@@ -1,6 +1,6 @@
 
 
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     
     var JavaFile = Packages.java.io.File;
     

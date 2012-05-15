@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function (raptor) {
+$rload(function (raptor) {
     
     /**
      * Utility module for working with JavaScript arrays.

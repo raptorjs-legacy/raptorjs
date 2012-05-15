@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     var EMPTY_STRING = '',
         trim = function(s){
             return s ? s.replace(/^\s*|\s*$/g,'') : EMPTY_STRING;

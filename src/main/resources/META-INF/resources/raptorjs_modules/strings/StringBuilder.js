@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     
     /**
      * Used to build a string by using an array of strings as a buffer.

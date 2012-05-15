@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
 
     var errors = raptor.errors,
         arrays = raptor.arrays,

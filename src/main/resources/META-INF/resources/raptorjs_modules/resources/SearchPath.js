@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     raptor.defineClass('resources.SearchPath', function(raptor) {
     
         var forEach = raptor.forEach,

@@ -4,63 +4,58 @@
         isArray = function(o)
         {
             return o && o.constructor === Array;
-        };
-
-    
-    var extend = function(dest, source) {
-        if (dest == null) dest = {};
-        if (source != null)
-        {  
-            for (var k in source)
-            {
-                if (source.hasOwnProperty(k))
+        },
+        extend = function(dest, source) {
+            if (dest == null) dest = {};
+            if (source != null)
+            {  
+                for (var k in source)
                 {
-                    dest[k] = source[k];
+                    if (source.hasOwnProperty(k))
+                    {
+                        dest[k] = source[k];
+                    }
                 }
             }
-        }
-        return dest;
-    };
-    
-    var arrayFromArguments = function(args, startIndex)
-    {
-        if (!args) return [];
-        
-        if (isArray(args) && !startIndex) {
-            return args;
-        }
-        
-        if (startIndex != null)
-        {
-            if (startIndex < args.length)
+            return dest;
+        },
+        arrayFromArguments = function(args, startIndex) {
+            if (!args) return [];
+            
+            if (isArray(args) && !startIndex) {
+                return args;
+            }
+            
+            if (startIndex != null)
             {
-                return slice.call(args, startIndex);
+                if (startIndex < args.length)
+                {
+                    return slice.call(args, startIndex);
+                }
+                else
+                {
+                    return [];
+                }
             }
             else
             {
-                return [];
+                return slice.call(args);
             }
-        }
-        else
-        {
-            return slice.call(args);
-        }
-    };
-    
-    var load = function(instance) {        
-        var len = loaders.length;
-        for (var i=0; i<len; i++)
-        {
-            var loaderFunc = loaders[i];
-            loaderFunc(instance);
-        }
-        
-        instance.newInstance = function(raptor) {        
-            return load({});
+        },
+        load = function(instance) {        
+            var len = loaders.length;
+            for (var i=0; i<len; i++)
+            {
+                var loaderFunc = loaders[i];
+                loaderFunc(instance);
+            }
+            
+            instance.newInstance = function(raptor) {        
+                return load({});
+            };
+            
+            return instance;
         };
-        
-        return instance;
-    };
     
     raptorBuilder = {
         createRaptor: function(config) {
@@ -268,5 +263,8 @@
             }
         }
     };
+    
+    $rload = raptorBuilder.addLoader;
 
 }());
+

@@ -1,3 +1,3 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     raptor.global.rhinoRaptorRequire = raptor.require;
 });

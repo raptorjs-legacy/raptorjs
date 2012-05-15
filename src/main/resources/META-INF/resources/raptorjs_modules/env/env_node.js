@@ -15,7 +15,7 @@
  * @name getName
  */
 
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     /**
      * @extension Node
      */

@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     var java = __rhinoHelpers.getJava();
     raptor.defineCore('java', {
 

@@ -4,7 +4,7 @@ var raptorClassDefs = {}; //Class definitionsLookup are global for a reason. It 
                           //which is needed for testing.
 
 
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     
     var forEach = raptor.forEach, //Short-hand reference to function for iterating over arrays with a function callback
         forEachEntry = raptor.forEachEntry, //Short-hand reference for iterating over object properties
@@ -135,6 +135,177 @@ raptorBuilder.addLoader(function(raptor) {
             enumValue._ordinal = target[ENUM_COUNT]++;
             enumValue._name = name;
             return enumValue;
+        },
+        /**
+         * 
+         * @param name
+         * @param def
+         * @returns
+         */
+        _build = function(name, def)
+        {
+            var type,           //The object with the user defined methods and properties
+                clazz,          //The resulting object that is constructed and returned
+                proto,          //The prototype for the class (CLASS and ENUM types only)
+                targetType = def[TYPE_IDX],             //The output type (either CLASS, MODULE, ENUM or MIXIN)
+                targetTypeName = typeNames[targetType], //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
+                modifiers = def[MODIFIERS_IDX] || {},   //Modifiers for the object being defined
+                superClassName,
+                onlyStatics = targetType === MODULE || targetType === MIXIN, //If true, then an object with static methods will be returned and not a constructor function
+                mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
+                extensions,     //The extensions that were found for the class
+                mixins,         //The list of mixins to apply to the class after it is loaded
+                factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
+                enumValues = def[ENUM_VALUES_IDX],
+                isEnum = targetType === ENUM,
+                EnumCtor,
+                enumValue;
+
+            if (factory) {
+                //The factory can be a function or just the type.
+                if (typeof factory === FUNCTION) {
+                    //If it is a function then execute the function to produce the type
+                    type = factory(raptor);
+                }
+                else {
+                    //Otherwise, use it is as the type directly
+                    type = factory;
+                }
+            }
+            else if (isEnum) {
+                type = function() {}; //Enum values were provided, but a constructor function is not required
+            }
+            else {
+                raptor.errors.throwError(new Error('Invalid definition for "' + name + '"'));
+            }
+
+            //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
+            //and the output simply becomes the input type with modifications applied (e.g. mixins)
+            if (onlyStatics) {
+                clazz = mixinsTarget = type;
+            }
+            else {
+                /*
+                 * We have a "type" object which contains the methods and constructors. We now
+                 * need to initialize a JavaScript "class" with the correct constructor function
+                 * and the correct prototype
+                 */
+                if (typeof type === FUNCTION) {
+                    clazz = type;
+                }
+                else {
+                    clazz = type.init || function() {};
+                    clazz[PROTOTYPE] = type;
+                }
+
+                if ((superClassName = modifiers.superclass))
+                {
+                    _inherit(clazz, superClassName, true);
+                }
+                
+                proto = clazz[PROTOTYPE];
+
+                _addTypeInfo(proto, name, targetTypeName);      //Add hidden fields to the prototype for the class so we can reflect on it
+                if (proto.toString === Object[PROTOTYPE].toString) {   //Add a default toString method if it doesn't already have one
+                    proto.toString = isEnum ? _enumValueName : _instanceToString;
+                }
+                proto.getClass = _instanceGetClass;  //Add the ability to lookup the class for an instance of a class
+                proto.init = proto.constructor = clazz;   //Add init/constructor properties for convenience
+                mixinsTarget = proto;                       //Add all mixins to the prototype of the class
+            }
+            
+            if (targetType !== MIXIN) {
+                _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
+                clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
+                clazz.getShortName = _getShortName;
+                clazz.toString = _staticToString;
+                mixinsTarget.logger = _createLoggerFunction(name);
+            }
+
+            //Handle extensions
+            if ((extensions = def[EXTENSIONS_IDX]))
+            {
+                forEach(extensions, function(ext) {
+                    oop.extend(mixinsTarget, ext.source);
+                }, this);
+            }
+            
+            //Check to see if this class explicitly wants any mixins to be applied
+            if ((mixins = modifiers.mixins)) {
+                forEach(mixins, function(mixin) {
+                    oop.extend(mixinsTarget, mixin);
+                }, oop);
+            }
+            
+            if (isEnum) {
+                clazz[ENUM_COUNT] = 0;
+                
+                if (isArray(enumValues)) 
+                {
+                    forEach(enumValues, function(name) {
+                        _addEnumValue(clazz, name, clazz);
+                    });
+                }
+                else if (enumValues) {
+                    EnumCtor = function() {};
+                    EnumCtor[PROTOTYPE] = proto;
+                    
+                    forEachEntry(enumValues, function(name, args) {
+                        enumValue = _addEnumValue(clazz, name, EnumCtor);
+                        clazz.apply(enumValue, args || []);
+                    });
+                }
+                clazz.valueOf = _enumValueOf;
+                proto.name = _enumValueName;
+                proto.ordinal = _enumValueOrdinal;
+                proto.compareTo = _enumValueCompareTo;
+            }
+            
+            if (clazz.__init) {
+                clazz.__init();
+            }
+            
+
+            return clazz;
+            
+        },
+        /**
+         * 
+         * @param name
+         * @param factory
+         * @param type
+         * @param modifiers
+         * @param enumValues
+         * @returns
+         */
+        _define = function(name, factory, type, modifiers, enumValues) {
+
+            if (loadedLookup[name] === null) {
+                delete loadedLookup[name]; //We now have a definition available
+            }
+            
+            var def = [factory, type, modifiers, enumValues, null /*extensions*/];
+            
+            if (!name) {
+                //If no name is provided then we have to build the class immediately
+                //and return it since it is an anonymous class
+                return _build("(anonymous)", def);
+            }
+
+            var existingDef = definitionsLookup[name];
+            
+            if (!existingDef) {
+                definitionsLookup[name] = def;
+            }
+            else {
+                //This would only happen if extensions were loaded before the class itself was defined
+                existingDef[FACTORY_IDX] = factory;
+                existingDef[TYPE_IDX] = type;
+                existingDef[MODIFIERS_IDX] = modifiers;
+                existingDef[ENUM_VALUES_IDX] = enumValues;
+            }
+            
+            return def;
         };
 
     
@@ -213,7 +384,7 @@ raptorBuilder.addLoader(function(raptor) {
                 };
             }
             
-            return oop._define(name, factory, CLASS, modifiers);
+            return _define(name, factory, CLASS, modifiers);
         },
         
         /**
@@ -240,7 +411,7 @@ raptorBuilder.addLoader(function(raptor) {
          *          the newly constructed module is immediately returned.
          */
         defineModule: function(name, factory) {
-            return oop._define(name, factory, MODULE);
+            return _define(name, factory, MODULE);
         },
         
         /**
@@ -316,7 +487,7 @@ raptor.defineEnum(
          *          the newly constructed enum is immediately returned.
          */
         defineEnum: function(name, enumValues, factory) {
-            return oop._define(name, factory, ENUM, null, enumValues);
+            return _define(name, factory, ENUM, null, enumValues);
         },
         
         /**
@@ -327,7 +498,7 @@ raptor.defineEnum(
          * @returns
          */
         defineMixin: function(name, factory) {
-            return oop._define(name, factory, MIXIN);
+            return _define(name, factory, MIXIN);
         },
         
         /**
@@ -372,45 +543,6 @@ raptor.defineEnum(
             
             return (dir[name] = type);
             
-        },
-
-        /**
-         * 
-         * @param name
-         * @param factory
-         * @param type
-         * @param modifiers
-         * @param enumValues
-         * @returns
-         */
-        _define: function(name, factory, type, modifiers, enumValues) {
-
-            if (loadedLookup[name] === null) {
-                delete loadedLookup[name]; //We now have a definition available
-            }
-            
-            var def = [factory, type, modifiers, enumValues, null /*extensions*/];
-            
-            if (!name) {
-                //If no name is provided then we have to build the class immediately
-                //and return it since it is an anonymous class
-                return oop._build("(anonymous)", def);
-            }
-
-            var existingDef = definitionsLookup[name];
-            
-            if (!existingDef) {
-                definitionsLookup[name] = def;
-            }
-            else {
-                //This would only happen if extensions were loaded before the class itself was defined
-                existingDef[FACTORY_IDX] = factory;
-                existingDef[TYPE_IDX] = type;
-                existingDef[MODIFIERS_IDX] = modifiers;
-                existingDef[ENUM_VALUES_IDX] = enumValues;
-            }
-            
-            return def;
         },
         
         /**
@@ -628,7 +760,7 @@ raptor.defineEnum(
             
             if (def && !loaded) {
                 //We found a definition, just build the object based on that definition
-                loaded = oop._build(name, def);
+                loaded = _build(name, def);
                 loadedLookup[name] = loaded;
             }
             
@@ -653,140 +785,6 @@ raptor.defineEnum(
             
             return loaded;
         },
-
-        /**
-         * 
-         * @param name
-         * @param def
-         * @returns
-         */
-        _build: function(name, def)
-        {
-            var type,           //The object with the user defined methods and properties
-                clazz,          //The resulting object that is constructed and returned
-                proto,          //The prototype for the class (CLASS and ENUM types only)
-                targetType = def[TYPE_IDX],             //The output type (either CLASS, MODULE, ENUM or MIXIN)
-                targetTypeName = typeNames[targetType], //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
-                modifiers = def[MODIFIERS_IDX] || {},   //Modifiers for the object being defined
-                superClassName,
-                onlyStatics = targetType === MODULE || targetType === MIXIN, //If true, then an object with static methods will be returned and not a constructor function
-                mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
-                extensions,     //The extensions that were found for the class
-                mixins,         //The list of mixins to apply to the class after it is loaded
-                factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
-                enumValues = def[ENUM_VALUES_IDX],
-                isEnum = targetType === ENUM,
-                EnumCtor,
-                enumValue;
-
-            if (factory) {
-                //The factory can be a function or just the type.
-                if (typeof factory === FUNCTION) {
-                    //If it is a function then execute the function to produce the type
-                    type = factory(raptor);
-                }
-                else {
-                    //Otherwise, use it is as the type directly
-                    type = factory;
-                }
-            }
-            else if (isEnum) {
-                type = function() {}; //Enum values were provided, but a constructor function is not required
-            }
-            else {
-                raptor.errors.throwError(new Error('Invalid definition for "' + name + '"'));
-            }
-
-            //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
-            //and the output simply becomes the input type with modifications applied (e.g. mixins)
-            if (onlyStatics) {
-                clazz = mixinsTarget = type;
-            }
-            else {
-                /*
-                 * We have a "type" object which contains the methods and constructors. We now
-                 * need to initialize a JavaScript "class" with the correct constructor function
-                 * and the correct prototype
-                 */
-                if (typeof type === FUNCTION) {
-                    clazz = type;
-                }
-                else {
-                    clazz = type.init || function() {};
-                    clazz[PROTOTYPE] = type;
-                }
-
-                if ((superClassName = modifiers.superclass))
-                {
-                    _inherit(clazz, superClassName, true);
-                }
-                
-                proto = clazz[PROTOTYPE];
-
-                _addTypeInfo(proto, name, targetTypeName);      //Add hidden fields to the prototype for the class so we can reflect on it
-                if (proto.toString === Object[PROTOTYPE].toString) {   //Add a default toString method if it doesn't already have one
-                    proto.toString = isEnum ? _enumValueName : _instanceToString;
-                }
-                proto.getClass = _instanceGetClass;  //Add the ability to lookup the class for an instance of a class
-                proto.init = proto.constructor = clazz;   //Add init/constructor properties for convenience
-                mixinsTarget = proto;                       //Add all mixins to the prototype of the class
-            }
-            
-            if (targetType !== MIXIN) {
-                _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
-                clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
-                clazz.getShortName = _getShortName;
-                clazz.toString = _staticToString;
-                mixinsTarget.logger = _createLoggerFunction(name);
-            }
-
-            //Handle extensions
-            if ((extensions = def[EXTENSIONS_IDX]))
-            {
-                forEach(extensions, function(ext) {
-                    oop.extend(mixinsTarget, ext.source);
-                }, this);
-            }
-            
-            //Check to see if this class explicitly wants any mixins to be applied
-            if ((mixins = modifiers.mixins)) {
-                forEach(mixins, function(mixin) {
-                    oop.extend(mixinsTarget, mixin);
-                }, oop);
-            }
-            
-            if (isEnum) {
-                clazz[ENUM_COUNT] = 0;
-                
-                if (isArray(enumValues)) 
-                {
-                    forEach(enumValues, function(name) {
-                        _addEnumValue(clazz, name, clazz);
-                    });
-                }
-                else if (enumValues) {
-                    EnumCtor = function() {};
-                    EnumCtor[PROTOTYPE] = proto;
-                    
-                    forEachEntry(enumValues, function(name, args) {
-                        enumValue = _addEnumValue(clazz, name, EnumCtor);
-                        clazz.apply(enumValue, args || []);
-                    });
-                }
-                clazz.valueOf = _enumValueOf;
-                proto.name = _enumValueName;
-                proto.ordinal = _enumValueOrdinal;
-                proto.compareTo = _enumValueCompareTo;
-            }
-            
-            if (clazz.__init) {
-                clazz.__init();
-            }
-            
-
-            return clazz;
-            
-        },
         
         /**
          * Adds mixins from the specified source to the specified target.
@@ -807,7 +805,7 @@ raptor.defineEnum(
                 //needs to be reloaded the extensions will again be reapplied
                 var def = definitionsLookup[target];
                 if (!def) {
-                    def = oop._define(target, null, null);
+                    def = _define(target, null, null);
                 }
                 /**
                  * @class

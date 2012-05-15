@@ -1,5 +1,5 @@
 
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
 
     var strings = raptor.strings,
         objects = raptor.objects,
@@ -12,22 +12,7 @@ raptorBuilder.addLoader(function(raptor) {
         },
         loggers = [],
         config = raptor.getModuleConfig('logging'),
-        configure = function(loggersConfig) {
-            try
-            {
-                if (console) {
-//                    console.log('Configuring loggers. Logging config:');
-//                    if (raptor.env.getName() === 'rhino') {
-//                        console.log(JSON.stringify(loggersConfig));
-//                    }
-//                    else {
-//                        console.log(loggersConfig);
-//                    }
-                    
-                }
-            }
-            catch(e) {/*ignore*/}
-            
+        configure = function(loggersConfig) {            
             var keys = objects.keys(loggersConfig);
 
             var sortByLen = function(a, b) {

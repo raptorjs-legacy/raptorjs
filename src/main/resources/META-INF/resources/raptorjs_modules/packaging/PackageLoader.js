@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     var packaging = raptor.packaging,
         runtime = raptor.runtime,
         loaded = {};

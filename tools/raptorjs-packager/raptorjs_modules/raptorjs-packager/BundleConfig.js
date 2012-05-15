@@ -6,15 +6,18 @@ raptor.defineClass(
             forEach = raptor.forEach,
             forEachEntry = raptor.forEachEntry;
         
-        var BundleConfig = function() {
+        var BundleConfig = function(options) {
+            this.options = options;
+            this.enabledExtensions = options.enabledExtensions;
             this.includeToBundleMapping = {};
             this.nextBundleId = 0;
             this.bundles = [];
+            this.bundlesByName = {};
         };
         
         BundleConfig.prototype = {
             clone: function() {
-                var clone = new BundleConfig();
+                var clone = new BundleConfig(this.options);
                 clone.includeToBundleMapping = raptor.extend({}, this.includeToBundleMapping);
                 clone.nextBundleId = this.nextBundleId;
                 clone.bundles = [].concat(this.bundles);
@@ -42,8 +45,6 @@ raptor.defineClass(
             
             addBundle: function(name, includes) {
                 var bundle = this.createBundle(name);
-                this.bundles.push(bundle);
-                
                 forEach(includes, function(include) {
                     bundle.addInclude(include);
                 }, this);
@@ -51,8 +52,13 @@ raptor.defineClass(
             },
             
             createBundle: function(name) {
+                if (this.bundlesByName[name]) {
+                    raptor.throwError(new Error('Bundle already added with name "' + name + '"'));
+                }
+                
                 var bundle = new Bundle(this, name);
                 this.bundles.push(bundle);
+                this.bundlesByName[name] = bundle;
                 return bundle;
             },
             
@@ -199,9 +205,7 @@ raptor.defineClass(
                         raptor.throwError(new Error("Only packages are allowed. Invalid include: " + handler.includeKe(include)));
                     }
                 }, this);
-                
-                console.log('ASYNC METADATA: ', output);
-                
+
                 return hasMetadata ? output : null;
             }
         };

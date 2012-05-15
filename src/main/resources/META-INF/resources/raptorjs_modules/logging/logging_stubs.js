@@ -1,5 +1,5 @@
 
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
 
     var extend = raptor.extend;
     

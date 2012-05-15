@@ -7,6 +7,7 @@ raptor.defineClass(
             forEachEntry = raptor.forEachEntry;
         
         var Bundle = function(bundleConfig, name) {
+            this.enabledExtensions = bundleConfig.enabledExtensions;
             this.bundleConfig = bundleConfig;
             this.name = name;
             
@@ -88,18 +89,30 @@ raptor.defineClass(
             
             writeBundle: function(dir, options) {
                 var outputFile;
+                if (!options) {
+                    options = {};
+                }
                 
                 forEachEntry(this.codeByContentType, function(contentType, contentArray) {
                     if (contentArray.length) {
                         outputFile = new files.File(dir, this.getFilename(contentType, options));
                         
+                        var size = 0;
+                        
                         var output = [];
                         forEach(contentArray, function(content) {
+                            var code = content.code;
+                            if (options.minify !== false) {
+                                code = raptor.require("js-minifier").minify(code);
+                            }
+                            
+                            size += code.length;
                             output.push("//" + content.path);
-                            output.push(content.code);
+                            output.push(code);
                         }, this);
                         
                         outputFile.writeFully(output.join("\n"));
+                        this.logger().info('Bundle "' + this.name + '" written to "' + outputFile.getAbsolutePath() + ". (size: " + size + " bytes)");
                     }
                 }, this);                
             },

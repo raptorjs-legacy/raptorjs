@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
 
     var logger = raptor.logging.logger('runtime');
     

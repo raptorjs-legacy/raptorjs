@@ -9,7 +9,10 @@ raptor.defineClass(
             forEachEntry = raptor.forEachEntry;
         
         var BundlesWriter = function(options) {
-            this.bundleConfig = new BundleConfig();
+            this.options = options;
+            this.bundleConfig = new BundleConfig({
+                enabledExtensions: options.enabledExtensions
+            });
             if (options.bundles) {
                 this.bundleConfig.addBundles(options.bundles);
             }
@@ -28,7 +31,8 @@ raptor.defineClass(
         
         BundlesWriter.prototype = {
             writeBundles: function() {
-                this.bundleConfig.forEachBundle(function(bundle) {
+                
+                this.bundleConfig.forEachBundle(function(bundle) {    
                     this.writeBundle(bundle);
                 }, this);
                 
@@ -79,7 +83,7 @@ raptor.defineClass(
             },
             
             writeBundle: function(bundle) {
-                bundle.writeBundle(this.bundlesDir);
+                bundle.writeBundle(this.bundlesDir, this.options);
             },
             
             writePages: function() {

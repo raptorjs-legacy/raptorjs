@@ -19,7 +19,7 @@
 (function() {
     var RHINO_GLOBAL = this;
     
-    raptorBuilder.addLoader(function(raptor) {
+    $rload(function(raptor) {
         /**
          * @extension Node
          */

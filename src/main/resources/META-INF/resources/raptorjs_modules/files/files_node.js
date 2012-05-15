@@ -1,4 +1,4 @@
-raptorBuilder.addLoader(function(raptor) {
+$rload(function(raptor) {
     
     var nodePath = require('path'), 
         nodeFs = require('fs'),

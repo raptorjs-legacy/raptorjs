@@ -10,6 +10,7 @@ require('raptorjs').createRaptor({
         logging: {
             loggers: {
                 'ROOT': {level: 'WARN'},
+                'raptorjs-packager': {level: 'INFO'},
                 'oop-server': {level: 'WARN'},
                 'resources': {level: 'WARN'}
             }
@@ -34,6 +35,7 @@ packager.writeBundles({
     pagesDir: outputDir + "/pages",
     bundles: config.bundles,
     pages: config.pages,
+    minify: true,
     usePackageBundles: false,
     enabledExtensions: ["browser", "jquery"]
 });
