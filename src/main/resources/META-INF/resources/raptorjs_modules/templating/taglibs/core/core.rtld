@@ -148,8 +148,15 @@
             <name>function</name>
             <type>custom</type>
             <allow-expressions>false</allow-expressions>
+            <required>true</required>
         </attribute>
 
+        <attribute>
+            <name>*</name>
+            <uri></uri>
+            <type>string</type>
+            <allow-expressions>true</allow-expressions>
+        </attribute>
     </tag>
     
     <tag>

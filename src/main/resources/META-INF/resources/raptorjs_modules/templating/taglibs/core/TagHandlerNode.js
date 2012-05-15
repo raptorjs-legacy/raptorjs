@@ -116,17 +116,6 @@ raptor.defineClass(
                 }
                 
                 template.addJavaScriptCode(");");
-                
-                
-                
-//                        {
-//                            widgetId: "testButton",
-//                            widgetPage: page,
-//                            label: "Test Button"
-//                        },
-//                        null,
-//                        page,
-//                        pos1);
             }
         };
         

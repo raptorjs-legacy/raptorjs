@@ -91,7 +91,7 @@ raptor.defineClass(
                             if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.prefix == 'xmlns') {
                                 return; //Skip xmlns attributes
                             }
-                            var attrDef = tagDef.getAttributeDef(attr.prefix && attr.uri != tagDef.taglib.uri ? attr.uri : null, attr.localName);
+                            var attrDef = tagDef.getAttributeDef(attr.prefix && (attr.uri != tagDef.taglib.uri) ? attr.uri : null, attr.localName);
                             
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
                                 value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true),

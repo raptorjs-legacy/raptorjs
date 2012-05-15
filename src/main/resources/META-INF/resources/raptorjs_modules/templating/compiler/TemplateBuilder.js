@@ -222,6 +222,15 @@ raptor.defineClass(
             
             isExpression: function(expression) {
                 return expression instanceof Expression;
+            },
+            
+            getAttribute: function(name) {
+                return this.attributes[name];
+            },
+            
+            setAttribute: function(name, value) {
+                this.attributes[name] = value;
+                return value;
             }
             
         };

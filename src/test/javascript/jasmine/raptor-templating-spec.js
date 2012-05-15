@@ -386,7 +386,7 @@ describe('templating module', function() {
         compileAndLoad("invoke.rhtml");
         
         var output = compileAndRender("invoke.rhtml", "invoke", {}).output;
-        expect(output).toEqual('AHello World!B');
+        expect(output).toEqual('A<p>Hello World!</p>B<p>Hello Frank! You have 10 new messages.</p>');
     });
     
 //    xit("should allow for widgets", function() {
