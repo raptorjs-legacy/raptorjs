@@ -10,7 +10,7 @@ raptor.defineClass(
                 
                 var widget = context.addWidget({
                         type: 'test.ButtonWidget', 
-                        attributes: input["http://ebay.com/raptor/widgets"],
+                        attributes: input["http://raptor.ebayopensource.org/widgets"],
                         clientConfig: {
                             disabled: disabled                            
                         }

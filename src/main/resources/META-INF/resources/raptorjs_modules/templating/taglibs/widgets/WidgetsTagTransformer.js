@@ -1,7 +1,7 @@
 raptor.defineClass(
     "templating.taglibs.widgets.WidgetsTagTransformer",
     function(raptor) {
-        var widgetsNS = "http://ebay.com/raptor/widgets";
+        var widgetsNS = "http://raptor.ebayopensource.org/widgets";
         
         return {
             process: function(node, compiler, template) {

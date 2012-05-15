@@ -3,7 +3,7 @@
     
     <tlib-version>1.0</tlib-version>
     <short-name>core</short-name>
-    <uri>http://ebay.com/raptor/core</uri>
+    <uri>http://raptor.ebayopensource.org/core</uri>
     
     <tag>
         

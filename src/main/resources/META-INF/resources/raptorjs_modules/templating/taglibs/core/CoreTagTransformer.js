@@ -4,7 +4,7 @@ raptor.defineClass(
         var extend = raptor.extend,
             forEach = raptor.forEach,
             stringify = raptor.require('json.stringify').stringify,
-            coreNS = "http://ebay.com/raptor/core",
+            coreNS = "http://raptor.ebayopensource.org/core",
             errors = raptor.errors,
             Node = raptor.require('templating.compiler.Node'),
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),

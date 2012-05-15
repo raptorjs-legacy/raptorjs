@@ -3,7 +3,7 @@
     
     <tlib-version>1.0</tlib-version>
     <short-name>widgets</short-name>
-    <uri>http://ebay.com/raptor/widgets</uri>
+    <uri>http://raptor.ebayopensource.org/widgets</uri>
     
     <tag>
         

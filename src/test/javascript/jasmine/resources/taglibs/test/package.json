@@ -12,9 +12,9 @@
     ],
     
     "includes": [
-        {"type": "rtld", "uri": "http://ebay.com/raptor/core"},
-        {"type": "rtld", "uri": "http://ebay.com/raptor/html"},
-        {"type": "rtld", "uri": "http://ebay.com/raptor/widgets"},
+        {"type": "rtld", "uri": "http://raptor.ebayopensource.org/core"},
+        {"type": "rtld", "uri": "http://raptor.ebayopensource.org/html"},
+        {"type": "rtld", "uri": "http://raptor.ebayopensource.org/widgets"},
         {"type": "js", "path": "SimpleHelloController.js"},
         {"type": "js", "path": "TabController.js"},
         {"type": "js", "path": "TabsController.js"},

@@ -6,7 +6,7 @@ raptor.defineClass(
             forEach = raptor.forEach,
             TextNode = raptor.require('templating.compiler.TextNode'),
             ElementNode = raptor.require('templating.compiler.ElementNode'),
-            CORE_UI = "http://ebay.com/raptor/core";
+            CORE_UI = "http://raptor.ebayopensource.org/core";
             
           
         var ParseTreeBuilder = function() {
