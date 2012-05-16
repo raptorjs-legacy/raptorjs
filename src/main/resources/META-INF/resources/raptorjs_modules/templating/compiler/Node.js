@@ -231,10 +231,43 @@ raptor.defineClass(
                 return false;
             },
             
+            setStripExpression: function(stripExpression) {
+                this.stripExpression = stripExpression;
+            },
+            
             generateCode: function(template) {
                 try
                 {
-                    this.doGenerateCode(template);
+                    if (!this.stripExpression || this.stripExpression.toString() === 'false') {
+                        this.doGenerateCode(template);
+                    }
+                    else if (this.stripExpression.toString() === 'true') {
+                        this.generateCodeForChildren(template);
+                    }
+                    else {
+                        //There is a strip expression
+                        if (!this.generateBeforeCode || !this.generateAfterCode) {
+                            raptor.throwError(new Error("The c:strip directive is not supported for node " + this));
+                        }
+                        
+                        var nextStripVarId = template.getAttribute("nextStripVarId");
+                        if (nextStripVarId == null) {
+                            nextStripVarId = template.setAttribute("nextStripVarId", 0);
+                        }
+                        var varName = '__strip' + (nextStripVarId++);
+                        
+                        template.addJavaScriptCode('var ' + varName + '=!(' + this.stripExpression + ');');
+                        
+                        template.addJavaScriptCode('if (' + varName + '){');
+                        this.generateBeforeCode(template);
+                        template.addJavaScriptCode('}');
+                        
+                        this.generateCodeForChildren(template);
+                        
+                        template.addJavaScriptCode('if (' + varName + '){');
+                        this.generateAfterCode(template);
+                        template.addJavaScriptCode('}');
+                    }
                 }
                 catch(e) {
                     raptor.throwError(new Error("Unable to generate code for node " + this + " at position " + this.pos + ". Exception: " + e), e);

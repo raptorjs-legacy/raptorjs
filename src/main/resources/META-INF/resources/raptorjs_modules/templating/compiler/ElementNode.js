@@ -143,7 +143,12 @@ raptor.defineClass(
              * @returns {Boolean}
              */
             isPreserveSpace: function() {
-                return this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
+                return this.preserveSpace === true || this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
+            },
+            
+            removePreserveSpaceAttr: function() {
+                this.removeAttributeNS(XML_URI, "space");
+                this.removeAttribute("space");
             },
             
             /**
@@ -151,27 +156,31 @@ raptor.defineClass(
              * @param preserve
              */
             setPreserveSpace: function(preserve) {
-                this.removeAttributeNS(XML_URI, "space");
-                this.removeAttribute("space");
-                
-                if (preserve === true) {
-                    this.setAttributeNS(XML_URI, "space", "preserve");
-                }
+                this.preserveSpace = preserve;
             },
             
+            setStripExpression: function(stripExpression) {
+                this.stripExpression = stripExpression;
+            },
             
             /**
              * 
              * @param template
              */
             doGenerateCode: function(template) {
-                var preserveSpace = this.isPreserveSpace();
+                this.generateBeforeCode(template);
+                this.generateCodeForChildren(template);
+                this.generateAfterCode(template);
+            },
+            
+            generateBeforeCode: function(template) {
+                var preserveSpace = this.preserveSpace = this.isPreserveSpace();
                 
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
                 if (preserveSpace) {
                     template.beginPreserveWhitespace();
-                    this.setPreserveSpace(false);
+                    this.removePreserveSpaceAttr();
                 }
                 
                 template.addText("<" + name);
@@ -221,10 +230,6 @@ raptor.defineClass(
                 
                 if (this.childNodes.length) {
                     template.addText(">");
-                    
-                    this.generateCodeForChildren(template);
-                    
-                    template.addText("</" + name + ">");
                 }
                 else {
                     if (this.startTagOnly) {
@@ -233,7 +238,19 @@ raptor.defineClass(
                     else if (this.allowSelfClosing) {
                         template.addText("/>");
                     }
-                    else {
+                }
+            },
+            
+            generateAfterCode: function(template) {
+                var preserveSpace = this.isPreserveSpace();
+                
+                var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
+                
+                if (this.childNodes.length) {
+                    template.addText("</" + name + ">");
+                }
+                else {
+                    if (!this.startTagOnly && !this.allowSelfClosing) {
                         template.addText("></" + name + ">");
                     }
                 }

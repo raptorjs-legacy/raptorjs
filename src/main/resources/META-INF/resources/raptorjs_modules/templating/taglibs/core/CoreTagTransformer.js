@@ -193,14 +193,12 @@ raptor.defineClass(
                     node.appendChild(newChild);
                 }
                 
-                if ((stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
+                if (node.getAttributeNS && (stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
                     node.removeAttributeNS(coreNS, "strip");
-                    
-                    var newNode = new Node();
-                    newNode.appendChildren(node.childNodes);
-                    //Replace the existing node with an node that only has children
-                    node.parentNode.replaceChild(newNode, node);
-                    node = newNode;
+                    if (!node.setStripExpression) {
+                        raptor.throwError(new Error("The c:strip directive is not supported for node " + node));
+                    }
+                    node.setStripExpression(stripAttr);
                 }
                 
                 if (node.getAttributeNS && (replaceAttr = node.getAttributeNS(coreNS, "replace")) != null) {
@@ -211,6 +209,8 @@ raptor.defineClass(
                     node.parentNode.replaceChild(replaceWriteNode, node);
                     node = replaceWriteNode;
                 }
+                
+                
                 
                 var uri = node.uri;
                 

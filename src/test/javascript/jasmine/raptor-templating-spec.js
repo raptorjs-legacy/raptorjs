@@ -362,7 +362,7 @@ describe('templating module', function() {
     
     it("should allow for elements to be stripped out at compile time", function() {
         var output = compileAndRender("strip.rhtml", "strip", {}).output;
-        expect(output).toEqual('<div><b>foo</b></div>');
+        expect(output).toEqual('<div><b>A</b></div><div><span><b>B</b></span></div><div><b>c</b></div><div><span><b>d</b></span></div>');
     });
     
     it("should allow for body content to be replaced with the result of an expression", function() {
