@@ -17,6 +17,7 @@
         {"type": "module", "name": "xml.utils"},
         {"type": "js", "path": "Expression.js"},
         {"type": "js", "path": "ExpressionParser.js"},
+        {"type": "js", "path": "TypeConverter.js"},
         {"type": "js", "path": "AttributeSplitter.js"},
         {"type": "js", "path": "TemplateBuilder.js"},
         {"type": "js", "path": "TemplateCompiler.js"},

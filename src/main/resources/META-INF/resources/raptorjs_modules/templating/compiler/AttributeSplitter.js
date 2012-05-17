@@ -1,3 +1,16 @@
+/**
+ * Utility class to support sub-attributes in an XML attribute. Each sub-attribute must
+ * be separated by a semicolon. Within each sub-attribute, the name/value pair must
+ * be split using an equal sign. However, the name for the first sub-attribute
+ * is optional and a default name can be provided when reading the sub-attributes.
+ * 
+ * <p>
+ * Sub-attribute format:
+ * (<attr-value>)?(<attr-name>=<attr-value>;)*(<attr-name>=<attr-value>)
+ * 
+ * 
+ * 
+ */
 raptor.defineClass(
     'templating.compiler.AttributeSplitter',
     function(raptor) {
@@ -5,7 +18,8 @@ raptor.defineClass(
             strings = raptor.require("strings"),
             events = ['text', 'expression'],
             Expression = raptor.require('templating.compiler.Expression'),
-            regExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|[;=]/g;
+            TypeConverter = raptor.require('templating.compiler.TypeConverter'),
+            regExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|==|===|[;=]/g;
         
         /**
          * 
@@ -15,13 +29,27 @@ raptor.defineClass(
         };
         
         /**
+         * Parses the provided string to find the sub-attributes that it contains.
+         * The parsed output can be either returned as an array or a map. By default,
+         * the parsed output is returned as a map where each property corresponds
+         * to a sub-attribute. However, if the order of the sub-attributes is important
+         * then the "ordered" option can be set to "true" and
+         * an array will instead be returned where each element in the array is an object
+         * with a name and value property that corresponds to the matching sub-attribute.
+         * 
+         * <p>
+         * Supported options:
+         * <ul>
+         *  <li>ordered (boolean, defaults to "false") - If true then an array is returned (see above). Otherwise, an object is returned.
+         * </ul>
+         * 
          * @memberOf templating.compiler$AttributeSplitter
-         * @param attr
-         * @param types
+         * @param attr {String} The attribute to split
+         * @param types {Object} Type definitions for the possible sub-attributes.
          * @param options
          * @returns
          */
-        AttributeSplitter.split = function(attr, types, options) {
+        AttributeSplitter.parse = function(attr, types, options) {
             
             if (!options) {
                 options = {};
@@ -34,6 +62,7 @@ raptor.defineClass(
                 result = ordered ? [] : {},
                 finishPart = function(endIndex) {
                     if (partStart === endIndex) {
+                        //The part is an empty string... ignore it
                         return;
                     }
                     
@@ -61,18 +90,20 @@ raptor.defineClass(
                         name = strings.trim(name);
                     }
                     if (!strings.trim(name).length && !strings.trim(value).length) {
+                        equalIndex = -1;
                         return; //ignore empty parts
                     }
                     
                     if (types) {
-                        var type = types[name];
+                        var type = types[name] || types['*'];
                         if (type) {
-                            if (value && type.type == "expression") {
-                                value = new Expression(value);
-                            }
+                            value = TypeConverter.convert(value, type.type, type.allowExpressions !== false);
                             if (type.name) {
                                 name = type.name;
                             }
+                        }
+                        else {
+                            raptor.throwError(new Error('Invalid sub-attribute name of "' + name + '"'));
                         }
                     }
                     if (ordered) {
@@ -81,9 +112,16 @@ raptor.defineClass(
                     else {
                         result[name] = value;
                     }
-                    
+                    equalIndex = -1; //Reset the equal index
                 };
             
+            /*
+             * Keep searching the string for the relevant tokens.
+             * 
+             * NOTE: The regular expression will also return matches for JavaScript strings,
+             *       but they are just ignored. This ensures that semicolons inside strings
+             *       are not treated as 
+             */
             while((matches = regExp.exec(attr))) {
                 //console.error(matches[0]);
                 
@@ -93,7 +131,9 @@ raptor.defineClass(
                     equalIndex = -1;
                 }
                 else if (matches[0] == '=') {
-                    equalIndex = matches.index;
+                    if (equalIndex == -1) {
+                        equalIndex = matches.index;
+                    }
                 }
                 
             }

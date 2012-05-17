@@ -220,9 +220,36 @@ describe('templating module', function() {
         var AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter');
         var result;
         
-        result = AttributeSplitter.split(
+        result = AttributeSplitter.parse(
             "item in ['one', 'two', 'three']; separator=', '; varStatus=loop;  ", 
             {
+                each: {
+                    type: "custom"
+                },
+                separator: {
+                    type: "expression"
+                },
+                varStatus: {
+                    type: "custom"
+                }
+            },
+            {
+                defaultName: "each"
+            });
+        
+        expect(raptor.keys(result).length).toEqual(3);
+        expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
+        expect(result["separator"].getExpression()).toEqual("', '");
+        expect(result["varStatus"]).toEqual("loop");
+        
+        //////
+        result = AttributeSplitter.parse(
+            "item in ['one', 'two', 'three']", 
+            {
+                each: {
+                    type: "custom"
+                },
+                
                 separator: {
                     type: "expression"
                 }
@@ -231,9 +258,44 @@ describe('templating module', function() {
                 defaultName: "each"
             });
         
+        expect(raptor.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
-        expect(result["separator"].getExpression()).toEqual("', '");
-        expect(result["varStatus"]).toEqual("loop");
+        
+        //////
+        result = AttributeSplitter.parse(
+            "each=item in ['one', 'two', 'three']", 
+            {
+                each: {
+                    type: "custom"
+                },
+                separator: {
+                    type: "expression"
+                }
+            },
+            {
+                defaultName: "each"
+            });
+        
+        expect(raptor.keys(result).length).toEqual(1);
+        expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
+        
+        //////
+        result = AttributeSplitter.parse(
+            "each=item in (a = [1,2,3])", 
+            {
+                each: {
+                    type: "custom"
+                },
+                separator: {
+                    type: "expression"
+                }
+            },
+            {
+                defaultName: "each"
+            });
+        
+        expect(raptor.keys(result).length).toEqual(1);
+        expect(result["each"]).toEqual("item in (a = [1,2,3])");
     });
     
     it("should allow for escaping XML", function() {

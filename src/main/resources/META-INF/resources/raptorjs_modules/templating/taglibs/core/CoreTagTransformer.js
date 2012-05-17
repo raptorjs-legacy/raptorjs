@@ -3,7 +3,6 @@ raptor.defineClass(
     function(raptor) {
         var extend = raptor.extend,
             forEach = raptor.forEach,
-            stringify = raptor.require('json.stringify').stringify,
             coreNS = "http://raptor.ebayopensource.org/core",
             errors = raptor.errors,
             Node = raptor.require('templating.compiler.Node'),
@@ -16,58 +15,9 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter'),
+            TypeConverter = raptor.require('templating.compiler.TypeConverter'),
             getPropValue = function(value, type, allowExpressions) {
-                 
-                
-                var hasExpression = false,
-                    expressionParts = [];
-                
-                if (type === 'expression') {
-                    return new Expression(value);
-                }
-                
-                if (allowExpressions) {
-                    ExpressionParser.parse(value, {
-                        text: function(text) {
-                            expressionParts.push(stringify(text));
-                        },
-                        
-                        expression: function(expression) {
-                            expressionParts.push(expression);
-                            hasExpression = true;
-                        }
-                    });
-                    
-                    if (hasExpression) {
-                        return new Expression(expressionParts.join("+"));
-                    }
-                }
-                
-                if (type === 'string') {
-                    return allowExpressions ? new Expression(value ? stringify(value) : "null") : value;
-                }
-                else if (type === 'boolean') {
-                    value = value.toLowerCase();
-                    value = value === 'true' || value === 'yes'; //convert it to a boolean
-                    return allowExpressions ? new Expression(value) : value;
-                }
-                else if (type === 'float' || type === 'double' || type === 'number' || type === 'integer') {
-                    if (type === 'integer') {
-                        value = parseInt(value);
-                    }
-                    else {
-                        value = parseFloat(value);
-                    }
-                    return allowExpressions ? new Expression(value) : value;
-                }
-                else if (type === 'custom' || type === 'identifier') {
-                    return value;
-                }
-                else {
-                    errors.throwError(new Error("Unsupported attribute type: " + type));
-                }
-                
-                
+                return TypeConverter.convert(value, type, allowExpressions);
             };
         
         return {
@@ -150,11 +100,17 @@ raptor.defineClass(
                 
                 if ((forEachAttr = node.getAttributeNS(coreNS, "for")) != null) {
                     node.removeAttributeNS(coreNS, "for");
-                    var forEachProps = AttributeSplitter.split(
+                    var forEachProps = AttributeSplitter.parse(
                             forEachAttr, 
                             {
+                                each: {
+                                    type: "custom"
+                                },
                                 separator: {
                                     type: "expression"
+                                },
+                                varStatus: {
+                                    type: "identifier"
                                 }
                             },
                             {

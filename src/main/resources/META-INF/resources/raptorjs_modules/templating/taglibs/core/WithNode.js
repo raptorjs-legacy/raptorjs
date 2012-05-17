@@ -21,7 +21,7 @@ raptor.defineClass(
                     errors.throwError(new Error('"vars" attribute is required'));
                 }
                 
-                var withVars = AttributeSplitter.split(
+                var withVars = AttributeSplitter.parse(
                         vars, 
                         {
                             "*": {
