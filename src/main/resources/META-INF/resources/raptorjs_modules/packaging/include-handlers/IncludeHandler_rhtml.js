@@ -19,8 +19,8 @@ raptor.defineClass(
     "packaging.IncludeHandler",
     function() {
         return {
-            includeKey: function(include) {
-                return "rhtml:" + include.path;
+            includeKey: function(include, manifest) {
+                return "rhtml:" + this.resolvePathKey(include.path, manifest);
             },
             
             load: function(include, manifest) {

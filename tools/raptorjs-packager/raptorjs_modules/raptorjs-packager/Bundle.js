@@ -18,12 +18,12 @@ raptor.defineClass(
         Bundle.prototype = {
             addInclude: function(include, manifest) {
                 
-                var existingBundle = this.bundleConfig.getBundleForInclude(include);
+                var existingBundle = this.bundleConfig.getBundleForInclude(include, manifest);
                 if (existingBundle) {
                     return; //The include is already part of another bundle
                 }
                 
-                this.bundleConfig.setBundleForInclude(include, this);
+                this.bundleConfig.setBundleForInclude(include, manifest, this);
                 
                 var handler = packaging.getIncludeHandler(include.type);
                 

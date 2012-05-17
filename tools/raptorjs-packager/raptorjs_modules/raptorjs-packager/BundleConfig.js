@@ -24,15 +24,15 @@ raptor.defineClass(
                 return clone;
             },
             
-            setBundleForInclude: function(include, bundle) {
+            setBundleForInclude: function(include, manifest, bundle) {
                 var includeHandler = packaging.getIncludeHandler(include.type);
-                var key = includeHandler.includeKey(include);
+                var key = includeHandler.includeKey(include, manifest);
                 this.includeToBundleMapping[key] = bundle;
             },
             
-            getBundleForInclude: function(include) {
+            getBundleForInclude: function(include, manifest) {
                 var includeHandler = packaging.getIncludeHandler(include.type);
-                var key = includeHandler.includeKey(include);
+                var key = includeHandler.includeKey(include, manifest);
                 return this.includeToBundleMapping[key];
             },
             
@@ -90,7 +90,7 @@ raptor.defineClass(
                         _handleManifest.call(this, manifest);
                     }
                     else {
-                        var bundle = this.getBundleForInclude(include);
+                        var bundle = this.getBundleForInclude(include, manifest);
                         var contentTypes = bundle.getContentTypes();
                         forEach(contentTypes, function(contentType) {
                             var contentTypeUrls = urls[contentType];
@@ -98,7 +98,7 @@ raptor.defineClass(
                                 contentTypeUrls = urls[contentType] = [];
                             }
                             
-                            var url = this.getUrl(contentType, include, options);
+                            var url = this.getUrl(contentType, include, manifest, options);
                             if (url && !includedUrls[url]) {
                                 includedUrls[url] = true;
                                 contentTypeUrls.push(url);    
@@ -114,10 +114,10 @@ raptor.defineClass(
                 return urls;
             },
             
-            getUrl: function(contentType, include, options) {
-                var bundle = this.getBundleForInclude(include);
+            getUrl: function(contentType, include, manifest, options) {
+                var bundle = this.getBundleForInclude(include, manifest);
                 if (!bundle) {
-                    throw new Error('Bundle not found for include "' + handler.includeKey(handler) + '"');
+                    throw new Error('Bundle not found for include "' + handler.includeKey(include, manifest) + '"');
                 }
                 if (bundle.hasCode(contentType)) {
                     var url = bundle.getFilename(contentType, options);
@@ -139,10 +139,10 @@ raptor.defineClass(
                     hasMetadata = false,
                     excludedUrls = {},
                     _handleInclude,
-                    _addUrl = function(contentType, include, metadata, includedUrls) {
-                        var bundle = this.getBundleForInclude(include);
+                    _addUrl = function(contentType, include, manifest, metadata, includedUrls) {
+                        var bundle = this.getBundleForInclude(include, manifest);
                         
-                        var url = this.getUrl(contentType, include);
+                        var url = this.getUrl(contentType, include, manifest);
                         if (url && !includedUrls[url] && !excludedUrls[url]) {
                             includedUrls[url] = true;
                             if (!metadata[contentType]) {
@@ -170,21 +170,23 @@ raptor.defineClass(
                     
                     manifest.forEachInclude({
                         callback: function(type, include) {                            
-                            var handler = packaging.getIncludeHandler(include.type);
+                            var handler = packaging.getIncludeHandler(include.type),
+                                packageManifest;
+                            
                             if (handler.isPackageInclude(include)) {
-                                var manifest = handler.getManifest(include);
+                                packageManifest = handler.getManifest(include);
                                 if (!metadata.requires) {
                                     metadata.requires = [];
                                 }
                                 
-                                var requiredMetadata = _handleManifest.call(this, manifest);
+                                var requiredMetadata = _handleManifest.call(this, packageManifest);
                                 if (raptor.keys(requiredMetadata).length !== 0){
-                                    metadata.requires.push(manifest.name);
+                                    metadata.requires.push(packageManifest.name);
                                 }
                             }
                             else {
-                                _addUrl.call(this, "js", include, metadata, includedUrls);
-                                _addUrl.call(this, "css", include, metadata, includedUrls);
+                                _addUrl.call(this, "js", include, manifest, metadata, includedUrls);
+                                _addUrl.call(this, "css", include, manifest, metadata, includedUrls);
                             }
                         },
                         enabledExtensions: this.enabledExtensions,
@@ -202,7 +204,7 @@ raptor.defineClass(
                         _handleManifest.call(this, manifest);
                     }
                     else {
-                        raptor.throwError(new Error("Only packages are allowed. Invalid include: " + handler.includeKe(include)));
+                        raptor.throwError(new Error("Only packages are allowed. Invalid include: " + JSON.stringify(include)));
                     }
                 }, this);
 

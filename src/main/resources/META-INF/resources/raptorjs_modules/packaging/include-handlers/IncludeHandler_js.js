@@ -22,8 +22,8 @@ raptor.defineClass(
             runtime = raptor.require('runtime');
         
         return {
-            includeKey: function(include) {
-                return "js:" + include.path;
+            includeKey: function(include, manifest) {
+                return "js:" + this.resolvePathKey(include.path, manifest);
             },
             
             load: function(include, manifest, loader) {

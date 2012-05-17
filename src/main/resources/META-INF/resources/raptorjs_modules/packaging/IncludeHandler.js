@@ -18,6 +18,17 @@ raptor.defineClass(
     "packaging.IncludeHandler",
     function() {
         return {
+            resolvePathKey: function(path, manifest) {
+                var relative = path.charAt(0) !== '/';
+                
+                if (relative && !manifest) {
+                    raptor.throwError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
+                }
+                else {
+                    return path + ":" + (manifest ? ":" + manifest.getSystemPath() : "");                    
+                }
+            },
+            
             includeKey: function(include) {
                 return "css:" + include.path;
             },

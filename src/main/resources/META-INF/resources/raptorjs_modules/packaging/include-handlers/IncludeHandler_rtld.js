@@ -19,8 +19,14 @@ raptor.defineClass(
     "packaging.IncludeHandler",
     function() {
         return {
-            includeKey: function(include) {
-                return "rtld:" + (include.uri || uri.path);
+            
+            includeKey: function(include, manifest) {
+                if (uri.path) {
+                    return "rtld:" + this.resolvePathKey(include.path, manifest);
+                }
+                else {
+                    return "rtld:" + include.uri;
+                }
             },
             
             load: function(include, manifest) {

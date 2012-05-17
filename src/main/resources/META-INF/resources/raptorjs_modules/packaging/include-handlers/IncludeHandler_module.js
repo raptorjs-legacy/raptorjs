@@ -20,7 +20,7 @@ raptor.defineClass(
     function() {
 
         return {
-            includeKey: function(include) {
+            includeKey: function(include, manifest) {
                 return "module:" + include.name;
             },
             
