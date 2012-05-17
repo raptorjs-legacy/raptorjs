@@ -31,7 +31,7 @@ raptor.defineClass(
             Transformer = Taglib.Transformer;
         
         var TaglibCollection = function() {
-            this.tagTransformers = {}; //Tag transformers lookup
+            this.tagTransformersLookup = {}; //Tag transformers lookup
             this.tagDefs = {}; //Tag definitions lookup
             this.textTransformers = [];
             this.taglibUris = {}; //Lookup to track the URIs of taglibs that have been added to this collection
@@ -94,12 +94,20 @@ raptor.defineClass(
                     
                     if (tag.transformers) { //Check if the tag has any transformers that should be applied
                         
-                        var tagTransformers; //A reference to the array of the tag transformers with the same key
+                        var tagTransformersEntry; //A reference to the array of the tag transformers with the same key
                         
-                        if (!(tagTransformers = this.tagTransformers[key])) { //Look up the existing transformers
-                            this.tagTransformers[key] = tagTransformers = { //No transformers found so create a new entry
+                        if (!(tagTransformersEntry = this.tagTransformersLookup[key])) { //Look up the existing transformers
+                            this.tagTransformersLookup[key] = tagTransformersEntry = { //No transformers found so create a new entry
                                     transformers: [], //Initialize the transformers to an empty list
-                                    after: {} //This map will contain entries for transformers that should be 
+                                    before: {}, //This map will contain entries for transformers that should be invoked after a transformer of a certain class name (class names are keys)
+                                    after: {}, //This map will contain entries for transformers that should be invoked before a transformer of a certain class name (class names are keys)
+                                    _addRelativeTransformer: function(beforeAfter, transformer, relativeTo) {
+                                        var existing = this[beforeAfter][relativeTo]; //There may be more than one transformer configured to be invoked before another transformer
+                                        if (!existing) { 
+                                            existing = this[beforeAfter][relativeTo] = [];
+                                        }
+                                        existing.push(transformer);
+                                    }
                             };
                         }
                         
@@ -109,23 +117,13 @@ raptor.defineClass(
                             transformer = extend(new Transformer(), transformer); //Convert the transformer config to instance of Transformer
                             
                             if (transformer.after) { //Check if this transformer is configured to run after another transfrormer
-                                /*
-                                 * If multiple transformers are applied to the same tag then we allow
-                                 * the order to be controlled by allowed relative ordering. Currently,
-                                 * we only allow transformers to be invoked *after* another
-                                 * transformer.
-                                 */
-                                var after = tagTransformers.after[transformer.after]; //There may be more than one transformer configured to be invoked after another transformer
-                                if (!after) { 
-                                    /*
-                                     * If we haven't initialized the "after" array then initialize it now
-                                     */
-                                    after = tagTransformers.after[transformer.after] = [];
-                                }
-                                after.push(transformer); //Add the transform
+                                tagTransformersEntry._addRelativeTransformer("after", transformer, transformer.after);
+                            }
+                            else if (transformer.before) { //Check if this transformer is configured to run after another transfrormer
+                                tagTransformersEntry._addRelativeTransformer("before", transformer, transformer.before);
                             }
                             else {
-                                tagTransformers.transformers.push(transformer);  //The transformer is not configured to run after another transformer so just append it to the list                             
+                                tagTransformersEntry.transformers.push(transformer);  //The transformer is not configured to run before/after another transformer so just append it to the list                             
                             }
                             
                         }, this);
@@ -199,43 +197,59 @@ raptor.defineClass(
                     uri = '';
                 }
                 
-                //console.error("forEachTagTransformer(): ", uri, tagName);
-                var keepGoing = true,
-                    _this = this;
-                
-                var tagTransformers = this.tagTransformers, //Local variable that references
-                    _addTransformers = function(tagTransformers) {
-                        if (!tagTransformers) {
+                var _this = this,
+                    /**
+                     * Handle all of the transformers in the tag transformers entry
+                     */
+                    _handleTransformers = function(entry, transformers) {
+                        if (!entry) { //If no entry then nothing to do
                             return;
                         }
                         
-                        var handleTransformers = function(transformers) {
-                            if (keepGoing === false) {
-                                return false;
+                        if (!transformers) {
+                            transformers = entry.transformers; //If no transformers were provided then using the transformers in the entry
+                        }
+                        
+                        if (!transformers) { //Check if there are any transformers
+                            return;
+                        }
+                        /*
+                         * Loop over all of the transformers and invoke the provided callback
+                         */
+                        for (var i=0, len=transformers.length; i<len; i++)
+                        {
+                            var transformer = transformers[i];
+                            
+                            if (entry.before[transformer.className]) {
+                                _handleTransformers(entry, entry.before[transformer.className]); //Handle any transformers that are registered to be invoked before the current transformer
                             }
                             
-                            forEach(transformers, function(transformer) {
-                                keepGoing = callback.call(thisObj, transformer);
-                                
-                                if (keepGoing === false) {
-                                    return false;
-                                }
-                                
+                            if (callback.call(thisObj, transformer) === false) { //Invoke the callback and if the return value is "false" then stop
+                                return;
+                            }
 
-                                if (tagTransformers.after[transformer.className]) {
-                                    handleTransformers(tagTransformers.after[transformer.className]);
-                                }
-                            });
+                            if (entry.after[transformer.className]) {
+                                _handleTransformers(entry, entry.after[transformer.className]); //Handle any transformers that are registered to be invoked after the current transformer 
+                            }
                         };
-                        
-                        handleTransformers(tagTransformers.transformers);
                     };
                 
-                _addTransformers(tagTransformers[uri + ":" + tagName]);
-                _addTransformers(tagTransformers[uri + ":*"]);
-                _addTransformers(tagTransformers["*:*"]);
+                /*
+                 * Handle all of the transformers for all possible matching transformers.
+                 * 
+                 * Start with the most specific and end with the list specific.
+                 */
+                _handleTransformers(this.tagTransformersLookup[uri + ":" + tagName]); //All transformers that match the URI and tag name exactly
+                _handleTransformers(this.tagTransformersLookup[uri + ":*"]); //Wildcard for tag name but matching URI (i.e. transformers that apply to every element with a URI, regadless of tag name)
+                _handleTransformers(this.tagTransformersLookup["*:*"]); //Wildcard for both URI and tag name (i.e. transformers that apply to every element)
             },
             
+            /**
+             * Invokes a provided callback for each registered text transformer.
+             * 
+             * @param callback {Function} The callback function to invoke
+             * @param thisObj {Object} The "this" object to use when invoking the callback function
+             */
             forEachTextTransformer: function(callback, thisObj) {
                 forEach(this.textTransformers, function(textTransformer) {
                     var keepGoing = callback.call(thisObj, textTransformer);
@@ -245,14 +259,19 @@ raptor.defineClass(
                 });
             },
             
+            /**
+             * Returns the definition of a tag that was loaded from the taglib with the specified
+             * URI and with the matching 
+             * @param uri
+             * @param localName
+             * @returns
+             */
             getTagDef: function(uri, localName) {
-                if (uri) {
-                    return this.tagDefs[uri + ":" + localName];
+                var tagDef = this.tagDefs[uri + ":" + localName];
+                if (!tagDef) {
+                    this.tagDefs[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
                 }
-                else {
-                    return this.tagDefs[localName];
-                }
-                
+                return tagDef;
             }
         };
         
