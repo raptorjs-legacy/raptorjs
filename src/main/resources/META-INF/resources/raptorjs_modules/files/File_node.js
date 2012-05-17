@@ -155,7 +155,7 @@ $rload(function(raptor) {
                 return;
             }
             
-            return nodeFs.readFileSync(this.getAbsolutePath(), encoding || "UTF-8");
+            return nodeFS.readFileSync(this.getAbsolutePath(), encoding || "UTF-8");
         },
         
         remove: function() {
@@ -179,7 +179,12 @@ $rload(function(raptor) {
         },
         
         getExtension: function() {
-            return nodePath.extname(this.getName());
+            var filename = this.getName();
+            var lastDot = filename.lastIndexOf('.');
+            if (lastDot == 0) {
+                return "";
+            }
+            return lastDot === -1 ? "" : filename.substring(lastDot+1); 
         }
     };
     

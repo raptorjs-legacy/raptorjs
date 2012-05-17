@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+require("./add-license-app.js");
