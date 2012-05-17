@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.ForNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors,
             forEachRegEx = /^(.+)\s+in\s+(.+)$/,
             stringify = raptor.require("json.stringify").stringify,
@@ -46,7 +48,6 @@ raptor.defineClass(
                     varStatus = this.getProperty("varStatus");
                 
                 if (!each) {
-                    console.error("for props: ", props);
                     errors.throwError(new Error('"each" attribute is required'));
                 }
                 

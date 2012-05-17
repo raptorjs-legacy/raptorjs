@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.IfNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors;
         
         var IfNode = function(props) {

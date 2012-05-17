@@ -16,7 +16,8 @@
 
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var strings = raptor.strings,
         objects = raptor.objects,
         levels = {

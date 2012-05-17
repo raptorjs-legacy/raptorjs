@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.IncludeNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors,
             stringify = raptor.require('json.stringify').stringify;
         

@@ -19,6 +19,8 @@
 * 
 */
 raptor.extend('widgets', function(raptor) {
+    "use strict";
+    
     return {
         add: function(context, type, config) {
             

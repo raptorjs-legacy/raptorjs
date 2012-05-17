@@ -17,6 +17,7 @@
 raptor.defineClass(
     "templating.compiler.TaglibXmlLoader",
     function(raptor) {
+        "use strict";
         
         var objectMapper = raptor.require('xml.sax.objectMapper'),
             strings = raptor.require("strings"),

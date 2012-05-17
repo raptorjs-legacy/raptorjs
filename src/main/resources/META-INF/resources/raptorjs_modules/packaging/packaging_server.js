@@ -15,13 +15,13 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var errors = raptor.errors,
         arrays = raptor.arrays,
         forEachEntry = raptor.forEachEntry,
         logger = raptor.logging.logger('packaging-server'),
         packageManifests = {},
-        loaded = {},
         _extensionsLookup = {},
         includeHandlers = {},
         includeHandlersDiscovered = false,
@@ -94,7 +94,7 @@ $rload(function(raptor) {
             }
             var handler = includeHandlers[type];
             if (!handler) {
-                raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                raptor.errors.throwError(new Error('Handler not found for include of type "' + type + '"'));
             }
             return handler;
         },

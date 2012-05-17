@@ -17,6 +17,8 @@
 raptor.defineClass(
     'templating.compiler.ExpressionParser',
     function(raptor) {
+        "use strict";
+        
         var listeners = raptor.require("listeners"),
             events = ['text', 'expression', 'scriptlet'],
             endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g,

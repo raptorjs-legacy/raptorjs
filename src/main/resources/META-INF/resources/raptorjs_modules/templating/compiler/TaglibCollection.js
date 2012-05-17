@@ -20,6 +20,8 @@
 raptor.defineClass(
     'templating.compiler.TaglibCollection',
     function(raptor) {
+        "use strict";
+        
         var forEach = raptor.forEach,
             extend = raptor.extend,
             Taglib = raptor.require("templating.compiler.Taglib"),

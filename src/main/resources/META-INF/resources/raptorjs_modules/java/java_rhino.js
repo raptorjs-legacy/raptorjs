@@ -15,6 +15,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     var java = __rhinoHelpers.getJava();
     raptor.defineCore('java', {
 

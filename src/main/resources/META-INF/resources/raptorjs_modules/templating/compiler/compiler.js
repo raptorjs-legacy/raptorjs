@@ -17,7 +17,8 @@
 raptor.defineModule(
     "templating.compiler", 
     function(raptor) {
-
+        "use strict";
+        
         var TaglibCollection = raptor.require('templating.compiler.TaglibCollection'),
             taglibs = new TaglibCollection(),
             extend = raptor.extend,
@@ -172,5 +173,6 @@ startTagOnly: {
  * Add a global function that can be used to register taglibs
  */
 raptor.global.$rtld = function(taglib) {
+    "use strict";
     raptor.require('templating.compiler').addTaglib(taglib);
 };

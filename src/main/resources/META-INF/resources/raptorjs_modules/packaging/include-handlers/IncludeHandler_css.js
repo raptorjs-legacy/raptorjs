@@ -18,6 +18,8 @@ raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_css",
     "packaging.IncludeHandler",
     function() {
+        "use strict";
+        
         return {
             includeKey: function(include, manifest) {
                 return "css:" + this.resolvePathKey(include.path, manifest);

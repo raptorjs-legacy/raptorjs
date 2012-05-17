@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.OtherwiseNode',
     'templating.compiler.Node',
     function(raptor) {
+        "use strict";
+        
         var strings = raptor.require("strings");
         
         var ChooseNode = function(props) {

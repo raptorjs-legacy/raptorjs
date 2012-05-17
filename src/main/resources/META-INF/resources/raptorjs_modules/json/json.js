@@ -21,7 +21,8 @@
  * can be optionally included.
  */
 raptor.defineModule('json', function(raptor) {
-
+    "use strict";
+    
     var NativeJSON = raptor.global.JSON,
         PARSE = 'parse',
         STRINGIFY = 'stringify',

@@ -15,6 +15,7 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
     
     /**
      * Used to build a string by using an array of strings as a buffer.

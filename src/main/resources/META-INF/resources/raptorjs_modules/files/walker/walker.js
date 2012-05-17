@@ -15,6 +15,8 @@
  */
 
 raptor.defineModule('files.walker', function() {
+    "use strict";
+    
     var Walker = raptor.require("files.walker.DirWalker");
     
     return {

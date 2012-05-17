@@ -15,6 +15,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     var EMPTY_STRING = '',
         trim = function(s){
             return s ? s.replace(/^\s*|\s*$/g,'') : EMPTY_STRING;

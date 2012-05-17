@@ -15,6 +15,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     if (!window.console)
     {
         var console = {};

@@ -18,6 +18,8 @@ raptor.defineClass(
     "templating.taglibs.core.TagHandlerNode",
     'templating.compiler.Node',
     function(raptor) {
+        "use strict";
+        
         var extend = raptor.extend,
             forEach = raptor.forEach,
             stringify = raptor.require('json.stringify').stringify,

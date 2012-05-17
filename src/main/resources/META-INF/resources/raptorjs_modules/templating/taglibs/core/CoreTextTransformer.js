@@ -17,6 +17,7 @@
 raptor.defineClass(
     "templating.taglibs.core.CoreTextTransformer",
     function() {
+        "use strict";
         
         var ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             TextNode = raptor.require('templating.compiler.TextNode'),

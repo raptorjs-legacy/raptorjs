@@ -26,6 +26,8 @@
  * 
  */
 raptor.defineModule('loader', function(raptor) {
+    "use strict";
+    
     var included = {},
         downloaded = {},
         forEach = raptor.forEach,

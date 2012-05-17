@@ -33,6 +33,8 @@
 
 
 (function() {
+    "use strict";
+    
     var RHINO_GLOBAL = this;
     
     $rload(function(raptor) {

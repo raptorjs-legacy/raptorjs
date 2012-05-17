@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.WithNode',
     'templating.compiler.Node',
     function(raptor) {
+        "use strict";
+        
         var errors = raptor.errors,
             AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter');
         

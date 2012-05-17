@@ -17,6 +17,8 @@
 raptor.defineClass(
     "packaging.IncludeHandler",
     function() {
+        "use strict";
+        
         return {
             resolvePathKey: function(path, manifest) {
                 var relative = path.charAt(0) !== '/';

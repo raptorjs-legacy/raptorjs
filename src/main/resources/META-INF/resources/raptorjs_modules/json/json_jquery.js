@@ -21,6 +21,8 @@
  */
 raptor.extend('json', {
     extend: function(target) {
+        "use strict";
+        
         var parse = $.parseJSON;
         
         //NOTE: Target is the "json" module that we are extending with this mixin

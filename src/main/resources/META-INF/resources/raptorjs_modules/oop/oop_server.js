@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var logger = raptor.logging.logger('oop-server'),
         errors = raptor.errors,
         getModuleDirPath = function(name) {

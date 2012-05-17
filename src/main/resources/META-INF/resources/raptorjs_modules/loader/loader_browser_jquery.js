@@ -18,7 +18,7 @@
  * @extension jQuery
  */
 raptor.extend('loader', function(raptor) {
-
+    "use strict";
     var extend = raptor.extend;
     
     return {

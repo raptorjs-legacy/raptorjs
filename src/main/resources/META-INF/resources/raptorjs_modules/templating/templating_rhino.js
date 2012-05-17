@@ -20,6 +20,7 @@
  * 
  */
 raptor.extend('templating', function(raptor) {
+    "use strict";
     
     var WrappedWriter = function(javaWriter) {
         this.javaWriter = javaWriter;

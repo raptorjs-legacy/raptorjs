@@ -17,6 +17,7 @@
 raptor.defineClass(
     'templating.compiler.TemplateCompiler',
     function(raptor) {
+        "use strict";
         
         var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder'),
             ParseTreeBuilder = raptor.require('templating.compiler.ParseTreeBuilder'),

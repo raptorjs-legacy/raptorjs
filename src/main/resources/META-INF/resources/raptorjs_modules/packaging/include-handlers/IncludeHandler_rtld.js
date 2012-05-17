@@ -18,10 +18,12 @@ raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_rtld",
     "packaging.IncludeHandler",
     function() {
+        "use strict";
+        
         return {
             
             includeKey: function(include, manifest) {
-                if (uri.path) {
+                if (include.path) {
                     return "rtld:" + this.resolvePathKey(include.path, manifest);
                 }
                 else {
@@ -78,7 +80,7 @@ raptor.defineClass(
                 }
                 else {
                     var stringify = raptor.require('json.stringify').stringify;
-                    raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+                    raptor.throwError(new Error('Unable to get manifest. Include is not a package: ' + stringify(include)));
                 }
             }
         };

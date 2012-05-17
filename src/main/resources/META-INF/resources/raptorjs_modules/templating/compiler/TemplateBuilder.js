@@ -17,6 +17,8 @@
 raptor.defineClass(
     'templating.compiler.TemplateBuilder',
     function(raptor) {
+        "use strict";
+        
         var stringify = raptor.require('json.stringify').stringify,
             strings = raptor.require('strings'),
             errors = raptor.errors,

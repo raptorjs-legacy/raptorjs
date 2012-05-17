@@ -15,6 +15,7 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
     
     var forEach = raptor.forEach;
     

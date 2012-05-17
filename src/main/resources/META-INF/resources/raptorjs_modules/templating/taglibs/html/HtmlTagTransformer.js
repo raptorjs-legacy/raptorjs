@@ -17,7 +17,8 @@
 raptor.defineClass(
     "templating.taglibs.html.HtmlTagTransformer",
     function() {
-
+        "use strict";
+        
         return {
             
             process: function(node, compiler) {

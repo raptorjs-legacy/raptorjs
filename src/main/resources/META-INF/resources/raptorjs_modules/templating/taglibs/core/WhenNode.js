@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.WhenNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors;
         
         var WhenNode = function(props) {

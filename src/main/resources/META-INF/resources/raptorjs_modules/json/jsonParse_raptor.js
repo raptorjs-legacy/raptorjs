@@ -21,6 +21,8 @@
  */
 raptor.extend('json', {
     extend: function(target) {
+        "use strict";
+        
         var parse = raptor.require("json.parse").parse;
         
         target.registerImpl('raptor', 'parse', parse);

@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var loadedFiles = {};
     
     raptor.defineCore('runtime', {

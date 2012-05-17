@@ -18,7 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.WriteNode',
     'templating.compiler.Node',
     function() {
-       
+        "use strict";
+        
         var WriteNode = function(props) {
             WriteNode.superclass.constructor.call(this, 'write');
             

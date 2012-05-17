@@ -17,6 +17,8 @@
 
 
 (function() {
+    "use strict";
+    
     var global = this;
     
     if (global.console === undefined) {

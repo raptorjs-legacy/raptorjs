@@ -19,6 +19,8 @@
 
 
 (function() {
+    "use strict";
+    
     var java = raptor.require('java');
     
     var Resource = raptor.defineClass(

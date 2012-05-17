@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.InvokeNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors,
             forEach = raptor.forEach;
         

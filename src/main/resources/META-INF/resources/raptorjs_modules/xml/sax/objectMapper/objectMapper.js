@@ -17,6 +17,8 @@
 raptor.defineModule(
     'xml.sax.objectMapper',
     function(raptor) {
+        "use strict";
+        
         var forEach = raptor.forEach,
             sax = raptor.require("xml.sax"),
             forEachEntry = raptor.forEachEntry,

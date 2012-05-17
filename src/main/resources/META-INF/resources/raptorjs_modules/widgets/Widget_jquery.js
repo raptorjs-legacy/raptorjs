@@ -20,7 +20,8 @@
  * @extension jQuery
  */
 raptor.extend('widgets.Widget', function(raptor) {
-
+    "use strict";
+    
     var idRegExp = /\#(\w+)( .*)?/g,
         global = raptor.global;
     

@@ -18,6 +18,8 @@
  * @extension Module Loader
  */
 raptor.extend('loader', function(raptor) {
+    "use strict";
+    
     var forEach = raptor.forEach,
         extend = raptor.extend;
     

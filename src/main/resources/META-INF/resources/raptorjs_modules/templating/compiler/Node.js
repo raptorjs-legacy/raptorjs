@@ -17,6 +17,8 @@
 raptor.defineClass(
     'templating.compiler.Node',
     function(raptor) {
+        "use strict";
+        
         var forEachEntry = raptor.forEachEntry,
             forEach = raptor.forEach,
             isArray = raptor.isArray,

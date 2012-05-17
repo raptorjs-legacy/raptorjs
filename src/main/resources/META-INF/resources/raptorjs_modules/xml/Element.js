@@ -17,6 +17,8 @@
 raptor.defineClass(
     "xml.Element",
     function(raptor) {
+        "use strict";
+        
         var Element = function(uri, localName, qName, prefix) {
             this.uri = uri;
             this.localName = localName;

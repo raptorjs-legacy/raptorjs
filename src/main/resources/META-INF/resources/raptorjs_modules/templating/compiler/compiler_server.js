@@ -20,6 +20,8 @@
 raptor.extend(
     "templating.compiler",
     function(raptor, compiler) {
+        "use strict";
+        
         var resources = raptor.require('resources'),
             strings = raptor.require('strings'),
             json = raptor.require('json'),

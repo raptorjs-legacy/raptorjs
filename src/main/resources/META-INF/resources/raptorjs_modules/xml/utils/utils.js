@@ -17,6 +17,8 @@
 raptor.defineModule(
     'xml.utils',
     function(raptor) {
+        "use strict";
+        
         var extend = raptor.extend,
             specialRegExp = /(\n|\"|[&<>]|[^\u0020-\}])/g,
             attrReplacements = {

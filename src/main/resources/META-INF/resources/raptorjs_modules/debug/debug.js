@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     raptor.defineCore('debug', {
         /**
          * 

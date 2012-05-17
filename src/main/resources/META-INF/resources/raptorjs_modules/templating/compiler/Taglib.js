@@ -17,6 +17,7 @@
 raptor.defineClass(
     'templating.compiler.Taglib',
     function(raptor) {
+        "use strict";
         
         var forEach = raptor.forEach,
             errors = raptor.errors;

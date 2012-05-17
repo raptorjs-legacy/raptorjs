@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
-    'http.Response',
-    function() {
-       var Response = function() {
-           
-       };
-       
-       Response.prototype = {
-               
-       };
-       
-       return Response;
-    });
+raptor.defineClass('http.Response', function() {
+    "use strict";
+    
+    var Response = function() {
+
+    };
+
+    Response.prototype = {
+
+    };
+
+    return Response;
+});

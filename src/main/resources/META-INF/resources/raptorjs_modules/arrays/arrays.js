@@ -15,6 +15,7 @@
  */
 
 $rload(function (raptor) {
+    "use strict";
     
     /**
      * Utility module for working with JavaScript arrays.

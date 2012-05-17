@@ -17,6 +17,7 @@
 raptor.defineModule(
     "xml.sax",
     function() {
+        "use strict";
         
         return {
             

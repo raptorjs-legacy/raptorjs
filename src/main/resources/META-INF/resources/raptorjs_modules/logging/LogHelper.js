@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-        
+    "use strict";
+    
     var stacktraces = raptor.stacktraces,
         arrayFromArguments = raptor.arrayFromArguments;
     

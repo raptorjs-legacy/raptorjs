@@ -18,7 +18,8 @@ raptor.defineClass(
     'templating.compiler.TextNode',
     'templating.compiler.Node',
     function() {
-       
+        "use strict";
+        
         var TextNode = function(text) {
             TextNode.superclass.constructor.call(this, 'text');
             this.text = text;

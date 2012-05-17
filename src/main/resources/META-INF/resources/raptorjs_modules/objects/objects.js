@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     /**
      * @borrows raptor.forEachEntry as forEachEntry
      * @borrows raptor.keys as keys
@@ -33,9 +34,8 @@ $rload(function(raptor) {
          */
         values: function(o)
         {
-            var k;
             var values = [];
-            for (k in o)
+            for (var k in o)
             {
                 if (o.hasOwnProperty(k))
                 {
@@ -51,9 +51,8 @@ $rload(function(raptor) {
          */
         entries: function(o)
         {
-            var k;
             var entries = [];
-            for (k in o)
+            for (var k in o)
             {
                 if (o.hasOwnProperty(k))
                 {

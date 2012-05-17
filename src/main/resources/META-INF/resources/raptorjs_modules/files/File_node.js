@@ -15,7 +15,7 @@
  */
 
 $rload(function(raptor) {
-    
+    "use strict";
     
     var nodePath = require("path"),
         nodeFS = require("fs");
@@ -109,8 +109,7 @@ $rload(function(raptor) {
             
             
             if (this.isSymbolicLink()) {
-                this.readSymbolicLink().listFiles();
-                return;
+                return this.readSymbolicLink().listFiles();
             }
             
             var filenames = nodeFS.readdirSync(this._path);
@@ -137,7 +136,8 @@ $rload(function(raptor) {
         
         mkdirs: function() {
             var file = this, 
-                missing = [];
+                missing = [],
+                parentFile;
             
             while ((parentFile = file.getParentFile())) {
                 if (parentFile.exists()) {
@@ -197,7 +197,7 @@ $rload(function(raptor) {
         getExtension: function() {
             var filename = this.getName();
             var lastDot = filename.lastIndexOf('.');
-            if (lastDot == 0) {
+            if (lastDot === 0) {
                 return "";
             }
             return lastDot === -1 ? "" : filename.substring(lastDot+1); 

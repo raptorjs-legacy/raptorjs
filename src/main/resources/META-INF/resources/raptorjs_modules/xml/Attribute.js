@@ -17,6 +17,8 @@
 raptor.defineClass(
     "xml.Attribute",
     function(raptor) {
+        "use strict";
+        
         var Attribute = function(uri, localName, qName, prefix, value) {
         };
         

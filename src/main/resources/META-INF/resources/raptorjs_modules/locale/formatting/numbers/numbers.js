@@ -15,6 +15,7 @@
  */
 
 raptor.defineModule('locale.formatting.numbers', function() {
+    "use strict";
     
     /**
      * @class

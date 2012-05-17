@@ -30,6 +30,8 @@
 raptor.defineClass(
     'templating.compiler.AttributeSplitter',
     function(raptor) {
+        "use strict";
+        
         var listeners = raptor.require("listeners"),
             strings = raptor.require("strings"),
             events = ['text', 'expression'],

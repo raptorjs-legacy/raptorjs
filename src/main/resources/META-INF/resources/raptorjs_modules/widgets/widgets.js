@@ -19,6 +19,8 @@
 * 
 */
 raptor.defineModule('widgets', function(raptor) {
+    "use strict";
+    
     return {
         
     };

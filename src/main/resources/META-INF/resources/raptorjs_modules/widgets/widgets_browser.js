@@ -19,6 +19,8 @@
 * 
 */
 raptor.extend('widgets', function(raptor) {
+    "use strict";
+    
     var PROTOTYPE = 'prototype',
         widgetsById = {},
         errors = raptor.errors,

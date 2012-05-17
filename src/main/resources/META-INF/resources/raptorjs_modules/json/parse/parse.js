@@ -17,6 +17,8 @@
 raptor.defineModule(
     'json.parse',
     function() {
+        "use strict";
+        
         var NON_ASCII = /[^\x00-\x7F]/g,
             strings = raptor.require("strings"),
             unicodeEncode = strings.unicodeEncode; //Pick up the unicodeEncode method from the strings module

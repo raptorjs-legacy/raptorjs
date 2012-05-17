@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var logger = raptor.logging.logger('runtime');
     
     raptor.extendCore('runtime', {

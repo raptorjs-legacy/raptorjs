@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/*jshint strict:false */
 raptorBootstrap = {
     env: null,
     
@@ -101,5 +102,4 @@ raptorBootstrap = {
         this._require('resources/resources.js');
     }
 };
-
 

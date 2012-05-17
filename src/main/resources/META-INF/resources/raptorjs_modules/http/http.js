@@ -17,7 +17,9 @@
 raptor.defineModule(
     'http',
     function() {
-       return {
+        "use strict";
+        
+        return {
            
-       };
+        };
     });

@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.compiler.ElementNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var forEachEntry = raptor.forEachEntry,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             XML_URI = 'http://www.w3.org/XML/1998/namespace',

@@ -17,6 +17,8 @@
 raptor.defineClass(
     'templating.Context',
     function(raptor) {
+        "use strict";
+        
         var forEachEntry = raptor.forEachEntry,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             strings = raptor.require('strings'),

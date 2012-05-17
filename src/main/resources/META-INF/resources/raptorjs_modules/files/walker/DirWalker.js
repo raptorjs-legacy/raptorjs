@@ -17,8 +17,9 @@
 raptor.defineClass(
     "files.walker.DirWalker",
     function(raptor) {
-        var listeners = raptor.require("listeners"),
-            File = raptor.require('files').File;
+        "use strict";
+        
+        var File = raptor.require('files').File;
         
         var DirWalker = function(callbackFunc, thisObj, options) {
             this.callbackThisObj = thisObj;

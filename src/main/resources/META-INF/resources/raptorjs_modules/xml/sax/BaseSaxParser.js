@@ -17,6 +17,8 @@
 raptor.defineClass(
     "xml.sax.BaseSaxParser",
     function() {
+        "use strict";
+        
         var listeners = raptor.require("listeners"),
             arrayFromArguments = raptor.arrayFromArguments;
         

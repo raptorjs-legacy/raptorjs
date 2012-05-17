@@ -18,7 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.ScriptletNode',
     'templating.compiler.Node',
     function() {
-       
+        "use strict";
+        
         var ScriptletNode = function(code) {
             ScriptletNode.superclass.constructor.call(this, 'scriptlet');
             this.code = code;

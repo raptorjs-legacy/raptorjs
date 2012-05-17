@@ -17,6 +17,8 @@
 raptor.defineClass(
     "templating.taglibs.widgets.WidgetsTagTransformer",
     function(raptor) {
+        "use strict";
+        
         var widgetsNS = "http://raptor.ebayopensource.org/widgets";
         
         return {

@@ -17,6 +17,8 @@
 raptor.extend(
         'templating.Context',
         function() {
+            "use strict";
+            
             var widgets = raptor.require('widgets'),
                 getWidgetsData = function(context) {
                     var widgetsData;

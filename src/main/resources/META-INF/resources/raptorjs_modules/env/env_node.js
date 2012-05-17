@@ -32,6 +32,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     /**
      * @extension Node
      */

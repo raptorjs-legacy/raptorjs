@@ -18,6 +18,7 @@
  * @extension Browser
  */
 raptor.extend('loader', function(raptor) {
+    "use strict";
     
     return {
         

@@ -17,6 +17,7 @@
 raptor.defineClass(
     'templating.compiler.ParseTreeBuilder',
     function() {
+        "use strict";
         
         var sax = raptor.require("xml.sax"),
             forEach = raptor.forEach,

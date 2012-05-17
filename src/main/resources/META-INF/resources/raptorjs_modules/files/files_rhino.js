@@ -17,6 +17,7 @@
 
 
 $rload(function(raptor) {
+    "use strict";
     
     var JavaFile = Packages.java.io.File;
     

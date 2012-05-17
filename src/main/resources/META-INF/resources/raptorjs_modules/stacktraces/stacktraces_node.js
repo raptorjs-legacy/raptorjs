@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     raptor.defineCore('stacktraces', {
         trace : function(e) {
             var out = [];

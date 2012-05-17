@@ -21,6 +21,7 @@ var raptorClassDefs = {}; //Class definitionsLookup are global for a reason. It 
 
 
 $rload(function(raptor) {
+    "use strict";
     
     var forEach = raptor.forEach, //Short-hand reference to function for iterating over arrays with a function callback
         forEachEntry = raptor.forEachEntry, //Short-hand reference for iterating over object properties

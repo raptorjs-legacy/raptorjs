@@ -17,6 +17,8 @@
 raptor.defineClass(
     "templating.taglibs.core.CoreTagTransformer",
     function(raptor) {
+        "use strict";
+        
         var extend = raptor.extend,
             forEach = raptor.forEach,
             coreNS = "http://raptor.ebayopensource.org/core",

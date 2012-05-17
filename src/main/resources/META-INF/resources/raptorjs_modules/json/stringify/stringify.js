@@ -17,6 +17,8 @@
 raptor.defineModule(
     'json.stringify',
     function() {
+        "use strict";
+        
         var strings = raptor.require('strings'),
             unicodeEncode = strings.unicodeEncode, //Pick up the unicodeEncode method from the strings module
             COMMA = ',',        

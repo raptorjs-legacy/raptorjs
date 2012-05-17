@@ -17,7 +17,8 @@
 raptor.defineClass(
     'templating.compiler.Expression',
     function() {
-       
+        "use strict";
+        
         var Expression = function(expression) {
             this.expression = expression;
         };

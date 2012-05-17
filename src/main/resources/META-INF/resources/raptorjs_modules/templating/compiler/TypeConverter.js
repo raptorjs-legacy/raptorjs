@@ -17,6 +17,7 @@
 raptor.defineClass(
     'templating.compiler.TypeConverter',
     function(raptor) {
+        "use strict";
         
         var ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             stringify = raptor.require('json.stringify').stringify,
@@ -67,7 +68,7 @@ raptor.defineClass(
             }
             else if (targetType === 'float' || targetType === 'double' || targetType === 'number' || targetType === 'integer') {
                 if (targetType === 'integer') {
-                    value = parseInt(value);
+                    value = parseInt(value, 10);
                 }
                 else {
                     value = parseFloat(value);
@@ -75,7 +76,7 @@ raptor.defineClass(
                 return allowExpressions ? new Expression(value) : value;
             }
             else {
-                errors.throwError(new Error("Unsupported attribute targetType: " + targetType));
+                raptor.throwError(new Error("Unsupported attribute targetType: " + targetType));
             }
         };
         

@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var stacktraces = raptor.stacktraces,
         global = raptor.global;
     
@@ -175,8 +176,6 @@ $rload(function(raptor) {
                                   
                 }
                 catch(e) {
-                    
-                    console.log('LOG EXCEPTION: ' + e, e.stack);
                     console.error(e);
                 }
             }

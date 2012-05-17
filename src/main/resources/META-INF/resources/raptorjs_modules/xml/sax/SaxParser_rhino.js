@@ -18,6 +18,8 @@ raptor.defineClass(
     "xml.sax.SaxParser",
     "xml.sax.BaseSaxParser",
     function(raptor) {
+        "use strict";
+        
         var extend = raptor.extend,
             arrays = raptor.require("arrays"),
             java = raptor.require("java"),

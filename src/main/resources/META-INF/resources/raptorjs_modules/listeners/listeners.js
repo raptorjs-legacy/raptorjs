@@ -15,7 +15,8 @@
  */
 
 $rload(function(raptor) {
-
+    "use strict";
+    
     var forEach = raptor.forEach,
         forEachEntry = raptor.forEachEntry,
         arrayFromArguments = raptor.arrayFromArguments,

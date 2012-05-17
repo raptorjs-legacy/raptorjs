@@ -98,8 +98,9 @@
  * 
  */
 raptor.defineModule('pubsub', function(raptor) {
-    var listeners = raptor.listeners,
-        arrayFromArguments = raptor.arrayFromArguments;
+    "use strict";
+    
+    var listeners = raptor.listeners;
 
     /**
      * The Message class allows additional information to be provided to subscribers.

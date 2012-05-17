@@ -22,6 +22,8 @@
  * @borrows listeners-Observable#subscribe as #subscribe
  */
 raptor.defineMixin('widgets.Widget',  function(raptor) {
+    "use strict";
+    
     var errors = raptor.errors,
         forEach = raptor.forEach,
         listeners = raptor.require('listeners'),

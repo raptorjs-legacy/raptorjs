@@ -15,7 +15,8 @@
  */
 
 raptor.defineModule('templating', function(raptor) {
-
+    "use strict";
+    
     var registeredTemplates = {},
         loadedTemplates = {},
         forEachEntry = raptor.forEachEntry,
@@ -279,5 +280,6 @@ raptor.defineModule('templating', function(raptor) {
 });
 
 raptor.global.$rtmpl = function(name, func) {
+    "use strict";
     raptor.require('templating').register(name, func);
 };

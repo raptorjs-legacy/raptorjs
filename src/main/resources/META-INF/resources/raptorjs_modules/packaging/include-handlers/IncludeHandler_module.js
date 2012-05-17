@@ -18,7 +18,8 @@ raptor.defineClass(
     "packaging.include-handlers.IncludeHandler_module",
     "packaging.IncludeHandler",
     function() {
-
+        "use strict";
+        
         return {
             includeKey: function(include, manifest) {
                 return "module:" + include.name;

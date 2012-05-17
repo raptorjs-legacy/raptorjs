@@ -15,6 +15,8 @@
  */
 
 raptor.defineModule("js-minifier", function() {
+    "use strict";
+    
     var parser = require("uglify-js").parser;
     var uglify = require("uglify-js").uglify;
     

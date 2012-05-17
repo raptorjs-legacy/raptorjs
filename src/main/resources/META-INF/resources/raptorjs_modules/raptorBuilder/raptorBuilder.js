@@ -15,6 +15,8 @@
  */
 
 (function() {
+    /*jshint strict:false */
+    
     var loaders = [],
         slice = Array.prototype.slice,
         isArray = function(o)

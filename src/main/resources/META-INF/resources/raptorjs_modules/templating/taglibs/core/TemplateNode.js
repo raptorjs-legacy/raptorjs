@@ -18,6 +18,8 @@ raptor.defineClass(
     "templating.taglibs.core.TemplateNode",
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var extend = raptor.extend,
             errors = raptor.errors;
         

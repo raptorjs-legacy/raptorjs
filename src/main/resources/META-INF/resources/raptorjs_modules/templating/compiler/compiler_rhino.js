@@ -20,7 +20,8 @@
 raptor.extend(
     "templating.compiler",
     function(raptor, compiler) {
-
+        "use strict";
+        
         var java = raptor.require("java");
         
         var convertJavaOptions = function(javaOptions) {

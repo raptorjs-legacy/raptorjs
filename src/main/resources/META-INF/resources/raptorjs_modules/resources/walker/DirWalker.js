@@ -17,6 +17,8 @@
 raptor.defineClass(
     "resources.walker.DirWalker",
     function(raptor) {
+        "use strict";
+        
         var listeners = raptor.require("listeners"),
             resources = raptor.require('resources');
         

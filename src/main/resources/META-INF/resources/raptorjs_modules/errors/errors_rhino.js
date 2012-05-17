@@ -15,6 +15,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     var stacktraces = raptor.stacktraces;
     
     raptor.defineCore('errors', {        

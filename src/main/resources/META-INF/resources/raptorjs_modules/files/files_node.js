@@ -15,6 +15,7 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
     
     var nodePath = require('path'), 
         nodeFs = require('fs'),

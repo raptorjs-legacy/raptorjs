@@ -18,6 +18,8 @@ raptor.defineClass(
     'templating.taglibs.core.DefNode',
     'templating.compiler.Node',
     function() {
+        "use strict";
+        
         var errors = raptor.errors,
             strings = raptor.require('strings'),
             funcDefRegExp = /^([A-Za-z_][A-Za-z0-9_]*)\(((?:[A-Za-z_][A-Za-z0-9_]*,\s*)*[A-Za-z_][A-Za-z0-9_]*)?\)$/;

@@ -15,6 +15,8 @@
  */
 
 $rload(function(raptor) {
+    "use strict";
+    
     raptor.defineClass(
         'resources.DirSearchPathEntry',
         {
