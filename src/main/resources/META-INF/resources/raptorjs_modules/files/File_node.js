@@ -149,7 +149,7 @@ $rload(function(raptor) {
             nodeFS.writeFileSync(this.getAbsolutePath(), str, encoding || "UTF-8");
         },
         
-        readFully: function(str, encoding) {
+        readFully: function(encoding) {
             if (this.isSymbolicLink()) {
                 this.readSymbolicLink().readFully(encoding);
                 return;
@@ -176,6 +176,10 @@ $rload(function(raptor) {
             else if (this.isFile()) {
                 nodeFS.unlinkSync(this.getAbsolutePath());
             }
+        },
+        
+        getExtension: function() {
+            return nodePath.extname(this.getName());
         }
     };
     
