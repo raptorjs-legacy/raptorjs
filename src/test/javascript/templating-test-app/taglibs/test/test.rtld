@@ -1,0 +1,52 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    <short-name>t</short-name>
+    <uri>http://ebay.com/raptor/test</uri>
+    
+    
+    <tag>
+        <name>simpleHello</name>
+        <handler-class>taglibs.test.SimpleHelloController</handler-class>
+        <attribute>
+            <name>name</name>
+        </attribute>
+        <attribute>
+            <name>adult</name>
+            <type>boolean</type>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>tabs</name>
+        <handler-class>taglibs.test.TabsController</handler-class>
+        <nested-variable name="tabs"/>
+    </tag>
+    
+    <tag>
+        <name>tab</name>
+        <handler-class>taglibs.test.TabController</handler-class>
+        
+        <attribute name="title"/>
+        
+        <imported-variable property-name="tabs" expression="tabs"/>
+    </tag>
+    
+    <tag>
+        <name>button</name>
+        <handler-class>taglibs.test.ButtonController</handler-class>
+        
+        <attribute name="label"/>
+        <attribute name="type"/>
+    </tag>
+    
+    
+    <tag>
+        <name>greeting</name>
+        <handler-class>taglibs.test.GreetingController</handler-class>
+        
+        <attribute name="name"/>
+    </tag>
+
+</raptor-taglib>

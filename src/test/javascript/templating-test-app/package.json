@@ -1,0 +1,17 @@
+{
+    "type": "library",
+    "name": "test",
+    "version": "1.0",
+    "description": "Top-level manifest for test resources",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "taglibs": {
+	    "http://ebay.com/raptor/test": "/taglibs/test"
+	}
+}

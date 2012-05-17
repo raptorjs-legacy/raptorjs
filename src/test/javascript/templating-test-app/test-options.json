@@ -12,5 +12,6 @@
         "br": true,
         "link": true
     },
-    "xhtml": false
+    "xhtml": false,
+    "minify": false
 }

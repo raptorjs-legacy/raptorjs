@@ -6,7 +6,8 @@ raptor.defineClass(
             ParseTreeBuilder = raptor.require('templating.compiler.ParseTreeBuilder'),
             Expression = raptor.require('templating.compiler.Expression'),
             forEach = raptor.forEach,
-            errors = raptor.require("errors");
+            errors = raptor.require("errors"),
+            minifier = raptor.find("js-minifier");
         
         /**
          * @param taglibs {templating.compiler$TaglibCollection} The collection of taglibs that are available to the compiler
@@ -112,6 +113,9 @@ raptor.defineClass(
                     rootNode.generateCode(templateBuilder); //Generate the code and have all output be managed by the TemplateBuilder
                     
                     var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
+                    if (minifier && this.options.minify !== false) {
+                        output = minifier.minify(output);
+                    }
                     //console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                     return output;
                 }

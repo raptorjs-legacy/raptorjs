@@ -7,7 +7,7 @@ require("raptorjs").createRaptor({
         }
     }
 });
-raptor.resources.addSearchPathDir(__dirname + '/templates');
+raptor.resources.addSearchPathDir(__dirname);
 
 var files = raptor.require('files'),
     templatesPath = files.joinPaths(__dirname, "/templates"),
@@ -68,7 +68,7 @@ fs.watch(templateIncludePath, readAndCompile);
 fs.watch(jsonPath, readAndCompile);
 fs.watch(optionsJsonPath, readAndCompile);
 
-//raptor.require("templating.compiler").compileAndLoadResource("/test.rhtml");
+//raptor.require("templating.compiler").compileAndLoadResource("/templates/test.rhtml");
 //console.log(raptor.require("templating").renderToString("test", {
 //    message: "Hello World", 
 //    colors: ["red", "green", "blue", "pink"], 
