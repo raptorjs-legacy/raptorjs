@@ -51,7 +51,7 @@ var files = raptor.require('files'),
             eval(compiledSrc);
             var htmlOutput = templating.renderToString("test", readData());
             console.log(ansi("\033[0;1;33m") + htmlOutput);
-            files.writeFile(outputHtmlPath, htmlOutput);
+            files.writeFully(outputHtmlPath, htmlOutput);
         }
         catch(e) {
             console.log(ansi('\033[31m'));
