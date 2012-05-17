@@ -230,6 +230,11 @@ raptor.defineClass(
                                     "after": {
                                         _type: STRING,
                                         _targetProp: "after"
+                                    },
+                                    
+                                    "before": {
+                                        _type: STRING,
+                                        _targetProp: "before"
                                     }
                                 }
                             },
