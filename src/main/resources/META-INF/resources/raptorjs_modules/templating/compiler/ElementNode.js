@@ -206,8 +206,6 @@ raptor.defineClass(
                     forEachEntry(this.attributes, function(key, attr) {
                         template.addText(" ");
                         
-                        var name;
-                        
                         var prefix = attr.prefix;
                         if (!prefix && attr.uri) {
                             prefix = this.resolveNamespacePrefix(attr.uri);

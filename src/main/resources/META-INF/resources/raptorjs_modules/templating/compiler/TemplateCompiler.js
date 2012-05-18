@@ -22,7 +22,6 @@ raptor.defineClass(
         var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder'),
             ParseTreeBuilder = raptor.require('templating.compiler.ParseTreeBuilder'),
             Expression = raptor.require('templating.compiler.Expression'),
-            forEach = raptor.forEach,
             errors = raptor.require("errors"),
             minifier = raptor.find("js-minifier");
         

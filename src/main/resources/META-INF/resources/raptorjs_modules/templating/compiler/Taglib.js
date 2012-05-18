@@ -19,10 +19,6 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var forEach = raptor.forEach,
-            errors = raptor.errors;
-        
-        
         var Taglib = function() {
 //            this.uri = null;
 //            this.shortName = null;
@@ -76,7 +72,7 @@ raptor.defineClass(
             Transformer.prototype = {
                 getInstance: function() {
                     if (!this.className) {
-                        errors.throwError(new Error("Transformer class not defined for tag transformer (tag=" + this.tag + ")"));
+                        raptor.throwError(new Error("Transformer class not defined for tag transformer (tag=" + this.tag + ")"));
                     }
                     
                     if (!this.instance) {
