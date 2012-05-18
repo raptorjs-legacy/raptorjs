@@ -22,8 +22,7 @@ raptor.defineClass(
         var sax = raptor.require("xml.sax"),
             forEach = raptor.forEach,
             TextNode = raptor.require('templating.compiler.TextNode'),
-            ElementNode = raptor.require('templating.compiler.ElementNode'),
-            CORE_UI = "http://raptor.ebayopensource.org/core";
+            ElementNode = raptor.require('templating.compiler.ElementNode');
             
           
         var ParseTreeBuilder = function() {

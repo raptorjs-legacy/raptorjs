@@ -101,6 +101,67 @@ raptor.defineClass(
             };
         
             
+        /**
+         * 
+         */
+        var ExpressionParserHelper = raptor.defineClass(function() {
+            return {
+                init: function(callback, callbackThisObj) {
+                    this.callback = callback;
+                    this.callbackThisObj = callbackThisObj;
+                    
+                    this.text = '';
+                },
+                
+                _invokeCallback: function(name, arg) {
+                    if (!this.callback[name]) {
+                        raptor.throwError(new Error(name + " not allowed: " + arg));
+                    }
+                    
+                    this.callback[name].call(this.callbackThisObj, arg);
+                },
+                
+                _endText: function() {
+                    if (this.text) {
+                        this._invokeCallback("text", this.text);
+                        this.text = '';
+                    }
+                },
+                
+                /**
+                 * 
+                 * @param newText
+                 * @returns
+                 */
+                addText: function(newText) {
+                    this.text += newText;
+                },
+                
+                /**
+                 * 
+                 * @param expression
+                 * @returns
+                 */
+                addExpression: function(expression) {
+                    this._endText();
+                    if (!(expression instanceof Expression)) {
+                        expression = new Expression(expression);
+                    }
+                    this._invokeCallback("expression", expression);
+                },
+                
+                /**
+                 * 
+                 * @param scriptlet
+                 * @returns
+                 */
+                addScriptlet: function(scriptlet) {
+                    this._endText();
+                    this._invokeCallback("scriptlet", scriptlet);
+                }
+            };
+        });
+            
         var ExpressionParser = function() {
             
         };
@@ -114,7 +175,6 @@ raptor.defineClass(
          */
         ExpressionParser.parse = function(str, callback, thisObj) {
             var searchStart = 0,
-                text = '',
                 textStart = 0,
                 textEnd,
                 startMatches,
@@ -122,37 +182,9 @@ raptor.defineClass(
                 expressionStart,
                 expression,
                 isScriptlet,
-                startToken,
-                ob = listeners.createObservable(events, true),
-                endText = function() {
-                    if (text) {
-                        //console.log("END TEXT: " + text);
-                        callback.text(text);
-                        text = '';
-                    }
-                };
+                startToken;
             
-            ob.subscribe(callback, thisObj);
-            
-            var helper = {
-                addText: function(newText) {
-                    text += newText;
-                },
-                addExpression: function(expression) {
-                    endText();
-                    if (!(expression instanceof Expression)) {
-                        expression = new Expression(expression);
-                    }
-                    callback.expression(expression);
-                },
-                addScriptlet: function(scriptlet) {
-                    endText();
-                    if (!callback.scriptlet) {
-                        throw new Error("Scriptlet not allowed. Scriptlet: " + callback.scriptlet);
-                    }
-                    callback.scriptlet(scriptlet);
-                }
-            };
+            var helper = new ExpressionParserHelper(callback, thisObj);
             
             startRegExp.lastIndex = 0;
             
@@ -278,7 +310,7 @@ raptor.defineClass(
             }
             
             //console.log("Loop ended");
-            endText();
+            helper._endText();
         };
         
         ExpressionParser.custom = {

@@ -22,9 +22,8 @@ raptor.defineModule(
         var TaglibCollection = raptor.require('templating.compiler.TaglibCollection'),
             taglibs = new TaglibCollection(),
             extend = raptor.extend,
-            errors = raptor.require('errors'),
             taglibsLoaded = false,
-            resources = raptor.require("resources"),
+            ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             defaultOptions = {
                 preserveWhitespace: {
                     'pre': true,
@@ -165,6 +164,31 @@ startTagOnly: {
              */
             addTaglib: function(taglib) {
                 taglibs.add(taglib); 
+            },
+            
+            /**
+             * 
+             * Registers a custom expression handler with the given name and handler function.
+             * 
+             * <p>
+             * Custom expression handlers are functions that can be used to control the compiled output
+             * of certain expressions. Custom expression handlers are of the following form:
+             * ${<handler-name>:<custom-expression>}
+             * 
+             * <p>
+             * When a custom expression handler is used in a template then the provided handler
+             * function will be invoked with two arguments:
+             * <ul>
+             *  <li><b>customExpression</b> (String) The custom expression provided in the template the (the part after the colon)</li>
+             *  <li><b>helper</b> (String) The custom expression provided in the template the (the part after the colon)</li>
+             * </ul>
+             * 
+             * @param name
+             * @param func
+             * @returns
+             */
+            registerCustomExpressionHandler: function(name, func) {
+                ExpressionParser.custom[name] = func;
             }
         };
     });
