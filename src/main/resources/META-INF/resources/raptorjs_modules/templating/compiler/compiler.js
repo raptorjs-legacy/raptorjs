@@ -180,7 +180,7 @@ startTagOnly: {
              * function will be invoked with two arguments:
              * <ul>
              *  <li><b>customExpression</b> (String) The custom expression provided in the template the (the part after the colon)</li>
-             *  <li><b>helper</b> (String) The custom expression provided in the template the (the part after the colon)</li>
+             *  <li><b>helper</b> (ExpressionParserHelper) The helper that can be used to control the compiled output</li>
              * </ul>
              * 
              * @param name
