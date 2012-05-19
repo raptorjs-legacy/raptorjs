@@ -19,9 +19,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var listeners = raptor.require("listeners"),
-            events = ['text', 'expression', 'scriptlet'],
-            endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g,
+        var endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g,
             Expression = raptor.require('templating.compiler.Expression'),
             strings = raptor.require('strings'),
             regexp = raptor.require('regexp'),
@@ -144,9 +142,12 @@ raptor.defineClass(
                  */
                 addExpression: function(expression) {
                     this._endText();
+                    
+                    
                     if (!(expression instanceof Expression)) {
                         expression = new Expression(expression);
                     }
+
                     this._invokeCallback("expression", expression);
                 },
                 

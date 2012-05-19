@@ -95,6 +95,14 @@ raptor.defineClass(
                 return this.properties[uri];
             },
             
+            forEachProperty: function(callback, thisObj) {
+                forEachEntry(this.properties, function(uri, properties) {
+                    forEachEntry(properties, function(name, value) {
+                        callback.call(thisObj, uri, name, value);
+                    }, this);
+                }, this);
+            },
+            
             getProperty: function(name) {
                 return this.getPropertyNS(null, name);
             },
@@ -120,10 +128,6 @@ raptor.defineClass(
                 if (namespaceProps) {
                     delete namespaceProps[name];
                 }
-            },
-            
-            forEachProperty: function(callback, thisObj) {
-                this.forEachPropertyNS('', callback, thisObj);
             },
             
             forEachPropertyNS: function(uri, callback, thisObj) {
@@ -196,7 +200,9 @@ raptor.defineClass(
             },
 
             replaceChild: function(newChild, replacedChild) {
-                if (newChild === replacedChild) return;
+                if (newChild === replacedChild) {
+                    return;
+                }
                 
                 for (var i=0, len=this.childNodes.length; i<len; i++) {
                     if (this.childNodes[i] == replacedChild) {

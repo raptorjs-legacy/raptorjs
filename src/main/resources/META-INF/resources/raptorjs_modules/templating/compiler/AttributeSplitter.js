@@ -115,7 +115,9 @@ raptor.defineClass(
                     if (types) {
                         var type = types[name] || types['*'];
                         if (type) {
-                            value = TypeConverter.convert(value, type.type, type.allowExpressions !== false);
+                            if (value != null) {
+                                value = TypeConverter.convert(value, type.type, type.allowExpressions !== false);
+                            }
                             if (type.name) {
                                 name = type.name;
                             }

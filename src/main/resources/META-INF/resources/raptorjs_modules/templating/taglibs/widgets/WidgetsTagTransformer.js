@@ -35,7 +35,7 @@ raptor.defineClass(
                     }
                     
                     if (!widgetsData.docVarAdded) {
-                        template.addRenderJavaScriptVar("widgetDoc", "context.widgetDoc()");
+                        template.addVar("widgetDoc", "context.widgetDoc()");
                         widgetsData.docVarAdded = true;
                     }
                     

@@ -48,7 +48,7 @@ raptor.defineClass(
                     if (uri == null) {
                         uri = '';
                     }
-                    return this.attributeMap[uri + ':' + localName] || this.attributeMap[uri + ':*'] || this.attributeMap['*:*'];
+                    return this.attributeMap[uri + ':' + localName] || this.attributeMap[uri + ':*'] || this.attributeMap['*:' + localName] || this.attributeMap['*:*'];
                 },
                 
                 toString: function() {

@@ -35,7 +35,7 @@ raptor.defineClass(
                 var handlerVar = handlerVars[handlerClass];
                 if (!handlerVar) {
                     handlerVars[handlerClass] = handlerVar = handlerClass.replace(/[.\-]/g, '_');
-                    template.addStaticJavaScriptVar(handlerVar, template.getStaticHelperFunction("getHandler", "h") + "(" + stringify(handlerClass) + ")");
+                    template.addStaticVar(handlerVar, template.getStaticHelperFunction("getTagHandler", "t") + "(" + stringify(handlerClass) + ")");
                 }
                 
                 return handlerVar;

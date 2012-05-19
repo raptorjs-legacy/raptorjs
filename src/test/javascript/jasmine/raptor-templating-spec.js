@@ -13,7 +13,7 @@ describe('templating module', function() {
         compileAndLoad = function(templatePath, invalid) {
             try
             {
-                var templateCompiler = raptor.require("templating.compiler").createCompiler({logErrors: invalid !== true});
+                var templateCompiler = raptor.require("templating.compiler").createCompiler({logErrors: invalid !== true, minify: false});
                 var src = readTemplate(templatePath);
                 var compiledSrc = templateCompiler.compile(src, templatePath);
                 console.log('\n==================================\nCompiled source (' + templatePath + '):\n----------------------------------\n', compiledSrc, "\n----------------------------------\n");
@@ -449,6 +449,29 @@ describe('templating module', function() {
         
         var output = compileAndRender("invoke.rhtml", "invoke", {}).output;
         expect(output).toEqual('A<p>Hello World!</p>B<p>Hello Frank! You have 10 new messages.</p>');
+    });
+    
+    it("should allow for helper functions", function() {
+        
+        var helperThisObj = {},
+            actualHelperThisObj;
+        
+        raptor.require('templating').registerHelpers(
+            "http://raptor.ebayopensource.org/test",
+            "test",
+            {
+                "trim": function(str) {
+                    actualHelperThisObj = this;
+                    return str ? raptor.require("strings").trim(str) : str;
+                },
+                "upperCase": function(str) {
+                    return str ? str.toUpperCase(str) : str;
+                }
+            }, helperThisObj);
+        
+        var output = compileAndRender("helper-functions.rhtml", "helper-functions", {}).output;
+        expect(output).toEqual('Hello WORLD! Hello World!');
+        expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
     });
     
 //    xit("should allow for widgets", function() {

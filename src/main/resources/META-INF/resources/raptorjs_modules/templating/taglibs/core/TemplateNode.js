@@ -19,9 +19,11 @@ raptor.defineClass(
     'templating.compiler.Node',
     function() {
         "use strict";
-        
-        var extend = raptor.extend,
-            errors = raptor.errors;
+
+        var forEach = raptor.forEach,
+            getURIVarName = function(uri) {
+                return uri.replace(/[:\/\.\-\?]/g, '_');
+            };
         
         var TemplateNode = function(props) {
             TemplateNode.superclass.constructor.call(this);
@@ -38,17 +40,37 @@ raptor.defineClass(
                 
                 if (params) {
                     params = params.split(/\s*,\s*/g);
+                    
+                    forEach(params, function(param) {
+                        template.addVar(param, "data." + param);
+                    }, this);
                 }
                 else {
                     params = null;
                 }
+                
+                this.forEachProperty(function(uri, name, value) {
+                    if (name === 'helpers') {
+                        var uriVarName = getURIVarName(uri);
+                        if (!template.hasStaticVar(uriVarName)) {
+                            template.addStaticVar(uriVarName, JSON.stringify(uri));
+                        }
+                        
+                        var helpers = value.split(/\s*,\s*/g);
+                        
+                        forEach(helpers, function(helper) {
+                            template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                        }, this);
+                    }
+                }, this);
+
                 
                 if (!name) {
                     raptor.throwError(new Error('The "name" attribute is required for the ' + this.toString() + ' tag.'));
                 }
                 
                 template.setTemplateName(name);
-                template.addTemplateParams(params);
+                
                 this.generateCodeForChildren(template);
             }
         };

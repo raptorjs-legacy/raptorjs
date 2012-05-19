@@ -19,7 +19,28 @@ raptor.defineClass(
     function() {
         "use strict";
         
-        var Expression = function(expression) {
+        var operatorsRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\s+(?:and|or|lt|gt|eq|ne|lt|gt|ge|le)\s+/g,
+            strings = raptor.require('strings'),
+            replacements = {
+                "and": " && ",
+                "or": " || ",
+                "eq": " === ",
+                "ne": " !== ",
+                "lt": " < ",
+                "gt": " > ",
+                "ge": " >= ",
+                "le": " <= "
+            },
+            handleBinaryOperators = function(str) {
+                return str.replace(operatorsRegExp, function(match) {
+                    return replacements[strings.trim(match)] || match;
+                });
+            };
+        
+        var Expression = function(expression, replaceSpecialOperators) {
+            if (replaceSpecialOperators !== false && typeof expression === 'string') {
+                expression = handleBinaryOperators(expression);
+            }
             this.expression = expression;
         };
         

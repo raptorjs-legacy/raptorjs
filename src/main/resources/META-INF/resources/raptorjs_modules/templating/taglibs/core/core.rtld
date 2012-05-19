@@ -13,8 +13,15 @@
             <name>name</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
+        
         <attribute>
             <name>params</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <uri>*</uri>
+            <name>helpers</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
         

@@ -65,7 +65,7 @@ raptor.defineClass(
                      * VALIDATION:
                      * Loop over all of the provided attributes and make sure they are allowed 
                      */
-                    this.forEachProperty(function(name, value) {
+                    this.forEachPropertyNS('', function(name, value) {
                         if (name === 'function') {
                             return;
                         }

@@ -33,6 +33,10 @@ raptor.defineClass(
             var hasExpression = false,
                 expressionParts = [];
             
+            if (value == null) {
+                return value;
+            }
+            
             if (targetType === 'custom' || targetType === 'identifier') {
                 return value;
             }

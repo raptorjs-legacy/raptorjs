@@ -28,15 +28,16 @@ raptor.defineClass(
         var TemplateBuilder = function(compiler) {
             this.compiler = compiler;
             this.options = compiler.options;
-            this.taglibs = {};
             this.templateName = null;
             this.curText = null;
             this.attributes = {};
             
-            this.staticJavaScriptVars = [];
+            this.staticVars = [];
+            this.staticVarsLookup = {};
             this.helperFunctionsAdded = {};
             
-            this.renderJavaScriptVars = [];
+            this.vars = [];
+            this.varsLookup = {};
             
             this.javaScriptCode = strings.createStringBuilder(); 
             
@@ -73,10 +74,10 @@ raptor.defineClass(
                 }
                 else {
                     if (isStatic) {
-                        this.addStaticJavaScriptVar(varName, "helpers." + propName);
+                        this.addStaticVar(varName, "helpers." + propName);
                     }
                     else {
-                        this.addRenderJavaScriptVar(varName, "contextHelpers." + propName);
+                        this.addVar(varName, "contextHelpers." + propName);
                     }
                     
                     this.helperFunctionsAdded[key] = varName;
@@ -92,12 +93,22 @@ raptor.defineClass(
                 return this._getHelperFunction(varName, propName, true);
             },
             
-            addStaticJavaScriptVar: function(name, expression) {
-                this.staticJavaScriptVars.push({name: name, expression: expression});
+            hasStaticVar: function(name) {
+                return this.staticVarsLookup[name] === true;
             },
             
-            addRenderJavaScriptVar: function(name, expression) {
-                this.renderJavaScriptVars.push({name: name, expression: expression});
+            addStaticVar: function(name, expression) {
+                this.staticVarsLookup[name] = true;
+                this.staticVars.push({name: name, expression: expression});
+            },
+            
+            hasVar: function(name) {
+                return this.vars[name] === true;
+            },
+            
+            addVar: function(name, expression) {
+                this.vars[name] = true;
+                this.vars.push({name: name, expression: expression});
             },
             
             _writeVars: function(vars, out) {
@@ -203,11 +214,11 @@ raptor.defineClass(
                 out.append(',');
                 out.append('function(helpers){');
                 //Write out the static variables
-                this._writeVars(this.staticJavaScriptVars, out);
+                this._writeVars(this.staticVars, out);
                 out.append('return function(data, context, contextHelpers){\n');
                 
                 //Write out the render variables
-                this._writeVars(this.renderJavaScriptVars, out);
+                this._writeVars(this.vars, out);
                 
                 this._endText();
                 this._endWrites();
@@ -218,12 +229,6 @@ raptor.defineClass(
             
             setTemplateName: function(templateName) {
                 this.templateName = templateName;
-            },
-            
-            addTemplateParams: function(templateParams) {
-                forEach(templateParams, function(param) {
-                    this.addRenderJavaScriptVar(param, "data." + param);
-                }, this);
             },
             
             makeExpression: function(expression) {

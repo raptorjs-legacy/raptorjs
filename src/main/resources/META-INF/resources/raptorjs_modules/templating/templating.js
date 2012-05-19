@@ -26,6 +26,7 @@ raptor.defineModule('templating', function(raptor) {
         escapeXmlAttr = raptor.require('xml.utils').escapeXmlAttr,
         Context = raptor.require("templating.Context"),
         templating,
+        helpers,
         /**
          * Helper function to check if an object is "empty". Different types of objects are handled differently:
          * 1) null/undefined: Null and undefined objects are considered empty
@@ -186,15 +187,47 @@ raptor.defineModule('templating', function(raptor) {
         
         /**
          * 
+         * @param name
+         * @param func
+         * @param thisObj
+         */
+        registerHelpers: function(uri, shortName, newHelpers, thisObj) {
+            forEachEntry(newHelpers, function(name, func) {
+                var helperFunc;
+                if (thisObj) {
+                    helperFunc = function() { return func.apply(thisObj, arguments); };
+                }
+                else {
+                    helperFunc = func;
+                }
+                helpers[uri + ":" + name] = helperFunc;
+                if (shortName) {
+                    helpers[shortName + ":" + name] = helperFunc;
+                }
+            }, this);
+        },
+        
+        /**
+         * 
          */
         helpers: {
+            h: function(uri, name) {
+                var helper = uri ? helpers[uri + ":" + name] : helpers[name];
+                if (!helper) {
+                    
+                    raptor.throwError(new Error('Helper function not found with name "' + name + '" and uri "' + uri + '"'));
+                }
+                
+                return helper;
+            },
+            
             /**
              * Helper function to return the singelton instance of a tag handler
              * 
              * @param name The class name of the tag handler
              * @returns {Object} The tag handler singleton instance.
              */
-            h: function(name) {
+            t: function(name) {
                 var Handler = raptor.require(name), //Load the handler class
                     instance;
                 
@@ -274,6 +307,8 @@ raptor.defineModule('templating', function(raptor) {
             }
         }
     };
+    
+    helpers = templating.helpers;
     
     return templating;
     

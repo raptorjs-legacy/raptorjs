@@ -53,7 +53,7 @@ raptor.defineClass(
                 
                 var parts = parseForEach(each);
                 
-                var items = parts["in"];
+                var items = template.makeExpression(parts["in"]);
                 var varName = parts["var"];
                 if (separator && !varStatus) {
                     varStatus = "__loop";

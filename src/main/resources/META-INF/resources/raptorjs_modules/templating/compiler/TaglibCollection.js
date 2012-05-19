@@ -35,7 +35,8 @@ raptor.defineClass(
             this.tagDefs = {}; //Tag definitions lookup
             this.textTransformers = [];
             this.taglibUris = {}; //Lookup to track the URIs of taglibs that have been added to this collection
-            this.shortnameToUriMapping = {};
+            this.shortNameToUriMapping = {};
+            this.uriToShortNameMapping = {};
             
         };
         
@@ -70,7 +71,8 @@ raptor.defineClass(
                      * can map the short name to the full URI
                      */
                     this.taglibUris[taglib.shortName] = true; //Mark the short name as being a taglib
-                    this.shortnameToUriMapping[taglib.shortName] = taglib.uri; //Add the mapping
+                    this.shortNameToUriMapping[taglib.shortName] = taglib.uri; //Add the mapping
+                    this.uriToShortNameMapping[taglib.uri] = taglib.shortName; //Add the reverse-mapping
                 }
                 
                 /*
@@ -166,16 +168,32 @@ raptor.defineClass(
              * Resolves a taglib short name to a taglib URI.
              * 
              * <p>
-             * If the provided URI is not a known short name then it is just returned.
+             * If the provided short name is not a known short name then it is just returned.
              * 
              * @param shortName {String} The taglib short name to resolve
              * @returns {String} The resolved URI or the input string if it is not a known short name
              */
             resolveURI: function(shortName) {
                 if (!shortName) {
-                    return;
+                    return shortName;
                 }
-                return this.shortnameToUriMapping[shortName] || shortName;
+                return this.shortNameToUriMapping[shortName] || shortName;
+            },
+            
+            /**
+             * Resolves a taglib URI to a taglib short name.
+             * 
+             * <p>
+             * If the provided URI is not a known short name then it is just returned.
+             * 
+             * @param uri {String} The taglib uri to resolve to a short name
+             * @returns {String} The resolved short name or the input string if there is not a known short name
+             */
+            resolveShortName: function(uri) {
+                if (!uri) {
+                    return uri;
+                }
+                return this.uriToshortNameMapping[uri] || uri;
             },
             
             /**

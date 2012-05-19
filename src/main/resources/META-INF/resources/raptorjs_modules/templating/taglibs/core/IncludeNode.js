@@ -41,7 +41,7 @@ raptor.defineClass(
                 }
                 var propParts = [];
                 
-                this.forEachProperty(function(name, value) {
+                this.forEachPropertyNS('', function(name, value) {
                     propParts.push(stringify(name) + ": " + value);
                 }, this);
                 
