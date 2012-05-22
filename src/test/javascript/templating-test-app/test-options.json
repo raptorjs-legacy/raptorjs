@@ -1,6 +1,6 @@
 {
     "preserveWhitespace": {
-        "pre": true,
+        "pre": false,
         "textarea": true
     },
     "allowSelfClosing": {

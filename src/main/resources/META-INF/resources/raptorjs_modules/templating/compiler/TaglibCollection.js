@@ -37,6 +37,7 @@ raptor.defineClass(
             this.taglibUris = {}; //Lookup to track the URIs of taglibs that have been added to this collection
             this.shortNameToUriMapping = {};
             this.uriToShortNameMapping = {};
+            this.functionsLookup = {};
             
         };
         
@@ -140,6 +141,20 @@ raptor.defineClass(
                 forEach(taglib.textTransformers, function(textTransformer) {
                     this.textTransformers.push(extend(new Transformer(), textTransformer));
                 }, this);
+                
+                
+                
+                forEach(taglib.functions, function(func) {
+                    if (!func.name) {
+                        return;
+                    }
+                    this.functionsLookup[taglib.uri + ":" + func.name] = func;
+                    if (taglib.shortName) {
+                        this.functionsLookup[taglib.shortName + ":" + func.name] = func;
+                    }
+                }, this);
+                
+                
             },
             
             /**
@@ -290,6 +305,10 @@ raptor.defineClass(
                     this.tagDefs[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
                 }
                 return tagDef;
+            },
+            
+            getFunction: function(uri, functionName) {
+                return this.functionsLookup[uri + ":" + functionName];
             }
         };
         

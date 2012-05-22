@@ -23,7 +23,13 @@ raptor.defineClass(
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             strings = raptor.require('strings'),
             listeners = raptor.require('listeners'),
-            nextUniqueId = 0;
+            nextUniqueId = 0,
+            helpers,
+            bind = function(func, context) {
+                return function() {
+                    return func.apply(context, arguments); //Proxy the arguments to the real function and use the "context" object for the "this" object
+                };
+            };
         
         /**
          * 
@@ -33,6 +39,18 @@ raptor.defineClass(
             var _this = this;
             this.attributes = {};
             listeners.makeObservable(this, Context.prototype);
+            
+            var contextHelpers = {};
+            
+            /*
+             * Now bind all of the Context helper functions to the correct "this" so that they
+             * can be executed directly (i.e. "func()" instead of "context.func()")
+             */
+            forEachEntry(helpers, function(name, func) {
+                contextHelpers[name] = bind(func, _this);
+            });
+            
+            this._helpers = contextHelpers; //Associate the bound helpers with the context
         };
 
         Context.prototype = {
@@ -99,27 +117,55 @@ raptor.defineClass(
                 props.invokeBody = body;
                 handler.process(props, this);
             },
-            
-            getHelpers: function() {
-                return this._helpers;
+
+            getFunction: function(uri, name) {
+                var key = uri + ":" + name;
+                var helper = this._helpers[key];
+                if (!helper) {
+                    var unboundHelper = raptor.require("templating").getFunction(uri, name);
+                    helper = this._helpers[key] = bind(unboundHelper, this);
+                }
+                
+                return helper;
             }
         };
         
-        Context.helpers = {
+        Context.namespacedHelpers = helpers = {
+                /**
+                 * Helper function to write out a string to the context
+                 * @param str
+                 * @returns
+                 */
                 w: function(str) {
                     this.write(str);
-                    return this.getHelpers().w;
+                    return this._helpers.w;
                 },
                 
 //                w: function() {
 //                    for (var args = arguments, i=0, len=args.length; i<len; i++) {
 //                        this.write(args[i]);
 //                    }
-//                    return this.getHelpers().w;
+//                    return _helpers.w;
 //                },
+                /**
+                 * Helper function to return a namespaced helper function
+                 * @param uri
+                 * @param name
+                 * @returns
+                 */
+                h: function(uri, name) {
+                    return this.getFunction(uri, name);
+                },
                 
-                h: Context.prototype.invokeHandler,
+                /**
+                 * Helper function invoke a tag handler
+                 */
+                t: Context.prototype.invokeHandler,
                 
+                /**
+                 * Helper function to render dynamic attributes
+                 * @param attrs
+                 */
                 a: function(attrs) {
                     if (!attrs) {
                         return;
@@ -130,6 +176,12 @@ raptor.defineClass(
                     }, this);
                 },
                 
+                /**
+                 * Helper function include another template
+                 * 
+                 * @param name
+                 * @param data
+                 */
                 i: function(name, data) {
                     raptor.require("templating").render(name, data, this);
                 }

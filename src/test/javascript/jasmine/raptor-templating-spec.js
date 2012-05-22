@@ -4,7 +4,6 @@ describe('templating module', function() {
     var files = raptor.require('files'),
         templatesDir = getTestsDir("/resources/test-templates"),
         logger = raptor.require('logging').logger('raptor-templating-spec'),
-        stringify = raptor.require('json.stringify').stringify,
         readTemplate = function(path) {
             var src = files.readFully(
                     files.joinPaths(templatesDir, path));
@@ -37,12 +36,12 @@ describe('templating module', function() {
                 throw e;
             }
         },
-        compileAndRender = function(templatePath, templateName, data, invalid) {
+        compileAndRender = function(templatePath, templateName, data, invalid, context) {
             try
             {
                 var compiledSrc = compileAndLoad(templatePath, invalid);
                 
-                var output = raptor.require("templating").renderToString(templateName, data);
+                var output = raptor.require("templating").renderToString(templateName, data, context);
                 console.log('==================================\nOutput (' + templatePath + '):\n----------------------------------\n', output, "\n----------------------------------\n");
                 
                 return {
@@ -456,7 +455,7 @@ describe('templating module', function() {
         var helperThisObj = {},
             actualHelperThisObj;
         
-        raptor.require('templating').registerHelpers(
+        raptor.require('templating').registerFunctions(
             "http://raptor.ebayopensource.org/test",
             "test",
             {
@@ -469,9 +468,41 @@ describe('templating module', function() {
                 }
             }, helperThisObj);
         
-        var output = compileAndRender("helper-functions.rhtml", "helper-functions", {}).output;
+        var output = compileAndRender("helper-functions-shortname.rhtml", "helper-functions-shortname", {}).output;
         expect(output).toEqual('Hello WORLD! Hello World!');
         expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
+        
+        output = compileAndRender("helper-functions-uri.rhtml", "helper-functions-uri", {}).output;
+        expect(output).toEqual('Hello WORLD! Hello World!');
+        expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
+    });
+    
+    it("should allow for context helper functions", function() {
+
+        raptor.require('templating').registerFunctions(
+            "http://raptor.ebayopensource.org/test",
+            "test",
+            {
+                "user": function(str) {
+                    return this.attributes["loggedInUser"];
+                },
+                "isLoggedIn": function() {
+                    return this.attributes["loggedInUser"] != null; 
+                }
+            });
+        
+        var context = raptor.require('templating').createContext();
+        context.attributes["loggedInUser"] = {
+                firstName: "John",
+                lastName: "Doe"
+        };
+        
+        var output = compileAndRender("context-helper-functions-shortname.rhtml", "context-helper-functions-shortname", {}, false, context).output;
+        expect(output).toEqual('Hello John Doe!');
+        
+        output = compileAndRender("context-helper-functions-uri.rhtml", "context-helper-functions-uri", {}, false, context).output;
+        expect(output).toEqual('Hello John Doe!');
+        
     });
     
 //    xit("should allow for widgets", function() {

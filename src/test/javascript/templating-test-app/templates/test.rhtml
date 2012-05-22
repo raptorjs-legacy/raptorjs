@@ -1,15 +1,22 @@
 <c:template 
-    xmlns:c="http://raptor.ebayopensource.org/core" 
+    xmlns:c="http://raptor.ebayopensource.org/core"
+    xmlns:test="test" 
     name="test"
     params="name,count,rootClass,colors,message,buttonAttrs">
     
-    <html>
     
-        <head>
-            <title>Templating Demo</title>
-        </head>
-        <body>
-            Hello $name! You have $count new messages!
-        </body>
-    </html>
+    <c:def function="greeting(name)">
+        Hello ${name}
+    </c:def>
+    
+    ${greeting('John')}
+    ${greeting('Frank')}
+    
+    <img src="logo.jpg"/>
+    
+    <pre>
+    This whitespace
+    will be
+    preserved
+    </pre>
 </c:template>

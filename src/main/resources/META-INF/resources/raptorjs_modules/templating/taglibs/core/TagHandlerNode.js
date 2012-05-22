@@ -89,7 +89,7 @@ raptor.defineClass(
                 
                 var handlerVar = addHandlerVar(template, this.tagDef.handlerClass);
 
-                template.addJavaScriptCode(template.getContextHelperFunction("invokeHandler", "h") + '(' +
+                template.addJavaScriptCode(template.getContextHelperFunction("invokeHandler", "t") + '(' +
                         handlerVar + ',');
                 
                 

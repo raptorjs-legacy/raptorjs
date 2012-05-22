@@ -1,14 +1,9 @@
 {
     name: "Frank",
-    count: 30, 
-    message: "something", 
-    colors: ["yellow", "green", "blue", "pink"], 
-    rootClass: "test",
+    count: 30,
+    colors: ["Red", "Green", "Blue"],
     myAttrs: {
-        class: "my-class <>",
-        width: "100%"
-    },
-    buttonAttrs: {
-        style: "font-size: 120%;"
+        class: "my-class",
+        style: "border: 1px solid Black"
     }
 }

@@ -2,8 +2,8 @@
     
     
     <tlib-version>1.0</tlib-version>
-    <short-name>t</short-name>
-    <uri>http://ebay.com/raptor/test</uri>
+    <short-name>test</short-name>
+    <uri>http://raptor.ebayopensource.org/test</uri>
     
     
     <tag>

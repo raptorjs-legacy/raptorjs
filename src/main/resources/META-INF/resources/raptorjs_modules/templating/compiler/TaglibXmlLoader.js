@@ -20,8 +20,6 @@ raptor.defineClass(
         "use strict";
         
         var objectMapper = raptor.require('xml.sax.objectMapper'),
-            strings = raptor.require("strings"),
-            Taglib = raptor.require('templating.compiler.Taglib'),
             STRING = "string",
             BOOLEAN = "boolean",
             OBJECT = "object",
@@ -277,6 +275,32 @@ raptor.defineClass(
                                 
                                 "uri": {
                                     _type: STRING
+                                }
+                            },
+                            
+                            "function": {
+                                _type: OBJECT,
+                                
+                                _begin: function() {
+                                    return {
+                                        
+                                    };
+                                },
+                                
+                                _end: function(func, taglib) {
+                                    if (!taglib.functions) {
+                                        taglib.functions = [];
+                                    }
+                                    taglib.functions.push(func);
+                                },
+                                
+                                "name": {
+                                    _type: STRING
+                                },
+                                
+                                "bind-to-context": {
+                                    _type: BOOLEAN,
+                                    _targetProp: "bindToContext"
                                 }
                             }
                             

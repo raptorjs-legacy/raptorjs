@@ -27,6 +27,15 @@ raptor.defineModule('templating', function(raptor) {
         Context = raptor.require("templating.Context"),
         templating,
         helpers,
+        _getFunction = function(uri, name) {
+            var helper = uri ? helpers[uri + ":" + name] : helpers[name];
+            if (!helper) {
+                
+                raptor.throwError(new Error('Helper function not found with name "' + name + '" and uri "' + uri + '"'));
+            }
+            
+            return helper;
+        },
         /**
          * Helper function to check if an object is "empty". Different types of objects are handled differently:
          * 1) null/undefined: Null and undefined objects are considered empty
@@ -160,6 +169,16 @@ raptor.defineModule('templating', function(raptor) {
         },
         
         /**
+         * Helper function to return a helper function
+         * 
+         * @function
+         * @param uri
+         * @param name
+         * @returns {Function} The corresponding helper function. An exception is thrown if the helper function is not found
+         */
+        getFunction: _getFunction,
+        
+        /**
          * Creates a new context object that can be used as the context for
          * template rendering.
          * 
@@ -168,20 +187,6 @@ raptor.defineModule('templating', function(raptor) {
          */
         createContext: function(writer) {
             var context = new Context(writer); //Create a new context using the writer provided
-            
-            var contextHelpers = {};
-            
-            /*
-             * Now bind all of the Context helper functions to the correct "this" so that they
-             * can be executed directly (i.e. "func()" instead of "context.func()")
-             */
-            forEachEntry(Context.helpers, function(name, func) {
-                contextHelpers[name] = function() {
-                    return func.apply(context, arguments); //Proxy the arguments to the real function and use the "context" object for the "this" object
-                };
-            });
-            
-            context._helpers = contextHelpers; //Associate the bound helpers with the context
             return context; //Return the newly created context
         },
         
@@ -191,7 +196,7 @@ raptor.defineModule('templating', function(raptor) {
          * @param func
          * @param thisObj
          */
-        registerHelpers: function(uri, shortName, newHelpers, thisObj) {
+        registerFunctions: function(uri, shortName, newHelpers, thisObj) {
             forEachEntry(newHelpers, function(name, func) {
                 var helperFunc;
                 if (thisObj) {
@@ -211,18 +216,19 @@ raptor.defineModule('templating', function(raptor) {
          * 
          */
         helpers: {
-            h: function(uri, name) {
-                var helper = uri ? helpers[uri + ":" + name] : helpers[name];
-                if (!helper) {
-                    
-                    raptor.throwError(new Error('Helper function not found with name "' + name + '" and uri "' + uri + '"'));
-                }
-                
-                return helper;
-            },
             
             /**
-             * Helper function to return the singelton instance of a tag handler
+             * Helper function to return a helper function
+             * 
+             * @function
+             * @param uri
+             * @param name
+             * @returns {Function} The corresponding helper function. An exception is thrown if the helper function is not found
+             */
+            h: _getFunction,
+            
+            /**
+             * Helper function to return the singleton instance of a tag handler
              * 
              * @param name The class name of the tag handler
              * @returns {Object} The tag handler singleton instance.

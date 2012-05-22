@@ -2,8 +2,8 @@
     
     
     <tlib-version>1.0</tlib-version>
-    <short-name>t</short-name>
-    <uri>http://ebay.com/raptor/test</uri>
+    <short-name>test</short-name>
+    <uri>http://raptor.ebayopensource.org/test</uri>
     
     
     <tag>
@@ -40,5 +40,23 @@
         <attribute name="label"/>
         <attribute name="type"/>
     </tag>
+    
+    <function>
+        <name>user</name>
+        <bind-to-context>true</bind-to-context>            
+    </function>
+    
+    <function>
+        <name>isLoggedIn</name>
+        <bind-to-context>true</bind-to-context>            
+    </function>  
+    
+    <function>
+        <name>trim</name>
+    </function>
+    
+    <function>
+        <name>upperCase</name>
+    </function>
 
 </raptor-taglib>

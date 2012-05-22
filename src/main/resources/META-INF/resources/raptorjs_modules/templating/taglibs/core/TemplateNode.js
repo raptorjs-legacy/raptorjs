@@ -22,7 +22,7 @@ raptor.defineClass(
 
         var forEach = raptor.forEach,
             getURIVarName = function(uri) {
-                return uri.replace(/[:\/\.\-\?]/g, '_');
+                return uri.replace(/[^a-zA-Z0-9]+/g, '_');
             };
         
         var TemplateNode = function(props) {
@@ -36,7 +36,15 @@ raptor.defineClass(
         
             doGenerateCode: function(template) {
                 var name = this.getProperty("name"),
-                    params = this.getProperty("params");
+                    params = this.getProperty("params"),
+                    addUriVar = function(uri) {
+                        var uriVarName = uri.replace(/[^a-zA-Z0-9]+/g, '_');
+                        if (!template.hasStaticVar(uriVarName)) {
+                            template.addStaticVar(uriVarName, JSON.stringify(uri));
+                        }
+                        return uriVarName;
+                    },
+                    uriVarName;
                 
                 if (params) {
                     params = params.split(/\s*,\s*/g);
@@ -50,16 +58,20 @@ raptor.defineClass(
                 }
                 
                 this.forEachProperty(function(uri, name, value) {
-                    if (name === 'helpers') {
-                        var uriVarName = getURIVarName(uri);
-                        if (!template.hasStaticVar(uriVarName)) {
-                            template.addStaticVar(uriVarName, JSON.stringify(uri));
-                        }
+                    if (name === 'functions') {
+                        uriVarName = addUriVar(uri);
                         
-                        var helpers = value.split(/\s*,\s*/g);
-                        
-                        forEach(helpers, function(helper) {
-                            template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                        forEach(value.split(/\s*,\s*/g), function(helper) {
+                            var func = template.compiler.taglibs.getFunction(uri, helper);
+                            if (!func) {
+                                raptor.throwError(new Error('Function with name "' + helper + '" not found in taglib "' + uri + '"'));
+                            }
+                            if (func.bindToContext === true) {
+                                template.addVar(helper, template.getContextHelperFunction("getContextHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");    
+                            }
+                            else {
+                                template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                            }
                         }, this);
                     }
                 }, this);

@@ -21,10 +21,10 @@
         
         <attribute>
             <uri>*</uri>
-            <name>helpers</name>
+            <name>functions</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
-        
+
         <node-compiler-class>templating.taglibs.core.TemplateNode</node-compiler-class>
     </tag>
     
