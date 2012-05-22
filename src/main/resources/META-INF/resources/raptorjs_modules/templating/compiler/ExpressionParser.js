@@ -175,68 +175,74 @@ raptor.defineClass(
          * @param thisObj
          */
         ExpressionParser.parse = function(str, callback, thisObj) {
-            var searchStart = 0,
-                textStart = 0,
-                textEnd,
-                startMatches,
-                endMatches,
-                expressionStart,
-                expression,
-                isScriptlet,
-                startToken;
+            var textStart = 0, //The index of the start of the next text block
+                textEnd, //The index of the current text block
+                startMatches, //The matches found when searching for the possible start tokens
+                endMatches, //The matches found when searching through special expression tokens
+                expressionStart, //The index of the start of the current expression
+                expression, //The current expression string
+                isScriptlet, //If true, then the expression is a scriptlet
+                startToken; //The start token for the current expression
             
             var helper = new ExpressionParserHelper(callback, thisObj);
             
             startRegExp.lastIndex = 0;
             
+            /*
+             * Look for any of the possible start tokens (including the escaped and double-escaped versions)
+             */
             outer:
             while((startMatches = startRegExp.exec(str))) {
                 
-                if (!startMatches) {
-                    helper.addText(str.substring(textStart, str.length));
-                    textStart = str.length;
-                    break;
-                }
-                else if (strings.startsWith(startMatches[0], "\\\\")) { // \\{ or \\${
-                    //We found a start token that is preceeded by an escaped backslash... Add a black slash and handle the expression
-                    textEnd = startMatches.index + 1;
+                if (strings.startsWith(startMatches[0], "\\\\")) { // \\${
+                    /*
+                     * We found a double-escaped start token.
+                     * 
+                     * We found a start token that is preceeded by an escaped backslash...
+                     * The start token is a valid start token preceded by an escaped
+                     * backslash. Add a single black slash and handle the expression
+                     */
+                    textEnd = startMatches.index + 1; //Include everything up to and include the first backslash as part of the text
                     startToken = startMatches[0].substring(2); //Record the start token
-                    expressionStart = startMatches.index + startMatches[0].length;
+                    expressionStart = startMatches.index + startMatches[0].length; //The expression starts after the start token
                 }
-                else if (strings.startsWith(startMatches[0], "\\")) { // \{
-                    //We found a start token that is escaped... it needs to be added as text
-                    helper.addText(str.substring(textStart, startMatches.index));
-                    helper.addText(startMatches[0].substring(1));
-                    textStart = startRegExp.lastIndex;
+                else if (strings.startsWith(startMatches[0], "\\")) { // \${
+                    /*
+                     * We found a start token that is escaped. We should
+                     * add the unescaped start token to the text output.
+                     */
+                    helper.addText(str.substring(textStart, startMatches.index)); //Add everything preceeding the start token
+                    helper.addText(startMatches[0].substring(1)); //Add the start token excluding the initial escape character
+                    textStart = startRegExp.lastIndex; // The next text block we find will be after this match
                     continue;
                 }
-                else if (startMatches[0] == "{%" || startMatches[0] == "${" || startMatches[0] == "{" || startMatches[0] == "$") {
-                    startToken = startMatches[0];
-                    textEnd = startMatches.index;
+                else if (endingTokens.hasOwnProperty(startMatches[0])) {
+                    /*
+                     * We found a valid start token 
+                     */
+                    startToken = startMatches[0]; //Record the start token
+                    textEnd = startMatches.index; //The text ends where the start token begins
                 }
                 else {
-                    searchStart += startMatches.index + startMatches[0].length;
-                    continue;
+                    raptor.throwError(new Error("Illegal state. Unexpected start token: " + startMatches[0]));
                 }
 
                 expressionStart = startRegExp.lastIndex; //Expression starts where the start token ended
 
-                if (textStart !== textEnd) {
+                if (textStart !== textEnd) { //If there was any text between expressions then add it now
                     helper.addText(str.substring(textStart, textEnd));
                 }
                 
-                var endToken = endingTokens[startToken];
-                if (!endToken) {
-                    variableRegExp.lastIndex = expressionStart;
-                    var variableMatches = variableRegExp.exec(str);
-                    if (!variableMatches) {
-                        raptor.throwError('Invalid expression "$' + str.substring(expressionStart) + '"');
+                var endToken = endingTokens[startToken]; //Look up the end token
+                if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
+                    variableRegExp.lastIndex = expressionStart; //Reset the variable search regular expression to start searching from where the expression begins
+                    var variableMatches = variableRegExp.exec(str); //Find the variable name that follows the starting "$" token
+                    if (!variableMatches) { //We did not find a valid variable name after the starting "$" token
+                        raptor.throwError('Invalid expression "$' + str.substring(expressionStart) + '"'); //TODO: Provide a more helpful error message
                     }
-                    helper.addExpression(variableMatches[1]);
+                    helper.addExpression(variableMatches[1]); //Add the variable as an expression
                     
                     startRegExp.lastIndex = textStart = variableMatches.index + variableMatches[1].length; //Start searching from where the end token ended
-                    
-                    //console.log('Found ending curly. Start index now: ' + searchStart);
                     continue outer;
                 }
                 
