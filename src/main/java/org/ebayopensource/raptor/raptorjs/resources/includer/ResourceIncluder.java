@@ -105,6 +105,12 @@ public abstract class ResourceIncluder {
         return context;
     }
     
+    public ResourceIncluderContext resetResourceIncluderContext(ServletRequest request) {
+       	ResourceIncluderContext context = this.createIncluderContext(request);
+        request.setAttribute(ResourceIncluder.INCLUDE_CONTEXT_KEY, context);
+        return context;
+    }
+    
     protected abstract ResourceIncluderContext createIncluderContext(ServletRequest request);
     
     public void includeResource(String path, ResourceType resourceType, ServletRequest request) {
