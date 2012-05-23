@@ -46,14 +46,12 @@ raptor.defineClass(
                     renderedIfAttr,
                     attrsAttr,
                     whenAttr,
-                    otherwiseAttr,
                     allowBodyExpressionsAttr,
                     stripAttr,
                     contentAttr,
                     replaceAttr,
                     replaced,
                     forEachProp = function(callback, thisObj) {
-                        var props = {};
                         forEach(node.getAttributes(), function(attr) {
 
                             if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.prefix == 'xmlns') {
@@ -90,7 +88,7 @@ raptor.defineClass(
                 if ((whenAttr = node.getAttributeNS(coreNS, "when")) != null) {
                     node.removeAttributeNS(coreNS, "when");
 
-                    var whenNode = new WhenNode({test: whenAttr});
+                    var whenNode = new WhenNode({test: new Expression(whenAttr)});
                     replaced = node.parentNode.replaceChild(whenNode, node);
                     if (!replaced) {
                         errors.throwError(new Error('Unable to replace child'));
@@ -98,7 +96,7 @@ raptor.defineClass(
                     whenNode.appendChild(node);
                 }
                 
-                if ((otherwiseAttr = node.getAttributeNS(coreNS, "otherwise")) != null) {
+                if (node.getAttributeNS(coreNS, "otherwise") != null) {
                     node.removeAttributeNS(coreNS, "otherwise");
 
                     var otherwiseNode = new OtherwiseNode({});
@@ -108,8 +106,6 @@ raptor.defineClass(
                     }
                     otherwiseNode.appendChild(node);
                 }
-                
-                
                 
                 if ((attrsAttr = node.getAttributeNS(coreNS, "attrs")) != null) {
                     node.removeAttributeNS(coreNS, "attrs");
@@ -150,7 +146,7 @@ raptor.defineClass(
                     node.removeAttributeNS(coreNS, "if");
                     
                     var ifNode = new IfNode({
-                        test: renderedIfAttr
+                        test: new Expression(renderedIfAttr)
                     });
                     
                     //Surround the existing node with an "if" node by replacing the current
