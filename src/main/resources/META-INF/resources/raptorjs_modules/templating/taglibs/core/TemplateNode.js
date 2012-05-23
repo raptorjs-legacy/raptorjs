@@ -20,10 +20,7 @@ raptor.defineClass(
     function() {
         "use strict";
 
-        var forEach = raptor.forEach,
-            getURIVarName = function(uri) {
-                return uri.replace(/[^a-zA-Z0-9]+/g, '_');
-            };
+        var forEach = raptor.forEach;
         
         var TemplateNode = function(props) {
             TemplateNode.superclass.constructor.call(this);
