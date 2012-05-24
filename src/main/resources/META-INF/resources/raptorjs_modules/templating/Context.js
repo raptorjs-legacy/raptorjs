@@ -172,7 +172,11 @@ raptor.defineClass(
                     }
                     
                     forEachEntry(attrs, function(name, value) {
-                        this.write(' ' + name + (value == null ? '' : ('="' + escapeXmlAttr(value) + '"')));
+                        if (value === undefined) {
+                            return;
+                        }
+                        
+                        this.write(' ' + name + (value === null ? '' : ('="' + escapeXmlAttr(value) + '"')));
                     }, this);
                 },
                 
