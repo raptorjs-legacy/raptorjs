@@ -71,7 +71,7 @@ raptor.defineClass(
                                 //Tag doesn't allow dynamic attributes
                                 if (!uri || !compiler.taglibs.isTaglib(uri)) {
                                     //The attribute is not part of another taglib so throw an error
-                                    errors.throwError(new Error('The tag "' + tagDef.name + '" in tablib "' + tagDef.taglib.uri + '" does not support attribute "' + attr + '"'));
+                                    errors.throwError(new Error('The tag "' + tagDef.name + '" in taglib "' + tagDef.taglib.uri + '" does not support attribute "' + attr + '"'));
                                 }
                                 //We'll allow the attribute since it is part of another taglib...
                             }
