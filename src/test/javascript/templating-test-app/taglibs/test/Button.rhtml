@@ -1,5 +1,10 @@
-<c:template name="test/Button" xmlns:c="http://raptor.ebayopensource.org/core">
-    <button id="${widget.elId()}" c:attrs="buttonAttrs">
+<c:template 
+    name="test/Button" 
+    xmlns:c="http://raptor.ebayopensource.org/core"
+    params="id,label,buttonAttrs">
+    
+    <button c:attrs="buttonAttrs">
         ${label}
     </button>
+    
 </c:template>

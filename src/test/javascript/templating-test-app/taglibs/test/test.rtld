@@ -7,14 +7,10 @@
     
     
     <tag>
-        <name>simpleHello</name>
-        <handler-class>taglibs.test.SimpleHelloController</handler-class>
+        <name>greeting</name>
+        <handler-class>taglibs.test.GreetingController</handler-class>
         <attribute>
             <name>name</name>
-        </attribute>
-        <attribute>
-            <name>adult</name>
-            <type>boolean</type>
         </attribute>
     </tag>
     
@@ -39,6 +35,7 @@
         
         <attribute name="label"/>
         <attribute name="type"/>
+        <attribute name="disabled" type="boolean"/>
     </tag>
     
     

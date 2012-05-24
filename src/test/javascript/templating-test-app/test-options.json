@@ -1,6 +1,6 @@
 {
     "preserveWhitespace": {
-        "pre": false,
+        "pre": true,
         "textarea": true
     },
     "allowSelfClosing": {
@@ -13,5 +13,5 @@
         "link": true
     },
     "xhtml": false,
-    "minify": false
+    "minify": true
 }
