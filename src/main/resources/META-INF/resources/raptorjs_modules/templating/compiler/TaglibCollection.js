@@ -230,11 +230,10 @@ raptor.defineClass(
                     uri = '';
                 }
                 
-                var _this = this,
-                    /**
-                     * Handle all of the transformers in the tag transformers entry
-                     */
-                    _handleTransformers = function(entry, transformers) {
+                /*
+                 * Handle all of the transformers in the tag transformers entry
+                 */
+                var _handleTransformers = function(entry, transformers) {
                         if (!entry) { //If no entry then nothing to do
                             return;
                         }
@@ -264,7 +263,7 @@ raptor.defineClass(
                             if (entry.after[transformer.className]) {
                                 _handleTransformers(entry, entry.after[transformer.className]); //Handle any transformers that are registered to be invoked after the current transformer 
                             }
-                        };
+                        }
                     };
                 
                 /*
@@ -302,7 +301,7 @@ raptor.defineClass(
             getTagDef: function(uri, localName) {
                 var tagDef = this.tagDefs[uri + ":" + localName];
                 if (!tagDef) {
-                    this.tagDefs[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
+                    tagDef = this.tagDefs[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
                 }
                 return tagDef;
             },
