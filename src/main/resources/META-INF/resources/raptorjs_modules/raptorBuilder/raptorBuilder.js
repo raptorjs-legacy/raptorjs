@@ -17,7 +17,8 @@
 (function() {
     /*jshint strict:false */
     
-    var loaders = [],
+    var global = this,
+        loaders = [],
         slice = Array.prototype.slice,
         isArray = function(o)
         {
@@ -94,7 +95,6 @@
              * @namespace
              * @name raptor
              * @borrows oop.require as require
-             * @borrows oop.requireAll as requireAll
              * @borrows oop.find as find
              * @borrows oop.defineClass as defineClass
              * @borrows oop.defineEnum as defineEnum
@@ -164,17 +164,6 @@
                     },
                     
                     /**
-                     * 
-                     * @param func
-                     * @param thisObj
-                     * @param args
-                     * @returns
-                     */
-                    invoke: function(func, thisObj, args) {
-                        return func.apply(thisObj, slice.call(arguments, 2));
-                    },
-                    
-                    /**
                      * @function
                      * @param dest
                      * @param source
@@ -226,16 +215,12 @@
                     forEach: function(a, fun, thisp) {
                         if (a == null) return;
 
-                        var i, len, result;
-                        
-                        if (isArray(a) === false)
+                        if (!isArray(a))
                         {
                             a = [a];
                         }
 
-                        len = a.length;
-
-                        for (i = 0; i < len; i++)
+                        for (var i = 0, len=a.length, result; i < len; i++)
                         {
                             result = fun.call(thisp, a[i], i, a);
                             if (result === false) return;
@@ -276,7 +261,7 @@
         addLoader: function(loaderFunc) {
             loaders.push(loaderFunc);
             
-            if (typeof raptor !== "undefined") {
+            if (global.raptor) {
                 loaderFunc(raptor);
             }
         }

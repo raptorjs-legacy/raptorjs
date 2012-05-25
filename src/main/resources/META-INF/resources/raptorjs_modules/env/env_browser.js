@@ -15,28 +15,6 @@
  */
 
 $rload(function(raptor) {
-    "use strict";
-    
-    /**
-     * @extension Browser
-     */
-    raptor.defineCore('env', {
-        /**
-         * 
-         * @returns
-         */
-        getGlobal: function() {
-            return window;
-        },
-        
-        /**
-         * 
-         * @returns {String}
-         */
-        getName: function() {
-            return 'browser';
-        }
-    });
-    
+    /*jshint strict:false */
     raptor.global = window;
 });

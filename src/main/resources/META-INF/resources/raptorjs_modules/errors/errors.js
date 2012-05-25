@@ -41,7 +41,12 @@ $rload(function(raptor) {
         return error;
     };
 
-    raptor.defineCore('errors', {
+    /**
+     * @namespace
+     * @raptor
+     * @name errors
+     */
+    raptor.errors = /** @lends errors */ {
         
         /**
          * 
@@ -53,7 +58,7 @@ $rload(function(raptor) {
             var error = createError.apply(this, arguments);
             throw error;
         }
-    });    
+    };    
     
     raptor.throwError = raptor.errors.throwError;
 });

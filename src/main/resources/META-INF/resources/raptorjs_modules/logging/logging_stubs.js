@@ -18,85 +18,88 @@
 $rload(function(raptor) {
     "use strict";
     
-    var extend = raptor.extend;
     
     /**
      * @class
      * @name logging-VoidLogger
      */
-    var VoidLogger = function() {};
+    var VoidLogger = function() {},
+        EMPTY_FUNC = function() {
+            return false;
+        };
 
     VoidLogger.prototype = /** @lends logging-VoidLogger.prototype */ {
         
         /**
          * 
          */
-        isDebugEnabled: function() {return false; },
+        isDebugEnabled: EMPTY_FUNC,
         
         /**
          * 
          */
-        isInfoEnabled: function() {return false;},
+        isInfoEnabled: EMPTY_FUNC,
         
         /**
          * 
          */
-        isWarnEnabled: function() {return false;},
+        isWarnEnabled: EMPTY_FUNC,
         
         /**
          * 
          */
-        isErrorEnabled: function() {return false;},
+        isErrorEnabled: EMPTY_FUNC,
         
         /**
          * 
          */
-        isFatalEnabled: function() {return false;},
+        isFatalEnabled: EMPTY_FUNC,
         
         /**
          * 
          */
-        dump: function(obj, desc, allProps) {},
+        dump: EMPTY_FUNC,
         
         /**
          * 
          */
-        debug: function(args) {},
+        debug: EMPTY_FUNC,
         
         /**
          * 
          */
-        info: function(args) {},
+        info: EMPTY_FUNC,
         
         /**
          * 
          */
-        warn: function(args) {},
+        warn: EMPTY_FUNC,
         
         /**
          * 
          */
-        error: function(args) {},
+        error: EMPTY_FUNC,
         
         /**
          * 
          */
-        fatal: function(args) {},
+        fatal: EMPTY_FUNC,
         
         /**
          * 
          */
-        alert: function(args) {},
+        alert: EMPTY_FUNC,
         
         /**
          * 
          */
-        trace: function(args) {}
+        trace: EMPTY_FUNC
     };
     
-    var voidLogger = new VoidLogger();
+    var extend = raptor.extend,
+        voidLogger = new VoidLogger();
 
-    raptor.defineCore('logging', {
+    raptor.logging = {
         /**
          * 
          * @param className
@@ -104,7 +107,7 @@ $rload(function(raptor) {
          */
         logger: function(className)
         {
-            return this.getVoidLogger();
+            return voidLogger;
         },
 
         /**
@@ -114,19 +117,8 @@ $rload(function(raptor) {
         {
             extend(obj, this.VoidLogger.prototype);
         },
-//        
-//        /**
-//         * @type logging-VoidLogger
-//         */
-//        VoidLogger: VoidLogger,
         
-        /**
-         * 
-         * @returns {logging-VoidLogger}
-         */
-        getVoidLogger: function() {            
-            return voidLogger;
-        }
-    });
+        voidLogger: voidLogger
+    };
 
 });

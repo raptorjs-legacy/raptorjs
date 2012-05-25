@@ -99,7 +99,7 @@ $rload(function(raptor) {
         {   
             var logLevel = this.ConsoleLogger ? getLogLevel(className) : -1;
             return logLevel === -1 ?
-                this.getVoidLogger() :
+                this.voidLogger :
                 new this.ConsoleLogger(logLevel, className);
         },
         

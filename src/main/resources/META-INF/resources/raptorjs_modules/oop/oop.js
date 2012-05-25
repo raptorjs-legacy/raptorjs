@@ -30,6 +30,9 @@ $rload(function(raptor) {
         logger = logging.logger('oop'), //The logger to use for this module
         FUNCTION = 'function', //String constant
         STRING = 'string', //String constant
+        is = function(o, type) {
+            return typeof o == type;
+        },
         PROTOTYPE = "prototype",
         ENUM_COUNT = "_count",
         FACTORY_IDX = 0,
@@ -70,7 +73,7 @@ $rload(function(raptor) {
 
             var F = function() {};
               
-            F[PROTOTYPE] = typeof superclass === STRING ?    //Is the superclass the name of a super class?
+            F[PROTOTYPE] = is(superclass, STRING) ?    //Is the superclass the name of a super class?
                       raptor.require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
                       superclass[PROTOTYPE];
                       
@@ -121,20 +124,6 @@ $rload(function(raptor) {
         _instanceGetClass = function() {
             return oop.require(this.__name);
         },
-        _create = function(prototype) {
-            var Obj = function() {};
-            Obj[PROTOTYPE] = prototype;
-            return new Obj();
-        },
-        _construct = function(name,args) {
-
-            var type = raptor.require(name);
-
-            var object = _create(type[PROTOTYPE]);
-            object.constructor.apply(object,args);
-            return object;
-
-        },
         _enumValueOf = function(name) {
             return this[name];
         },
@@ -180,7 +169,7 @@ $rload(function(raptor) {
 
             if (factory) {
                 //The factory can be a function or just the type.
-                if (typeof factory === FUNCTION) {
+                if (is(factory, FUNCTION)) {
                     //If it is a function then execute the function to produce the type
                     type = factory(raptor);
                 }
@@ -193,24 +182,20 @@ $rload(function(raptor) {
                 type = function() {}; //Enum values were provided, but a constructor function is not required
             }
             else {
-                raptor.errors.throwError(new Error('Invalid definition for "' + name + '"'));
+                raptor.errors.throwError(new Error(name + ' invalid'));
             }
 
+            clazz = mixinsTarget = type;
+            
             //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
             //and the output simply becomes the input type with modifications applied (e.g. mixins)
-            if (onlyStatics) {
-                clazz = mixinsTarget = type;
-            }
-            else {
+            if (!onlyStatics) {
                 /*
                  * We have a "type" object which contains the methods and constructors. We now
                  * need to initialize a JavaScript "class" with the correct constructor function
                  * and the correct prototype
                  */
-                if (typeof type === FUNCTION) {
-                    clazz = type;
-                }
-                else {
+                if (!is(type, FUNCTION)) {
                     clazz = type.init || function() {};
                     clazz[PROTOTYPE] = type;
                 }
@@ -278,10 +263,10 @@ $rload(function(raptor) {
                 proto.compareTo = _enumValueCompareTo;
             }
             
-            if (clazz.__init) {
-                clazz.__init();
-            }
-            
+//            if (clazz.__init) {
+//                clazz.__init();
+//            }
+//            
 
             return clazz;
             
@@ -323,18 +308,19 @@ $rload(function(raptor) {
             }
             
             return def;
-        };
-
-    
-    //Constants for each of the "object types"
-    var CLASS = 0,      //Supports inheritance. A constructor function is returned
+        },
+        CLASS = 0,      //Supports inheritance. A constructor function is returned
         MODULE = 1,    //All properties treated as statics. An object is returned
         ENUM = 2,        //Supports constant static fields. An object is returned with the enum constants
-        MIXIN = 3;      //All properties treated as statics. An object is returned
-
-    var typeNames = ['class', 'module', 'enum', 'mixin']; //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
+        MIXIN = 3,      //All properties treated as statics. An object is returned
+        typeNames = ['class', 'module', 'enum', 'mixin']; //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
    
-    raptor.defineCore('oop', {
+    /**
+     * @namespace
+     * @raptor
+     * @name oop
+     */
+    raptor.oop = /** @lends oop */ {
         /**
          * Defines a Raptor JavaScript class.
          * 
@@ -379,7 +365,7 @@ $rload(function(raptor) {
                 factory = modifiers; //Factory is always the second parameter if there are two args
                 
                 //The first arg is either a class name or a modifiers object
-                if (typeof name === STRING) {
+                if (is(name, STRING)) {
                     modifiers = null; //No modifiers
                 }
                 else {
@@ -394,7 +380,7 @@ $rload(function(raptor) {
             }
             //If there are three args then that is the default case and no shuffling of args is required
             
-            if (typeof modifiers === STRING) {
+            if (is(modifiers, STRING)) {
                 //Handle the case where the 'modifiers' is a string that refers to the superclass (equivalent to {superclass: superclassName})
                 modifiers = {
                     superclass: modifiers
@@ -724,41 +710,6 @@ raptor.defineEnum(
             }
             return loaded;
         },
-        
-        /**
-         * Returns references to multiple objects as properties of an object.
-         * 
-         * The short name of the requested will be used as the property name in the returned
-         * object.
-         * 
-         * <h2>Example:</h2>
-         * <js>
-         * var imports = raptor.requireAll('widgets', 'some.namespace.MyClass');
-         * var widgets = imports.widgets;
-         * var myObject = new imports.MyClass();
-         * 
-         * </js>
-         * 
-         * @deprecated This method is experimental and might be removed in the future.
-         * 
-         * @param names {...String} A variable length argument of object names
-         * @returns {object} Object with the short names of the objects as keys and the objects themselves as values
-         */
-        requireAll: function(names) {
-            var i=0,
-                args = arguments,
-                imports = {},
-                len = args.length,
-                loaded;
-        
-            for (; i<len; i++)
-            {
-                loaded = oop.require(args[i]);
-                imports[loaded.getShortName()] = loaded;
-            }
-            
-            return imports;
-        },
 
         /**
          * 
@@ -816,7 +767,7 @@ raptor.defineEnum(
 
             if (!source) return; //If source is null then there is nothing to extend the target with
             
-            if (typeof target === STRING) {
+            if (is(target, STRING)) {
                 
                 //Always register the extensions with the definition so that if the object
                 //needs to be reloaded the extensions will again be reapplied
@@ -848,7 +799,7 @@ raptor.defineEnum(
                 var loaded = loadedLookup[target]; //See if the object has already been loaded
                 if (loaded) {
                     //If the target object has already been loaded then we can used the loaded object as the target
-                    if (typeof loaded === FUNCTION) { //The loaded object is a class... mixins should apply to the prototype
+                    if (is(loaded, FUNCTION)) { //The loaded object is a class... mixins should apply to the prototype
                         target = loaded[PROTOTYPE];
                     }
                     else {
@@ -864,7 +815,7 @@ raptor.defineEnum(
                 }
             }
             
-            if (typeof source === FUNCTION) {
+            if (is(source, FUNCTION)) {
                 //If the source is a function then treat it as a factory function
                 //that will return the mixins
                 if (!overridden) {
@@ -872,7 +823,7 @@ raptor.defineEnum(
                 }
                 source = source(raptor, target, overridden); //Execute the factory function with three parameters
             }
-            else if (typeof source === STRING)
+            else if (is(source, STRING))
             {
                 //The source is the name of the source so load the source
                 source = oop.require(source);
@@ -911,13 +862,12 @@ raptor.defineEnum(
         handleMissing: function(name) {
             throw new Error('require failed. "' + name + '" not found.');
         }
-    });
+    };
     
     oop = raptor.oop;
     
     forEach(
             ['require',
-             'requireAll',
              'find',
              'load',
              'defineClass',
