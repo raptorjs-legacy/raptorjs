@@ -16,88 +16,86 @@
 
 
 $rload(function(raptor) {
-    "use strict";
-    
+    /*jshint strict:false */
     
     /**
      * @class
      * @name logging-VoidLogger
      */
-    var VoidLogger = function() {},
-        EMPTY_FUNC = function() {
-            return false;
-        };
-
-    VoidLogger.prototype = /** @lends logging-VoidLogger.prototype */ {
-        
-        /**
-         * 
-         */
-        isDebugEnabled: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        isInfoEnabled: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        isWarnEnabled: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        isErrorEnabled: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        isFatalEnabled: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        dump: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        debug: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        info: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        warn: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        error: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        fatal: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        alert: EMPTY_FUNC,
-        
-        /**
-         * 
-         */
-        trace: EMPTY_FUNC
-    };
     
-    var extend = raptor.extend,
-        voidLogger = new VoidLogger();
+    /**
+     * 
+     */
+    var EMPTY_FUNC = function() {
+            return false;
+        },
+        voidLogger = /** @lends logging-VoidLogger.prototype */ {
+            
+            /**
+             * 
+             */
+            isDebugEnabled: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            isInfoEnabled: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            isWarnEnabled: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            isErrorEnabled: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            isFatalEnabled: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            dump: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            debug: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            info: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            warn: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            error: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            fatal: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            alert: EMPTY_FUNC,
+            
+            /**
+             * 
+             */
+            trace: EMPTY_FUNC
+        };
 
     raptor.logging = {
         /**
@@ -115,7 +113,7 @@ $rload(function(raptor) {
          */
         makeLogger: function(obj, className)
         {
-            extend(obj, this.VoidLogger.prototype);
+            raptor.extend(obj, voidLogger);
         },
         
         voidLogger: voidLogger

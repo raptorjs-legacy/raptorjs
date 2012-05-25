@@ -100,21 +100,6 @@ $rload(function(raptor) {
         _staticToString = function() {
             return '[' + this.__type + ': ' + this.__name + ']';
         },
-        _getShortName = function() {
-            var shortName,
-                name;
-            
-            if ((shortName = this.__shortName) === undefined) {
-                name = this.__name;
-                var endStart = name.lastIndexOf('.');
-                if (endStart === -1) {
-                    endStart = name.lastIndexOf('/');
-                }
-                
-                this.__shortName = shortName = name.substring(endStart+1);
-            }
-            return shortName;
-        },
         _getName = function() {
             return this.__name;
         },
@@ -219,7 +204,6 @@ $rload(function(raptor) {
             if (targetType !== MIXIN) {
                 _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
                 clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
-                clazz.getShortName = _getShortName;
                 clazz.toString = _staticToString;
                 mixinsTarget.logger = _createLoggerFunction(name);
             }
@@ -675,19 +659,7 @@ raptor.defineEnum(
             if (asyncCallback || isArray(name)) {
                 //If an asynchronous callback is provided or if multiple module names are provided then we go through the "loader"
                 //module to load the required modules as a single transaction.
-                
-                var loader = this.find('loader');
-                
-                if (!loader) {
-                    //The "loader" module is an optional module, but is required for asynchronous module loading.
-                    raptor.errors.throwError(new Error('The "loader" module is required for asynchronous module loading'));
-                }
-                
-                if (!loader.require) {
-                    raptor.errors.throwError(new Error('The "loader.requires" extension is not enabled'));
-                }
-                
-                return loader.require(
+                return raptor.require('loader').require(
                         name, /* handles arrays and single names */
                         asyncCallback,
                         thisObj);

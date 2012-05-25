@@ -15,31 +15,7 @@
  */
 
 $rload(function(raptor) {
-    "use strict";
-    
-    var createError = function(message, cause) 
-    {
-        var error;
-
-        if (arguments.length === 2)
-        {
-            error = message instanceof Error ? message : new Error(message);            
-            error.__cause__ = cause;                        
-        }
-        else if (arguments.length === 1)
-        {            
-            if (message instanceof Error)
-            {
-                error = message;
-            }
-            else
-            {
-                error = new Error(message);                
-            }
-        }
-        
-        return error;
-    };
+    /*jshint strict:false */
 
     /**
      * @namespace
@@ -55,7 +31,26 @@ $rload(function(raptor) {
          */
         throwError: function(message, cause)
         {
-            var error = createError.apply(this, arguments);
+            var error,
+                E = Error;
+            
+            if (arguments.length === 2)
+            {
+                error = message instanceof E ? message : new E(message);            
+                error.__cause__ = cause;                        
+            }
+            else if (arguments.length === 1)
+            {            
+                if (message instanceof E)
+                {
+                    error = message;
+                }
+                else
+                {
+                    error = new E(message);                
+                }
+            }
+            
             throw error;
         }
     };    
