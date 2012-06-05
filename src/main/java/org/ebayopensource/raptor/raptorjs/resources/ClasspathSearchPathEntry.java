@@ -19,7 +19,7 @@ public class ClasspathSearchPathEntry extends SearchPathEntry {
         
         URL url = this.clazz.getResource(fullPath);
         if (url != null) {
-            return new URLResource(path, url, true);
+            return new URLResource(path, fullPath, url, true);
         }
         else {
             return null;
