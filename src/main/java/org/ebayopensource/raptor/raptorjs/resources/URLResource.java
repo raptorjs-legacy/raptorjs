@@ -24,11 +24,17 @@ public class URLResource extends Resource {
 
     private URL url = null;
     private boolean isFile = true;
+    private String fullPath;
 
-    public URLResource(String path, URL url, boolean isFile) {
+    public URLResource(String path, String fullPath, URL url, boolean isFile) {
         super(path);
         this.url = url;
         this.isFile = true;
+        this.fullPath = fullPath;
+    }
+
+    public String getFullPath() {
+        return fullPath;
     }
 
     @Override
