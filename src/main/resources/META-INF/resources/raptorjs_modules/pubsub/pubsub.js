@@ -326,7 +326,7 @@ raptor.defineModule('pubsub', function(raptor) {
          */
         subscribe: function(topic, callback, thisObj) {
             var global = this.global();
-            global.subscribe.apply(global, arguments);
+            return global.subscribe.apply(global, arguments);
         },
         
         /**
