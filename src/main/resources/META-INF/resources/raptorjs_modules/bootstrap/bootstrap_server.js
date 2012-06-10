@@ -45,10 +45,7 @@ raptorBootstrap = {
         this._require('config/config.js');
 
         this._require('ecma/json/JSON.js', RHINO); //Patch older versions of Rhino that don't include the JSON object
-        
-        this._require('env/env_node.js', NODE);
-        this._require('env/env_rhino.js', RHINO);
-        
+
         this._require('java/java_rhino.js', RHINO);
 
         this._require('console/console_node.js', NODE);

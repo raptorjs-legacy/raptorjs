@@ -32,14 +32,15 @@ $rload(function(raptor) {
         throwError: function(message, cause)
         {
             var error,
+                argsLen = arguments.length,
                 E = Error;
             
-            if (arguments.length === 2)
+            if (argsLen === 2)
             {
                 error = message instanceof E ? message : new E(message);            
-                error.__cause__ = cause;                        
+                error._cause = cause;                        
             }
-            else if (arguments.length === 1)
+            else if (argsLen === 1)
             {            
                 if (message instanceof E)
                 {

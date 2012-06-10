@@ -19,38 +19,12 @@ $rload(function(raptor) {
     
     var logger = raptor.logging.logger('oop-server'),
         errors = raptor.errors,
+        oop = raptor.oop,
         getModuleDirPath = function(name) {
             return '/' + name.replace(/\./g, '/');
         },
-        loaded = {};
-    
-    /**
-     * @extension Server
-     */
-    raptor.extendCore('oop', {
-        /**
-         * 
-         * @protected
-         * 
-         * @param name
-         * @returns
-         */
-        findMissing: function(name) {
-            var loaded = this.findMissingClass(name);
-            if (loaded === undefined) {
-                loaded = this.findMissingModule(name);
-            }
-            return loaded;
-        },
-        
-        /**
-         * 
-         * @protected
-         * 
-         * @param name
-         * @returns
-         */
-        findMissingClass: function(name) {
+        loaded = {},
+        findMissingClass = function(name) {
             var resources = raptor.resources;
             
             var resourcePath = '/' + name.replace(/\./g, '/') + '.js';
@@ -62,9 +36,9 @@ $rload(function(raptor) {
                 
                 raptor.runtime.evaluateResource(resource);
                 
-                var loaded = this._load(name, false /* Do not find again or infinite loop will result */);
+                var loaded = oop._load(name, false /* Do not find again or infinite loop will result */);
 
-                if (loaded == null)
+                if (!loaded)
                 {
                     var pathToFile = resource.getSystemPath();
                     
@@ -83,16 +57,8 @@ $rload(function(raptor) {
                 return undefined;                
             }
         },
-        
-        /**
-         * 
-         * @protected
-         * 
-         * @param name
-         * @returns
-         */
-        findMissingModule: function(name) {
-            var manifest = this.getModuleManifest(name);
+        findMissingModule = function(name) {
+            var manifest = oop.getModuleManifest(name);
             
             if (!manifest) {
                 return undefined;
@@ -100,11 +66,30 @@ $rload(function(raptor) {
             
             raptor.packaging.loadPackage(manifest);
             
-            var module = this._load(name, false /* Do not find again or infinite loop will result */);
+            var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
+        };
+    
+    /**
+     * @extension Server
+     */
+    raptor.extendCore('oop', {
+        /**
+         * 
+         * @protected
+         * 
+         * @param name
+         * @returns
+         */
+        _find: function(name) {
+            var loaded = findMissingClass(name);
+            if (loaded === undefined) {
+                loaded = findMissingModule(name);
+            }
+            return loaded;
         },
         
-        handleMissing: function(name) {
+        _missing: function(name) {
             errors.throwError(new Error('require failed. "' + name + '" not found. Search path:\n' + raptor.resources.getSearchPathString()));
         },
         

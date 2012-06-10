@@ -117,7 +117,9 @@ $rload(function(raptor) {
                 packageResource = resources.findResource(resourcePath);
             }
             
-            
+            if (!packageResource.exists()) {
+                return null;
+            }
             
             var manifest = packageManifests[packageResource.getSystemPath()];
             if (manifest === undefined)

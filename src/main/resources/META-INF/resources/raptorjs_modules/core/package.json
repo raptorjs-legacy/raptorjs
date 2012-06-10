@@ -13,7 +13,6 @@
     
     "includes": [
         {"type": "module", "name": "raptorBuilder"},
-        {"type": "module", "name": "env"},
         {"type": "module", "name": "logging"},
         {"type": "module", "name": "errors"}
     ]

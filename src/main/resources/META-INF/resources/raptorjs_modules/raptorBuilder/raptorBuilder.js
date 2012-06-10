@@ -105,6 +105,11 @@
              */
             var newRaptor = {
                     /**
+                     * 
+                     */
+                    global: global,
+                    
+                    /**
                      * The global object for the environment.
                      * 
                      * This object normalizes the JavaScript global object across multiple environments. 

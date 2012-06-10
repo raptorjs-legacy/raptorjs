@@ -40,12 +40,14 @@ $rload(function(raptor) {
         MODIFIERS_IDX = 2,
         ENUM_VALUES_IDX = 3,
         EXTENSIONS_IDX = 4,
+        ORDINAL_PROP = '_ordinal',
+        NAME_PROP = '__name',
         nameSpaces = {}, //Lookup for global namespaces
         definitionsLookup = raptorClassDefs, //Local variable reference to the global definitions lookup
         loadedLookup = {}, //A lookup for loaded classes/modules/mixins/enums
         oop = null,    //Used to self-refer to this module. Used instead of "this" for minification and in unbound callbacks
         _addTypeInfo = function(obj, name, type) { //Adds hidden type information to created class constructors, class prototypes, modules and enums (not mixins)
-                obj.__name = name;
+                obj[NAME_PROP] = name;
                 obj.__type = type;
             },
         _simpleExtend = raptor.extend, //A method to add properties to an object without support for "overridden" or "doNotOverride" properties (faster)
@@ -74,7 +76,7 @@ $rload(function(raptor) {
             var F = function() {};
               
             F[PROTOTYPE] = is(superclass, STRING) ?    //Is the superclass the name of a super class?
-                      raptor.require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
+                      _require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
                       superclass[PROTOTYPE];
                       
             clazz.superclass = F[PROTOTYPE];
@@ -98,34 +100,62 @@ $rload(function(raptor) {
             };
         },
         _staticToString = function() {
-            return '[' + this.__type + ': ' + this.__name + ']';
+            return '[' + this.__type + ': ' + this[NAME_PROP] + ']';
         },
         _getName = function() {
-            return this.__name;
+            return this[NAME_PROP];
         },
         _instanceToString = function() {
-            return '[' + this.__name + ']';
+            return '[' + this[NAME_PROP] + ']';
         },
         _instanceGetClass = function() {
-            return oop.require(this.__name);
+            return _find(this[NAME_PROP]);
         },
         _enumValueOf = function(name) {
             return this[name];
         },
         _enumValueOrdinal = function() {
-            return this._ordinal;
+            return this[ORDINAL_PROP];
         },
         _enumValueName = function() {
             return this._name;
         },
         _enumValueCompareTo = function(other) {
-            return this._ordinal - other._ordinal;
+            return this[ORDINAL_PROP] - other[ORDINAL_PROP];
         },
         _addEnumValue = function(target, name, EnumCtor) {
             var enumValue = target[name] = new EnumCtor();
-            enumValue._ordinal = target[ENUM_COUNT]++;
+            enumValue[ORDINAL_PROP] = target[ENUM_COUNT]++;
             enumValue._name = name;
             return enumValue;
+        },
+        _require = function(name, asyncCallback, thisObj, ignoreMissing) {
+            
+            if (asyncCallback || isArray(name)) {
+                //If an asynchronous callback is provided or if multiple module names are provided then we go through the "loader"
+                //module to load the required modules as a single transaction.
+                return _require('loader').require(
+                        name, /* handles arrays and single names */
+                        asyncCallback,
+                        thisObj);
+            }
+            
+            var loaded = loadedLookup[name]; //See if the object has already been loaded
+            
+            if (loaded !== undefined)
+            {
+                //If loaded, then just return it
+                return loaded;
+            }
+            
+            //Otherwise, try to load the object with the specified name
+            loaded = oop._load(name);
+            
+            //If we didn't find the object then throw an error
+            if (loaded === undefined && ignoreMissing !== true) {
+                oop._missing(name);
+            }
+            return loaded;
         },
         /**
          * 
@@ -167,7 +197,7 @@ $rload(function(raptor) {
                 type = function() {}; //Enum values were provided, but a constructor function is not required
             }
             else {
-                raptor.errors.throwError(new Error(name + ' invalid'));
+                raptor.throwError(new Error(name + ' invalid'));
             }
 
             clazz = mixinsTarget = type;
@@ -297,7 +327,10 @@ $rload(function(raptor) {
         MODULE = 1,    //All properties treated as statics. An object is returned
         ENUM = 2,        //Supports constant static fields. An object is returned with the enum constants
         MIXIN = 3,      //All properties treated as statics. An object is returned
-        typeNames = ['class', 'module', 'enum', 'mixin']; //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
+        typeNames = ['class', 'module', 'enum', 'mixin'], //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
+        _find = function(name) {
+            return _require(name, null, null, true); //Checks for the existing of an object
+        }; 
    
     /**
      * @namespace
@@ -343,9 +376,9 @@ $rload(function(raptor) {
          * @returns {void|class} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
          */
         defineClass: function(name, modifiers, factory) {
-            var args = arguments;
+            var argsLength = arguments.length;
             
-            if (args.length === 2) { //Most common: defineClass(name, factory)
+            if (argsLength === 2) { //Most common: defineClass(name, factory)
                 factory = modifiers; //Factory is always the second parameter if there are two args
                 
                 //The first arg is either a class name or a modifiers object
@@ -357,7 +390,7 @@ $rload(function(raptor) {
                     name = null;
                 }
             }
-            else if (args.length === 1) {
+            else if (argsLength === 1) {
                 factory = name; //The factory is the first argument and there is no name or modifiers
                 name = null;
                 modifiers = null;
@@ -540,12 +573,12 @@ raptor.defineEnum(
          * is that the require method will throw an exception if the object
          * with the specified name is not found.
          * 
+         * @function
+         * @memberOf oop
          * @param name The name of the class/module/mixin/enum
          * @returns Returns an instance of an object if it exists, otherwise null
          */
-        find: function(name) {
-            return oop.require(name, null, null, true); //Checks for the existing of an object
-        },
+        find: _find,
         
 
         /**
@@ -557,9 +590,7 @@ raptor.defineEnum(
          * @param name The name of the class/module/mixin/enum
          * @returns Returns an instance of an object if it exists, otherwise null
          */
-        load: function(name) {
-            return oop.find(name);
-        },
+        load: _find,
         
         /**
          * Obtains reference(s) to the requested class/module/mixin/enum (either synchronously or asynchronously). If the requested objects
@@ -647,41 +678,15 @@ raptor.defineEnum(
          *     }
          * });
          * </js>
-         * 
+         * @function
+         * @memberOf oop 
          * @param name {String|Array<String>} The name of the class/module/mixin/enum
          * @param asyncCallback {Object|Function} A success/error callback function or an object with callback functions for some or all of the the supported events. The following events are supported: asyncStart, success, error, asyncComplete, complete - (<b>NOTE:</b> Should only be used with module loading)
          * @param thisObj {Object} The "this" object for the callback function(s) - (<b>NOTE:</b> Should only be used with module loading)  
          * @param ignoreMissing {Boolean} If true then an Error will not be thrown if the requested object is not found.
          * @returns {Object|loader-Transaction} For synchronous module/class/mixin/enum loading, a reference to the requested class/module/mixin/enum is returned. For asynchronous module loading, the transaction is returned. 
          */
-        require: function(name, asyncCallback, thisObj, ignoreMissing) {
-            
-            if (asyncCallback || isArray(name)) {
-                //If an asynchronous callback is provided or if multiple module names are provided then we go through the "loader"
-                //module to load the required modules as a single transaction.
-                return raptor.require('loader').require(
-                        name, /* handles arrays and single names */
-                        asyncCallback,
-                        thisObj);
-            }
-            
-            var loaded = loadedLookup[name]; //See if the object has already been loaded
-            
-            if (loaded !== undefined)
-            {
-                //If loaded, then just return it
-                return loaded;
-            }
-            
-            //Otherwise, try to load the object with the specified name
-            loaded = oop._load(name);
-            
-            //If we didn't find the object then throw an error
-            if (loaded === undefined && ignoreMissing !== true) {
-                oop.handleMissing(name);
-            }
-            return loaded;
-        },
+        require: _require,
 
         /**
          * 
@@ -710,9 +715,9 @@ raptor.defineEnum(
             }
             
             //Otherwise, try to find
-            if (oop.findMissing) {
+            if (oop._find) {
                 if (find !== false) {
-                    loaded =  oop.findMissing(name);
+                    loaded =  oop._find(name);
                 }
             }
             else {
@@ -798,7 +803,7 @@ raptor.defineEnum(
             else if (is(source, STRING))
             {
                 //The source is the name of the source so load the source
-                source = oop.require(source);
+                source = _require(source);
             }
             
             var createMixin = source.createMixin || source.extend;
@@ -831,26 +836,16 @@ raptor.defineEnum(
          */
         inherit: _inherit,
         
-        handleMissing: function(name) {
-            throw new Error('require failed. "' + name + '" not found.');
+        _missing: function(name) {
+            throw new Error('Missing: ' + name);
         }
     };
     
     oop = raptor.oop;
     
-    forEach(
-            ['require',
-             'find',
-             'load',
-             'defineClass',
-             'defineEnum',
-             'defineModule',
-             'defineMixin',
-             'alias',
-             'extend',
-             'inherit'],
-            function(methodName) {
-                raptor[methodName] = oop[methodName];
-            });
-
+    forEachEntry(oop, function(k, v) {
+        if (k.charAt(0) != '_') {
+            raptor[k] = v;
+        }
+    });
 });

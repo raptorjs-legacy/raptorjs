@@ -24,7 +24,7 @@ $rload(function(raptor) {
                 
                 out[out.length] = '' + (e.stack || e.message || e);
                 
-                e = e.__cause__;
+                e = e._cause;
                 if (e) {
                     out[out.length] = '\n\nCaused by:\n';
                 }
