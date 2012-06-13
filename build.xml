@@ -6,7 +6,7 @@
 	
     <property name="raptorjs_modules.dir" location="src/main/resources/META-INF/resources/raptorjs_modules"/>
     
-    <property name="dist.raptorjs-node.dir" location="dist/raptorjs"/>
+    <property name="dist.raptorjs-node.dir" location="dist/node-raptorjs"/>
 	<property name="dist.raptorjs-node.node_modules.dir" location="${dist.raptorjs-node.dir}/node_modules"/>
     <property name="dist.raptorjs-node.raptorjs_modules.dir" location="${dist.raptorjs-node.dir}/lib/raptorjs/raptorjs_modules"/>
     
