@@ -309,12 +309,6 @@ raptor.defineClass(
                 }
                 
                 forEach(this.childNodes, function(childNode) {
-                    if (!childNode.generateCode) {
-                        delete childNode.parentNode;
-                        childNode.parentNode = 'Hello';
-                        console.error('Hello: ', childNode);
-                        errors.throwError(new Error('generateCodeForChildren - ' + (isArray(childNode)) ));
-                    }
                     childNode.generateCode(template);
                 }, this);
             },
