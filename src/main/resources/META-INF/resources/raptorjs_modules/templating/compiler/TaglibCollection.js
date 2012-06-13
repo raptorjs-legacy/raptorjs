@@ -59,17 +59,14 @@ raptor.defineClass(
                     
                     prefix = localName.substring(0, prefixEnd);
                     name = localName.substring(prefixEnd+1);
+                    uri = imports._prefixes[prefix];
                     
-                    if (lookup['*-' + name]) {
-                        uri = imports._prefixes[prefix];
-                        
-                        if (uri) {
-                            return {
-                                uri: uri,
-                                name: name,
-                                prefix: prefix
-                            };
-                        }
+                    if (uri) {
+                        return {
+                            uri: uri,
+                            name: name,
+                            prefix: prefix
+                        };
                     }
                 }
                 
@@ -120,16 +117,11 @@ raptor.defineClass(
 
                 taglibs.forEachTag(from, function(tag, taglib) {
                     
-                    if (tag.uri === from) {
+                    if (tag.uri === from && (importsLookup['*'] || importsLookup[tag.name])) {
                         /*
                          * Import tags with a URI that matches the taglib URI
                          */
-                        if (importsLookup['*'] || importsLookup[tag.name]) {
-                            this._tagImports[as + '-' + tag.name] = { uri: from, name: tag.name, prefix: as };
-                        }
-                    }
-                    else if (tag.uri === '*' && tag.name !== '*') {
-                        this._tagImports['*-' + tag.name] = { uri: '*', name: tag.name };
+                        this._tagImports[tag.name] = { uri: from, name: tag.name, prefix: as };
                     }
                     
                     /*
@@ -138,15 +130,10 @@ raptor.defineClass(
                      */
                     tag.forEachAttribute(function(attr) {
                         
-                        if (importsLookup['*'] || importsLookup["@" + attr.name]) {
-                            if (attr.uri === '*' && attr.name !== '*') {
-                                this._attrImports['*-' + attr.name] = { uri: '*', name: attr.name };
-                            }
-                            else if (tag.uri !== from) {
-                                this._attrImports[as + '-' + attr.name] = { uri: from, name: attr.name, prefix: as };  
-                            }
+                        if (tag.uri !== from && (importsLookup['*'] || importsLookup["@" + attr.name])) {
+                            this._attrImports[attr.name] = { uri: from, name: attr.name, prefix: as };
                         }
-                        
+
                     }, this);
                     
                 }, this);
