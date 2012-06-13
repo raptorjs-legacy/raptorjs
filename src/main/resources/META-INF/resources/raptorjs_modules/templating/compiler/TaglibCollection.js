@@ -41,11 +41,45 @@ raptor.defineClass(
              * core
              * core as my-core
              */
-            importRegExp = /^(?:(\*|(?:(?:@?[A-Za-z0-9_\-]+\s*,\s*)*@?[A-Za-z0-9_\-]+))\s+from\s+)?([^ ]*)(?:\s+as\s+([A-Za-z0-9_\-]+))?$/;
+            importRegExp = /^(?:(\*|(?:(?:@?[A-Za-z0-9_\-]+\s*,\s*)*@?[A-Za-z0-9_\-]+))\s+from\s+)?([^ ]*)(?:\s+as\s+([A-Za-z0-9_\-]+))?$/,
+            getImported = function(lookup, localName, imports) {
+                if (lookup[localName] != null) {
+                    return lookup[localName];
+                }
+                
+                var prefixEnd = localName.indexOf('-'),
+                    prefix,
+                    uri,
+                    name;
+                
+                
+                
+                if (prefixEnd != -1) {
+                    
+                    
+                    prefix = localName.substring(0, prefixEnd);
+                    name = localName.substring(prefixEnd+1);
+                    
+                    if (lookup['*-' + name]) {
+                        uri = imports._prefixes[prefix];
+                        
+                        if (uri) {
+                            return {
+                                uri: uri,
+                                name: name,
+                                prefix: prefix
+                            };
+                        }
+                    }
+                }
+                
+                return null;
+            };
         
         var Imports = function(taglibs, importsStr) {
             this._tagImports = {};
             this._attrImports = {};
+            this._prefixes = {};
             
             var parts = strings.trim(importsStr).split(/\s*;\s*/);
             forEach(parts, function(part) {
@@ -78,51 +112,56 @@ raptor.defineClass(
                     }
                 }
                 
+                this._prefixes[as] = from;
                 
                 forEach(imports.split(/\s*,\s*/), function(importedTagName) {
                     importsLookup[importedTagName] = true;
                 });
 
                 taglibs.forEachTag(from, function(tag, taglib) {
+                    
                     if (tag.uri === from) {
                         /*
                          * Import tags with a URI that matches the taglib URI
                          */
                         if (importsLookup['*'] || importsLookup[tag.name]) {
-                            this._tagImports[as + '-' + tag.name] = { uri: from, name: tag.name };
+                            this._tagImports[as + '-' + tag.name] = { uri: from, name: tag.name, prefix: as };
                         }
                     }
-                    else {
-                        /*
-                         * Allow imports for attributes that can be assigned to tags with a different URI
-                         * e.g. <div c-if="someCondition"></div> --> <div c:if="someCondition"></div>
-                         */
-                        tag.forEachAttribute(function(attr) {
-                            if (importsLookup['*'] || importsLookup["@" + attr.name]) {
-                                this._attrImports[as + '-' + attr.name] = { uri: from, name: attr.name };
-                            }
-                        }, this);
+                    else if (tag.uri === '*' && tag.name !== '*') {
+                        this._tagImports['*-' + tag.name] = { uri: '*', name: tag.name };
                     }
+                    
+                    /*
+                     * Allow imports for attributes that can be assigned to tags with a different URI
+                     * e.g. <div c-if="someCondition"></div> --> <div c:if="someCondition"></div>
+                     */
+                    tag.forEachAttribute(function(attr) {
+                        
+                        if (importsLookup['*'] || importsLookup["@" + attr.name]) {
+                            if (attr.uri === '*' && attr.name !== '*') {
+                                this._attrImports['*-' + attr.name] = { uri: '*', name: attr.name };
+                            }
+                            else if (tag.uri !== from) {
+                                this._attrImports[as + '-' + attr.name] = { uri: from, name: attr.name, prefix: as };  
+                            }
+                        }
+                        
+                    }, this);
+                    
                 }, this);
                 
             }, this);
         };
         
         Imports.prototype = {
-            isTagImported: function(localName) {
-                return this._tagImports[localName] != null;
-            },
-            
+
             getImportedTag: function(localName) {
-                return this._tagImports[localName];
-            },
-            
-            isAttributeImported: function(localName) {
-                return this._attrImports[localName] != null;
+                return getImported(this._tagImports, localName, this);
             },
             
             getImportedAttribute: function(localName) {
-                return this._attrImports[localName];
+                return getImported(this._attrImports, localName, this);
             }
         };
         

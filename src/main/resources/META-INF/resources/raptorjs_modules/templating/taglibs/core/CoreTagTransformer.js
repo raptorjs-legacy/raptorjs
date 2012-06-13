@@ -61,7 +61,7 @@ raptor.defineClass(
                             
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
                                 value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true),
-                                uri = attr.prefix ? attr.uri : null;
+                                uri = attr.uri;
                             
                             if (uri === tagDef.taglib.uri) {
                                 uri = '';

@@ -1,0 +1,13 @@
+<c-template
+    imports="core;test"
+    name="imports3"
+    test-functions="user,isLoggedIn">
+    
+    <c-if test="isLoggedIn()">
+        Hello ${user().firstName} ${user().lastName}!
+    </c-if>
+    <c-if test="!isLoggedIn()">
+        You are not logged in.
+    </c-if>
+    
+</c-template>

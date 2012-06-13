@@ -515,6 +515,31 @@ describe('templating module', function() {
         expect(output).toEqual('<div class="tabs"><ul class="nav nav-tabs"><li class="active"><a href="#tab0" data-toggle="tab">Tab 1</a></li><li class=""><a href="#tab1" data-toggle="tab">Tab 2</a></li></ul><div class="tab-content"><div id="tab0" class="tab-pane active">Tab 1 content</div><div id="tab1" class="tab-pane">Tab 2 content</div></div></div>');
     });
     
+    it("should allow for context helper functions", function() {
+
+        raptor.require('templating').registerFunctions(
+            "http://raptor.ebayopensource.org/test",
+            "test",
+            {
+                "user": function(str) {
+                    return this.attributes["loggedInUser"];
+                },
+                "isLoggedIn": function() {
+                    return this.attributes["loggedInUser"] != null; 
+                }
+            });
+        
+        var context = raptor.require('templating').createContext();
+        context.attributes["loggedInUser"] = {
+                firstName: "John",
+                lastName: "Doe"
+        };
+        
+        var output = compileAndRender("imports3.rhtml", "imports3", {}, false, context).output;
+        expect(output).toEqual('Hello John Doe!');
+        
+    });
+    
 //    xit("should allow for widgets", function() {
 //        var output = compileAndRender("widgets.rhtml", "widgets", {}).output;
 //        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');

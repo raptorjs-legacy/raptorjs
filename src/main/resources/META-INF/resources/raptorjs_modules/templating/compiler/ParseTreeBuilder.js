@@ -74,6 +74,9 @@ raptor.defineClass(
                     
                     startElement: function(el) {
                         prevTextNode = null;
+                        var importsAttr,
+                            importedAttr,
+                            importedTag;
                         
                         var elementNode = new ElementNode();
                         elementNode.prefix = el.getPrefix();
@@ -85,22 +88,12 @@ raptor.defineClass(
                         elementNode.pos = parser.getPos();
                         
                         forEach(el.getAttributes(), function(attr) {
-                            var attrURI = taglibs.resolveURI(attr.getURI()),
-                                attrLocalName = attr.getLocalName();
-                            
-                           
-                            if (!attrURI && imports && imports.isAttributeImported(attrLocalName)) {
-                                var importedAttr = imports.getImportedAttribute(attrLocalName);     
-                                attrURI = importedAttr.uri;
-                                attrLocalName = importedAttr.name;
+                            if (attr.getLocalName() === 'imports' && !attr.getURI()) {
+                                importsAttr = attr.getValue();
                             }
-                            
-                            elementNode.setAttributeNS(
-                                    attrURI, 
-                                    attrLocalName, 
-                                    attr.getValue(), 
-                                    attr.getPrefix());
                         }, this);
+                        
+                        
                         
                         if (parentNode) {
                             
@@ -108,16 +101,33 @@ raptor.defineClass(
                         }
                         else {
                             rootNode = elementNode;
-                            var importsAttr = rootNode.getAttributeNS('', 'imports');
                             if (importsAttr) {
                                 imports = taglibs.getImports(importsAttr);
                             }
                         }
                         
-                        if (!elementNode.uri && imports && imports.isTagImported(elementNode.localName)) {
-                            var importedTag = imports.getImportedTag(elementNode.localName);
+                        forEach(el.getAttributes(), function(attr) {
+                            var attrURI = taglibs.resolveURI(attr.getURI()),
+                                attrLocalName = attr.getLocalName(),
+                                attrPrefix = attr.getPrefix();
+                            
+                           
+                            if (!attrURI && imports && (importedAttr = imports.getImportedAttribute(attrLocalName))) {     
+                                attrURI = importedAttr.uri;
+                                attrLocalName = importedAttr.name;
+                                attrPrefix = importedAttr.prefix;
+                            }
+                            elementNode.setAttributeNS(
+                                    attrURI, 
+                                    attrLocalName, 
+                                    attr.getValue(), 
+                                    attrPrefix);
+                        }, this);
+                        
+                        if (!elementNode.uri && imports && (importedTag = imports.getImportedTag(elementNode.localName))) {
                             elementNode.uri = importedTag.uri;
                             elementNode.localName = importedTag.name;
+                            elementNode.prefix = importedTag.prefix;
                         }
                         
                         parentNode = elementNode;
