@@ -33,7 +33,7 @@ $rload(function(raptor) {
          * @returns
          */
         exists: function(path) {
-            return nodePath.existsSync(path);
+            return nodeFs.existsSync ? nodeFs.existsSync(path) : nodePath.existsSync(path);
         },
         
         /**

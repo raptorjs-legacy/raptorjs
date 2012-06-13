@@ -54,7 +54,7 @@ $rload(function(raptor) {
         },
         
         exists: function() {
-            return nodePath.existsSync(this._path);
+            return nodeFS.existsSync ? nodeFS.existsSync(this._path) : nodePath.existsSync(this._path);
         },
         
         isDirectory: function() {
