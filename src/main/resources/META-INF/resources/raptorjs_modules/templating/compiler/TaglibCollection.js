@@ -98,9 +98,6 @@ raptor.defineClass(
                     from = taglibs.resolveURI(match[2]),
                     as = match[3];
 
-                    if (!imports) {
-                        imports = "*";
-                    }
                     if (!as) {
                         as = taglibs.resolvePrefix(from) || taglibs.resolveShortName(from); //Use either the prefix (preferred) or the short name if provided
                         if (!as) {
@@ -111,9 +108,11 @@ raptor.defineClass(
                 
                 this._prefixes[as] = from;
                 
-                forEach(imports.split(/\s*,\s*/), function(importedTagName) {
-                    importsLookup[importedTagName] = true;
-                });
+                if (imports) {
+                    forEach(imports.split(/\s*,\s*/), function(importedTagName) {
+                        importsLookup[importedTagName] = true;
+                    });
+                }
 
                 taglibs.forEachTag(from, function(tag, taglib) {
                     
