@@ -155,8 +155,8 @@ raptor.defineClass(
                     ifNode.appendChild(node);
                 }
                 
-                if ((contentAttr = node.getAttributeNS(coreNS, "content")) != null) {
-                    node.removeAttributeNS(coreNS, "content");
+                if ((contentAttr = node.getAttributeNS(coreNS, "bodyContent")) != null) {
+                    node.removeAttributeNS(coreNS, "bodyContent");
                     
                     var newChild = new WriteNode({expression: contentAttr});
                     node.removeChildren();

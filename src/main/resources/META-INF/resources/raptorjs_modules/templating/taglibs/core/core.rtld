@@ -85,7 +85,7 @@
         </attribute>
         
         <attribute>
-            <name>content</name>
+            <name>bodyContent</name>
             <type>expression</type>
         </attribute>
         
