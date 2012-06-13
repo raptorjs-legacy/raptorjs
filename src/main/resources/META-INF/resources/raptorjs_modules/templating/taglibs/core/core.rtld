@@ -2,10 +2,12 @@
     
     
     <tlib-version>1.0</tlib-version>
-    <short-name>core</short-name>
-    <uri>http://raptor.ebayopensource.org/core</uri>
     
-    <tag>
+    <uri>http://raptor.ebayopensource.org/core</uri>
+    <short-name>core</short-name>
+    <prefix>c</prefix>
+    
+    <tag id="template">
         
         <name>template</name> 
         
@@ -20,12 +22,24 @@
         </attribute>
         
         <attribute>
+            <name>imports</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
             <uri>*</uri>
             <name>functions</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
 
         <node-compiler-class>templating.taglibs.core.TemplateNode</node-compiler-class>
+    </tag>
+    
+    <tag extends="template">
+    
+        <uri></uri>
+        <name>template</name>
+        
     </tag>
     
     <tag>

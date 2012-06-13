@@ -184,40 +184,37 @@ raptor.defineClass(
                 
                 var uri = node.uri;
                 
-                if (uri && compiler.taglibs.isTaglib(uri)) {
-                    
-                    var tagDef = compiler.taglibs.getTagDef(node.uri, node.localName);
-                    if (tagDef) {
-                        if (tagDef.handlerClass)
-                        {
-                            //Instead of compiling as a static XML element, we'll
-                            //make the node render as a tag handler node so that
-                            //writes code that invokes the handler
-                            TagHandlerNode.convertNode(
-                                node, 
-                                tagDef);
-                            
-                            forEachProp(function(uri, name, value) {
-                                node.setPropertyNS(uri, name, value);
-                            });
-                        }
-                        else if (tagDef.nodeCompilerClass){
-                            
-                            var NodeCompilerClass = raptor.require(tagDef.nodeCompilerClass);
-                            extend(node, NodeCompilerClass.prototype);
-                            NodeCompilerClass.call(node);
-                            
-                            node.setNodeClass(NodeCompilerClass);
-                            
-                            forEachProp(function(uri, name, value) {
-                                node.setPropertyNS(uri, name, value);
-                            });
-                        }
+                var tagDef = compiler.taglibs.getTagDef(uri, node.localName);
+                if (tagDef) {
+                    if (tagDef.handlerClass)
+                    {
+                        //Instead of compiling as a static XML element, we'll
+                        //make the node render as a tag handler node so that
+                        //writes code that invokes the handler
+                        TagHandlerNode.convertNode(
+                            node, 
+                            tagDef);
                         
+                        forEachProp(function(uri, name, value) {
+                            node.setPropertyNS(uri, name, value);
+                        });
                     }
-                    else {
-                        errors.throwError(new Error('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"'));
+                    else if (tagDef.nodeCompilerClass){
+                        
+                        var NodeCompilerClass = raptor.require(tagDef.nodeCompilerClass);
+                        extend(node, NodeCompilerClass.prototype);
+                        NodeCompilerClass.call(node);
+                        
+                        node.setNodeClass(NodeCompilerClass);
+                        
+                        forEachProp(function(uri, name, value) {
+                            node.setPropertyNS(uri, name, value);
+                        });
                     }
+                    
+                }
+                else if (uri && compiler.taglibs.isTaglib(uri)) {
+                    errors.throwError(new Error('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"'));
                 }
             }
         };

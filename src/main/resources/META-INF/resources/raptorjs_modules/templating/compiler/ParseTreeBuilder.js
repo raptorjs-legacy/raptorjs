@@ -43,7 +43,8 @@ raptor.defineClass(
                 var logger = this.logger(),
                     parentNode = null,
                     rootNode = null,
-                    prevTextNode = null;
+                    prevTextNode = null,
+                    imports;
                 
                 var parser = sax.parser({
                         trim: false,
@@ -84,14 +85,39 @@ raptor.defineClass(
                         elementNode.pos = parser.getPos();
                         
                         forEach(el.getAttributes(), function(attr) {
-                            elementNode.setAttributeNS(taglibs.resolveURI(attr.getURI()), attr.getLocalName(), attr.getValue(), attr.getPrefix());
+                            var attrURI = taglibs.resolveURI(attr.getURI()),
+                                attrLocalName = attr.getLocalName();
+                            
+                           
+                            if (!attrURI && imports && imports.isAttributeImported(attrLocalName)) {
+                                var importedAttr = imports.getImportedAttribute(attrLocalName);     
+                                attrURI = importedAttr.uri;
+                                attrLocalName = importedAttr.name;
+                            }
+                            
+                            elementNode.setAttributeNS(
+                                    attrURI, 
+                                    attrLocalName, 
+                                    attr.getValue(), 
+                                    attr.getPrefix());
                         }, this);
                         
                         if (parentNode) {
+                            
                             parentNode.appendChild(elementNode);
                         }
                         else {
                             rootNode = elementNode;
+                            var importsAttr = rootNode.getAttributeNS('', 'imports');
+                            if (importsAttr) {
+                                imports = taglibs.getImports(importsAttr);
+                            }
+                        }
+                        
+                        if (!elementNode.uri && imports && imports.isTagImported(elementNode.localName)) {
+                            var importedTag = imports.getImportedTag(elementNode.localName);
+                            elementNode.uri = importedTag.uri;
+                            elementNode.localName = importedTag.name;
                         }
                         
                         parentNode = elementNode;

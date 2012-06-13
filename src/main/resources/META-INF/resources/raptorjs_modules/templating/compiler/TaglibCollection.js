@@ -24,25 +24,140 @@ raptor.defineClass(
         
         var forEach = raptor.forEach,
             extend = raptor.extend,
+            strings = raptor.strings,
             Taglib = raptor.require("templating.compiler.Taglib"),
             ElementNode = raptor.require('templating.compiler.ElementNode'),
             TextNode = raptor.require('templating.compiler.TextNode'),
             Tag = Taglib.Tag,
-            Transformer = Taglib.Transformer;
+            Transformer = Taglib.Transformer,
+            /*
+             * Probably one of the more amazing regular expressions you will ever see...
+             * 
+             * Valid imports:
+             * x, y, z from http://raptor.ebayopensource.org/core
+             * x, y, z from core
+             * x, y, z from core as my-core
+             * * from core as c 
+             * core
+             * core as my-core
+             */
+            importRegExp = /^(?:(\*|(?:(?:@?[A-Za-z0-9_\-]+\s*,\s*)*@?[A-Za-z0-9_\-]+))\s+from\s+)?([^ ]*)(?:\s+as\s+([A-Za-z0-9_\-]+))?$/;
+        
+        var Imports = function(taglibs, importsStr) {
+            this._tagImports = {};
+            this._attrImports = {};
+            
+            var parts = strings.trim(importsStr).split(/\s*;\s*/);
+            forEach(parts, function(part) {
+                if (!part) { //Skip empty strings
+                    return;
+                }
+                
+                var match = part.match(importRegExp),
+                    imports,
+                    importsLookup = {},
+                    from,
+                    as;
+                
+                if (!match) {
+                    raptor.throwError(new Error('Invalid import: "' + part + '"'));
+                }
+                else {
+                    imports = match[1],
+                    from = taglibs.resolveURI(match[2]),
+                    as = match[3];
+
+                    if (!imports) {
+                        imports = "*";
+                    }
+                    if (!as) {
+                        as = taglibs.resolvePrefix(from) || taglibs.resolveShortName(from); //Use either the prefix (preferred) or the short name if provided
+                        if (!as) {
+                            raptor.throwError(new Error('Unable to handle imports from "' + from + '". The taglib does not have a prefix or short name defined.'));
+                        }
+                    }
+                }
+                
+                
+                forEach(imports.split(/\s*,\s*/), function(importedTagName) {
+                    importsLookup[importedTagName] = true;
+                });
+
+                taglibs.forEachTag(from, function(tag, taglib) {
+                    if (tag.uri === from) {
+                        /*
+                         * Import tags with a URI that matches the taglib URI
+                         */
+                        if (importsLookup['*'] || importsLookup[tag.name]) {
+                            this._tagImports[as + '-' + tag.name] = { uri: from, name: tag.name };
+                        }
+                    }
+                    else {
+                        /*
+                         * Allow imports for attributes that can be assigned to tags with a different URI
+                         * e.g. <div c-if="someCondition"></div> --> <div c:if="someCondition"></div>
+                         */
+                        tag.forEachAttribute(function(attr) {
+                            if (importsLookup['*'] || importsLookup["@" + attr.name]) {
+                                this._attrImports[as + '-' + attr.name] = { uri: from, name: attr.name };
+                            }
+                        }, this);
+                    }
+                }, this);
+                
+            }, this);
+        };
+        
+        Imports.prototype = {
+            isTagImported: function(localName) {
+                return this._tagImports[localName] != null;
+            },
+            
+            getImportedTag: function(localName) {
+                return this._tagImports[localName];
+            },
+            
+            isAttributeImported: function(localName) {
+                return this._attrImports[localName] != null;
+            },
+            
+            getImportedAttribute: function(localName) {
+                return this._attrImports[localName];
+            }
+        };
+        
         
         var TaglibCollection = function() {
             this.tagTransformersLookup = {}; //Tag transformers lookup
             this.tagDefs = {}; //Tag definitions lookup
             this.textTransformers = [];
-            this.taglibUris = {}; //Lookup to track the URIs of taglibs that have been added to this collection
+            this.taglibs = [];
+            this.taglibsByURI = {}; //Lookup to track the URIs of taglibs that have been added to this collection
             this.shortNameToUriMapping = {};
             this.uriToShortNameMapping = {};
+            this.uriToPrefixMapping = {};
             this.functionsLookup = {};
             
         };
         
         TaglibCollection.prototype = {
+            forEachTag: function(uri, callback, thisObj) {
+                uri = this.resolveURI(uri);
                 
+                
+                var taglib = this.taglibsByURI[uri];
+                
+                
+                if (!taglib) {
+                    return;
+                }
+                
+                forEach(taglib.tags, function(tag) {
+                    
+                    callback.call(thisObj, tag, taglib);
+                });
+            },
+            
             /**
              * Checks if the provided URI is the URI of a taglib
              * 
@@ -50,7 +165,7 @@ raptor.defineClass(
              * @returns {Boolean} Returns true if the URI is that of a taglib. False, otherwise.
              */
             isTaglib: function(uri) {
-                return this.taglibUris[uri] === true;
+                return this.taglibsByURI[uri] != null;
             },
             
             /**
@@ -59,28 +174,39 @@ raptor.defineClass(
              * @param taglib {templating.compiler$Taglib} The taglib to add
              */
             add: function(taglib) {
-                
-                if (this.taglibUris[taglib.uri]) { //Check if a taglib with the same URI has already been added
-                    return; //Taglib already added... nothing to do
+                taglib = extend(new Taglib(), taglib); //Convert the tag to an actual Tag class
+                if (taglib.tags) {
+                    taglib.tags = [].concat(taglib.tags);
                 }
                 
-                this.taglibUris[taglib.uri] = true; //Mark the taglib as added
+                if (this.taglibsByURI[taglib.uri]) { //Check if a taglib with the same URI has already been added
+                    return; //Taglib already added... nothing to do
+                }
+                this.taglibs.push(taglib);
+                this.taglibsByURI[taglib.uri] = taglib; //Mark the taglib as added
                 
                 if (taglib.shortName) {
                     /*
                      * If the taglib has a short name then record that mapping so that we
                      * can map the short name to the full URI
                      */
-                    this.taglibUris[taglib.shortName] = true; //Mark the short name as being a taglib
-                    this.shortNameToUriMapping[taglib.shortName] = taglib.uri; //Add the mapping
-                    this.uriToShortNameMapping[taglib.uri] = taglib.shortName; //Add the reverse-mapping
+                    this.taglibsByURI[taglib.shortName] = taglib; //Mark the short name as being a taglib
+                    
+                    if (taglib.shortName) {
+                        this.shortNameToUriMapping[taglib.shortName] = taglib.uri; //Add the mapping
+                        this.uriToShortNameMapping[taglib.uri] = taglib.shortName; //Add the reverse-mapping
+                    }
+                    
+                    if (taglib.prefix) {
+                        this.uriToPrefixMapping[taglib.uri] = taglib.prefix;
+                    }
                 }
                 
                 /*
                  * Index all of the tags in the taglib by registering them
                  * based on the tag URI and the tag name
                  */
-                forEach(taglib.tags, function(tag) {
+                forEach(taglib.tags, function(tag, i) {
                     
                     var uri = tag.uri == null ? taglib.uri : tag.uri, //If not specified, the tag URI should be the same as the taglib URI
                         name = tag.name,
@@ -90,8 +216,9 @@ raptor.defineClass(
                      *       that it matches any URI and similar for the tag name. 
                      */
                     
-                    tag = extend(new Tag(), tag); //Convert the tag to an actual Tag class
+                    tag = taglib.tags[i] = extend(new Tag(), tag); //Convert the tag to an actual Tag class
                     tag.taglib = taglib; //Store a reference to the taglib that the tag belongs to
+                    tag.uri = uri;
                     
                     this.tagDefs[key] = tag; //Register the tag using the combination of URI and tag name so that it can easily be looked up
                     
@@ -202,13 +329,26 @@ raptor.defineClass(
              * If the provided URI is not a known short name then it is just returned.
              * 
              * @param uri {String} The taglib uri to resolve to a short name
-             * @returns {String} The resolved short name or the input string if there is not a known short name
+             * @returns {String} The resolved short name or undefined if the taglib does not have a short name
              */
             resolveShortName: function(uri) {
                 if (!uri) {
                     return uri;
                 }
-                return this.uriToshortNameMapping[uri] || uri;
+                if (this.shortNameToUriMapping[uri]) { //See if the URI is already a short name
+                    return uri;
+                }
+                
+                return this.uriToShortNameMapping[uri]; //Otherwise lookup the short name for the long URI
+            },
+            
+            resolvePrefix: function(uri) {
+                if (!uri) {
+                    return uri;
+                }
+                uri = this.resolveURI(uri); //Resolve the short name to a long URI
+                
+                return this.uriToPrefixMapping[uri]; //See if there is a mapping from the long URI to a prefix
             },
             
             /**
@@ -288,6 +428,7 @@ raptor.defineClass(
                     if (keepGoing === false) {
                         return false;
                     }
+                    return true;
                 });
             },
             
@@ -308,6 +449,10 @@ raptor.defineClass(
             
             getFunction: function(uri, functionName) {
                 return this.functionsLookup[uri + ":" + functionName];
+            },
+            
+            getImports: function(importsStr) {
+                return new Imports(this, importsStr);
             }
         };
         

@@ -53,6 +53,12 @@ raptor.defineClass(
                 
                 toString: function() {
                     return "[Tag: <" + this.uri + ":" + this.name + ">]";  
+                },
+                
+                forEachAttribute: function(callback, thisObj) {
+                    raptor.forEachEntry(this.attributeMap, function(attrName, attr) {
+                        callback.call(thisObj, attr);
+                    });
                 }
             };
             

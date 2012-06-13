@@ -41,9 +41,60 @@ raptor.defineClass(
             load: function() {
                 var src = this.src, 
                     filePath = this.filePath,
-                    logger = this.logger();
+                    logger = this.logger(),
+                    tagsById = {},
+                    extendTag = function(subTag) {
+                        var extendsId = subTag['extends'];
+                        
+                        delete subTag['extends'];
+                        
+                        var superTag = tagsById[extendsId];
+                        if (!superTag) {
+                            raptor.throwError(new Error('Parent tag with ID "' + extendsId + '" not found in taglib at path "' + filePath + '"'));
+                        }
+                        
+                        if (superTag['extends']) {
+                            extendTag(superTag);
+                        }
+                        
+                        /*
+                         * Have the sub tag inherit any properties from the super tag that are not in the sub tag
+                         */
+                        raptor.forEachEntry(superTag, function(k, v) {
+                            if (subTag[k] === undefined) {
+                                subTag[k] = v;
+                            }
+                        });
+                        
+                        /*
+                         * Copy any attributes from the super tag that are not found in the sub tag 
+                         */
+                        if (subTag.attributeMap && superTag.attributeMap && subTag.attributeMap !== superTag.attributeMap) {
+                            raptor.forEachEntry(superTag.attributeMap, function(k, v) {
+                                if (!subTag.attributeMap[k]) {
+                                    subTag.attributeMap[k] = v;
+                                }
+                            });
+                        }
+                        else if (superTag.attributeMap) {
+                            subTag.attributemap = superTag.attributeMap; 
+                        }
+                    },
+                    handleExtends = function(tags) {
 
-                return objectMapper.read(
+                        if (!tags) {
+                            return;
+                        }
+                        
+                        for (var i=0, len=tags.length; i<len; i++) {
+                            var tag = tags[i];
+                            if (tag['extends']) {
+                                extendTag(tag);
+                            }
+                        }
+                    };
+                
+                var taglib = objectMapper.read(
                     src, 
                     filePath,  
                     {
@@ -61,6 +112,7 @@ raptor.defineClass(
                                 _type: STRING,
                                 _targetProp: "version"
                             },
+                            
                             "short-name": {
                                 _type: STRING,
                                 _targetProp: "shortName"
@@ -69,15 +121,19 @@ raptor.defineClass(
                                 _type: STRING
                             },
                             
+                            "prefix": {
+                                _type: STRING
+                            },
+                            
                             "tag": {
                                 _type: OBJECT,
                                 
                                 _begin: function(taglib) {
                                     return {
-                                        name: null,
-                                        uri: null,
-                                        handlerClass: null,
-                                        dynamicAttributes: false
+//                                        name: null,
+//                                        uri: null,
+//                                        handlerClass: null,
+//                                        dynamicAttributes: false
                                     };
                                 },
                                 
@@ -89,6 +145,12 @@ raptor.defineClass(
                                     if (!taglib.tags) {
                                         taglib.tags = [];
                                     }
+                                    
+                                    if (tag.id) {
+                                        tagsById[tag.id] = tag;
+                                    }
+                                    
+                                    
                                     taglib.tags.push(tag);
                                 },
                                 
@@ -101,6 +163,13 @@ raptor.defineClass(
                                     _begin: function(tag) {
                                         tag.uri = '';
                                     }
+                                },
+                                "id": {
+                                    _type: STRING
+                                },
+                                "extends": {
+                                    _type: STRING,
+                                    _targetProp: "extends"
                                 },
                                 "handler-class": {
                                     _type: STRING,
@@ -306,6 +375,10 @@ raptor.defineClass(
                             
                         }
                     });
+                
+                handleExtends(taglib.tags);
+                
+                return taglib;
             }
         };
         

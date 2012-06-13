@@ -18,7 +18,7 @@ raptor.defineClass(
                             tab.activeFound = true;
                         }
                         
-                        tab.id = "tab" + context.uniqueId();
+                        tab.id = "tab" + tabs.length;
                         tabs.push(tab);
                     }
                 });
