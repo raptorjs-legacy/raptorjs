@@ -7,10 +7,7 @@ raptorBuilder.addLoader(function(raptor) {
         packageManifests = {},
         loaded = {},
         _extensionsLookup = {};
-    
-    /**
-     * @extension Server
-     */
+
     raptor.defineCore('packaging', {
         config: raptor.config.create({
             "enabledExtensions": {
