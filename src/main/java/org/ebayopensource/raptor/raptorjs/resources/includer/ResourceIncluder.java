@@ -244,6 +244,24 @@ public abstract class ResourceIncluder {
         return "/" + moduleName.replace('.', '/') + "/package.json";
     }
     
+    public void clearCache() {
+        if (!this.includePackageCommandsCache.isEmpty()) {
+            this.includePackageCommandsCache.clear();    
+        }
+        
+        if (!this.includeAsyncPackageCommandsCache.isEmpty()) {
+            this.includeAsyncPackageCommandsCache.clear();    
+        }
+        
+        if (!this.includeJSResourceCommandsCache.isEmpty()) {
+            this.includeJSResourceCommandsCache.clear();    
+        }
+        
+        if (!this.includeCSSResourceCommandsCache.isEmpty()) {
+            this.includeCSSResourceCommandsCache.clear();    
+        }
+    }
+    
     public IncludeCommand getCachedIncludeModuleCommand(String moduleName, ResourceIncluderContext context) {
         IncludeCommand includeModuleCommand = this.includePackageCommandsCache.get(moduleName);
         if (includeModuleCommand == null) {

@@ -47,6 +47,10 @@ public class PackageManager {
         return manifest;
     }
     
+    public void clearCache() {
+        this.cachedManifests.clear();
+    }
+    
     protected PackageManifest loadPackageManifest(String packagePath) {
         
         Resource resource = ResourceManager.getInstance().findResource(packagePath);
