@@ -67,6 +67,7 @@ public class PackageManifest {
             if (this.includes != null) { 
                 defaultExtension.includes = this.includes;
             }
+            this.extensions.extensionsByName.put("", defaultExtension);
             this.extensions.extensions.add(0, defaultExtension);
         }
         
@@ -82,6 +83,21 @@ public class PackageManifest {
             }
         }
         
+    }
+    
+    public List<Include> getIncludes(String extensionName) {
+        if (extensionName == null) {
+            extensionName = "";
+        }
+        
+        Extension extension = this.extensions.extensionsByName.get(extensionName);
+        
+        if (extension != null) {
+            return extension.getIncludes();
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
     
     public List<Include> getIncludes() {
@@ -297,6 +313,7 @@ public class PackageManifest {
     public static class Extensions {
 
         private List<Extension> extensions = new ArrayList<Extension>();
+        private Map<String, Extension> extensionsByName = new HashMap<String, Extension>();
         
         private void init(PackageManifest manifest) {
             Collections.sort(this.extensions);
@@ -308,6 +325,11 @@ public class PackageManifest {
 
         private void add(Extension extension) {
             this.extensions.add(extension);
+            String name = extension.name;
+            if (name != null) {
+                this.extensionsByName.put(name, extension);
+            }
+            
         }
     }
     

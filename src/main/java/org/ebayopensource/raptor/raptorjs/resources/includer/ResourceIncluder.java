@@ -240,7 +240,7 @@ public abstract class ResourceIncluder {
         }
     }
     
-    protected String getModulePackagePath(String moduleName) {
+    public String getModulePackagePath(String moduleName) {
         return "/" + moduleName.replace('.', '/') + "/package.json";
     }
     
