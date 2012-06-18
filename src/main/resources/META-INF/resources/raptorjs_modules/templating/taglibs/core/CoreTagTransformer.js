@@ -199,9 +199,9 @@ raptor.defineClass(
                             node.setPropertyNS(uri, name, value);
                         });
                     }
-                    else if (tagDef.nodeCompilerClass){
+                    else if (tagDef.compilerClass){
                         
-                        var NodeCompilerClass = raptor.require(tagDef.nodeCompilerClass);
+                        var NodeCompilerClass = raptor.require(tagDef.compilerClass);
                         extend(node, NodeCompilerClass.prototype);
                         NodeCompilerClass.call(node);
                         

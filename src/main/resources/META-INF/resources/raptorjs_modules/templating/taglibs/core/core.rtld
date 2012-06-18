@@ -32,7 +32,7 @@
             <allow-expressions>false</allow-expressions>
         </attribute>
 
-        <node-compiler-class>templating.taglibs.core.TemplateNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.TemplateNode</compiler-class>
     </tag>
     
     <tag extends="template">
@@ -106,7 +106,7 @@
         
         <name>for</name> 
 
-        <node-compiler-class>templating.taglibs.core.ForNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.ForNode</compiler-class>
         
         <attribute>
             <name>each</name>
@@ -130,7 +130,7 @@
         
         <name>write</name> 
 
-        <node-compiler-class>templating.taglibs.core.WriteNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.WriteNode</compiler-class>
         
         <attribute>
             <name>value</name>
@@ -150,7 +150,7 @@
         
         <name>if</name> 
 
-        <node-compiler-class>templating.taglibs.core.IfNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.IfNode</compiler-class>
 
         <attribute>
             <name>test</name>
@@ -163,7 +163,7 @@
         
         <name>invoke</name> 
 
-        <node-compiler-class>templating.taglibs.core.InvokeNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.InvokeNode</compiler-class>
 
         <attribute>
             <name>function</name>
@@ -184,7 +184,7 @@
         
         <name>choose</name> 
 
-        <node-compiler-class>templating.taglibs.core.ChooseNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.ChooseNode</compiler-class>
 
     </tag>
 
@@ -192,7 +192,7 @@
         
         <name>when</name> 
 
-        <node-compiler-class>templating.taglibs.core.WhenNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.WhenNode</compiler-class>
 
         <attribute>
             <name>test</name>
@@ -205,7 +205,7 @@
         
         <name>otherwise</name> 
 
-        <node-compiler-class>templating.taglibs.core.OtherwiseNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.OtherwiseNode</compiler-class>
 
     </tag>
         
@@ -213,7 +213,7 @@
         
         <name>def</name> 
 
-        <node-compiler-class>templating.taglibs.core.DefNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.DefNode</compiler-class>
 
         <attribute>
             <name>function</name>
@@ -227,7 +227,7 @@
         
         <name>with</name> 
 
-        <node-compiler-class>templating.taglibs.core.WithNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.WithNode</compiler-class>
 
         <attribute>
             <name>vars</name>
@@ -241,7 +241,7 @@
         
         <name>include</name> 
 
-        <node-compiler-class>templating.taglibs.core.IncludeNode</node-compiler-class>
+        <compiler-class>templating.taglibs.core.IncludeNode</compiler-class>
 
         <attribute>
             <name>template</name>
