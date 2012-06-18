@@ -201,7 +201,7 @@ raptor.defineClass(
 
             replaceChild: function(newChild, replacedChild) {
                 if (newChild === replacedChild) {
-                    return;
+                    return false;
                 }
                 
                 for (var i=0, len=this.childNodes.length; i<len; i++) {
