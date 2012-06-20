@@ -92,7 +92,13 @@ raptor.defineModule('templating', function(raptor) {
                  * then it means that the template has not been fully loaded and initialized.
                  * Therefore, check if the template has been registerd with the name provided
                  */
-                if ((templateFunc = registeredTemplates[templateName])) { //Check the registered templates lookup to see if a factory function has been register
+                templateFunc = registeredTemplates[templateName]
+                if (!templateFunc && this.findTemplate) {
+                    this.findTemplate(templateName);
+                    templateFunc = registeredTemplates[templateName];    
+                }
+                
+                if (templateFunc) { //Check the registered templates lookup to see if a factory function has been register
                     /*
                      * We found that template has been registered so we need to fully initialize it.
                      * To create the template rendering function we must invoke the template factory

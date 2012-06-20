@@ -19,12 +19,18 @@
         {"type": "js", "path": "templating.js"}
     ],
     
-    "extensions": {
-        
-        "rhino": {
+    "extensions": [
+        {
+            "name": "server",
+            "includes": [
+                {"type": "js", "path": "templating_server.js"}
+            ]
+        },
+        {
+            "name": "rhino",
             "includes": [
                 {"type": "js", "path": "templating_rhino.js"}
             ]
         }
-    }
+    ]
 }
