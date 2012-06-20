@@ -36,9 +36,9 @@ $rload(function(raptor) {
                 
                 raptor.runtime.evaluateResource(resource);
                 
-                var loaded = oop._load(name, false /* Do not find again or infinite loop will result */);
+                var o = oop._load(name, false /* Do not find again or infinite loop will result */);
 
-                if (!loaded)
+                if (!o)
                 {
                     var pathToFile = resource.getSystemPath();
                     
@@ -49,7 +49,7 @@ $rload(function(raptor) {
                 }
                 else
                 {   
-                    return loaded;
+                    return o;
                 }
             }
             else
@@ -57,8 +57,11 @@ $rload(function(raptor) {
                 return undefined;                
             }
         },
-        findMissingModule = function(name) {
-            var manifest = oop.getModuleManifest(name);
+        findMissingModule = function(name, manifest) {
+            if (!manifest) {
+                manifest = oop.getModuleManifest(name);
+            }
+            
             
             if (!manifest) {
                 return undefined;
@@ -68,12 +71,45 @@ $rload(function(raptor) {
             
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
-        };
+        },
+        mappings = {},
+        addMappings = function(_mappings) {
+            raptor.extend(mappings, _mappings);
+        },
+        searchPathListenerHandle,
+        discoveryComplete = false;
     
     /**
      * @extension Server
      */
     raptor.extendCore('oop', {
+        _watchResourceSearchPath: function() {
+            if (!searchPathListenerHandle) {
+                searchPathListenerHandle = raptor.resources.getSearchPath().subscribe("modified", function() {
+                    discoveryComplete = false;
+                    this._doDiscovery(); //If the search path is modified then rediscover the 
+                }, this);
+            }
+        },
+        
+        _doDiscovery: function() {
+            if (discoveryComplete) {
+                return;
+            }
+            discoveryComplete = true;
+            
+            raptor.require('packaging').forEachTopLevelPackageManifest(function(manifest) {
+                var manifestMappings = manifest["raptor-module-mappings"];
+                
+                if (manifestMappings) {
+                    addMappings(manifestMappings);
+                }
+
+            }, this);
+            
+            this._watchResourceSearchPath();
+        },
+        
         /**
          * 
          * @protected
@@ -82,11 +118,13 @@ $rload(function(raptor) {
          * @returns
          */
         _find: function(name) {
-            var loaded = findMissingClass(name);
-            if (loaded === undefined) {
-                loaded = findMissingModule(name);
+            this._doDiscovery();
+            
+            var o = findMissingClass(name);
+            if (o === undefined) {
+                o = findMissingModule(name);
             }
-            return loaded;
+            return o;
         },
         
         _missing: function(name) {
@@ -99,11 +137,18 @@ $rload(function(raptor) {
          * @returns
          */
         getModuleManifest: function(name) {
-            return raptor.packaging.getPackageManifest(this.getModuleManifestPath(name));
-        },
-        
-        getModuleManifestPath: function(name) {
-            return getModuleDirPath(name) + "/package.json";
+            var path = mappings[name];
+            if (name == 'taglib/widgets') {
+                console.error(mappings);                
+            }
+            
+            if (!path) {
+                path = getModuleDirPath(name) + "/package.json";
+            }
+            else {
+                console.error('Found mapping: ', path);
+            }
+            return raptor.packaging.getPackageManifest(path);
         }
     });
 });
