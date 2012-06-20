@@ -25,9 +25,9 @@ raptor.defineClass(
                 
                 if (node.isElementNode()) {
                     var options = compiler.options || {};
-                    var preserveWhitespace = compiler.options.preserveWhitespace || {};
-                    var allowSelfClosing = compiler.options.allowSelfClosing || {};
-                    var startTagOnly = compiler.options.startTagOnly || {};
+                    var preserveWhitespace = options.preserveWhitespace || {};
+                    var allowSelfClosing = options.allowSelfClosing || {};
+                    var startTagOnly = options.startTagOnly || {};
                     
                     var lookupKey = node.uri ? node.uri + ":" + node.localName : node.localName;
                     if (preserveWhitespace[lookupKey] === true) {
