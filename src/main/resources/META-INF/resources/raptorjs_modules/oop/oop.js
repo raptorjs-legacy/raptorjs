@@ -396,6 +396,14 @@ raptor.defineEnum(
                 //and return it since it is an anonymous class
                 return oop._build("(anonymous)", def);
             }
+            
+            if (type == CLASS) { 
+                oop.alias(
+                    function() { 
+                        return _construct(name,arguments); 
+                    },
+                    name);
+            }
 
             var existingDef = definitionsLookup[name];
             
@@ -784,7 +792,7 @@ raptor.defineEnum(
             }
             
 
-            return clazz;
+            return targetType !== MODULE ? oop.alias(clazz,name) : clazz;
             
         },
         
