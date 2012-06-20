@@ -540,8 +540,12 @@ describe('templating module', function() {
         
     });
     
-//    xit("should allow for widgets", function() {
-//        var output = compileAndRender("widgets.rhtml", "widgets", {}).output;
-//        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
-//    });
+    xit("should allow for widgets", function() {
+        compileAndLoad("widgets_nested.rhtml");
+        
+        raptor.load('taglib/widgets');
+        
+        var output = compileAndRender("widgets.rhtml", "widgets", {}).output;
+        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
+    });
 });
