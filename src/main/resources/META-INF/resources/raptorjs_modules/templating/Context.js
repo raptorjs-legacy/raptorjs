@@ -110,11 +110,7 @@ raptor.defineClass(
              * @param props
              * @param body
              */
-            invokeHandler: function(handler, props, body) {
-                if (!props) {
-                    props = {};
-                }
-                props.invokeBody = body;
+            invokeHandler: function(handler, props) {
                 handler.process(props, this);
             },
 
@@ -127,6 +123,14 @@ raptor.defineClass(
                 }
                 
                 return helper;
+            },
+            
+            isTagInput: function(input) {
+                return input && input.hasOwnProperty("_tag");
+            },
+            
+            renderTemplate: function(name, data) {
+                raptor.require("templating").render(name, data, this);
             }
         };
         
@@ -160,7 +164,20 @@ raptor.defineClass(
                 /**
                  * Helper function invoke a tag handler
                  */
-                t: Context.prototype.invokeHandler,
+                t: function(handler, props, body, namespacedProps) {
+                    if (!props) {
+                        props = {};
+                    }
+                    
+                    props._tag = true;
+                    
+                    props.invokeBody = body;
+                    if (namespacedProps) {
+                        raptor.extend(props, namespacedProps);
+                    }
+                    
+                    this.invokeHandler(handler, props);
+                },
                 
                 /**
                  * Helper function to render dynamic attributes
@@ -181,13 +198,13 @@ raptor.defineClass(
                 },
                 
                 /**
-                 * Helper function include another template
+                 * Helper function to include another template
                  * 
                  * @param name
                  * @param data
                  */
                 i: function(name, data) {
-                    raptor.require("templating").render(name, data, this);
+                    this.renderTemplate(name, data);
                 }
             };
         
