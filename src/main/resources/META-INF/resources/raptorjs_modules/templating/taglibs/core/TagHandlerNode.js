@@ -94,7 +94,7 @@ raptor.defineClass(
                 
                 
                 forEach(this.tagDef.importedVariables, function(importedVariable) {
-                    this.setProperty(null, importedVariable.propertyName, new Expression(importedVariable.expression));
+                    this.setProperty(importedVariable.propertyName, new Expression(importedVariable.expression));
                 }, this);
                  
                 
