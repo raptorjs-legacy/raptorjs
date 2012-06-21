@@ -23,7 +23,8 @@ raptor.defineClass(
             STRING = "string",
             BOOLEAN = "boolean",
             OBJECT = "object",
-            transformerUniqueId = 0;
+            transformerUniqueId = 0,
+            resources = raptor.require('resources');
         
         var TaglibXmlLoader = function(src, path) {
             this.src = src;
@@ -93,19 +94,25 @@ raptor.defineClass(
                             }
                         }
                     };
+                    
+                var taglib;
                 
-                var taglib = objectMapper.read(
-                    src, 
-                    filePath,  
-                    {
+                var handlers = {
                         "raptor-taglib": { 
                             _type: OBJECT,
                             
                             _begin: function() {
-                                return {
-                                    uri: null,
-                                    shortName: null
-                                };
+                                var newTaglib = {
+                                        uri: null,
+                                        shortName: null
+                                    };
+                                
+                                if (!taglib) {
+                                    taglib = newTaglib;
+                                }
+                                
+                                
+                                return newTaglib;
                             },
                             
                             "tlib-version": {
@@ -128,7 +135,7 @@ raptor.defineClass(
                             "tag": {
                                 _type: OBJECT,
                                 
-                                _begin: function(taglib) {
+                                _begin: function() {
                                     return {
 //                                        name: null,
 //                                        uri: null,
@@ -137,7 +144,7 @@ raptor.defineClass(
                                     };
                                 },
                                 
-                                _end: function(tag, taglib) {
+                                _end: function(tag) {
                                     if (tag.uri == null) {
                                         tag.uri = taglib.uri;
                                     }
@@ -274,7 +281,7 @@ raptor.defineClass(
                                 "transformer": {
                                     _type: OBJECT,
                                     
-                                    _begin: function(taglib) {
+                                    _begin: function() {
                                         return {
                                             id: transformerUniqueId++,
                                             className: null,
@@ -318,7 +325,7 @@ raptor.defineClass(
                                     };
                                 },
                                 
-                                _end: function(textTransformer, taglib) {
+                                _end: function(textTransformer) {
                                     if (!taglib.textTransformers) {
                                         taglib.textTransformers = [];
                                     }
@@ -335,14 +342,23 @@ raptor.defineClass(
                                 _type: OBJECT,
                                 
                                 _begin: function() {
-                                    raptor.errors.throwError(new Error("<import-taglib> no yet supported"));
+                                    return {};
+                                    
                                 },
                                 
-                                _end: function(textTransformer, taglib) {
-
+                                _end: function(importedTaglib) {
+                                    var path = importedTaglib.path,
+                                        taglibResource = resources.findResource(path),
+                                        importedXmlSource = taglibResource.readyFully();
+                                    
+                                    objectMapper.read(
+                                            importedXmlSource, 
+                                            taglibResource.getSystemPath(),  
+                                            handlers);
+                                    
                                 },
                                 
-                                "uri": {
+                                "path": {
                                     _type: STRING
                                 }
                             },
@@ -356,7 +372,7 @@ raptor.defineClass(
                                     };
                                 },
                                 
-                                _end: function(func, taglib) {
+                                _end: function(func) {
                                     if (!taglib.functions) {
                                         taglib.functions = [];
                                     }
@@ -374,7 +390,12 @@ raptor.defineClass(
                             }
                             
                         }
-                    });
+                    };
+                
+                objectMapper.read(
+                    src, 
+                    filePath,  
+                    handlers);
                 
                 handleExtends(taglib.tags);
                 
