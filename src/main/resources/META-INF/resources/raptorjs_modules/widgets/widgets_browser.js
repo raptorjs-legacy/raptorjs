@@ -27,7 +27,61 @@ raptor.extend('widgets', function(raptor) {
         listeners = raptor.listeners,
         EVENTS = 'events',
         Widget = raptor.require('widgets.Widget'),
-        arrayFromArguments = raptor.arrayFromArguments;
+        arrayFromArguments = raptor.arrayFromArguments,
+        nextWidgetId = 0;
+    
+    /**
+     * The Documentation groups up all widgets rendered in the same template documentat.
+     * 
+     * @class
+     * @anonymous
+     * @name widgets-Document
+     *  
+     */
+    var Document = function() {
+        this.widgetsById = {};
+    };
+    
+    /**
+     * 
+     */
+    Document.prototype = /** @lends widgets-Document.prototype */ {
+        /**
+         * 
+         * @param widget
+         * @param id
+         */
+        addWidget: function(widget, id) {
+            var existing = this.widgetsById[id];
+            if (!existing) {
+                this.widgetsById[id] = [widget];
+            }
+            else {
+                existing.push(widget);
+            }
+        },
+        
+        /**
+         * 
+         * @param id
+         * @returns
+         */
+        getWidget: function(id) {
+            var matching = this.widgetsById[id];
+            if (!matching || matching.length === 0) return undefined;
+            if (matching.length === 1) return matching[0];
+            raptor.throwError(new Error('getWidget: Multiple widgets found with ID "' + id + '"'));
+        },
+        
+        /**
+         * 
+         * @param id
+         * @returns {Boolean}
+         */
+        getWidgets: function(id) {
+            return this.widgetsById[id] || [];
+        }
+    };
 
     return {
         /**
@@ -35,9 +89,10 @@ raptor.extend('widgets', function(raptor) {
          * @param {...widgets} widgets An array of widget definitions
          * @returns {void}
          */
-        initAll: function(widgets) {
+        _initAll: function(widgets) {
             
-            var logger = this.logger();
+            var logger = this.logger(),
+                docs = {};
             
             var _initWidget = function(widget, config, type) {
                     try
@@ -47,6 +102,17 @@ raptor.extend('widgets', function(raptor) {
                     catch(e) {
                         logger.error('Unable to initialize widget of type "' + type + "'. Exception: " + e, e);
                     }
+                },
+                _getDoc = function(docId) {
+                    if (!docId) {
+                        return null;
+                    }
+                    
+                    var doc = docs[docId];
+                    if (!doc) {
+                        doc = docs[docId] = new Document();
+                    }
+                    return doc;
                 },
                 _initWidgetOnReady = function(widget, config, type) {
                     widget.onReady(function() {
@@ -61,16 +127,36 @@ raptor.extend('widgets', function(raptor) {
                     if (!widgetDefs) return;
                     
                     var i=0,
-                        len = widgetDefs.length;
+                        len = widgetDefs.length,
+                        doc,
+                        nestedDoc;
                     
                     for (; i<len; i++) {
                         
                         var widgetDef = widgetDefs[i], 
                             type = widgetDef[0],
                             id = widgetDef[1],
-                            childId = widgetDef[2],
-                            config = widgetDef[3] || {},
-                            children = widgetDef[4];
+                            docId = widgetDef[2],
+                            nestedDocId = widgetDef[3],
+                            childId = widgetDef[4],
+                            config = widgetDef[5] || {},
+                            children = widgetDef.slice(6);
+                        
+                        if (docId === 0) {
+                            docId = undefined;
+                        }
+                        
+                        if (nestedDocId === 0) {
+                            nestedDocId = undefined;
+                        }
+                            
+                        if (childId === 0) {
+                            childId = undefined;
+                        }
+                        
+                        if (config === 0) {
+                            childId = undefined;
+                        }
                         
                         logger.debug('Creating widget of type "' + type + '" (' + id + ')');
                         
@@ -113,8 +199,17 @@ raptor.extend('widgets', function(raptor) {
                         widget._id = id;
                         widget._childId = childId;
                         widgetsById[id] = widget;
+                        if (childId && docId) {
+                            doc = _getDoc(docId);
+                            doc.addWidget(widget, childId);                         
+                        }
                         
-                        if (children) {
+                        
+                        if (nestedDocId) {
+                            widget._doc = _getDoc(nestedDocId);
+                        }
+                        
+                        if (children && children.length) {
                             _initWidgets(children, widget);
                         }
 
@@ -124,16 +219,11 @@ raptor.extend('widgets', function(raptor) {
                         else {
                             _initWidgetOnReady(widget, config, type);
                         }
-                        
-                        if (parentWidget) {
-                            parentWidget._addChild(widget);
-                        }
-
                     }
 
                 };
                 
-            _initWidgets(arguments);
+            _initWidgets(arrayFromArguments(arguments));
         },
         
         /**
@@ -143,6 +233,15 @@ raptor.extend('widgets', function(raptor) {
          */
         get: function(id) {
             return widgetsById[id];
+        },
+        
+        _nextWidgetId: function() {
+            return 'c' + nextWidgetId++;
         }
     };
 });
+
+raptor.global.$rwidgets = function() {
+    var widgets = raptor.require('widgets');
+    widgets._initAll.apply(widgets, arguments);
+};

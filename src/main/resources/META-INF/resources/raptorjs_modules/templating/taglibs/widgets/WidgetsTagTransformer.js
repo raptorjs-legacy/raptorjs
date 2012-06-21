@@ -23,23 +23,11 @@ raptor.defineClass(
         
         return {
             process: function(node, compiler, template) {
-                
                 var id;
                 
-                if ((id = node.getPropertyNS(widgetsNS, "id")) != null) {
-                    
-                    
-                    var widgetsData = template.attributes[widgetsNS];
-                    if (!widgetsData) {
-                        widgetsData = template.attributes[widgetsNS] = {};
-                    }
-                    
-                    if (!widgetsData.docVarAdded) {
-                        template.addVar("widgetDoc", "context.widgetDoc()");
-                        widgetsData.docVarAdded = true;
-                    }
-                    
-                    node.setPropertyNS(widgetsNS, "doc", template.makeExpression("widgetDoc"));
+                if ((id = node.getPropertyNS(widgetsNS, "id"))) {
+                    node.removePropertyNS(widgetsNS, "id");
+                    node.setProperty("widgetContext", template.makeExpression("[widget, " + id + "]"));
                 }
             }
         };

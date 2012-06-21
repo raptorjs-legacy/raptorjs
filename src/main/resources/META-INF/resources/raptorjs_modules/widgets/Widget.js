@@ -72,27 +72,7 @@ raptor.defineMixin('widgets.Widget',  function(raptor) {
             this._children = [];
             this._childrenById = {};
         },
-
-        /**
-         * 
-         * @param childWidget
-         * @returns
-         */
-        _addChild: function(childWidget) {
-            childWidget._parentWidget = this;
-            var childrenById = this._childrenById;
-            
-            var existingChildren = childrenById[childWidget._childId];
-            if (existingChildren == null)
-            {
-                existingChildren = [];
-                childrenById[childWidget._childId] = existingChildren;
-            }
-            existingChildren.push(childWidget);
-
-            this._children.push(childWidget);
-        },
-
+        
         /**
          * Returns the DOM element ID corresponding to the provided
          * widget element ID. 
@@ -195,10 +175,8 @@ raptor.defineMixin('widgets.Widget',  function(raptor) {
          * @returns {object} The child instance widget or null if one is not found.
          */
         getChild: function(childWidgetId) {
-            var children = this._childrenById[childWidgetId];
-            if (!children || children.length === 0) return undefined;
-            if (children.length === 1) return children[0];
-            errors.throwError(new Error('Multiple widgets found with ID "' + childWidgetId + '" (' + children.length + ')'));
+            var doc = this._doc;
+            return doc ? doc.getWidget(childWidgetId) : null;
         },
         
         /**
@@ -207,12 +185,18 @@ raptor.defineMixin('widgets.Widget',  function(raptor) {
          * @returns {array} An array of child widgets (or an empty array if none are found)
          */
         getChildren: function(childWidgetsId) {
-            if (arguments.length === 0) {
-                return this._children;
-            }
-            
-            var children = this._childrenById[childWidgetsId];
-            return children || [];
+            var doc = this._doc;
+            return doc ? doc.getWidgets(childWidgetsId) : null;
+        },
+        
+        /**
+         * Returns the document associated with this widget. The widget document will contain
+         * all widgets with an assigned ID declared in the same template.
+         * 
+         * @returns 
+         */
+        getDoc: function() {
+            return this._doc;
         },
         
         /**

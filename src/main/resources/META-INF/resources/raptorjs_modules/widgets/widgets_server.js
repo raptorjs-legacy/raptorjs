@@ -21,7 +21,65 @@
 raptor.extend('widgets', function(raptor) {
     "use strict";
     
+    var stringify = raptor.require('json.stringify').stringify;
+    
     return {
-       
+        
+        writeInitWidgetsCode: function(context, clearWidgets) {
+            var attributes = context.attributes,
+                widgets = attributes.widgets;
+            
+            if (!widgets) {
+                return;
+            }
+            
+            var write = function(str) {
+                    context.write(str);
+                },
+                writeWidgets = function(widgets) {
+                    for (var i=0, len=widgets.length; i<len; i++) {
+                        if (i) {
+                            write(',');
+                        }
+                        writeWidget(widgets[i]);
+
+                    }
+                },
+                writeWidget = function(widget) {
+                    write('["');
+                    write(widget.type);
+                    write('","');
+                    write(widget.id);
+                    write('",');
+                    write(widget.docId != null ? widget.docId : "0");
+                    write(',');
+                    write(widget.nestedDocId != null ? widget.nestedDocId : "0");
+                    write(',');
+                    write(widget.childId ? ('"' + widget.childId + '"') : "0");
+                    write(',');
+                    write(widget.config ? stringify(widget.config) : "0");
+                    if (widget.children.length) {
+                        write(',');
+                        writeWidgets(widget.children);
+                    }
+                    write(']');
+                };
+            
+            write("$rwidgets(");
+            writeWidgets(widgets);
+            write(");");
+            
+            if (clearWidgets !== false) {
+                attributes.widgets = [];
+            }
+        },
+        
+        _nextWidgetId: function(context) {
+            var attributes = context.attributes;
+            if (!attributes.nextWidgetId) {
+                attributes.nextWidgetId = 0;
+            }
+            return 's' + attributes.nextWidgetId++;
+        }
     };
 });

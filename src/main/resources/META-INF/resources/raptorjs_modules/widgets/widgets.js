@@ -20,8 +20,72 @@
 */
 raptor.defineModule('widgets', function(raptor) {
     "use strict";
+
+    var WidgetDef = function(id, type, childId, config, parent) {
+        this.type = type;
+        this.id = id;
+        this.childId = childId;
+        this.config = config;
+//        this.nestedDocId = null;
+//        this.docId = null;
+        this.parent = parent;
+        this.children = [];
+        if (parent) {
+            parent.children.push(this);
+        }
+    };
+
+    WidgetDef.prototype = {
+        elId: function(name) {
+            if (arguments.length === 0) {
+                return this.id;
+            }
+            else {
+                return this.id + "-" + name;
+            }
+        }
+    };
     
     return {
+        addWidget: function(type, childId, config, parent, context) {
+            
+            var widgetId = this._nextWidgetId(context),
+                widgetDef = new WidgetDef(widgetId, type, childId, config, parent);
+            
+            if (childId) {
+                if (!parent) {
+                    raptor.throwError(new Error("Widget with an assigned ID is not scoped within another widget."));
+                }
+                if (!parent.nestedDocId) {
+                    parent.nestedDocId = this._nextDocId(context);
+                }
+                widgetDef.docId = parent.nestedDocId;
+            }
+            
+            
+            if (!parent) {
+                var attributes = context.attributes;
+                if (!attributes.widgets) {
+                    attributes.widgets = [];
+                }
+                attributes.widgets.push(widgetDef); 
+            }
+            
+            
+            return widgetDef;
+        },
         
+        hasWidgets: function(context) {
+            var attributes = context.attributes;
+            return attributes.widgets && attributes.widgets.length != 0;
+        },
+        
+        _nextDocId: function(context) {
+            var attributes = context.attributes;
+            if (!attributes.nextDocId) {
+                attributes.nextDocId = 1;
+            }
+            return attributes.nextDocId++;
+        }
     };
 });

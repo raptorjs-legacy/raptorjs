@@ -22,4 +22,23 @@
         </transformer>
     </tag>
     
+    <tag>
+        <name>widget</name>
+        <handler-class>templating.taglibs.widgets.WidgetTag</handler-class>
+        
+        <attribute name="jsClass" type="string"/>
+        
+        <nested-variable name="widget"/>
+        
+        <imported-variable property-name="config" expression="data.widgetConfig"/>
+        <imported-variable property-name="widgetContext" expression="data.widgetContext"/>
+    </tag>
+    
+    <tag>
+        <name>initWidgets</name>
+        <handler-class>templating.taglibs.widgets.InitWidgetsTag</handler-class>
+        
+        <attribute name="includeScriptTag" type="boolean"/>
+    </tag>
+    
 </raptor-taglib>
