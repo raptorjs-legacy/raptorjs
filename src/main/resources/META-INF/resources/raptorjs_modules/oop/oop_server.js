@@ -138,15 +138,9 @@ $rload(function(raptor) {
          */
         getModuleManifest: function(name) {
             var path = mappings[name];
-            if (name == 'taglib/widgets') {
-                console.error(mappings);                
-            }
-            
+
             if (!path) {
                 path = getModuleDirPath(name) + "/package.json";
-            }
-            else {
-                console.error('Found mapping: ', path);
             }
             return raptor.packaging.getPackageManifest(path);
         }
