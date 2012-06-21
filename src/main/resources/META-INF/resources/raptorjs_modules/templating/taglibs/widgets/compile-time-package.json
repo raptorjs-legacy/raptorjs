@@ -1,0 +1,6 @@
+{
+    "includes": [
+        {"type": "js", "path": "WidgetsTagTransformer.js"},
+        {"type": "rtld", "path": "widgets.rtld"}
+    ]
+}
