@@ -22,6 +22,7 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             forEach = raptor.forEach,
             isArray = raptor.isArray,
+            isEmpty = raptor.require('objects').isEmpty,
             splice = Array.prototype.splice,
             errors = raptor.errors,
             setParentNode = function(nodes, newParent) {
@@ -50,7 +51,7 @@ raptor.defineClass(
         };
         
         Node.prototype = { 
-            setProperty: function(uri, name, value) {
+            setProperty: function(name, value) {
                 this.setPropertyNS(null, name, value);
             },
             
@@ -128,6 +129,11 @@ raptor.defineClass(
                 if (namespaceProps) {
                     delete namespaceProps[name];
                 }
+                
+                if (isEmpty(namespaceProps)) {
+                    delete this.properties[uri];
+                }
+                
             },
             
             forEachPropertyNS: function(uri, callback, thisObj) {
