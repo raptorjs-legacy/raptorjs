@@ -61,6 +61,16 @@ $rload(function(raptor) {
             }
 
             return entries;
+        },
+        
+        isEmpty: function(o) {
+            if (!o) return true;
+            for (var k in o) {
+                if (o.hasOwnProperty(k)) {
+                    return false;
+                }
+            }
+            return true;
         }
     });    
 });
