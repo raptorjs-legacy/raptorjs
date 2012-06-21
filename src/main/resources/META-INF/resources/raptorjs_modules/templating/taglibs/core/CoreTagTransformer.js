@@ -31,7 +31,6 @@ raptor.defineClass(
             OtherwiseNode = raptor.require("templating.taglibs.core.OtherwiseNode"),
             TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
             Expression = raptor.require('templating.compiler.Expression'),
-            ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter'),
             TypeConverter = raptor.require('templating.compiler.TypeConverter'),
             getPropValue = function(value, type, allowExpressions) {
