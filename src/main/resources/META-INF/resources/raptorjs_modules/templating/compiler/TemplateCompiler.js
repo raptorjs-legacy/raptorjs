@@ -23,7 +23,9 @@ raptor.defineClass(
             ParseTreeBuilder = raptor.require('templating.compiler.ParseTreeBuilder'),
             Expression = raptor.require('templating.compiler.Expression'),
             errors = raptor.require("errors"),
-            minifier = raptor.find("js-minifier");
+            minifier = raptor.find("js-minifier"),
+            TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
+            TypeConverter = raptor.require('templating.compiler.TypeConverter');
         
         /**
          * @param taglibs {templating.compiler$TaglibCollection} The collection of taglibs that are available to the compiler
@@ -129,10 +131,13 @@ raptor.defineClass(
                     rootNode.generateCode(templateBuilder); //Generate the code and have all output be managed by the TemplateBuilder
                     
                     var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
+                    
+//                    console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
+                    
                     if (minifier && this.options.minify !== false) {
                         output = minifier.minify(output);
                     }
-                    //console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
+                    
                     return output;
                 }
                 catch(e) {
@@ -181,6 +186,29 @@ raptor.defineClass(
              */
             isExpression: function(expression) {
                 return expression instanceof Expression;
+            },
+            
+            /**
+             * 
+             * @param uri
+             * @param localName
+             * @returns {TagHandlerNode}
+             */
+            createTagHandlerNode: function(uri, localName) {
+                var tagDef = this.taglibs.getTagDef(uri, localName);
+                var tagHandlerNode = new TagHandlerNode(tagDef);
+                return tagHandlerNode;
+            },
+            
+            /**
+             * 
+             * @param value
+             * @param type
+             * @param allowExpressions
+             * @returns
+             */
+            convertType: function(value, type, allowExpressions) {
+                return TypeConverter.convert(value, type, allowExpressions);
             }
         };
         
