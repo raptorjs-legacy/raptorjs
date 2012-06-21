@@ -164,13 +164,22 @@ $rload(function(raptor) {
 
                     if (exception != null)
                     {
-                        out += '\n\n' + stacktraces.trace(exception);
+                        if (stacktraces) {
+                            out += '\n\n' + stacktraces.trace(exception);
+                        }
+                        else {
+                            console.error(exception);
+                        }
                     }
                     else if (message instanceof Error)
                     {
-                        out += '\n\n' + stacktraces.trace(message);
+                        if (stacktraces) {
+                            out += '\n\n' + stacktraces.trace(message);    
+                        }
+                        else {
+                            console.error(message);
+                        }
                     }
-                    
                     
                     console[level](out);
                                   
