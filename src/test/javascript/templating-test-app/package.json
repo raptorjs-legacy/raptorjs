@@ -11,7 +11,7 @@
         }
     ],
     
-    "taglibs": {
-	    "http://ebay.com/raptor/test": "/taglibs/test"
+    "raptor-taglibs": {
+	    "http://raptor.ebayopensource.org/test": "/taglibs/test/test.rtld"
 	}
 }

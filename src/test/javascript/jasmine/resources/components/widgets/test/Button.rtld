@@ -1,0 +1,16 @@
+<raptor-taglib>
+    <tag>
+        <handler-class>components.widgets.test.ButtonController</handler-class>
+        <name>button</name>
+        <attribute>
+            <name>label</name>
+        </attribute>
+        <attribute>
+            <name>id</name>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
+            <type>boolean</type>
+        </attribute>
+    </tag>
+</raptor-taglib>

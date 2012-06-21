@@ -1,18 +1,18 @@
 raptor.defineClass(
-    'taglibs.test.TabController',
+    'taglibs.test.TabTag',
     function(raptor) {
         
         
-        var TabController = function() {
+        var TabTag = function() {
             
         };
         
-        TabController.prototype = {
+        TabTag.prototype = {
             process: function(input, context) {
                  var tabs = input.tabs;
                  tabs.addTab(input);
             }
         };
         
-        return TabController;
+        return TabTag;
     });

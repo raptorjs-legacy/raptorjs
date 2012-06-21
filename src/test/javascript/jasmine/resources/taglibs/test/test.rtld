@@ -8,7 +8,7 @@
     
     <tag>
         <name>simpleHello</name>
-        <handler-class>taglibs.test.SimpleHelloController</handler-class>
+        <handler-class>taglibs.test.SimpleHelloTag</handler-class>
         <attribute>
             <name>name</name>
         </attribute>
@@ -20,13 +20,13 @@
     
     <tag>
         <name>tabs</name>
-        <handler-class>taglibs.test.TabsController</handler-class>
+        <handler-class>taglibs.test.TabsTag</handler-class>
         <nested-variable name="tabs"/>
     </tag>
     
     <tag>
         <name>tab</name>
-        <handler-class>taglibs.test.TabController</handler-class>
+        <handler-class>taglibs.test.TabTag</handler-class>
         
         <attribute name="title"/>
         
@@ -35,10 +35,19 @@
     
     <tag>
         <name>button</name>
-        <handler-class>taglibs.test.ButtonController</handler-class>
+        <handler-class>taglibs.test.ButtonTag</handler-class>
         
         <attribute name="label"/>
         <attribute name="type"/>
+        <attribute name="disabled" type="boolean"/>
+        <attribute name="id" uri="http://raptor.ebayopensource.org/widgets" type="string"/>
+    </tag>
+    
+    <tag>
+        <name>container</name>
+        <handler-class>taglibs.test.ContainerTag</handler-class>
+        
+        <attribute name="title"/>
     </tag>
     
     <function>

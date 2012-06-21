@@ -11,7 +11,19 @@
         }
     ],
     
-    "taglibs": {
-	    "http://ebay.com/raptor/test": "/taglibs/test"
+    "raptor-module-mappings": {
+        "components/widgets/test/Button": "/components/widgets/test/Button-package.json",
+        "components/widgets/test/Button-renderer": "/components/widgets/test/Button-renderer-package.json",
+        "components/widgets/test/Container": "/components/widgets/test/Container-package.json",
+        "components/widgets/test/Container-renderer": "/components/widgets/test/Container-renderer-package.json"
+    },
+    
+    "raptor-taglibs": {
+	    "http://ebay.com/raptor/test": "/taglibs/test/test.rtld",
+	    "http://raptor.ebayopensource.org/widgets/test": "widgets-test.rtld"
+	},
+	
+	"raptor-templates": {
+	   "test/Tabs": "/taglibs/test/Tabs.rhtml"
 	}
 }

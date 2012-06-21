@@ -1,0 +1,8 @@
+{
+    "includes": {
+        { "type": "module", "name": "components/widgets/test/Button" },
+        { "type": "rhtml", "path": "ButtonWidget.js" }
+    }
+    
+    
+}

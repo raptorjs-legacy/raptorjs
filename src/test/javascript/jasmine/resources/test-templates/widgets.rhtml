@@ -1,9 +1,21 @@
 <c:template 
     xmlns:c="http://raptor.ebayopensource.org/core"
     xmlns:test="http://raptor.ebayopensource.org/test" 
-    xmlns:w="http://raptor.ebayopensource.org/widgets" 
-    name="widgets">
+    xmlns:w="http://raptor.ebayopensource.org/widgets">
     
-    <test:button label="Submit" type="submit" w:id="myButton"/>
+    <div w:widget="TestAttrWidget" id="${'myId'}">
+        ${widget.elId()} - ${widget.elId('test')}
+    </div>
+    
+    <w:widget jsClass="TestWidget">
+        <test:container title="My Container">
+            <test:button label="Submit" type="submit" disabled="true" w:id="submitButton"/>
+            <test:button label="Cancel"/>
+        </test:container>
+    </w:widget>
+    
+    <c:include template="widgets_nested"/>
+    
+    <w:initWidgets/>
     
 </c:template>

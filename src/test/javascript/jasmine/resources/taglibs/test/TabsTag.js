@@ -1,13 +1,13 @@
 raptor.defineClass(
-    'taglibs.test.TabsController',
+    'taglibs.test.TabsTag',
     function(raptor) {
         var templating = raptor.require("templating");
         
-        var TabsController = function() {
+        var TabsTag = function() {
             
         };
         
-        TabsController.prototype = {
+        TabsTag.prototype = {
             process: function(input, context) {
                 var tabs = [],  
                     activeFound = false;
@@ -34,12 +34,12 @@ raptor.defineClass(
                 
                 
                 
-                templating.render("test/Tabs", {
+                templating.render("taglibs/test/Tabs", {
                     tabs: tabs
                 }, context);
                 
             }
         };
         
-        return TabsController;
+        return TabsTag;
     });

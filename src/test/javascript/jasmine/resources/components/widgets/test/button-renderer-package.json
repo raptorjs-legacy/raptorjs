@@ -1,0 +1,6 @@
+{
+    "includes": [
+        {"type": "js", "path": "ButtonController.js"},
+        {"type": "rhtml", "path": "Button.rhtml"}
+    ]
+}

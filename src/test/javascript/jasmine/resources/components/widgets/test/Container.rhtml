@@ -1,0 +1,18 @@
+<c:template 
+    name="test/Container" 
+    xmlns:c="http://raptor.ebayopensource.org/core"
+    xmlns:widgets-test="widgets-test"
+    params="widget,title">
+    
+    
+    
+    <div w:widget="components.widgets.test.container.ContainerController">
+        <h1>$title</h1>
+        <div class="bd">
+            <c:invoke function="data.invokeBody()"/>
+        </div>
+        <div>
+            <widgets-test:button label="Collapse"/>
+        </div>
+    </div>
+</c:template>

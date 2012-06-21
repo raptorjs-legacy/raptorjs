@@ -1,67 +1,12 @@
 require('./_helper.js');
 
 describe('templating module', function() {
-    var files = raptor.require('files'),
-        templatesDir = getTestsDir("/resources/test-templates"),
-        logger = raptor.require('logging').logger('raptor-templating-spec'),
-        readTemplate = function(path) {
-            var src = files.readFully(
-                    files.joinPaths(templatesDir, path));
-            return src;
-        },
-        compileAndLoad = function(templatePath, invalid) {
-            try
-            {
-                var templateCompiler = raptor.require("templating.compiler").createCompiler({logErrors: invalid !== true, minify: false});
-                var src = readTemplate(templatePath);
-                var compiledSrc = templateCompiler.compile(src, templatePath);
-                console.log('\n==================================\nCompiled source (' + templatePath + '):\n----------------------------------\n', compiledSrc, "\n----------------------------------\n");
-                
-                try
-                {
-                    eval(compiledSrc);
-                }
-                catch(e) {
-                    console.error(e.stack);
-                    throw new Error(e);
-                }
-                
-                return compiledSrc;
-            }
-            catch(e) {
-                if (!invalid) {
-                    logger.error(e);
-                }
-                
-                throw e;
-            }
-        },
-        compileAndRender = function(templatePath, templateName, data, invalid, context) {
-            try
-            {
-                var compiledSrc = compileAndLoad(templatePath, invalid);
-                
-                var output = raptor.require("templating").renderToString(templateName, data, context);
-                console.log('==================================\nOutput (' + templatePath + '):\n----------------------------------\n', output, "\n----------------------------------\n");
-                
-                return {
-                    compiled: compiledSrc,
-                    output: output
-                };
-            }
-            catch(e) {
-                if (!invalid) {
-                    logger.error(e);
-                }
-                
-                throw e;
-            }
-        };
+    var logger = raptor.require('logging').logger('raptor-templating-spec'),
+        compileAndLoad = helpers.templating.compileAndLoad,
+        compileAndRender = helpers.templating.compileAndRender;
         
     before(function() {
         createRaptor();
-        raptor.resources.addSearchPathDir(templatesDir);
-        raptor.require("templating");
     });
     
     it("should allow expressions to be parsed", function() {
@@ -303,58 +248,58 @@ describe('templating module', function() {
     });
     
     it("should allow a simple template to be compiled", function() {
-        var output = compileAndRender("simple.rhtml", "simple", {message: "Hello World!", rootClass: "title", colors: ["red", "green", "blue"]}).output;
+        var output = compileAndRender("/test-templates/simple.rhtml", {message: "Hello World!", rootClass: "title", colors: ["red", "green", "blue"]}).output;
         expect(output).toEqual('<div class="hello-world title">Hello World!</div><ul><li class="color">red</li><li class="color">green</li><li class="color">blue</li></ul>');
     });
     
     
     it("should allow for simple template handlers", function() {
-        var output = compileAndRender("simple-handlers.rhtml", "simple-handlers", {dynamic: "universe"}).output;
-        
+        var output = compileAndRender("/test-templates/simple-handlers.rhtml", {dynamic: "universe"}).output;
+        expect(output).toEqual('<ul><li>Hello world! adult=false</li><li>Hello universe! adult=true</li><li>Hello Dynamic: universe! adult=false</li></ul>');
     });
     
     it("should allow for template handlers with nested body content", function() {
-        var output = compileAndRender("nested-handlers.rhtml", "nested-handlers", {showConditionalTab: false}).output;
+        var output = compileAndRender("/test-templates/nested-handlers.rhtml", {showConditionalTab: false}).output;
         expect(output).toEqual('<div class="tabs"><ul class="nav nav-tabs"><li class="active"><a href="#tab0" data-toggle="tab">Tab 1</a></li><li class=""><a href="#tab1" data-toggle="tab">Tab 2</a></li></ul><div class="tab-content"><div id="tab0" class="tab-pane active">Tab 1 content</div><div id="tab1" class="tab-pane">Tab 2 content</div></div></div>');
     });
 
     it("should allow entity expressions", function() {
-        var output = compileAndRender("entities.rhtml", "entities", {}).output;
+        var output = compileAndRender("/test-templates/entities.rhtml", {}).output;
         expect(output).toEqual('&lt;DIV&gt; <div>Hello</div><div data-entities="&amp;lt;"></div>');
     });
     
     it("should allow escaped expressions", function() {
-        var output = compileAndRender("escaped.rhtml", "escaped", {}).output;
+        var output = compileAndRender("/test-templates/escaped.rhtml", {}).output;
         expect(output).toEqual('VV {1} XX \\{1} YY ${1} ZZ \\1');
     });
     
     it("should allow complex expressions", function() {
-        var output = compileAndRender("expressions.rhtml", "expressions", {}).output;
+        var output = compileAndRender("/test-templates/expressions.rhtml", {}).output;
         expect(output).toEqual('Hello World!');
     });
     
     it("should allow whitespace to be removed", function() {
-        var output = compileAndRender("whitespace.rhtml", "whitespace", {}).output;
+        var output = compileAndRender("/test-templates/whitespace.rhtml", {}).output;
         expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines.<ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div>begin end");
     });
     
     it("should allow HTML output that is not well-formed XML", function() {
-        var output = compileAndRender("html.rhtml", "html", {}).output;
+        var output = compileAndRender("/test-templates/html.rhtml", {}).output;
         expect(output).toEqual('<img src="test.jpg"><div class="self-closing-not-allowed"></div><script src="test.js"></script><br>');
     });
     
     it("should allow for looping", function() {
-        var output = compileAndRender("looping.rhtml", "looping", {}).output;
+        var output = compileAndRender("/test-templates/looping.rhtml", {}).output;
         expect(output).toEqual('abca - true - false - 0 - 3, b - false - false - 1 - 3, c - false - true - 2 - 3<div>red - true - false - 0 - 3</div>, <div>green - false - false - 1 - 3</div>, <div>blue - false - true - 2 - 3</div>');
     });
     
     it("should allow for dynamic attributes", function() {
-        var output = compileAndRender("attrs.rhtml", "attrs", {"myAttrs": {style: "background-color: #FF0000; <test>", "class": "my-div"}}).output;
+        var output = compileAndRender("/test-templates/attrs.rhtml", {"myAttrs": {style: "background-color: #FF0000; <test>", "class": "my-div"}}).output;
         expect(output).toEqual('<div data-encoding="&quot;hello&quot;" style="background-color: #FF0000; &lt;test&gt;" class="my-div">Hello World!</div>');
     });
     
     it("should allow for choose...when statements", function() {
-        var output = compileAndRender("choose-when.rhtml", "choose-when", {}).output;
+        var output = compileAndRender("/test-templates/choose-when.rhtml", {}).output;
         expect(output).toEqual('TRUE,TRUE');
     });
     
@@ -363,7 +308,7 @@ describe('templating module', function() {
         var e;
         try
         {
-            compileAndRender("choose-when-invalid-text.rhtml", "choose-when-invalid-text", {}, true /* invalid */);
+            compileAndRender("/test-templates/choose-when-invalid-text.rhtml", {}, true /* invalid */);
         }
         catch(_e) {
             e = _e;
@@ -378,7 +323,7 @@ describe('templating module', function() {
         var e;
         try
         {
-            compileAndRender("choose-when-invalid-otherwise-only.rhtml", "choose-when-invalid-otherwise-only", {}, true /* invalid */);
+            compileAndRender("/test-templates/choose-when-invalid-otherwise-only.rhtml", {}, true /* invalid */);
         }
         catch(_e) {
             e = _e;
@@ -392,7 +337,7 @@ describe('templating module', function() {
         var e;
         try
         {
-            compileAndRender("choose-when-invalid-otherwise-not-last.rhtml", "choose-when-invalid-otherwise-not-last", {}, true /* invalid */);
+            compileAndRender("/test-templates/choose-when-invalid-otherwise-not-last.rhtml", {}, true /* invalid */);
         }
         catch(_e) {
             e = _e;
@@ -402,51 +347,49 @@ describe('templating module', function() {
     });
     
     it("should allow for <c:def> functions", function() {
-        var output = compileAndRender("def.rhtml", "def", {}).output;
+        var output = compileAndRender("/test-templates/def.rhtml", {}).output;
         expect(output).toEqual('<p class="greeting">Hello, World!</p>,<p class="greeting">Hello, Frank!</p>');
     });
     
     it("should allow for <c:with> functions", function() {
-        var output = compileAndRender("with.rhtml", "with", {}).output;
+        var output = compileAndRender("/test-templates/with.rhtml", {}).output;
         expect(output).toEqual('1 7 11');
     });
     
     it("should allow for scriptlets", function() {
-        var output = compileAndRender("scriptlet.rhtml", "scriptlet", {}).output;
+        var output = compileAndRender("/test-templates/scriptlet.rhtml", {}).output;
         expect(output).toEqual('HELLO,');
     });
     
     it("should allow for when and otherwise as attributes", function() {
-        var output = compileAndRender("choose-when-attributes.rhtml", "choose-when-attributes", {}).output;
+        var output = compileAndRender("/test-templates/choose-when-attributes.rhtml", {}).output;
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
     });
     
     it("should allow for elements to be stripped out at compile time", function() {
-        var output = compileAndRender("strip.rhtml", "strip", {}).output;
+        var output = compileAndRender("/test-templates/strip.rhtml", {}).output;
         expect(output).toEqual('<div><b>A</b></div><div><span><b>B</b></span></div><div><b>c</b></div><div><span><b>d</b></span></div>');
     });
     
     it("should allow for body content to be replaced with the result of an expression", function() {
-        var output = compileAndRender("content.rhtml", "content", {}).output;
+        var output = compileAndRender("/test-templates/content.rhtml", {}).output;
         expect(output).toEqual('<div>Hello</div>');
     });
     
     it("should allow for an element to be replaced with the result of an expression", function() {
-        var output = compileAndRender("replace.rhtml", "replace", {message: "Hello World!"}).output;
+        var output = compileAndRender("/test-templates/replace.rhtml", {message: "Hello World!"}).output;
         expect(output).toEqual('Hello,Hello World!');
     });
     
     it("should allow for includes", function() {
-        compileAndLoad("include-target.rhtml");
-        
-        var output = compileAndRender("include.rhtml", "include", {}).output;
+        var output = compileAndRender("/test-templates/include.rhtml", {}).output;
         expect(output).toEqual('Hello Frank! You have 20 new messages.');
     });
     
     it("should allow for <c:invoke function... />", function() {
-        compileAndLoad("invoke.rhtml");
+        compileAndLoad("/test-templates/invoke.rhtml");
         
-        var output = compileAndRender("invoke.rhtml", "invoke", {}).output;
+        var output = compileAndRender("/test-templates/invoke.rhtml", {}).output;
         expect(output).toEqual('A<p>Hello World!</p>B<p>Hello Frank! You have 10 new messages.</p>');
     });
     
@@ -468,11 +411,11 @@ describe('templating module', function() {
                 }
             }, helperThisObj);
         
-        var output = compileAndRender("helper-functions-shortname.rhtml", "helper-functions-shortname", {}).output;
+        var output = compileAndRender("/test-templates/helper-functions-shortname.rhtml", {}).output;
         expect(output).toEqual('Hello WORLD! Hello World!');
         expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
         
-        output = compileAndRender("helper-functions-uri.rhtml", "helper-functions-uri", {}).output;
+        output = compileAndRender("/test-templates/helper-functions-uri.rhtml", {}).output;
         expect(output).toEqual('Hello WORLD! Hello World!');
         expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
     });
@@ -497,21 +440,21 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("context-helper-functions-shortname.rhtml", "context-helper-functions-shortname", {}, false, context).output;
+        var output = compileAndRender("/test-templates/context-helper-functions-shortname.rhtml", {}, false, context).output;
         expect(output).toEqual('Hello John Doe!');
         
-        output = compileAndRender("context-helper-functions-uri.rhtml", "context-helper-functions-uri", {}, false, context).output;
+        output = compileAndRender("/test-templates/context-helper-functions-uri.rhtml", {}, false, context).output;
         expect(output).toEqual('Hello John Doe!');
         
     });
     
     it("should allow for template imports", function() {
-        var output = compileAndRender("imports1.rhtml", "imports1", {showConditionalTab: false}).output;
+        var output = compileAndRender("/test-templates/imports1.rhtml", {showConditionalTab: false}).output;
         expect(output).toEqual('<div class="tabs"><ul class="nav nav-tabs"><li class="active"><a href="#tab0" data-toggle="tab">Tab 1</a></li><li class=""><a href="#tab1" data-toggle="tab">Tab 2</a></li></ul><div class="tab-content"><div id="tab0" class="tab-pane active">Tab 1 content</div><div id="tab1" class="tab-pane">Tab 2 content</div></div></div>');
     });
 
     it("should allow for template simple imports", function() {
-        var output = compileAndRender("imports2.rhtml", "imports2", {showConditionalTab: false}).output;
+        var output = compileAndRender("/test-templates/imports2.rhtml", {showConditionalTab: false}).output;
         expect(output).toEqual('<div class="tabs"><ul class="nav nav-tabs"><li class="active"><a href="#tab0" data-toggle="tab">Tab 1</a></li><li class=""><a href="#tab1" data-toggle="tab">Tab 2</a></li></ul><div class="tab-content"><div id="tab0" class="tab-pane active">Tab 1 content</div><div id="tab1" class="tab-pane">Tab 2 content</div></div></div>');
     });
     
@@ -535,17 +478,15 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("imports3.rhtml", "imports3", {}, false, context).output;
+        var output = compileAndRender("/test-templates/imports3.rhtml", {}, false, context).output;
         expect(output).toEqual('Hello John Doe!');
         
     });
     
     xit("should allow for widgets", function() {
-        compileAndLoad("widgets_nested.rhtml");
+        compileAndLoad("/test-templates/widgets_nested.rhtml");
         
-        raptor.load('taglib/widgets');
-        
-        var output = compileAndRender("widgets.rhtml", "widgets", {}).output;
+        var output = compileAndRender("/test-templates/widgets.rhtml", "widgets", {}).output;
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
     });
 });

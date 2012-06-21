@@ -1,16 +1,16 @@
 raptor.defineClass(
-    'taglibs.test.SimpleHelloController',
+    'taglibs.test.SimpleHelloTag',
     function(raptor) {
-        var SimpleHelloController = function() {
+        var SimpleHelloTag = function() {
             
         };
         
-        SimpleHelloController.prototype = {
+        SimpleHelloTag.prototype = {
             process: function(input, context) {
                 var name = input.name || "(unknown)";
                 context.write("Hello " + name + "! adult=" + (input.adult === true));
             }
         };
         
-        return SimpleHelloController;
+        return SimpleHelloTag;
     });

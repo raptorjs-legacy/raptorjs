@@ -1,4 +1,4 @@
-describe('raptor loader module', function() {
+xdescribe('raptor loader module', function() {
 
     var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
     

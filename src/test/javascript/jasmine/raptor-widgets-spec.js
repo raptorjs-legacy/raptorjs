@@ -57,7 +57,7 @@ xdescribe('widgets module', function() {
         expect(true).toEqual(true);
 
         var widgets = raptor.require('widgets');
-        widgets.initAll(
+        $rwidgets(
                 ['test.widgets.ButtonWidget','w0',null,{"label":"Button 1"}, [
                     ['test.widgets.ButtonWidget','w1','childButton',{"label":"Child Widget"}]]]);
         

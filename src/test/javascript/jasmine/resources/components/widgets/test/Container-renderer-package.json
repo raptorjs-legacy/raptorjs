@@ -1,0 +1,7 @@
+{
+    "includes": [
+        {"type": "module", "name": "components/widgets/test/Button/renderer" },
+        {"type": "js", "path": "ContainerController.js"},
+        {"type": "rhtml", "path": "Container.rhtml"}
+    ]
+}
