@@ -47,10 +47,13 @@ raptor.defineModule('widgets', function(raptor) {
     };
     
     return {
-        addWidget: function(type, childId, config, parent, context) {
+        addWidget: function(type, widgetId, childId, config, parent, context) {
             
-            var widgetId = this._nextWidgetId(context),
-                widgetDef = new WidgetDef(widgetId, type, childId, config, parent);
+            if (!widgetId) {
+                widgetId = this._nextWidgetId(context);
+            }
+            
+            var widgetDef = new WidgetDef(widgetId, type, childId, config, parent);
             
             if (childId) {
                 if (!parent) {

@@ -23,11 +23,38 @@ raptor.defineClass(
         
         return {
             process: function(node, compiler, template) {
-                var id;
+                var id,
+                    widgetAttr;
+                
                 
                 if ((id = node.getPropertyNS(widgetsNS, "id"))) {
                     node.removePropertyNS(widgetsNS, "id");
                     node.setProperty("widgetContext", template.makeExpression("[widget, " + id + "]"));
+                }
+                
+                if ((widgetAttr = node.getAttributeNS(widgetsNS, "widget"))) {
+                    node.removeAttributeNS(widgetsNS, "widget");
+                    
+                    
+                    
+                    
+                    var widgetNode = compiler.createTagHandlerNode(widgetsNS, "widget");
+                    
+                    //Surround the existing node with an "if" node by replacing the current
+                    //node with the new "if" node and then adding the current node as a child
+                    node.parentNode.replaceChild(widgetNode, node);
+                    widgetNode.appendChild(node);
+                    widgetNode.setProperty("jsClass", widgetAttr);
+                    widgetNode.setProperty("widgetContext", template.makeExpression("[widget, " + id + "]"));
+                    
+                    var elId = node.getAttribute("id");
+                    if (elId) {
+                        elId = compiler.convertType(elId, "string", true);
+                        widgetNode.setProperty("id", elId);
+                    }
+                    else {
+                        node.setAttribute('id', '${widget.elId()}');
+                    }
                 }
             }
         };

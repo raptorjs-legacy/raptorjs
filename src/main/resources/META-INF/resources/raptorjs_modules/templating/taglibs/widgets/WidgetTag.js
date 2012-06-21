@@ -8,6 +8,7 @@ raptor.defineClass(
                 var type = input.jsClass,
                     config = input.config,
                     widgetContext = input.widgetContext,
+                    id = input.id,
                     parent,
                     childId;
                 
@@ -16,7 +17,7 @@ raptor.defineClass(
                     childId = widgetContext[1];
                 }
 
-                var widget = widgets.addWidget(type, childId, config, parent, context);
+                var widget = widgets.addWidget(type, id, childId, config, parent, context);
                 
                 input.invokeBody(widget);
             }

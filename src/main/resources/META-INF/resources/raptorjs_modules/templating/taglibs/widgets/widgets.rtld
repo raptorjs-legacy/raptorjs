@@ -15,6 +15,10 @@
             <type>string</type>
         </attribute>
         
+        <attribute>
+            <name>widget</name>
+        </attribute>
+        
         <!-- Compiler that applies to all tags as well -->
         <transformer>
             <class-name>templating.taglibs.widgets.WidgetsTagTransformer</class-name>

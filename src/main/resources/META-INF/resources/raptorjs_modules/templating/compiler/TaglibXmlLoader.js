@@ -349,7 +349,7 @@ raptor.defineClass(
                                 _end: function(importedTaglib) {
                                     var path = importedTaglib.path,
                                         taglibResource = resources.findResource(path),
-                                        importedXmlSource = taglibResource.readyFully();
+                                        importedXmlSource = taglibResource.readFully();
                                     
                                     objectMapper.read(
                                             importedXmlSource, 

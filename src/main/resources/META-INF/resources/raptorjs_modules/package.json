@@ -11,11 +11,17 @@
         }
     ],
     
-    "taglibs": {
-	    "http://raptor.ebayopensource.org/core": "/templating/taglibs/core",
-	    "http://raptor.ebayopensource.org/html": "/templating/taglibs/html",
-	    "http://raptor.ebayopensource.org/widgets": "/templating/taglibs/widgets"
-	},
+    "raptor-taglibs": {
+        "http://raptor.ebayopensource.org/core": "/templating/taglibs/core/core.rtld",
+        "http://raptor.ebayopensource.org/html": "/templating/taglibs/html/html.rtld",
+        "http://raptor.ebayopensource.org/widgets": "/templating/taglibs/widgets/widgets.rtld"
+    },
+    
+    "raptor-module-mappings": {
+        "taglib/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
+        "taglib/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
+        "taglib/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
+    },
 	
 	"include-handlers": {
 	    "js": {"class": "packaging.include-handlers.IncludeHandler_js", "path": "/packaging/include-handlers/IncludeHandler_js.js"},

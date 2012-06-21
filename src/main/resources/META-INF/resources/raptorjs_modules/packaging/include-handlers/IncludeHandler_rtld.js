@@ -20,6 +20,11 @@ raptor.defineClass(
     function() {
         "use strict";
         
+        var invalidInclude = function(include, manifest) {
+            var stringify = raptor.require('json.stringify').stringify;
+            raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+        };
+        
         return {
             
             includeKey: function(include, manifest) {
@@ -27,16 +32,13 @@ raptor.defineClass(
                     return "rtld:" + this.resolvePathKey(include.path, manifest);
                 }
                 else {
-                    return "rtld:" + include.uri;
+                    invalidInclude(include, manifest);
                 }
             },
             
             load: function(include, manifest) {
                 
-                if (include.uri) {
-                    raptor.require("templating.compiler").loadTaglibPackage(include.uri);
-                }
-                else if (include.path) {
+                if (include.path) {
                     //console.log('load_taglib: Loading taglib at path "' + include.path + '"...');
                     
                     
@@ -49,8 +51,7 @@ raptor.defineClass(
                     raptor.require("templating.compiler").loadTaglibXml(taglibResource.readFully(), taglibResource.getSystemPath());
                 }
                 else {
-                    var stringify = raptor.require('json.stringify').stringify;
-                    raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+                    invalidInclude(include, manifest);
                 }
             },
             
@@ -65,22 +66,7 @@ raptor.defineClass(
                     aggregator.addJavaScriptCode(taglibJS, taglibResource.getSystemPath());
                 }
                 else {
-                    var stringify = raptor.require('json.stringify').stringify;
-                    raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
-                }
-            },
-            
-            _isPackageInclude: function(include) {
-                return include.uri ? true : false;
-            },
-            
-            getManifest: function(include) {
-                if (include.uri) {
-                    return raptor.require("templating.compiler").getTaglibManifest(include.uri);
-                }
-                else {
-                    var stringify = raptor.require('json.stringify').stringify;
-                    raptor.throwError(new Error('Unable to get manifest. Include is not a package: ' + stringify(include)));
+                    invalidInclude(include, manifest);
                 }
             }
         };
