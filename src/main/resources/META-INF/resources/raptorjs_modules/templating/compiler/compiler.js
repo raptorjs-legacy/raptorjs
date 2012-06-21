@@ -22,7 +22,6 @@ raptor.defineModule(
         var TaglibCollection = raptor.require('templating.compiler.TaglibCollection'),
             taglibs = new TaglibCollection(),
             extend = raptor.extend,
-            taglibsLoaded = false,
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             defaultOptions = {
                 preserveWhitespace: {
@@ -101,18 +100,8 @@ startTagOnly: {
              * @returns {templating.compiler$TemplateCompiler} The newly created compiler
              */
             createCompiler: function(options) {
-                
-                if (!taglibsLoaded) {
-                    /*
-                     * Lazily discover taglibs when we create the first compiler.
-                     * Taglibs are discovered by finding and loading all "/taglib-registry.json"
-                     * resources in the resource search path.
-                     */
-                    taglibsLoaded = true; //Prevent taglibs from being discovered again by setting the necessary flag
-                    
-                    if (this.discoverTaglibs) { //Only discover taglibs if that method is implemented
-                        this.discoverTaglibs(); //The discoverTaglibs method is implemented on the server so execute it now
-                    }
+                if (this.discoverTaglibs) { //Only discover taglibs if that method is implemented
+                    this.discoverTaglibs(); //The discoverTaglibs method is implemented on the server so execute it now
                 }
                 
                 var TemplateCompiler = raptor.require("templating.compiler.TemplateCompiler"); //Get a reference to the TemplateCompiler class 
@@ -164,6 +153,10 @@ startTagOnly: {
              */
             addTaglib: function(taglib) {
                 taglibs.add(taglib); 
+            },
+            
+            hasTaglib: function(uri) {
+                return taglibs.isTaglib(uri);
             },
             
             /**
