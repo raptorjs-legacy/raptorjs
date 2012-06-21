@@ -24,8 +24,8 @@ $rload(function(raptor) {
         packageManifests = {},
         _extensionsLookup = {},
         includeHandlers = {},
-        includeHandlersDiscovered = false,
-        searchPathListenerHandler = null;
+        discoveryComplete = false,
+        searchPathListenerHandle = null;
     
     /**
      * 
@@ -56,12 +56,26 @@ $rload(function(raptor) {
             this.PackageLoader.instance.loadPackage(resourcePath, {enabledExtensions: _extensionsLookup});
         },
         
-        discoverIncludeHandlers: function() {
+        _watchResourceSearchPath: function() {
+            if (!searchPathListenerHandle) {
+                searchPathListenerHandle = raptor.resources.getSearchPath().subscribe("modified", function() {
+                    discoveryComplete = false;
+                    this._doDiscovery(); //If the search path is modified then rediscover the 
+                }, this);
+            }
+        },
+        
+        _doDiscovery: function() {
+            if (discoveryComplete) {
+                return;
+            }
+            discoveryComplete = true;
+            
             this.forEachTopLevelPackageManifest(function(manifest) {
-                var includeHandlers = manifest["include-handlers"];
+                var manifestIncludeHandlers = manifest["include-handlers"];
                 
-                if (includeHandlers) {
-                    forEachEntry(includeHandlers, function(type, handlerInfo) {
+                if (manifestIncludeHandlers) {
+                    forEachEntry(manifestIncludeHandlers, function(type, handlerInfo) {
                         if (handlerInfo.path) {
                             raptor.runtime.evaluateResource(handlerInfo.path);
                         }
@@ -72,13 +86,10 @@ $rload(function(raptor) {
                         this.registerIncludeHandler(type, HandlerClass.instance);
                     }, this);
                 }
+                
             }, this);
             
-            if (!searchPathListenerHandler) {
-                searchPathListenerHandler = raptor.resources.getSearchPath().subscribe("modified", function() {
-                    this.discoverIncludeHandlers(); //If the search path is modified then rediscover the 
-                }, this);
-            }
+            this._watchResourceSearchPath();
         },
         
         registerIncludeHandler: function(type, handler) {
@@ -86,12 +97,8 @@ $rload(function(raptor) {
         },
         
         getIncludeHandler: function(type) {
-            if (!includeHandlersDiscovered) {                
-                this.discoverIncludeHandlers();
-                
-                
-                includeHandlersDiscovered = true;
-            }
+            this._doDiscovery();
+            
             var handler = includeHandlers[type];
             if (!handler) {
                 raptor.errors.throwError(new Error('Handler not found for include of type "' + type + '"'));
@@ -144,7 +151,7 @@ $rload(function(raptor) {
                     manifest = JSON.parse(packageJson);
                 }
                 catch(e) {
-                    errors.throwError(new Error('Unable to parse module manifest at path "' + packageResource.getPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
+                    errors.throwError(new Error('Unable to parse module manifest at path "' + packageResource.getSystemPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
                 }
                 
                 raptor.extend(manifest, this.PackageManifest);
