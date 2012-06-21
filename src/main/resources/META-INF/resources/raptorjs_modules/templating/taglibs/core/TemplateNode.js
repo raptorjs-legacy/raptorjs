@@ -74,7 +74,7 @@ raptor.defineClass(
                 }, this);
 
                 
-                if (!name) {
+                if (!name && !template.compiler.options.templateName) {
                     raptor.throwError(new Error('The "name" attribute is required for the ' + this.toString() + ' tag.'));
                 }
                 

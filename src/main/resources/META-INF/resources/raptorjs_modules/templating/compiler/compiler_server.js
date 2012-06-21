@@ -36,13 +36,13 @@ raptor.extend(
              * @param path
              * @returns
              */
-            compileResource: function(path) {
+            compileResource: function(path, options) {
                 var resource = resources.findResource(path);
                 if (!resource.exists()) {
                     errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
                 var src = resource.readFully(src);
-                return this.compile(src, resource.getSystemPath());
+                return this.compile(src, resource.getSystemPath(), options);
             },
             
             /**
@@ -50,13 +50,13 @@ raptor.extend(
              * @param path
              * @returns
              */
-            compileAndLoadResource: function(path) {
+            compileAndLoadResource: function(path, options) {
                 var resource = resources.findResource(path);
                 if (!resource.exists()) {
                     errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
                 var src = resource.readFully(src);
-                this.compileAndLoad(src, resource.getSystemPath());
+                this.compileAndLoad(src, resource.getSystemPath(), options);
             },
             
             /**

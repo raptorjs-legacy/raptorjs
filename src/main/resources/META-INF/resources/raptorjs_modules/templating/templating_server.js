@@ -38,7 +38,7 @@ raptor.extend('templating', function(raptor) {
             
             resource = resources.findResource(path);
             if (resource.exists()) {
-                raptor.require('templating.compiler').compileAndLoadResource(resource);
+                raptor.require('templating.compiler').compileAndLoadResource(resource, {templateName: name});
             }
         }
     };
