@@ -9,7 +9,7 @@ raptor.defineClass(
                     return;
                 }
                 
-                var includeScriptTag = input.includeScriptTag !== true;
+                var includeScriptTag = input.includeScriptTag !== false;
                 
                 if (includeScriptTag) {
                     context.write('<script type="text/javascript">');
