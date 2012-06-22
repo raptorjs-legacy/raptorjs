@@ -349,7 +349,13 @@ raptor.defineClass(
                                 _end: function(importedTaglib) {
                                     var path = importedTaglib.path,
                                         taglibResource = resources.findResource(path),
-                                        importedXmlSource = taglibResource.readFully();
+                                        importedXmlSource;
+                                    
+                                    if (!taglibResource.exists()) {
+                                        raptor.throwError(new Error('Imported taglib with path "' + path + '" not found in taglib at path "' + filePath + '"'));
+                                    }
+                                    
+                                    importedXmlSource = taglibResource.readFully();
                                     
                                     objectMapper.read(
                                             importedXmlSource, 
