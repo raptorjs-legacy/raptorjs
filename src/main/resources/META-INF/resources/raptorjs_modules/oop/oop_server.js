@@ -137,12 +137,22 @@ $rload(function(raptor) {
          * @returns
          */
         getModuleManifest: function(name) {
-            var path = mappings[name];
+            var path = mappings[name],
+                manifest;
 
-            if (!path) {
-                path = getModuleDirPath(name) + "/package.json";
+            if (path) {
+                manifest = raptor.packaging.getPackageManifest(path);
             }
-            return raptor.packaging.getPackageManifest(path);
+            else {
+                var dir = getModuleDirPath(name);
+                
+                manifest = raptor.packaging.getPackageManifest(dir + "/package.json");
+                if (!manifest) {
+                    manifest = raptor.packaging.getPackageManifest(dir + "-package.json");
+                }
+            }
+            
+            return manifest;
         }
     });
 });
