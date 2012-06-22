@@ -15,7 +15,7 @@
  */
 
 
-var raptorClassDefs = {}; //Class definitionsLookup are global for a reason. It allows the
+var $rdefs = {}; //Class definitionsLookup are global for a reason. It allows the
                           //the class definitions to remain even if a new Raptor environment
                           //which is needed for testing.
 
@@ -26,24 +26,25 @@ $rload(function(raptor) {
     var forEach = raptor.forEach, //Short-hand reference to function for iterating over arrays with a function callback
         forEachEntry = raptor.forEachEntry, //Short-hand reference for iterating over object properties
         isArray = raptor.isArray,
+        isString = raptor.isString,
+        isFunction = raptor.isFunction,
         logging = raptor.logging, //Logging module used to add logging support to classes and modules
-        logger = logging.logger('oop'), //The logger to use for this module
-        FUNCTION = 'function', //String constant
-        STRING = 'string', //String constant
-        is = function(o, type) {
-            return typeof o == type;
-        },
         PROTOTYPE = "prototype",
         ENUM_COUNT = "_count",
-        FACTORY_IDX = 0,
-        TYPE_IDX = 1,
-        MODIFIERS_IDX = 2,
-        ENUM_VALUES_IDX = 3,
-        EXTENSIONS_IDX = 4,
+        NAME_IDX = 0,
+        MODIFIERS_IDX = 1,
+        FACTORY_IDX = 2,
+        TYPE_IDX = 3,
+        ENUM_VALUES_IDX = 4,
+        EXTENSIONS_IDX = 5,
         ORDINAL_PROP = '_ordinal',
         NAME_PROP = '__name',
-        nameSpaces = {}, //Lookup for global namespaces
-        definitionsLookup = raptorClassDefs, //Local variable reference to the global definitions lookup
+        CLASS = 0,      //Supports inheritance. A constructor function is returned
+        MODULE = 1,    //All properties treated as statics. An object is returned
+        ENUM = 2,        //Supports constant static fields. An object is returned with the enum constants
+        MIXIN = 3,      //All properties treated as statics. An object is returned
+        typeNames = ['class', 'module', 'enum', 'mixin'], //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
+        definitionsLookup = $rdefs, //Local variable reference to the global definitions lookup
         loadedLookup = {}, //A lookup for loaded classes/modules/mixins/enums
         oop = null,    //Used to self-refer to this module. Used instead of "this" for minification and in unbound callbacks
         _addTypeInfo = function(obj, name, type) { //Adds hidden type information to created class constructors, class prototypes, modules and enums (not mixins)
@@ -52,9 +53,10 @@ $rload(function(raptor) {
             },
         _simpleExtend = raptor.extend, //A method to add properties to an object without support for "overridden" or "doNotOverride" properties (faster)
         _extend = function(target, source, overridden, doNotOverride) { //An extend method with additional features
-            var overriddenProp;
+            var overriddenProp,
+                propName;
             
-            for (var propName in source) {
+            for (propName in source) {
                 if (source.hasOwnProperty(propName)) { //Only look at source properties that are not inherited
                     if ((overriddenProp = target[propName])) { //See if there is an existing property with the same name in the target object
                         if (doNotOverride === true) { //There is an existing property, if "doNotOverride" is set to true then we shouldn't override it
@@ -71,11 +73,10 @@ $rload(function(raptor) {
         },
         _inherit = function(clazz, superclass, copyProps) { //Helper function to setup the prototype chain of a class to inherit from another class's prototype
             
-            var proto = clazz[PROTOTYPE];
-
-            var F = function() {};
+            var proto = clazz[PROTOTYPE],
+                F = function() {};
               
-            F[PROTOTYPE] = is(superclass, STRING) ?    //Is the superclass the name of a super class?
+            F[PROTOTYPE] = isString(superclass) ?    //Is the superclass the name of a super class?
                       _require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
                       superclass[PROTOTYPE];
                       
@@ -83,20 +84,17 @@ $rload(function(raptor) {
 
             clazz[PROTOTYPE] = new F();
               
-            if (copyProps === true) {
+            if (copyProps) {
                 _simpleExtend(clazz[PROTOTYPE], proto);
             }
               
             return proto;
         },
         _createLoggerFunction = function(name) { //Helper function invoked for each class to add a "logger()" function to the class prototype
-            var logger;
+            var _logger;
             
             return function() {
-                if (!logger) {
-                    logger = logging.logger(name); //Create the logger with the specified name if it hasn't been created
-                }
-                return logger;
+                return _logger ? _logger : (_logger = logging.logger(name));
             };
         },
         _staticToString = function() {
@@ -169,13 +167,11 @@ $rload(function(raptor) {
                 clazz,          //The resulting object that is constructed and returned
                 proto,          //The prototype for the class (CLASS and ENUM types only)
                 targetType = def[TYPE_IDX],             //The output type (either CLASS, MODULE, ENUM or MIXIN)
-                targetTypeName = typeNames[targetType], //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
-                modifiers = def[MODIFIERS_IDX] || {},   //Modifiers for the object being defined
+                targetTypeName, //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
+                modifiers = def[MODIFIERS_IDX],   //Modifiers for the object being defined
                 superClassName,
-                onlyStatics = targetType === MODULE || targetType === MIXIN, //If true, then an object with static methods will be returned and not a constructor function
+                onlyStatics, //If true, then an object with static methods will be returned and not a constructor function
                 mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
-                extensions,     //The extensions that were found for the class
-                mixins,         //The list of mixins to apply to the class after it is loaded
                 factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
                 enumValues = def[ENUM_VALUES_IDX],
                 isEnum = targetType === ENUM,
@@ -184,7 +180,7 @@ $rload(function(raptor) {
 
             if (factory) {
                 //The factory can be a function or just the type.
-                if (is(factory, FUNCTION)) {
+                if (isFunction(factory)) {
                     //If it is a function then execute the function to produce the type
                     type = factory(raptor);
                 }
@@ -200,6 +196,14 @@ $rload(function(raptor) {
                 raptor.throwError(new Error(name + ' invalid'));
             }
 
+            if (isFunction(type) || modifiers.superclass) {
+                targetType = CLASS;
+            }
+            
+            targetTypeName = typeNames[targetType];
+            
+            onlyStatics = targetType === MODULE || targetType === MIXIN;
+            
             clazz = mixinsTarget = type;
             
             //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
@@ -210,7 +214,7 @@ $rload(function(raptor) {
                  * need to initialize a JavaScript "class" with the correct constructor function
                  * and the correct prototype
                  */
-                if (!is(type, FUNCTION)) {
+                if (!isFunction(type)) {
                     clazz = type.init || function() {};
                     clazz[PROTOTYPE] = type;
                 }
@@ -239,20 +243,15 @@ $rload(function(raptor) {
             }
 
             //Handle extensions
-            if ((extensions = def[EXTENSIONS_IDX]))
-            {
-                forEach(extensions, function(ext) {
-                    oop.extend(mixinsTarget, ext.source);
-                }, this);
-            }
+            forEach(def[EXTENSIONS_IDX], function(ext) {
+                oop.extend(mixinsTarget, ext);
+            }, this);
             
             //Check to see if this class explicitly wants any mixins to be applied
-            if ((mixins = modifiers.mixins)) {
-                forEach(mixins, function(mixin) {
-                    oop.extend(mixinsTarget, mixin);
-                }, oop);
-            }
-            
+            forEach(modifiers.mixins, function(mixin) {
+                oop.extend(mixinsTarget, mixin);
+            }, oop);
+
             if (isEnum) {
                 clazz[ENUM_COUNT] = 0;
                 
@@ -276,15 +275,47 @@ $rload(function(raptor) {
                 proto.ordinal = _enumValueOrdinal;
                 proto.compareTo = _enumValueCompareTo;
             }
-            
-//            if (clazz.__init) {
-//                clazz.__init();
-//            }
-//            
+
 
             return clazz;
             
         },
+        
+        getDefFromArgs = function(args) {
+            var argsLength = args.length,
+                name,
+                modifiers,
+                factory;
+            
+            if (argsLength == 2) { //Most common: defineClass(name, factory)
+                //The first arg is either a class name or a modifiers object
+                if (isString(args[0])) {
+                    name = args[0];
+                }
+                else {
+                    modifiers = args[0]; //The modifiers is the first parameter
+                }
+                factory = args[1]; //Factory is always the second parameter if there are two args
+            }
+            else if (argsLength == 1) {
+                factory = args[0];
+            }
+            else {
+                name = args[0];
+                modifiers = args[1];
+                factory = args[2];
+            }
+            
+            if (isString(modifiers)) {
+                //Handle the case where the 'modifiers' is a string that refers to the superclass (equivalent to {superclass: superclassName})
+                modifiers = {
+                    superclass: modifiers
+                };
+            }
+
+            return [name, modifiers || {}, factory];
+        },
+
         /**
          * 
          * @param name
@@ -294,13 +325,14 @@ $rload(function(raptor) {
          * @param enumValues
          * @returns
          */
-        _define = function(name, factory, type, modifiers, enumValues) {
+        _define = function(def) {
 
+            var name = def[NAME_IDX],
+                existingDef;
+            
             if (loadedLookup[name] === null) {
                 delete loadedLookup[name]; //We now have a definition available
             }
-            
-            var def = [factory, type, modifiers, enumValues, null /*extensions*/];
             
             if (!name) {
                 //If no name is provided then we have to build the class immediately
@@ -308,26 +340,16 @@ $rload(function(raptor) {
                 return _build("(anonymous)", def);
             }
 
-            var existingDef = definitionsLookup[name];
+            existingDef = definitionsLookup[name];
+            definitionsLookup[name] = def;
             
-            if (!existingDef) {
-                definitionsLookup[name] = def;
-            }
-            else {
+            if (existingDef) {
                 //This would only happen if extensions were loaded before the class itself was defined
-                existingDef[FACTORY_IDX] = factory;
-                existingDef[TYPE_IDX] = type;
-                existingDef[MODIFIERS_IDX] = modifiers;
-                existingDef[ENUM_VALUES_IDX] = enumValues;
+                def[EXTENSIONS_IDX] = existingDef[EXTENSIONS_IDX];
             }
             
             return def;
         },
-        CLASS = 0,      //Supports inheritance. A constructor function is returned
-        MODULE = 1,    //All properties treated as statics. An object is returned
-        ENUM = 2,        //Supports constant static fields. An object is returned with the enum constants
-        MIXIN = 3,      //All properties treated as statics. An object is returned
-        typeNames = ['class', 'module', 'enum', 'mixin'], //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
         _find = function(name) {
             return _require(name, null, null, true); //Checks for the existing of an object
         }; 
@@ -338,8 +360,25 @@ $rload(function(raptor) {
      * @name oop
      */
     raptor.oop = /** @lends oop */ {
+            
         /**
-         * Defines a Raptor JavaScript class.
+         * Defines a module or class.
+         * 
+         * <p>
+         * Defines a module or class that can later be loaded using "raptor.require(name)".
+         * The defined object is a singleton object that is only initialized
+         * when raptor.require(name) is invoked for the first time.
+         * A factory function must be provided so that the module can be created when it
+         * is first requested (i.e. it is lazily initialized). The return value of the factory
+         * function should be the module definition as a JavaScript object with properties.
+         * Once a module has been created for the first time it is stored in a lookup
+         * table and returned for all subsequent requests to get access to that module.
+         * 
+         * <p>
+         * It's also possible to have an anonymous module by defining a module
+         * without a name and passing the factory function as the first and only
+         * argument. If the module is anonymous then the module will be immediately
+         * created and returned.
          * 
          * Multiple signatures supported:
          * <ul>
@@ -353,6 +392,85 @@ $rload(function(raptor) {
          * Supported modifiers:
          * <ul>
          * <li>superclass: The name of the super class
+         * <li>mixins: An array of names of mixins
+         * </ul>
+         * 
+         * In addition, the "modifiers" parameter can be a string that specifies the name of the superclass
+         * <h2>Examples: Simple module object</h2>
+         * <js>
+         * raptor.define(
+         *     'some.namespace.myModule',
+         *     function() {
+         *         return {
+         *            greet: function(name) {
+         *                return 'Hello ' + name + '!';
+         *            }
+         *         }
+         *     });
+         * </js>
+         * 
+         * <h2>Examples: Class with prototype</h2>
+         * <js>
+         * raptor.define(
+         *     'some.namespace.MyClass',
+         *     function() {
+         *         var MyClass = function() {
+         *             //Constructor function
+         *         };
+         *         
+         *         MyClass.prototype = {
+         *             //Class prototype
+         *         };
+         *         
+         *         return MyClass
+         *     });
+         * </js>
+         * 
+         * <h2>Examples: Class with inheritance</h2>
+         * <js>
+         * raptor.define(
+         *     'some.namespace.MyClass',
+         *     'some.namespace.MySuperClass', //or: { superclass: 'some.namespace.MySuperClass' }
+         *     function() {
+         *         var MyClass = function() {
+         *             //Constructor function
+         *         };
+         *         
+         *         MyClass.prototype = {
+         *             //Class prototype
+         *         };
+         *         
+         *         return MyClass;
+         *     });
+         * </js>
+         * 
+         * @param name The name of the class (if not provided then class is built is an anonymous class and immediately returned
+         * @param modifiers Optional modifiers (see above)
+         * @param factory A factory function that returns either the class constructory function (with prototype)
+         *                or just the prototype
+         * 
+         * @returns {void|function|object} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
+         */
+        define: function(name, modifiers, factory) {
+            return _define(getDefFromArgs(arguments).concat(MODULE));
+        },
+        
+        /**
+         * Defines a module or class.
+         * 
+         * Multiple signatures supported:
+         * <ul>
+         * <li>defineClass(name, modifiers, factory)
+         * <li>defineClass(name, superclassName, factory)
+         * <li>defineClass(name, factory)
+         * <li>defineClass(modifiers, factory)
+         * <li>defineClass(factory)
+         * </ul>
+         * 
+         * Supported modifiers:
+         * <ul>
+         * <li>superclass: The name of the super class
+         * <li>mixins: An array of names of mixins
          * </ul>
          * 
          * In addition, the "modifiers" parameter can be a string that specifies the name of the superclass
@@ -373,65 +491,10 @@ $rload(function(raptor) {
          * @param factory A factory function that returns either the class constructory function (with prototype)
          *                or just the prototype
          * 
-         * @returns {void|class} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
+         * @returns {void|function|object} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
          */
         defineClass: function(name, modifiers, factory) {
-            var argsLength = arguments.length;
-            
-            if (argsLength === 2) { //Most common: defineClass(name, factory)
-                factory = modifiers; //Factory is always the second parameter if there are two args
-                
-                //The first arg is either a class name or a modifiers object
-                if (is(name, STRING)) {
-                    modifiers = null; //No modifiers
-                }
-                else {
-                    modifiers = name; //The modifiers is the first parameter
-                    name = null;
-                }
-            }
-            else if (argsLength === 1) {
-                factory = name; //The factory is the first argument and there is no name or modifiers
-                name = null;
-                modifiers = null;
-            }
-            //If there are three args then that is the default case and no shuffling of args is required
-            
-            if (is(modifiers, STRING)) {
-                //Handle the case where the 'modifiers' is a string that refers to the superclass (equivalent to {superclass: superclassName})
-                modifiers = {
-                    superclass: modifiers
-                };
-            }
-            
-            return _define(name, factory, CLASS, modifiers);
-        },
-        
-        /**
-         * Defines a Raptor JavaScript module.
-         * 
-         * <p>
-         * Defines a module that can later be loaded using "raptor.require(moduleName)".
-         * A module is simply a namespace that can contain properties (including methods, classes and fields).
-         * A factory function must be provided so that the module can be created when it
-         * is first requested (i.e. it is lazily initialized). The return value of the factory
-         * function should be the module definition as a JavaScript object with properties.
-         * Once a module has been created for the first time it is stored in a lookup
-         * table and returned for all subsequent requests to get access to that module.
-         * 
-         * <p>
-         * It's also possible to have an anonymous module by defining a module
-         * without a name and passing the factory function as the first and only
-         * argument. If the module is anonymous then the module will be immediately
-         * created and returned.
-         * 
-         * @param {string} name The name of the module
-         * @param {function} factory The factory function responsible for creating the module.
-         * @returns Nothing is returned if a name is provided. Otherwise, if a name is provided
-         *          the newly constructed module is immediately returned.
-         */
-        defineModule: function(name, factory) {
-            return _define(name, factory, MODULE);
+            return _define(getDefFromArgs(arguments).concat(CLASS));
         },
         
         /**
@@ -507,7 +570,7 @@ raptor.defineEnum(
          *          the newly constructed enum is immediately returned.
          */
         defineEnum: function(name, enumValues, factory) {
-            return _define(name, factory, ENUM, null, enumValues);
+            return _define([name, {}, factory, ENUM, enumValues]);
         },
         
         /**
@@ -518,51 +581,7 @@ raptor.defineEnum(
          * @returns
          */
         defineMixin: function(name, factory) {
-            return _define(name, factory, MIXIN);
-        },
-        
-        /**
-         * 
-         * @param name
-         * @returns {Boolean}
-         */
-        isDefined: function(name) {
-            return definitionsLookup[name] !== undefined;
-        },
-        
-        alias : function(type,name) {
-            
-            var dot = name.lastIndexOf('.'),
-                path = name.substring(0,dot),
-                dir = nameSpaces[path];
-            
-            name = name.substring(dot + 1);
-            
-            if (dir) {
-                return (dir[name] = type);
-            }
-
-            var global = raptor.global;
-            
-            var idx = 0,
-                dirs = path ? path.split('.') : [], 
-                len = dirs.length,
-                key;
-                
-            dir = global;
-            
-            for (; ((idx < len) && (dir[key = dirs[idx]])); idx++) {
-                dir = dir[key];
-            }
-            
-            while (idx < len) {
-                dir = dir[key = dirs[idx++]] = {};
-            }
-            
-            nameSpaces[path] = dir;
-            
-            return (dir[name] = type);
-            
+            return _define([name, {}, factory, MIXIN]);
         },
         
         /**
@@ -744,39 +763,30 @@ raptor.defineEnum(
 
             if (!source) return; //If source is null then there is nothing to extend the target with
             
-            if (is(target, STRING)) {
+            var def,
+                extensions,
+                createMixin;
+            
+            if (isString(target)) {
                 
                 //Always register the extensions with the definition so that if the object
                 //needs to be reloaded the extensions will again be reapplied
-                var def = definitionsLookup[target];
-                if (!def) {
-                    def = _define(target, null, null);
-                }
-                /**
-                 * @class
-                 * @name oop-RaptorExtensionDefinition
-                 * @private
-                 */
-                var ext = {
-                        /**
-                         * The source of the mixins to apply to the target
-                         */
-                        source: source
-                };
+                def = definitionsLookup[target] || (definitionsLookup[target] = [target]);
+                
 
-                var extensions = def[EXTENSIONS_IDX];
+                extensions = def[EXTENSIONS_IDX];
                 if (!extensions) {
-                    def[EXTENSIONS_IDX] = [ext];
+                    def[EXTENSIONS_IDX] = [source];
                 }
                 else {
-                    extensions.push(ext);
+                    extensions.push(source);
                 }
                 
                 //If the target object is a string then we need to see if it has been loaded
                 var loaded = loadedLookup[target]; //See if the object has already been loaded
                 if (loaded) {
                     //If the target object has already been loaded then we can used the loaded object as the target
-                    if (is(loaded, FUNCTION)) { //The loaded object is a class... mixins should apply to the prototype
+                    if (isFunction(loaded)) { //The loaded object is a class... mixins should apply to the prototype
                         target = loaded[PROTOTYPE];
                     }
                     else {
@@ -792,7 +802,7 @@ raptor.defineEnum(
                 }
             }
             
-            if (is(source, FUNCTION)) {
+            if (isFunction(source)) {
                 //If the source is a function then treat it as a factory function
                 //that will return the mixins
                 if (!overridden) {
@@ -800,13 +810,13 @@ raptor.defineEnum(
                 }
                 source = source(raptor, target, overridden); //Execute the factory function with three parameters
             }
-            else if (is(source, STRING))
+            else if (isString(source))
             {
                 //The source is the name of the source so load the source
                 source = _require(source);
             }
             
-            var createMixin = source.createMixin || source.extend;
+            createMixin = source.createMixin || source.extend;
             
             if (createMixin) {
                 if (!overridden) {
@@ -837,7 +847,7 @@ raptor.defineEnum(
         inherit: _inherit,
         
         _missing: function(name) {
-            throw new Error('Missing: ' + name);
+            throw new Error('Missing ' + name);
         }
     };
     
@@ -848,4 +858,5 @@ raptor.defineEnum(
             raptor[k] = v;
         }
     });
+    raptor.defineModule = oop.define;
 });
