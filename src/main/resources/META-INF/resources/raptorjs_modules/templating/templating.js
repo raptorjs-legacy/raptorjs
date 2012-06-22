@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule('templating', function(raptor) {
+raptor.define('templating', function(raptor) {
     "use strict";
     
     var registeredTemplates = {},

@@ -20,7 +20,7 @@
  * method will be used. Raptor also provides custom parse and stringify methods
  * can be optionally included.
  */
-raptor.defineModule('json', function(raptor) {
+raptor.define('json', function(raptor) {
     "use strict";
     
     var NativeJSON = raptor.global.JSON,

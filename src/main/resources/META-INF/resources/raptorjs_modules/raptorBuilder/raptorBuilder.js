@@ -211,6 +211,24 @@
                     
                     /**
                      * 
+                     * @param s
+                     * @returns {Boolean}
+                     */
+                    isString: function(s) {
+                        return typeof s == 'string';
+                    },
+                    
+                    /**
+                     * 
+                     * @param s
+                     * @returns {Boolean}
+                     */
+                    isFunction: function(f) {
+                        return typeof f == 'function';
+                    },
+                    
+                    /**
+                     * 
                      * Iterates over the elements in an array and invokes a provided callback function with the current element for each iteration.
                      * 
                      * @param {array|object|null} a The array to iterate over

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule("js-minifier", function() {
+raptor.define("js-minifier", function() {
     "use strict";
     
     var parser = require("uglify-js").parser;

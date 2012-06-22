@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule(
+raptor.define(
     "xml.sax",
     function() {
         "use strict";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule(
+raptor.define(
     "templating.compiler", 
     function(raptor) {
         "use strict";

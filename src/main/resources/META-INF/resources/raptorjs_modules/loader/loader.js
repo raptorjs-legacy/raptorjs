@@ -25,7 +25,7 @@
  * 
  * 
  */
-raptor.defineModule('loader', function(raptor) {
+raptor.define('loader', function(raptor) {
     "use strict";
     
     var included = {},

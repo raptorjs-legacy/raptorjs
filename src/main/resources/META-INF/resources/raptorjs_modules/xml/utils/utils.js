@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule(
+raptor.define(
     'xml.utils',
     function(raptor) {
         "use strict";

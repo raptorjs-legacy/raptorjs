@@ -97,7 +97,7 @@
  * 
  * 
  */
-raptor.defineModule('pubsub', function(raptor) {
+raptor.define('pubsub', function(raptor) {
     "use strict";
     
     var listeners = raptor.listeners;

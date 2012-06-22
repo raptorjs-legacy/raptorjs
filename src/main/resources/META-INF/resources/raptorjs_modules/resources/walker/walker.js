@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule('resources.walker', function() {
+raptor.define('resources.walker', function() {
     "use strict";
     
     var Walker = raptor.require("resources.walker.DirWalker");

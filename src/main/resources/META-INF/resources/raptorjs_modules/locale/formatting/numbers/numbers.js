@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineModule('locale.formatting.numbers', function() {
+raptor.define('locale.formatting.numbers', function() {
     "use strict";
     
     /**
