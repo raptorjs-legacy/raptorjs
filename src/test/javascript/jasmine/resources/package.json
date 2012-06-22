@@ -12,10 +12,6 @@
     ],
     
     "raptor-module-mappings": {
-        "components/widgets/test/Button": "/components/widgets/test/Button-package.json",
-        "components/widgets/test/Button-renderer": "/components/widgets/test/Button-renderer-package.json",
-        "components/widgets/test/Container": "/components/widgets/test/Container-package.json",
-        "components/widgets/test/Container-renderer": "/components/widgets/test/Container-renderer-package.json"
     },
     
     "raptor-taglibs": {

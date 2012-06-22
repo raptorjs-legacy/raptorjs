@@ -90,7 +90,6 @@ raptor.extend('widgets', function(raptor) {
          * @returns {void}
          */
         _initAll: function(widgets) {
-            
             var logger = this.logger(),
                 docs = {};
             
@@ -223,7 +222,7 @@ raptor.extend('widgets', function(raptor) {
 
                 };
                 
-            _initWidgets(arrayFromArguments(arguments));
+            _initWidgets(widgets);
         },
         
         /**
@@ -243,5 +242,5 @@ raptor.extend('widgets', function(raptor) {
 
 raptor.global.$rwidgets = function() {
     var widgets = raptor.require('widgets');
-    widgets._initAll.apply(widgets, arguments);
+    widgets._initAll(raptor.arrayFromArguments(arguments));
 };

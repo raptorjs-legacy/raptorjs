@@ -1,0 +1,25 @@
+<c:template
+    name="pages/test"
+    xmlns:c="core"
+    xmlns:w="widgets"
+    xmlns:widgets-test="widgets-test">
+    
+    <html>
+        <head>
+            <title>Test Page</title>
+        </head>
+        <body>
+        
+            Hello World!
+            
+            <widgets-test:button label="Click Me"/>
+            
+            <script>
+            window.initWidgets = function() {
+            <w:initWidgets includeScriptTag="false"/>
+            }
+            </script>
+        </body>
+    </html>
+    
+</c:template>

@@ -1,91 +1,53 @@
 require('./_helper.js');
 
 var compileAndLoad = helpers.templating.compileAndLoad,
-    compileAndRender = helpers.templating.compileAndRender;
+    compileAndRender = helpers.templating.compileAndRender,
+    jsdomScripts = helpers.jsdom.jsdomScripts,
+    jsdomWrapper = helpers.jsdom.jsdomWrapper;
 
-xdescribe('widgets module in the browser', function() {
+describe('widgets module in the browser', function() {
     before(function() {
         createRaptor();
-        raptor.resources.addSearchPathDir(getTestsDir("/resourcestest-templates"));
     });
-    
-//    it('should allow DOM widget elements to be looked up', function() {
-//        var jsdom = require('jsdom');
-//
-//        jsdom.env({
-//          html: 'http://news.ycombinator.com/',
-//          scripts: [
-//            'http://code.jquery.com/jquery-1.5.min.js'
-//          ],
-//          done: function(errors, window) {
-//            var $ = window.$;
-//            console.log('HN Links');
-//            $('td.title:not(:last) a').each(function() {
-//              console.log(' -', $(this).text());
-//            });
-//          }
+      
+//    it('should allow widgets to be initialized', function() {
+//        
+//        jsdomWrapper({
+//            html: compileAndRender('/pages/widgets/WidgetsTestPage.rhtml'),
+//            scripts: [
+//               '/js/jquery-1.7.js',
+//               'core',
+//               '/js/init-raptor.js',
+//               'widgets'
+//            ],
+//            loaded: function(window, raptor, done) {
+//                window.initWidgets();
+//                done();
+//            }
 //        });
+//
 //    });
-    
-//    console.log('Required browser scripts:');
-//    console.log(getRequiredBrowserScripts([
-//                    { lib: 'jquery' },
-//                    { module: 'core' }, 
-//                    { file: getTestJavaScriptPath('init-raptor.js') },
-//                    { module: 'widgets' },
-//                    { file: getTestJavaScriptPath('widgets/input/ButtonWidget.js') },
-//                    { file: getTestHtmlPath('two-buttons.js') }
-//                ]));
-    
-    xit('should allow widgets to be initialized', function() {
-        
-        var done = false,
-            exception = null;
-        
-        runs(function() {
-            var jsdom = require('jsdom');
 
-            try {
-                jsdom.env({
-                    html: compileAndRender('two-buttons.html'),
-                    scripts: getRequiredBrowserScripts([
-                        { lib: 'jquery' },
-                        { module: 'core' }, 
-                        { file: getTestJavaScriptPath('init-raptor.js') },
-                        { module: 'widgets' },
-                        { file: getTestJavaScriptPath('widgets/input/ButtonWidget.js') },
-                        { file: getTestHtmlPath('two-buttons.js') }
-                    ]),
-                    done: function(errors, window) {
-                        expect(!errors || errors.length == 0).toEqual(true);
-                        
-                        var raptor = window.raptor;
-                        var widgets = raptor.require('widgets');
-                        var widget = widgets.get('w0');
-                        expect(widget.getEl('button')).toNotEqual(null);
-                        expect(widget.initInvoked).toEqual(true);
-                        expect(widget.init).toNotEqual(null);
-                        expect(widget.getLabel()).toEqual("Button 1");
-                        
-                        done = true;
-                    }
-                });
+    it('should allow widgets to be initialized', function() {
+        
+        jsdomWrapper({
+            html: compileAndRender('/pages/widgets/SingleWidgetPage.rhtml'),
+            require: [
+               '/js/jquery-1.7.js',
+               'core',
+               '/js/init-raptor.js',
+               'widgets',
+               'components/widgets/Button',
+               'components/widgets/Button-renderer'
+            ],
+            ready: function(window, raptor, done) {
+                window.initWidgets();
+                var widgets = raptor.require('widgets');
+                expect(widgets.get('s0')).toNotEqual(null);
+                done();
             }
-            catch(e) {
-                done = true;
-                exception = e;
-                console.error('Error: ' + e);
-            }
-
         });
-        
-        expect(exception).toEqual(null);
-        
-        waitsFor(function() {
-            return done === true;
-          }, "done callback never invoked by jsdom", 10000);
-        
-        
+
     });
 
     xit('should allow DOM widget elements to be looked up', function() {
@@ -153,7 +115,7 @@ xdescribe('widgets module in the browser', function() {
                     scripts: getRequiredBrowserScripts([
                         { lib: 'jquery' },
                         { module: 'core' }, 
-                        { file: getTestJavaScriptPath('init-raptor.js') },
+                        { resource: getTestJavaScriptPath('init-raptor.js') },
                         { module: 'widgets' },
                         { file: getTestJavaScriptPath('widgets/input/ButtonWidget.js') },
                         { file: getTestHtmlPath('two-buttons.js') }

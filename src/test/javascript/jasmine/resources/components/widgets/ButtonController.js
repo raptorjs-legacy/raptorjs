@@ -1,12 +1,12 @@
 raptor.defineClass(
-    'components.widgets.test.ButtonController',
+    'components.widgets.ButtonController',
     function(raptor) {
         
         return {
             process: function(input, context) {
                 var disabled = input.disabled === true;
                 context.renderTemplate(
-                    "components/widgets/test/Button",
+                    "components/widgets/Button",
                     {
                         label: input.label,
                         widgetConfig: {

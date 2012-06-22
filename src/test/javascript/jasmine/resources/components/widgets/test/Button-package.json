@@ -1,7 +1,0 @@
-{
-    "includes": {
-        { "type": "rhtml", "path": "ButtonWidget.js" }
-    }
-    
-    
-}

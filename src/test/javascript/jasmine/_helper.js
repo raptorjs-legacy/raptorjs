@@ -132,10 +132,7 @@ var readTemplate = function(path) {
             var output = raptor.require("templating").renderToString(templatePath, data, context);
             console.log('==================================\nOutput (' + templatePath + '):\n----------------------------------\n', output, "\n----------------------------------\n");
             
-            return {
-                compiled: compiledSrc,
-                output: output
-            };
+            return output;
         }
         catch(e) {
             if (!invalid) {
@@ -163,14 +160,14 @@ getTestJavaScriptPath = function(relPath) {
     return nodePath.join(__dirname, "resources/js", relPath);
 };
 
-//require('jsdom').defaultDocumentFeatures = {
-//        FetchExternalResources   : ['script'],
-//        ProcessExternalResources : false,
-//        MutationEvents           : false,
-//        QuerySelector            : false
-//  };
+require('jsdom').defaultDocumentFeatures = {
+        FetchExternalResources   : ['script'],
+        ProcessExternalResources : ['script'],
+        MutationEvents           : '2.0',
+        QuerySelector            : false
+  };
 
-getRequiredBrowserScripts = function(dependencies) {
+jsdomScripts = function(dependencies) {
     
     var scripts = [];
     var arrays = raptor.arrays;
@@ -188,6 +185,18 @@ getRequiredBrowserScripts = function(dependencies) {
         }
     };
     
+    var handleResource = function(path) {
+        if (included[path] !== true) {
+            included[path] = true;
+            
+            var resource = raptor.resources.findResource(path);
+            if (!resource.exists()) {
+                throw new Error('Resource not found with path "' + path + '"');
+            }
+            handleFile(resource.getSystemPath());
+        }
+    };
+    
     var handleModule = function(name) {
         if (included[name] === true) {
             return;
@@ -195,7 +204,12 @@ getRequiredBrowserScripts = function(dependencies) {
         
         included[name] = true;
         
+        
+        
         var manifest = raptor.oop.getModuleManifest(name);
+        if (!manifest) {
+            raptor.throwError(new Error('Module not found for name "' + name + '"'));
+        }
         manifest.forEachInclude({
             callback: function(type, include) {
                 if (type === 'js') {
@@ -213,12 +227,20 @@ getRequiredBrowserScripts = function(dependencies) {
 
     var processDependencies = function(dependencies) {
         arrays.forEach(dependencies, function(d) {
-            if (d.module) {
+            if (typeof d === 'string') {
+                if (raptor.strings.endsWith(d, '.js')) {
+                    handleResource(d);
+                }
+                else {
+                    handleModule(d);
+                }
+            }
+            else if (d.module) {
                 handleModule(d.module);
             }
-            else if (d.lib === 'jquery')
+            else if (d.resource)
             {
-                handleFile(getTestJavaScriptPath('jquery-1.7.js'));
+                handleResoure(d.resource);
             }
             else if (d.file)
             {
@@ -229,8 +251,8 @@ getRequiredBrowserScripts = function(dependencies) {
     processDependencies(dependencies);
 //
 //    
-//        console.log('BROWSER SCRIPTS:');
-//        console.log(scripts);
+//    console.log('BROWSER SCRIPTS:');
+//    console.log(scripts);
     return scripts;
 };
 
@@ -239,5 +261,56 @@ helpers = {
    templating: {
        compileAndLoad: compileAndLoad,
        compileAndRender: compileAndRender
-   } 
+   },
+   
+   jsdom: {
+       jsdomScripts : jsdomScripts,
+       jsdomWrapper: function(config) {
+           
+           var html = config.html,
+               scripts = jsdomScripts(config.require),
+               done = false;
+           
+           runs(function() {
+               try {
+                   require('jsdom').env({
+                       html: html,
+                       scripts: scripts,
+                       features: {
+                           FetchExternalResources   : ['script'],
+                           ProcessExternalResources : ['script'],
+                           MutationEvents           : '2.0',
+                           QuerySelector            : false
+                       },
+                       done: function(errors, window) {
+                           if (errors && errors.length) {
+                               console.error('jsdom errors: ', errors);
+                               done = true;
+                               return;
+                           }
+                           window.console = console;
+                           config.ready(window, window.raptor, function() {
+                               done = true;
+                           });
+                       }
+                   });
+               }
+               catch(e) {
+                   done = true;
+                   exception = e;
+                   console.error('Error: ' + e, e.stack);
+               }
+           });
+           
+           waitsFor(function() {
+               return done === true;
+           }, "jsdom callback", config.timeout || 1000);
+               
+           return {
+               setDone: function() {
+                   done = true;
+               }
+           };
+       }
+   }
 };

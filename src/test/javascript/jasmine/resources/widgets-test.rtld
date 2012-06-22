@@ -2,7 +2,7 @@
     <uri>widgets-test</uri>
     <short-name>widgets-test</short-name>
     
-    <import-taglib path="/components/widgets/test/Button.rtld"/>
-    <import-taglib path="/components/widgets/test/Container.rtld"/>
+    <import-taglib path="/components/widgets/Button.rtld"/>
+    <import-taglib path="/components/widgets/Container.rtld"/>
     
 </raptor-taglib>
