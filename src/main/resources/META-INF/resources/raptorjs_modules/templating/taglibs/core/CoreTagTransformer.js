@@ -56,8 +56,14 @@ raptor.defineClass(
                             if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.prefix == 'xmlns') {
                                 return; //Skip xmlns attributes
                             }
-                            var attrDef = tagDef.getAttributeDef(attr.prefix && (attr.uri != tagDef.taglib.uri) ? attr.uri : null, attr.localName);
+                            var attrUri = attr.prefix && (attr.uri != tagDef.taglib.uri) ? attr.uri : null;
                             
+                            var attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
+                            if (!attrDef && attrUri) {
+                                //Try again with the short name for the URI in that's how the attribute was defined
+                                attrUri = compiler.taglibs.resolveShortName(attrUri);
+                                attrDef = tagDef.getAttributeDef(attrUri, attr.localName)
+                            }
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
                                 value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true),
                                 uri = attr.uri;
