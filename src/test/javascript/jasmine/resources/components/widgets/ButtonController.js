@@ -9,9 +9,11 @@ raptor.defineClass(
                     "components/widgets/Button",
                     {
                         label: input.label,
+                        id: input.id,
                         widgetConfig: {
                             disabled: disabled                            
                         },
+                        invokeBody: input.invokeBody,
                         widgetContext: input.widgetContext,
                         buttonAttrs: {
                             disabled: disabled ? null : undefined,

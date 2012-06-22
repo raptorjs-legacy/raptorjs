@@ -20,31 +20,44 @@ describe('widgets module in the browser', function() {
 //               '/js/init-raptor.js',
 //               'widgets'
 //            ],
-//            loaded: function(window, raptor, done) {
+//            ready: function(window, raptor, done) {
 //                window.initWidgets();
-//                done();
+//                window.$(function() {
+//                    done();
+//                });
 //            }
 //        });
 //
 //    });
 
     it('should allow widgets to be initialized', function() {
-        
+
         jsdomWrapper({
-            html: compileAndRender('/pages/widgets/SingleWidgetPage.rhtml'),
+            html: compileAndRender('/pages/widgets/SimpleWidgetPage.rhtml'),
             require: [
                '/js/jquery-1.7.js',
                'core',
                '/js/init-raptor.js',
                'widgets',
-               'components/widgets/Button',
-               'components/widgets/Button-renderer'
+               'pages/widgets/SimpleWidgetPage'
             ],
             ready: function(window, raptor, done) {
+//                var widgets = raptor.require('widgets');
+                var PageWidget = raptor.require('pages.widgets.PageWidget');
                 window.initWidgets();
-                var widgets = raptor.require('widgets');
-                expect(widgets.get('s0')).toNotEqual(null);
-                done();
+                window.$(function() {
+                    expect(PageWidget.instance).toNotEqual(null);
+                    expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
+                    expect(PageWidget.instance.getDoc().getWidget('button1').getEl().id).toEqual("myButton");
+                    expect(PageWidget.instance.getDoc().getWidget('button1').getRootEl().id).toEqual("myButton");
+                    expect(PageWidget.instance.getDoc().getWidget('button1').$().prop("id")).toEqual("myButton");
+                    expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
+                    expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
+                    expect(PageWidget.instance.$("#myDiv .mySpan").prop("className")).toEqual("mySpan");
+                    done();
+                });
+                
+                
             }
         });
 

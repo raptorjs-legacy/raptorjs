@@ -2,10 +2,17 @@
     name="widgets/test/Button" 
     xmlns:c="core"
     xmlns:w="widgets"
-    params="buttonAttrs,label">
+    params="buttonAttrs,label,id">
     
-    <button w:widget="components.widgets.ButtonWidget" c:attrs="buttonAttrs">
-        ${label}
+    <button w:widget="components.widgets.ButtonWidget" id="$id" c:attrs="buttonAttrs">
+        <c:choose>
+            <c:when test="label">
+                ${label}
+            </c:when>
+            <c:when test="data.invokeBody">
+                <c:invoke function="data.invokeBody()"/>
+            </c:when>
+        </c:choose>
     </button>
     
 </c:template>

@@ -12,5 +12,14 @@
             <name>disabled</name>
             <type>boolean</type>
         </attribute>
+        
+        
+        <!-- Support widget attributes -->
+        <attribute>
+            <uri>widgets</uri>
+            <name>id</name>
+        </attribute>
+        
+        
     </tag>
 </raptor-taglib>

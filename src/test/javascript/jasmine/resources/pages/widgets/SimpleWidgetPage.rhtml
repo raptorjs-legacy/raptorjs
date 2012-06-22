@@ -11,8 +11,17 @@
         <body>
         
             Hello World!
-            
-            <widgets-test:button label="Click Me"/>
+            <div w:widget="pages.widgets.PageWidget">
+                <widgets-test:button label="Button 1" id="myButton" w:id="button1"/>
+                <widgets-test:button>Button 2</widgets-test:button>
+                
+                <div id="${widget.elId('myDiv')}" class="myDiv">
+                    My Div
+                    <span class="mySpan">
+                        My Span
+                    </span>
+                </div>
+            </div>
             
             <script>
             window.initWidgets = function() {
