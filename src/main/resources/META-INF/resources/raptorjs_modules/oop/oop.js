@@ -382,11 +382,11 @@ $rload(function(raptor) {
          * 
          * Multiple signatures supported:
          * <ul>
-         * <li>defineClass(name, modifiers, factory)
-         * <li>defineClass(name, superclassName, factory)
-         * <li>defineClass(name, factory)
-         * <li>defineClass(modifiers, factory)
-         * <li>defineClass(factory)
+         * <li>define(name, modifiers, factory)
+         * <li>define(name, superclassName, factory)
+         * <li>define(name, factory)
+         * <li>define(modifiers, factory)
+         * <li>define(factory)
          * </ul>
          * 
          * Supported modifiers:
@@ -449,14 +449,14 @@ $rload(function(raptor) {
          * @param factory A factory function that returns either the class constructory function (with prototype)
          *                or just the prototype
          * 
-         * @returns {void|function|object} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
+         * @returns {void|function|object} Returns the module definition or class constructor function if the module/class is anonymous, otherwise nothing is returned
          */
         define: function(name, modifiers, factory) {
             return _define(getDefFromArgs(arguments).concat(MODULE));
         },
         
         /**
-         * Defines a module or class.
+         * Defines a class. This is identical to identical to "define" except that it supports a short-hand notation for classes
          * 
          * Multiple signatures supported:
          * <ul>
@@ -481,6 +481,11 @@ $rload(function(raptor) {
          *     'some.namespace.MyClass',
          *     function() {
          *         return {
+         *             init: function() {
+         *                 //Constructor 
+         *             },
+         *             
+         *             //Prototype methods:
          *             someMethod: function() { ... }
          *         }
          *     });
@@ -491,7 +496,7 @@ $rload(function(raptor) {
          * @param factory A factory function that returns either the class constructory function (with prototype)
          *                or just the prototype
          * 
-         * @returns {void|function|object} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
+         * @returns {void|function} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
          */
         defineClass: function(name, modifiers, factory) {
             return _define(getDefFromArgs(arguments).concat(CLASS));

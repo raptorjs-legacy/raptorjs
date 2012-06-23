@@ -99,6 +99,7 @@
              * @borrows oop.defineClass as defineClass
              * @borrows oop.defineEnum as defineEnum
              * @borrows oop.defineModule as defineModule
+             * @borrows oop.defineModule as define
              * @borrows oop.defineMixin as defineMixin
              * @borrows oop.extend as extend
              * @borrows oop.inherit as inherit
