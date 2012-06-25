@@ -130,138 +130,135 @@ raptor.define('loader', function(raptor) {
      * @param loader {loader} The loader module that started this transaction 
      */
     var Transaction = function(loader) {
-        this._loader = loader;
-        this._includes = [];
-        this._included = {};
-        this.started = false;
-    };
-    
-    Transaction.prototype = /** @lends loader-Transaction.prototype */ {
-            
-        /**
-         * Adds a include to the transaction
-         * 
-         * @param url {String} The URL/ID of the include
-         * @param include {Object} The data for the include
-         * @param includeFunc The function to actually include the resource (a callback will be provided)
-         * @param thisObj The "this" object ot use for the includeFunc arg
-         */
-        _add: function(url, include, includeFunc, thisObj) {
-            if (this.started) {
-                throw new Error("Transaction already started");
-            }
-            
-            if (this.isIncluded(url)) {
-                return; //Already added to transaction
-            }
-            this.setIncluded(url);
-            
-            this._includes.push(function(callback) {
-                if (_handleUrlStart(url, callback)) {
-                    return;
-                }
+        
+        var _includes = [],
+            _included = {},
+            started,
+            _this = {
                 
-                includeFunc.call(
-                        thisObj, 
-                        include, 
-                        _createImplCallback(url, callback));
-            });
-        },
-        
-        /**
-         * 
-         * @param url
-         * @returns {Boolean} Returns true if the  URL has already been included as part of this transaction. False, otherwise.
-         */
-        isIncluded: function(url) {
-            return this._included[url] === true;
-        },
-        
-        /**
-         * Marks a URL as included
-         * 
-         * @param url The URL to mark as included
-         */
-        setIncluded: function(url) {
-            this._included[url] = true;
-        },
-        
-        /**
-         * 
-         * @param type The resource type (e.g. "js", "css" or "module"
-         * @param includes {Object|Array} The array of includes or a single include 
-         */
-        add: function(type, includes) {
-            
-            var loader = this._loader,
-                handler = loader["handle_" + type];
-            
-            if (handler == null) {
-                throw new Error("Unsupported include type: " + type);
-            }
-            
-            forEach(includes, function(include) {
-                handler.call(loader, include, this);
-            }, this);
-        },
-                
-        /**
-         * 
-         * @param userCallback
-         * @returns {loader-Transaction} Returns itself
-         */
-        execute: function(userCallback) {
-            this.started = true;
-            
-            var failed = [],
-                status = {failed: failed};
-            
-            if (!this._includes.length) {
-                userCallback.success(status);
-                userCallback.complete(status);
-            }
-            
-            var completedCount = 0,
-                asyncStarted = false,
-                callback = _createAsyncCallback({
-                        asyncStart: function() {
-                            if (!asyncStarted) {
-                                asyncStarted = true;
-                                userCallback.asyncStart(status);
-                            }
-                        },
-                        error: function(url) {
-                            failed.push(url);
-                        }, 
-                        complete: function() {
-                            completedCount++;
-                            if (completedCount === this._includes.length) {
-                                
-                                if ((status.success = failed.length === 0)) {
-                                    userCallback.success(status);
-                                }
-                                else {
-                                    userCallback.error(status);
-                                }
-                                
-                                if (asyncStarted) {
-                                    userCallback.asyncComplete(status);
-                                }
-    
-                                userCallback.complete(status);
-                            }
+                /**
+                 * Adds a include to the transaction
+                 * 
+                 * @param url {String} The URL/ID of the include
+                 * @param include {Object} The data for the include
+                 * @param includeFunc The function to actually include the resource (a callback will be provided)
+                 * @param thisObj The "this" object ot use for the includeFunc arg
+                 */
+                _add: function(url, include, includeFunc, thisObj) {
+                    if (started || _included[url]) {
+                        return;
+                    }
+                    
+                    _included[url] = 1;
+                    
+                    _includes.push(function(callback) {
+                        if (_handleUrlStart(url, callback)) {
+                            return;
                         }
-                    }, this);
+                        
+                        includeFunc.call(
+                                thisObj, 
+                                include, 
+                                _createImplCallback(url, callback));
+                    });
+                },
+                
+                /**
+                 * 
+                 * @param url
+                 * @returns {Boolean} Returns true if the  URL has already been included as part of this transaction. False, otherwise.
+                 */
+                isIncluded: function(url) {
+                    return !!_included[url];
+                },
+                
+                /**
+                 * Marks a URL as included
+                 * 
+                 * @param url The URL to mark as included
+                 */
+                setIncluded: function(url) {
+                    _included[url] = 1;
+                },
+                
+                /**
+                 * 
+                 * @param type The resource type (e.g. "js", "css" or "module"
+                 * @param includes {Object|Array} The array of includes or a single include 
+                 */
+                add: function(type, includes) {
+                    
+                    var handler = loader["handle_" + type];
+                    
+                    if (handler == null) {
+                        throw new Error("Invalid type: " + type);
+                    }
+                    
+                    forEach(includes, function(include) {
+                        handler.call(loader, include, _this);
+                    });
+                },
+                        
+                /**
+                 * 
+                 * @param userCallback
+                 * @returns {loader-Transaction} Returns itself
+                 */
+                execute: function(userCallback) {
+                    started = 1;
+                    
+                    var failed = [],
+                        status = {failed: failed};
+                    
+                    if (!_includes.length) {
+                        userCallback.success(status);
+                        userCallback.complete(status);
+                    }
+                    
+                    var completedCount = 0,
+                        asyncStarted = false,
+                        callback = _createAsyncCallback({
+                                asyncStart: function() {
+                                    if (!asyncStarted) {
+                                        asyncStarted = true;
+                                        userCallback.asyncStart(status);
+                                    }
+                                },
+                                error: function(url) {
+                                    failed.push(url);
+                                }, 
+                                complete: function() {
+                                    completedCount++;
+                                    if (completedCount === _includes.length) {
+                                        
+                                        if ((status.success = !failed.length)) {
+                                            userCallback.success(status);
+                                        }
+                                        else {
+                                            userCallback.error(status);
+                                        }
+                                        
+                                        if (asyncStarted) {
+                                            userCallback.asyncComplete(status);
+                                        }
             
-            
-            
-            forEach(this._includes, function(execFunc) {
-                execFunc(callback);
-            });
-            return this;
-        }
+                                        userCallback.complete(status);
+                                    }
+                                }
+                            });
+                    
+                    
+                    
+                    forEach(_includes, function(execFunc) {
+                        execFunc(callback);
+                    });
+                    return _this;
+                }
+            };
+        
+        return _this;
     };
-    
+
     return {
         
         /**
@@ -281,17 +278,13 @@ raptor.define('loader', function(raptor) {
          * @returns
          */
         include: function(includes, callback, thisObj) {
-            var transaction = this.createTransaction();
+            var transaction = new Transaction(this);
 
             forEachEntry(includes, function(type, includesForType) {
                 transaction.add(type, includesForType);
-            }, this);
+            });
 
             return transaction.execute(_createAsyncCallback(callback, thisObj));
-        },
-        
-        createTransaction: function() {
-            return new Transaction(this);
         }
     };
 });

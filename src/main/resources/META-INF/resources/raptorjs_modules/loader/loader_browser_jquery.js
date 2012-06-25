@@ -33,19 +33,17 @@ raptor.extend('loader', function(raptor) {
         includeJSImpl: function(src, callback) {
             var _this = this;
             
-            this.logger().debug('Downloading JavaScript "' + src + '"...');
-            
             $.ajax({
                 url: src,
                 dataType: "script",
                 success: function(result) {
-                    _this.logger().debug('JavaScript downloaded: "' + src + '"');
+                    _this.logger().debug('Downloaded: "' + src + '"');
                     
                     //Let the loader module know that the resource has included successfully
                     callback.success();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    _this.logger().error('JavaScript FAILED to download: "' + src + '". Error: ' + errorThrown);
+                    _this.logger().error('Failed: "' + src + '": ' + errorThrown);
                     //Let the loader module know that the resource was failed to be included
                     callback.error();
                 }
@@ -62,7 +60,6 @@ raptor.extend('loader', function(raptor) {
          * @protected
          */
         includeCSSImpl: function(href, callback, attributes) {
-            this.logger().debug('Downloading StyleSheet "' + href + '"...');
 
             var complete = false,
                 _this = this;
@@ -80,14 +77,14 @@ raptor.extend('loader', function(raptor) {
                 {                    
                     complete = true;
                     cleanup();
-                    _this.logger().debug('StyleSheet downloaded: "' + href + '"');
+                    _this.logger().debug('Downloaded: "' + href + '"');
                     //Let the loader module know that the resource has included successfully
                     callback.success();
                 }
             };
             
             var error = function() {
-                this.logger().error('StyleSheet FAILED to download: "' + href + '"');
+                this.logger().error('Failed: "' + href + '"');
                 if (complete === false)
                 {                    
                     complete = true; 

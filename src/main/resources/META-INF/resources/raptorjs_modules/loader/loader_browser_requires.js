@@ -44,7 +44,7 @@ raptor.extend('loader', function(raptor) {
         var asyncModulesMetadata = raptor.global._asyncModules;
         
         var missing = function() {
-            throw new Error('Module metadata missing for require "' + require + '"');
+            throw new Error('Dependencies missing: "' + require + '"');
         };
         
         if (!asyncModulesMetadata) {
