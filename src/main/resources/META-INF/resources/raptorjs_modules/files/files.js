@@ -17,7 +17,12 @@
 $rload(function(raptor) {
     "use strict";
     
-    raptor.defineCore('files', {
+    /**
+     * @namespace
+     * @raptor
+     * @name files
+     */
+    raptor.files = /** @lends files */ {
         /**
          * 
          * @param path
@@ -64,5 +69,5 @@ $rload(function(raptor) {
             var file = new raptor.files.File(path);
             file.remove();
         }
-    });
+    };
 });

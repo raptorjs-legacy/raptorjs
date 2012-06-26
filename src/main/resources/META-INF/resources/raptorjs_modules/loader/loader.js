@@ -38,9 +38,10 @@ raptor.define('loader', function(raptor) {
             var observable = listeners.createObservable(events, true);
             if (callback) {
                 if (typeof callback === 'function') {
-                    observable.subscribe('complete', callback, thisObj);
+                    observable.complete(callback, thisObj);
                 }
                 else {
+                    //Assume the callback is an object
                     observable.subscribe(callback, thisObj);
                 }
             }

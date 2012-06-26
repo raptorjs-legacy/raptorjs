@@ -18,13 +18,18 @@ $rload(function (raptor) {
     "use strict";
     
     /**
+     * 
+     * @namespace
+     * @raptor
+     * @name arrays
+     *
      * Utility module for working with JavaScript arrays.
      * 
      * @borrows raptor.forEach as forEach
      * @borrows raptor.isArray as isArray
      * @borrows raptor.arrayFromArguments as fromArguments
      */
-    raptor.defineCore('arrays', {
+    raptor.arrays = /** @lends arrays */ {
 
         forEach: raptor.forEach,
 
@@ -74,5 +79,5 @@ $rload(function (raptor) {
             return array && array.length ? array[array.length-1] : undefined;
         }
         
-    });
+    };
 });

@@ -18,7 +18,13 @@ $rload(function(raptor) {
     "use strict";
     
     var java = __rhinoHelpers.getJava();
-    raptor.defineCore('java', {
+    
+    /**
+     * @namespace
+     * @raptor
+     * @name java
+     */
+    raptor.java = /** @lends java */ {
 
         convertString: function(str) 
         {
@@ -100,5 +106,5 @@ $rload(function(raptor) {
         getStringInputStream: function(str) {
             return java.getStringInputStream(str);
         }
-    });
+    };
 });

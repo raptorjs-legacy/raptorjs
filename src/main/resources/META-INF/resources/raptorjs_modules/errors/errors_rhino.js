@@ -19,7 +19,12 @@ $rload(function(raptor) {
     
     var stacktraces = raptor.stacktraces;
     
-    raptor.defineCore('errors', {        
+    /**
+     * @namespace
+     * @raptor
+     * @name errors
+     */
+    raptor.errors = /** @lends errors */ {        
         /**
          * 
          * @param message
@@ -55,7 +60,7 @@ $rload(function(raptor) {
             
             throw new Error(output);
         }
-    });  
+    };  
     
     raptor.throwError = raptor.errors.throwError;
 });

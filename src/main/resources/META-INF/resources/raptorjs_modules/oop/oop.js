@@ -46,7 +46,8 @@ $rload(function(raptor) {
         typeNames = ['class', 'module', 'enum', 'mixin'], //Translation type of object types (e.g. CLASS) to type names (e.g. 'class')
         definitionsLookup = $rdefs, //Local variable reference to the global definitions lookup
         loadedLookup = {}, //A lookup for loaded classes/modules/mixins/enums
-        oop = null,    //Used to self-refer to this module. Used instead of "this" for minification and in unbound callbacks
+        oop,    //Used to self-refer to this module. Used instead of "this" for minification and in unbound callbacks
+        k,
         _addTypeInfo = function(obj, name, type) { //Adds hidden type information to created class constructors, class prototypes, modules and enums (not mixins)
                 obj[NAME_PROP] = name;
                 obj.__type = type;
@@ -129,7 +130,7 @@ $rload(function(raptor) {
         },
         _require = function(name, asyncCallback, thisObj, ignoreMissing) {
             
-            if (asyncCallback || isArray(name)) {
+            if (asyncCallback) {
                 //If an asynchronous callback is provided or if multiple module names are provided then we go through the "loader"
                 //module to load the required modules as a single transaction.
                 return _require('loader').require(
@@ -174,7 +175,7 @@ $rload(function(raptor) {
                 mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
                 factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
                 enumValues = def[ENUM_VALUES_IDX],
-                isEnum = targetType === ENUM,
+                isEnum = targetType == ENUM,
                 EnumCtor,
                 enumValue;
 
@@ -202,7 +203,7 @@ $rload(function(raptor) {
             
             targetTypeName = typeNames[targetType];
             
-            onlyStatics = targetType === MODULE || targetType === MIXIN;
+            onlyStatics = targetType == MODULE || targetType == MIXIN;
             
             clazz = mixinsTarget = type;
             
@@ -235,7 +236,7 @@ $rload(function(raptor) {
                 mixinsTarget = proto;                       //Add all mixins to the prototype of the class
             }
             
-            if (targetType !== MIXIN) {
+            if (targetType != MIXIN) {
                 _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
                 clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
                 clazz.toString = _staticToString;
@@ -271,49 +272,45 @@ $rload(function(raptor) {
                     });
                 }
                 clazz.valueOf = _enumValueOf;
-                proto.name = _enumValueName;
-                proto.ordinal = _enumValueOrdinal;
-                proto.compareTo = _enumValueCompareTo;
+                _simpleExtend(proto, {
+                    name: _enumValueName,
+                    ordinal: _enumValueOrdinal,
+                    compareTo: _enumValueCompareTo
+                });
             }
 
 
             return clazz;
             
         },
-        
+
         getDefFromArgs = function(args) {
-            var argsLength = args.length,
+            var i=0,
+                len=args.length,
+                arg,
                 name,
-                modifiers,
+                modifiers = {},
                 factory;
             
-            if (argsLength == 2) { //Most common: defineClass(name, factory)
-                //The first arg is either a class name or a modifiers object
-                if (isString(args[0])) {
-                    name = args[0];
+            for (; i<len; i++) {
+                arg = args[i];
+                if (isString(arg)) {
+                    if (!name) {
+                        name = arg;
+                    }
+                    else {
+                        modifiers.superclass = arg;
+                    }
+                }
+                else if (i == len-1) {
+                    factory = arg;  //An object in the last position is the implementation
                 }
                 else {
-                    modifiers = args[0]; //The modifiers is the first parameter
+                    modifiers = arg;
                 }
-                factory = args[1]; //Factory is always the second parameter if there are two args
-            }
-            else if (argsLength == 1) {
-                factory = args[0];
-            }
-            else {
-                name = args[0];
-                modifiers = args[1];
-                factory = args[2];
-            }
-            
-            if (isString(modifiers)) {
-                //Handle the case where the 'modifiers' is a string that refers to the superclass (equivalent to {superclass: superclassName})
-                modifiers = {
-                    superclass: modifiers
-                };
             }
 
-            return [name, modifiers || {}, factory];
+            return [name, modifiers, factory];
         },
 
         /**
@@ -330,14 +327,14 @@ $rload(function(raptor) {
             var name = def[NAME_IDX],
                 existingDef;
             
-            if (loadedLookup[name] === null) {
+            if (!loadedLookup[name]) {
                 delete loadedLookup[name]; //We now have a definition available
             }
             
             if (!name) {
                 //If no name is provided then we have to build the class immediately
                 //and return it since it is an anonymous class
-                return _build("(anonymous)", def);
+                return _build("", def);
             }
 
             existingDef = definitionsLookup[name];
@@ -351,7 +348,7 @@ $rload(function(raptor) {
             return def;
         },
         _find = function(name) {
-            return _require(name, null, null, true); //Checks for the existing of an object
+            return _require(name, 0, 0, true); //Checks for the existing of an object
         }; 
    
     /**
@@ -359,7 +356,7 @@ $rload(function(raptor) {
      * @raptor
      * @name oop
      */
-    raptor.oop = /** @lends oop */ {
+    raptor.oop = oop = /** @lends oop */ {
             
         /**
          * Defines a module or class.
@@ -770,7 +767,8 @@ raptor.defineEnum(
             
             var def,
                 extensions,
-                createMixin;
+                createMixin,
+                loaded;
             
             if (isString(target)) {
                 
@@ -788,7 +786,7 @@ raptor.defineEnum(
                 }
                 
                 //If the target object is a string then we need to see if it has been loaded
-                var loaded = loadedLookup[target]; //See if the object has already been loaded
+                loaded = loadedLookup[target]; //See if the object has already been loaded
                 if (loaded) {
                     //If the target object has already been loaded then we can used the loaded object as the target
                     if (isFunction(loaded)) { //The loaded object is a class... mixins should apply to the prototype
@@ -855,13 +853,12 @@ raptor.defineEnum(
             throw new Error('Missing ' + name);
         }
     };
-    
-    oop = raptor.oop;
-    
-    forEachEntry(oop, function(k, v) {
+
+    for (k in oop) {
         if (k.charAt(0) != '_') {
-            raptor[k] = v;
+            raptor[k] = oop[k];
         }
-    });
+    }
+
     raptor.defineModule = oop.define;
 });

@@ -17,7 +17,12 @@
 $rload(function(raptor) {
     "use strict";
     
-    raptor.defineCore('debug', {
+    /**
+     * @namespace
+     * @raptor
+     * @name debug
+     */
+    raptor.debug = /** @lends arrays */ {
         /**
          * 
          * @param o
@@ -26,5 +31,5 @@ $rload(function(raptor) {
         dumpToString : function(o) {
             return raptor.require('json').stringify(o); //For now just use json.stringify
         }
-    });    
+    };    
 });

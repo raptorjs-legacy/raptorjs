@@ -18,10 +18,14 @@ $rload(function(raptor) {
     "use strict";
     
     /**
+     * @namespace
+     * @raptor
+     * @name objects
+     * 
      * @borrows raptor.forEachEntry as forEachEntry
      * @borrows raptor.keys as keys
      */
-    raptor.defineCore('objects', {
+    raptor.objects = /** @lends objects */ {
         extend: raptor.extend,
         
         
@@ -72,5 +76,5 @@ $rload(function(raptor) {
             }
             return true;
         }
-    });    
+    };    
 });

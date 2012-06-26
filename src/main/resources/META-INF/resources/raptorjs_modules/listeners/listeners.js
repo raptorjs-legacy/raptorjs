@@ -23,8 +23,9 @@ $rload(function(raptor) {
         isArray = raptor.isArray,
         extend = raptor.extend,
         nextHandleId = 0,
-        handlesPropName = "__messageHandles",
+        handlesPropName = "__lstnrs",
         EMPTY_FUNC = function() {},
+        listeners,
         _bind = function(callbackFunc, thisObj) {
             if (!callbackFunc) return EMPTY_FUNC;
             if (!thisObj) return callbackFunc;
@@ -38,8 +39,9 @@ $rload(function(raptor) {
             
             listener.removed = true;
             
-            forEach(listeners, function(curListener) {
-                if (curListener !== listener && curListener.removed === false) {
+            forEach(listeners._listeners, function(curListener) {
+                
+                if (curListener !== listener && !curListener.removed) {
                     newListeners.push(curListener);
                 }
             });
@@ -50,7 +52,7 @@ $rload(function(raptor) {
                 delete thisObj[handlesPropName][listener.id];
             }
             
-            if (listeners._listeners.length === 0) {
+            if (!listeners._listeners.length) {
                 listeners._onEmpty();
             }
         },
@@ -61,7 +63,7 @@ $rload(function(raptor) {
         },
         _createRemoveObservableFunc = function(handles) {
             return function(name) {
-                if (arguments.length === 0) {
+                if (!arguments.length) {
                     forEachEntry(handles, function(name, h) {
                         h.remove();
                     });
@@ -138,14 +140,13 @@ $rload(function(raptor) {
                     autoRemove: autoRemove,
                     id: nextHandleId++
                 },
-                handles;
+                handles,
+                _this = this;
             
             
             
-            this._listeners.push(listener);
-            
-            var _this = this;
-            
+            _this._listeners.push(listener);
+                        
             /**
              * @name listeners-ListenerHandle
              * @class
@@ -187,18 +188,19 @@ $rload(function(raptor) {
          * @param args
          */
         publish: function() {
-            var args = arguments;
+            var args = arguments,
+                _this = this;
             
-            forEach(this._listeners, function(listener) {
-                if (listener.removed === true) return;
+            forEach(_this._listeners, function(listener) {
+                if (listener.removed) return;
                 
                 listener.callback.apply(listener.thisObj, args);
                 
-                if (listener.autoRemove === true)
+                if (listener.autoRemove)
                 {
-                    _removeListener(this, listener);
+                    _removeListener(_this, listener);
                 }
-            }, this);
+            });
         },
         
         /**
@@ -212,7 +214,7 @@ $rload(function(raptor) {
     };
     
     var checkMessage = function(messageName, observable) {
-        var allowedMessages = observable._allowedMessages;
+        var allowedMessages = observable._allowed;
         if (allowedMessages && !allowedMessages[messageName]) {
             throw new Error('Invalid message name of "' + messageName + '". Allowed messages: ' + raptor.keys(allowedMessages).join(', '));
         }
@@ -223,7 +225,7 @@ $rload(function(raptor) {
     var _createMessageFunc = function(name) {
         return function(props) {
             var args = [name].concat(arrayFromArguments(arguments));
-            this[typeof props === 'function' ? 'subscribe' : 'publish'].apply(this, args);
+            this[typeof props == 'function' ? 'subscribe' : 'publish'].apply(this, args);
         };
     };
     
@@ -233,7 +235,7 @@ $rload(function(raptor) {
      * @name listeners-Observable
      */
     var Observable = function() {
-        this._listenersByName = {};
+        this._byName = {};
     };
     
     Observable.prototype = /**@lends listeners-Observable.prototype */ {
@@ -244,13 +246,13 @@ $rload(function(raptor) {
          * @param createPublishFunctions
          */
         registerMessages: function(messages, createPublishFunctions) {
-            if (!this._allowedMessages) {
-                this._allowedMessages = {};
+            if (!this._allowed) {
+                this._allowed = {};
             }
             
             for (var i=0, len=messages.length; i<len; i++) {
                 var message = messages[i];
-                this._allowedMessages[message] = true;
+                this._allowed[message] = true;
                 
                 if (createPublishFunctions) {
                     this[message] = _createMessageFunc(message);
@@ -276,24 +278,28 @@ $rload(function(raptor) {
          * @returns {listeners-ObservableListenerHandle} A handle to remove the added listeners or select listeners
          */
         subscribe: function(name, callback, thisObj, autoRemove) {
-            if (typeof name === 'object')
+            var _this = this,
+                handles,
+                handle;
+            
+            if (typeof name == 'object')
             {
-                thisObj = callback; //thisObj is the second argument
                 autoRemove = thisObj; //autoRemove is the third argument
+                thisObj = callback; //thisObj is the second argument
                 
-                var handles = {};
+                handles = {};
                 
                 forEachEntry(name, function(name, callback) {
-                    handles[name] = this.subscribe(name, callback, thisObj, autoRemove);
+                    handles[name] = _this.subscribe(name, callback, thisObj, autoRemove);
                     
-                }, this);
+                });
                 
                 /**
                  * @class
                  * @anonymous
                  * @name listeners-ObservableListenerHandle
                  */
-                var handle = /**@lends listeners-ObservableListenerHandle.prototype */ {
+                handle = /**@lends listeners-ObservableListenerHandle.prototype */ {
                     
                     /**
                      * @function
@@ -327,20 +333,20 @@ $rload(function(raptor) {
                 return handle;
             }
             
-            checkMessage(name, this);
+            checkMessage(name, _this);
             
-            var listeners = this._listenersByName[name];
-            if (!listeners)
+            var listenersInstance = _this._byName[name];
+            if (!listenersInstance)
             {
-                this._listenersByName[name] = listeners = new Listeners();
+                _this._byName[name] = listenersInstance = new Listeners();
                 
                 
                 //Prevent a memory leak by removing empty listener lists
-                listeners.onEmpty(function() {
-                    delete this._listenersByName[name];
-                }, this);
+                listenersInstance.onEmpty(function() {
+                    delete _this._byName[name];
+                });
             }
-            return listeners.add(callback, thisObj, autoRemove);
+            return listenersInstance.add(callback, thisObj, autoRemove);
         },
         
         /**
@@ -368,12 +374,12 @@ $rload(function(raptor) {
                 args = message;
             }
             else {
-                if (raptor.listeners.isMessage(name)) {
+                if (listeners.isMessage(name)) {
                     message = name;
                     name = message.getName();
                 }
                 else {
-                    message = raptor.listeners.createMessage(name, message);
+                    message = listeners.createMessage(name, message);
                 }
                 args = [message.data, message];
             }
@@ -384,10 +390,10 @@ $rload(function(raptor) {
             var _this = this;
             
             var _publish = function(name) {
-                var listeners = _this._listenersByName[name];
-                if (!listeners) return;
+                var listenersInstance = _this._byName[name];
+                if (!listenersInstance) return;
                 
-                listeners.publish.apply(listeners, args);
+                listenersInstance.publish.apply(listenersInstance, args);
             };
             
             _publish(name);
@@ -402,8 +408,12 @@ $rload(function(raptor) {
             return message;
         }
     };
-    
-    raptor.defineCore('listeners', {
+    /**
+     * @namespace
+     * @raptor
+     * @name listeners
+     */
+    return (raptor.listeners = listeners = /** @lends listeners */ {
         /**
          * @type listeners-Message
          * 
@@ -519,9 +529,7 @@ $rload(function(raptor) {
             var handles = thisObj[handlesPropName];
             if (handles) {
                 for (var k in handles) {
-                    if (handles.hasOwnProperty(k)) {
-                        handles[k].unsubscribe();
-                    }
+                    handles[k].unsubscribe();
                 }
             }
         }

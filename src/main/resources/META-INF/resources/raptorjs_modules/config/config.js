@@ -143,8 +143,12 @@ $rload(function(raptor) {
      * 
      * <p>
      * See {@link config-Config#add} for the format of the properties.
+     * 
+     * @namespace
+     * @raptor
+     * @name config
      */
-    raptor.defineCore('config', {
+    raptor.config = /** @lends config */ {
         /**
          * 
          * Creates a configuration object with the specified properties.
@@ -156,5 +160,5 @@ $rload(function(raptor) {
         create: function(properties) {
             return new Config(properties);
         }
-    });    
+    };    
 });

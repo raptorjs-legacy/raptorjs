@@ -166,7 +166,7 @@
                      * @returns {String}
                      */
                     toString: function() {
-                        return "[Raptor]";
+                        return "[raptor]";
                     },
                     
                     /**
@@ -228,6 +228,10 @@
                         return typeof f == 'function';
                     },
                     
+                    isObject: function(o) {
+                        return typeof o == 'object';
+                    },
+                    
                     /**
                      * 
                      * Iterates over the elements in an array and invokes a provided callback function with the current element for each iteration.
@@ -246,8 +250,9 @@
 
                         for (var i = 0, len=a.length, result; i < len; i++)
                         {
-                            result = fun.call(thisp, a[i], i, a);
-                            if (result === false) return;
+                            if (fun.call(thisp, a[i], i, a) === false) {
+                                return;
+                            }
                         }
                     },
 
@@ -280,18 +285,20 @@
             
             load(newRaptor);
             return newRaptor;
-        },
-        
-        addLoader: function(loaderFunc) {
-            loaders.push(loaderFunc);
-            
-            if (global.raptor) {
-                loaderFunc(raptor);
-            }
         }
     };
     
-    $rload = raptorBuilder.addLoader;
+    $rload = function(loaderFunc) {
+        loaders.push(loaderFunc);
+        
+        if (global.raptor) {
+            loaderFunc(raptor);
+        }
+    };
+    
+    $rcreate = function(config) {
+        raptor = raptorBuilder.createRaptor(config);
+    };
 
 }());
 

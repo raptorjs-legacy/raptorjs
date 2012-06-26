@@ -22,8 +22,12 @@ $rload(function(raptor) {
         "?": ".?"
     };
     
-    
-    raptor.defineCore('regexp', {
+    /**
+     * @namespace
+     * @raptor
+     * @name regexp
+     */
+    raptor.regexp = /** @lends regexp */ {
         
         /**
          * Escapes special regular expression characters in a string so that the resulting string can be used
@@ -57,5 +61,5 @@ $rload(function(raptor) {
             }) + "$");
         }
         
-    });
+    };
 });
