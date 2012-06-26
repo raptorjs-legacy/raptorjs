@@ -87,6 +87,10 @@ $rload(function(raptor) {
             return this.packageResource.getSystemPath();
         },
         
+        getPath: function() {
+            return this.packageResource.getPath();
+        },
+        
         /**
          * Returns the search path entry where the package.json resource was found.
          * 
