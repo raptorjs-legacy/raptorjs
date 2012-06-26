@@ -1,6 +1,6 @@
 {
     "type": "module",
-    "name": "files.walker",
+    "name": "resources.walker",
     "version": "1.0",
     "description": "Utility class for walking a directory structure",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
