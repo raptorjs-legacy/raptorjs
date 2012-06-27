@@ -175,6 +175,7 @@ JSDOC.PluginManager.registerPlugin(
 		    var functionName = functionCall.name;
 		    var raptorDefineFunctions = {
 	            "raptor.defineModule": true,
+	            "raptor.define": true,
 	            "raptor.defineCore": true,
 	            "raptor.defineClass": true,
 	            "raptor.defineMixin": true,
@@ -327,7 +328,7 @@ JSDOC.PluginManager.registerPlugin(
             
             printFunc();
             
-	        if (!isExtension && (functionCall.name == "raptor.defineModule" || functionCall.name == "raptor.defineCore")) {
+	        if (!isExtension && (functionCall.name == "raptor.defineModule" || functionCall.name == "raptor.define" || functionCall.name == "raptor.defineCore")) {
 	            
 
 	            if (lastSymbol && lastSymbol.isExtension) {
