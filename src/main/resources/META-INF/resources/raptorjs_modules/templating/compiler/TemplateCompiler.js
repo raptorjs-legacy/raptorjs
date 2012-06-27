@@ -27,6 +27,20 @@ raptor.defineClass(
             TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
             TypeConverter = raptor.require('templating.compiler.TypeConverter');
         
+        
+        var SyntaxError = function(msg){
+        	this.message = msg;
+        	this.syntaxError = true;
+        };
+        
+        SyntaxError.prototype = new Error();
+        
+        SyntaxError.prototype.toString = function(){
+        	var self = this;
+        	return "Syntax error: " + self.message + (self.pos ? " at position " + self.pos : "");
+        };
+        
+        
         /**
          * @param taglibs {templating.compiler$TaglibCollection} The collection of taglibs that are available to the compiler
          * @param options {object} The options for the compiler.
@@ -69,6 +83,10 @@ raptor.defineClass(
                         this);
                 }
                 catch(e) {
+                	if (e.syntaxError){
+                		e.pos = node.pos;
+                		throw e;
+                	}
                     errors.throwError(new Error("Unable to compile node " + node + " at position [" + (node.pos || "(unknown)") + "]. Error: " + e.message), e);
                 }
                 
@@ -141,11 +159,11 @@ raptor.defineClass(
                     return output;
                 }
                 catch(e) {
-                    var message = 'Unable to compile template at path "' + filePath + '". Exception: ' + e;
-//                    if (this.options.logErrors !== false) {
-//                        this.logger().error(message, e);
-//                    }
-                    errors.throwError(new Error(message), e);
+                    if (e.syntaxError){
+                    	e.path = filePath;
+                    	throw e;
+                    }
+                    errors.throwError(new Error(e));
                 }
             },
             
@@ -176,7 +194,7 @@ raptor.defineClass(
              */
             handleNodeError: function(message, node) {
                 var pos = node.pos;
-                errors.throwError(new Error(message + " (" + (pos ? (pos.filePath + ":" + pos.line + ":" + pos.column) : "unknown position") + ")"));
+                throw this.syntaxError(message + " (" + (pos ? (pos.filePath + ":" + pos.line + ":" + pos.column) : "unknown position") + ")");
             },
             
             /**
@@ -209,6 +227,10 @@ raptor.defineClass(
              */
             convertType: function(value, type, allowExpressions) {
                 return TypeConverter.convert(value, type, allowExpressions);
+            },
+            
+            syntaxError: function(msg){
+            	return new SyntaxError(msg);
             }
         };
         

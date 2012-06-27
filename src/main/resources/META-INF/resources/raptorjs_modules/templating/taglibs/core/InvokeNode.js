@@ -37,17 +37,17 @@ raptor.defineClass(
                 var func = this.getProperty("function");
                 
                 if (!func) {
-                    errors.throwError(new Error('"function" attribute is required'));
+                	throw template.compiler.syntaxError('"function" attribute is required');
                 }
                 
                 if (func.indexOf('(') === -1) {
                     var definedFunctions = template.getAttribute("core:definedFunctions");
                     if (!definedFunctions) {
-                        raptor.throwError(new Error('Function with name "' + func + '" not defined using <c:define>.'));
+                    	throw template.compiler.syntaxError('Function with name "' + func + '" not defined using <c:define>.');
                     }
                     var funcDef = definedFunctions[func];
                     if (!funcDef) {
-                        raptor.throwError(new Error('Function with name "' + func + '" not defined using <c:define>.'));
+                    	throw template.compiler.syntaxError('Function with name "' + func + '" not defined using <c:define>.');
                     }
                     var params = funcDef.params || [];
                     
@@ -71,7 +71,7 @@ raptor.defineClass(
                         }
                         
                         if (!validParamsLookup[name]) {
-                            raptor.throwError(new Error('Parameter with name "' + name + '" not supported for function with name "' + func + '". Allowed parameters: ' + params.join(", ")));
+                        	throw template.compiler.syntaxError('Parameter with name "' + name + '" not supported for function with name "' + func + '". Allowed parameters: ' + params.join(", "));
                         }
                     }, this);
                     

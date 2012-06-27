@@ -198,7 +198,7 @@ raptor.defineClass(
                 
                 var templateName = this.getTemplateName();
                 if (!templateName) {
-                    errors.throwError(new Error("Template name not defined in template"));
+                	throw this.compiler.syntaxError('Template name not defined in template');
                 }
                 
                 var params = this.params;
@@ -239,7 +239,7 @@ raptor.defineClass(
                     return new Expression(expression);
                 }
                 else {
-                    errors.throwError(new Error("Unsupported expression object: " + expression));
+                	throw this.compiler.syntaxError("Unsupported expression object: " + expression);
                 }
             },
             
