@@ -36,7 +36,7 @@ raptor.defineClass(
                 var vars = this.getProperty("vars");
                 
                 if (!vars) {
-                    errors.throwError(new Error('"vars" attribute is required'));
+                	throw template.compiler.syntaxError('"vars" attribute is required');
                 }
                 
                 var withVars = AttributeSplitter.parse(

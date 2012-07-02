@@ -48,7 +48,7 @@ raptor.defineClass(
                     varStatus = this.getProperty("varStatus");
                 
                 if (!each) {
-                    errors.throwError(new Error('"each" attribute is required'));
+                	throw template.compiler.syntaxError('"each" attribute is required');
                 }
                 
                 var parts = parseForEach(each);
