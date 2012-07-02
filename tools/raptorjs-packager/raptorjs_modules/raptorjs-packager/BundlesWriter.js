@@ -10,9 +10,7 @@ raptor.defineClass(
         
         var BundlesWriter = function(options) {
             this.options = options;
-            this.bundleConfig = new BundleConfig({
-                enabledExtensions: options.enabledExtensions
-            });
+            this.bundleConfig = new BundleConfig(options);
             if (options.bundles) {
                 this.bundleConfig.addBundles(options.bundles);
             }
@@ -40,14 +38,43 @@ raptor.defineClass(
             },
             
             createPackageBundles: function() {
+                
+                
+                var found = {},
+                    createBundleForPackage = function(manifest) {
+                        if (found[manifest.getSystemPath()]) {
+                            return;
+                        }
+                        
+                        found[manifest.getSystemPath()] = true;
+                        
+                        var resourceIncludes = [],
+                            bundleName = (manifest.type || "module") + "-" + manifest.name;
+                        
+                        this.logger().info('Creating bundle "' + bundleName + '" for package "' + manifest.getSystemPath() + '"');
+                        
+                        var bundle = this.bundleConfig.createBundle(bundleName);
+                        manifest.forEachInclude({
+                            callback: function(type, include) {
+                                var handler = packaging.getIncludeHandler(type);
+                                if (handler.isPackageInclude(include)) {
+                                    createBundleForPackage.call(this, handler.getManifest(include));
+                                }
+                                else {
+                                    bundle.addInclude(include, manifest);
+                                }
+                            },
+                            enabledExtensions: this.enabledExtensions,
+                            thisObj: this
+                        });
+                    };
+                
                 //Now write the rest of the packages
                 walker.walk(
                         "/", 
                         function(packageJsonResource) {
                             var manifest = packaging.getPackageManifest(packageJsonResource);
-                            this.createBundleForPackage(manifest);
-                            
-                            
+                            createBundleForPackage.call(this, manifest);
                         }, 
                         this, 
                         {
@@ -61,25 +88,6 @@ raptor.defineClass(
                                 }
                             }
                         });
-            },
-            
-            createBundleForPackage: function(manifest) {
-                var resourceIncludes = [];
-                
-                var bundle = this.bundleConfig.createBundle((manifest.type || "module") + "-" + manifest.name);
-                manifest.forEachInclude({
-                    callback: function(type, include) {
-                        var handler = packaging.getIncludeHandler(type);
-                        if (handler.isPackageInclude(include)) {
-                            this.createBundleForPackage(handler.getManifest(include));
-                        }
-                        else {
-                            bundle.addInclude(include, manifest);
-                        }
-                    },
-                    enabledExtensions: this.enabledExtensions,
-                    thisObj: this
-                });
             },
             
             writeBundle: function(bundle) {
@@ -103,7 +111,7 @@ raptor.defineClass(
                         pageConfig.includes.push({type: "module", name: "loader"});
                     }
                     
-                    var pageBundle = pageBundleConfig.addBundle("page-" + pageName, pageConfig.includes);
+                    var pageBundle = pageBundleConfig.addBundle("page-" + pageName, pageConfig.includes, true);
                     this.writeBundle(pageBundle); //Write out the page bundle
                     
                     var urls = pageBundleConfig.getUrls(pageConfig.includes);
@@ -111,6 +119,9 @@ raptor.defineClass(
                     var asyncMetadata = null;
                     
                     if (pageConfig.asyncIncludes) {
+                        var asyncPageBundle = pageBundleConfig.addBundle("page-" + pageName + "-async", pageConfig.asyncIncludes, true);
+                        this.writeBundle(asyncPageBundle); //Write out the async page bundle
+                        
                         asyncMetadata = pageBundleConfig.getAsyncMetadata(pageConfig.asyncIncludes, {
                             excludeUrls: urls //Exclude page URLs
                         });
@@ -141,8 +152,8 @@ raptor.defineClass(
                 var output = [],
                     scripts = [];
                 if (jsUrls && jsUrls.length) {
-                    forEach(jsUrls, function(url) {
-                        scripts.push('<script type="text/javascript" src="' + url + '"></script>');
+                    forEach(jsUrls, function(url, i) {
+                        scripts.push('<script type="text/javascript" src="' + url + '"' + (i !== 0 ? ' async="true"' : '') + '></script>');
                     }, this);
                     
                     output.push(scripts.join("\n"));

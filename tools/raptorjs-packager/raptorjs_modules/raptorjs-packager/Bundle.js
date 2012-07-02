@@ -4,9 +4,24 @@ raptor.defineClass(
         var packaging = raptor.require('packaging'),
             files = raptor.require('files'),
             forEach = raptor.forEach,
-            forEachEntry = raptor.forEachEntry;
+            forEachEntry = raptor.forEachEntry,
+            indent = function(level) {
+                var str = "";
+                for (var i=0; i<level; i++) {
+                    str += " ";
+                }
+                return str;
+            },
+            leftPad = function(str, len) {
+                while (str.length < len) {
+                    str = " " + str;
+                }
+                return str;
+            },
+            crypto = require('crypto');
         
         var Bundle = function(bundleConfig, name) {
+            this.options = bundleConfig.options;
             this.enabledExtensions = bundleConfig.enabledExtensions;
             this.bundleConfig = bundleConfig;
             this.name = name;
@@ -16,37 +31,65 @@ raptor.defineClass(
         };
         
         Bundle.prototype = {
-            addInclude: function(include, manifest) {
+            addInclude: function(include, manifest, recursive) {
                 
-                var existingBundle = this.bundleConfig.getBundleForInclude(include, manifest);
-                if (existingBundle) {
-                    return; //The include is already part of another bundle
-                }
-                
-                this.bundleConfig.setBundleForInclude(include, manifest, this);
-                
-                var handler = packaging.getIncludeHandler(include.type);
-                
-                if (handler.isPackageInclude(include)) {
-                    var manifest = handler.getManifest(include);
+                var _addInclude = function(include, manifest, forcePackage, depth) {
                     
-                    manifest.forEachInclude({
-                        callback: function(type, packageInclude) {
-                            this.addInclude(packageInclude, manifest);
-                        },
-                        enabledExtensions: this.enabledExtensions,
-                        thisObj: this
-                    });
-                }
-                else {
-                    var aggregateFunc = handler.aggregate;
-                    if (!aggregateFunc) {
-                        raptor.errors.throwError(new Error('"aggregate" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                    
+                    var handler = packaging.getIncludeHandler(include.type);
+                    
+                    var existingBundle = this.bundleConfig.getBundleForInclude(include, manifest);
+                    if (existingBundle) {
+                        return; //The include is already part of another bundle
                     }
-                    aggregateFunc.call(handler, include, manifest, this);
                     
-                    this.includes.push(include);
-                }
+                    if (handler.isPackageInclude(include)) {
+                        
+                        if (include.recursive) {
+                            recursive = true;
+                        }
+                        
+                        if (recursive === true) {
+                            this.bundleConfig.setBundleForInclude(include, manifest, this);
+                        }
+                        
+                        var dependencyManifest = handler.getManifest(include);
+                        
+                        if (recursive === true || forcePackage === true) {
+                            this.logger().info(leftPad(this.name, 30) + ": " + indent(depth) + 'Adding includes for package "' + dependencyManifest.getPath() + '"');
+                            
+                            
+                            
+                            dependencyManifest.forEachInclude({
+                                callback: function(type, packageInclude) {
+                                    _addInclude.call(this, packageInclude, dependencyManifest, false, depth+1);
+                                },
+                                enabledExtensions: this.enabledExtensions,
+                                thisObj: this
+                            });
+                        }
+                        else {
+                            this.logger().info(leftPad(this.name, 30) + ": " + indent(depth) + "***Skipping nested package " + dependencyManifest.getPath() + ' for package "' + manifest.getPath() + '"');
+                        }
+                    }
+                    else {
+                        
+                        
+                        this.bundleConfig.setBundleForInclude(include, manifest, this);
+                        
+                        this.logger().info(leftPad(this.name, 30) + ": " + indent(depth) + "Adding include " + JSON.stringify(include) + ' to bundle "' + this.name + '"');
+                        
+                        var aggregateFunc = handler.aggregate;
+                        if (!aggregateFunc) {
+                            raptor.errors.throwError(new Error('"aggregate" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                        }
+                        aggregateFunc.call(handler, include, manifest, this);
+                        
+                        this.includes.push(include);
+                    }
+                };
+                
+                _addInclude.call(this, include, manifest, true, 0);
             },
             
             addStyleSheetCode: function(css, path) {
@@ -95,7 +138,10 @@ raptor.defineClass(
                 
                 forEachEntry(this.codeByContentType, function(contentType, contentArray) {
                     if (contentArray.length) {
-                        outputFile = new files.File(dir, this.getFilename(contentType, options));
+                        var useChecksums = this.options.useChecksums !== false;
+                        
+                        var shasum = useChecksums ? crypto.createHash('sha1') : null;
+                        
                         
                         var size = 0;
                         
@@ -111,14 +157,38 @@ raptor.defineClass(
                             output.push(code);
                         }, this);
                         
-                        outputFile.writeFully(output.join("\n"));
+                        output = output.join("\n");
+                        
+                        if (useChecksums) {
+                            shasum.update(output);
+                            this.checksum = shasum.digest('hex').substring(0, 8);
+                        }
+                        
+                        if (this.options.addBundleUrls !== false) {
+                            output += '\n$rurl("' + this.getUrl(contentType) + '");';    
+                        }
+                        
+                        
+                        var filename = this.getFilename(contentType, options);
+                        outputFile = new files.File(dir, filename);
+                        outputFile.writeFully(output);
                         this.logger().info('Bundle "' + this.name + '" written to "' + outputFile.getAbsolutePath() + ". (size: " + size + " bytes)");
                     }
                 }, this);                
             },
             
             getFilename: function(contentType, options) {
-                return this.name + "." + contentType;
+                if (this.checksum) {
+                    return this.name + "-" + this.checksum + "." + contentType;    
+                }
+                else {
+                    return this.name + "." + contentType;
+                }
+                
+            },
+            
+            getUrl: function(contentType, options) {
+                return this.getFilename(contentType, options);
             }
         };
         

@@ -20,7 +20,7 @@ require('raptorjs').createRaptor({
 var dir = process.argv[2];
 raptor.require("resources").getSearchPath().addDir(dir);
 
-var config = JSON.parse(raptor.require('files').readFully(__dirname + "/raptorjs-config.json"));
+var config = eval("(" + raptor.require('files').readFully(__dirname + "/raptorjs-config.json") + ")");
 
 var outputDir = __dirname + "/dist-jquery";
 if (raptor.require('files').exists(outputDir)) {
@@ -36,6 +36,8 @@ packager.writeBundles({
     bundles: config.bundles,
     pages: config.pages,
     minify: true,
+    addBundleUrls: false,
+    useChecksums: true,
     usePackageBundles: false,
     enabledExtensions: ["browser", "jquery"]
 });

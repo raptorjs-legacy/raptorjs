@@ -43,12 +43,16 @@ raptor.defineClass(
                 }, this);
             },
             
-            addBundle: function(name, includes) {
+            addBundle: function(name, includes, recursive) {
                 var bundle = this.createBundle(name);
                 forEach(includes, function(include) {
-                    bundle.addInclude(include);
+                    bundle.addInclude(include, null, recursive);
                 }, this);
                 return bundle;
+            },
+            
+            hasBundle: function(name) {
+                return this.bundlesByName[name] != null;
             },
             
             createBundle: function(name) {
@@ -91,6 +95,9 @@ raptor.defineClass(
                     }
                     else {
                         var bundle = this.getBundleForInclude(include, manifest);
+                        if (!bundle) {
+                            throw new Error("Error: Include is not part of any bundle: " + JSON.stringify(include) + " (manifest: " + manifest.getSystemPath() + ")");
+                        }
                         var contentTypes = bundle.getContentTypes();
                         forEach(contentTypes, function(contentType) {
                             var contentTypeUrls = urls[contentType];
@@ -120,8 +127,7 @@ raptor.defineClass(
                     throw new Error('Bundle not found for include "' + handler.includeKey(include, manifest) + '"');
                 }
                 if (bundle.hasCode(contentType)) {
-                    var url = bundle.getFilename(contentType, options);
-                    return url;
+                    return bundle.getUrl(contentType, options);
                 }
                 else {
                     return null;

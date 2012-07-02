@@ -3,8 +3,26 @@
         {
             "name": "core",
             "includes": [
-                {"type": "module", "name": "core"},
+                {"type": "module", "name": "core", "recursive": true},
+                /*
+                {
+                    "type": "init-raptor", 
+                    "config": {
+                        "logging": {
+                            "loggers": {
+                                "ROOT": {"level": "DEBUG"}
+                            }
+                        }
+                    }
+                },
+                */
                 {"type": "module", "name": "oop"}
+            ]
+        },
+        {
+            "name": "loader",
+            "includes": [
+                {"type": "module", "name": "loader", "recursive": true}
             ]
         },
         {
@@ -13,12 +31,7 @@
                 {"type": "module", "name": "widgets"}
             ]
         },
-        {
-            "name": "loader",
-            "includes": [
-                {"type": "module", "name": "loader"}
-            ]
-        },
+        
         {
             "name": "templating",
             "includes": [
@@ -31,8 +44,8 @@
         "test": {
             "includes": [
                 { "type": "module", "name": "core" },
-                { "type": "module", "name": "ecma.array" },
-                { "type": "module", "name": "ecma.object" }
+                { "type": "module", "name": "ecma.Array" },
+                { "type": "module", "name": "ecma.Object" }
             ],
             
             "asyncIncludes": [
