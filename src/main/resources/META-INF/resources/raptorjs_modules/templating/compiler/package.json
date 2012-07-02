@@ -12,36 +12,36 @@
     ],
     
     "includes": [
-        {"type": "module", "name": "strings"},
-        {"type": "module", "name": "listeners"},
-        {"type": "module", "name": "xml.utils"},
-        {"type": "js", "path": "Expression.js"},
-        {"type": "js", "path": "ExpressionParser.js"},
-        {"type": "js", "path": "TypeConverter.js"},
-        {"type": "js", "path": "AttributeSplitter.js"},
-        {"type": "js", "path": "TemplateBuilder.js"},
-        {"type": "js", "path": "TemplateCompiler.js"},
-        {"type": "js", "path": "Taglib.js"},
-        {"type": "js", "path": "TaglibCollection.js"},        
-        {"type": "js", "path": "compiler.js"},
-        {"type": "js", "path": "Node.js"},
-        {"type": "js", "path": "ElementNode.js"},
-        {"type": "js", "path": "TextNode.js"},
-        {"type": "js", "path": "ParseTreeBuilder.js"}
+        {"module": "strings"},
+        {"module": "listeners"},
+        {"module": "xml.utils"},
+        {"path": "Expression.js"},
+        {"path": "ExpressionParser.js"},
+        {"path": "TypeConverter.js"},
+        {"path": "AttributeSplitter.js"},
+        {"path": "TemplateBuilder.js"},
+        {"path": "TemplateCompiler.js"},
+        {"path": "Taglib.js"},
+        {"path": "TaglibCollection.js"},        
+        {"path": "compiler.js"},
+        {"path": "Node.js"},
+        {"path": "ElementNode.js"},
+        {"path": "TextNode.js"},
+        {"path": "ParseTreeBuilder.js"}
     ],
     
     "extensions": [
         {   
             "name": "server",
             "includes": [
-                {"type": "js", "path": "compiler_server.js"},
-                {"type": "js", "path": "TaglibXmlLoader.js"}
+                {"path": "compiler_server.js"},
+                {"path": "TaglibXmlLoader.js"}
             ]
         },
         {   
             "name": "rhino",
             "includes": [
-                {"type": "js", "path": "compiler_rhino.js"}
+                {"path": "compiler_rhino.js"}
             ]
         }
     ]

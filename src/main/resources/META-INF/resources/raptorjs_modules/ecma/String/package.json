@@ -4,6 +4,6 @@
     "version": "1.0",
     "description": "ECMA-compatible String object",
     "includes": [
-        {"type": "js", "path": "String.js"}        
+        {"path": "String.js"}        
     ]
 }

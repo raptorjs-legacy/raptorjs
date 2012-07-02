@@ -120,6 +120,41 @@ raptor.defineClass(
         return Type;
     });
 
+raptor.defineMixin(
+    'test.mixins.BirdMixins',
+    function(raptor) {
+        return {
+            fly: function() {
+                
+            }
+        };
+    });
+raptor.defineClass(
+        'test.mixins.Ostrich',
+        {
+            mixins: ['test.mixins.BirdMixins']
+        },
+        function(raptor, type) {
+            var Ostrich = function() {
+                
+            };
+            
+            Ostrich.prototype = {
+                isFlighted: function() {
+                    return false;
+                },
+                
+                isOstrich: function() {
+                    return true;
+                },
+                
+                toString: function() {
+                    return Ostrich.superclass.toString.call(this);
+                }
+            };
+            
+            return Ostrich;
+        });
 
 describe('classes module', function() {
 
@@ -342,6 +377,11 @@ describe('classes module', function() {
         expect(MyClass.SOME_STATIC).toEqual(true);
     });
     
+    it('should allow for mixins', function() {
+        var Ostrich = raptor.require('test.mixins.Ostrich');
+        var ostrich = new Ostrich();
+        expect(ostrich.fly).toNotEqual(null);
+    });
     
 
 });

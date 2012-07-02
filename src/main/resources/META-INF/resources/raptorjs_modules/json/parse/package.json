@@ -11,7 +11,7 @@
         }
     ],
     "includes": [
-        {"type": "module", "name": "strings"},
-        {"type": "js", "path": "parse.js"}
+        {"module": "strings"},
+        {"path": "parse.js"}
     ]
 }

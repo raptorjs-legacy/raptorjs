@@ -15,14 +15,14 @@
         {
             "name": "server",
             "includes": [
-                {"type": "js", "path": "files.js"}
+                {"path": "files.js"}
             ]
         },
         {
             "name": "node",
             "includes": [
-                {"type": "js", "path": "File_node.js"},
-                {"type": "js", "path": "files_node.js"}
+                {"path": "File_node.js"},
+                {"path": "files_node.js"}
             ]
         }
     ]

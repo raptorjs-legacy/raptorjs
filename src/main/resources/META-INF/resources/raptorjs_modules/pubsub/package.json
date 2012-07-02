@@ -11,6 +11,6 @@
         }
     ],
     "includes": [
-        {"type": "js", "path": "pubsub.js"}
+        {"path": "pubsub.js"}
     ]
 }

@@ -17,7 +17,7 @@
     "extensions": {
         "node": {
             "includes": [
-                {"type": "js", "path": "js-minifier_node.js"}
+                {"path": "js-minifier_node.js"}
             ]
         }
     }

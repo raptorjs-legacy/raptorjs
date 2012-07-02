@@ -12,7 +12,7 @@
     ],
 
     "includes": [
-        {"type": "js", "path": "DirWalker.js"},
-        {"type": "js", "path": "walker.js"}
+        {"path": "DirWalker.js"},
+        {"path": "walker.js"}
     ]
 }

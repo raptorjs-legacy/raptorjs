@@ -12,19 +12,19 @@
     ],
     
     "includes": [
-        {"type": "js", "path": "sax.js"},
-        {"type": "js", "path": "BaseSaxParser.js"}
+        {"path": "sax.js"},
+        {"path": "BaseSaxParser.js"}
     ],
     
     "extensions": {
         "node": {
             "includes": [
-                {"type": "js", "path": "SaxParser_node.js"}
+                {"path": "SaxParser_node.js"}
             ]
         },
         "rhino": {
             "includes": [
-                {"type": "js", "path": "SaxParser_rhino.js"}
+                {"path": "SaxParser_rhino.js"}
             ]
         }
     }

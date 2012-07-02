@@ -11,7 +11,7 @@
         }
     ],
     "includes": [
-        {"type": "module", "name": "strings"},
-        {"type": "js", "path": "stringify.js"}
+        {"module": "strings"},
+        {"path": "stringify.js"}
     ]
 }

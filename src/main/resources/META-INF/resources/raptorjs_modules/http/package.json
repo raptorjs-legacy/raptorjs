@@ -14,9 +14,9 @@
     "extensions": {
         "rhino": {
             "includes": [
-                {"type": "js", "path": "Request_rhino.js"},
-                {"type": "js", "path": "Response_rhino.js"},
-                {"type": "js", "path": "http.js"}
+                {"path": "Request_rhino.js"},
+                {"path": "Response_rhino.js"},
+                {"path": "http.js"}
             ]
         }
     }

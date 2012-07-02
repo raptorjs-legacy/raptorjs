@@ -18,14 +18,14 @@
     "extensions": {
         "server": {
             "includes": [
-                {"type": "js", "path": "packaging_server.js"},
-                {"type": "js", "path": "ExtensionCollection.js"},
-                {"type": "js", "path": "PackageManifest.js"}
+                {"path": "packaging_server.js"},
+                {"path": "ExtensionCollection.js"},
+                {"path": "PackageManifest.js"}
             ]
         },
         "rhino": {
             "includes": [
-                {"type": "js", "path": "packaging_rhino.js"}
+                {"path": "packaging_rhino.js"}
             ]
         }
     }

@@ -12,6 +12,6 @@
     ],
     
     "includes": [
-        {"type": "js", "path": "arrays.js"}
+        {"path": "arrays.js"}
     ]
 }

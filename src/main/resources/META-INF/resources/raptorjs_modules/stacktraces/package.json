@@ -14,12 +14,12 @@
     "extensions": {
         "browser": {
             "includes": [
-                {"type": "js", "path": "stacktraces_browser.js"}
+                {"path": "stacktraces_browser.js"}
             ]
         },
         "node": {
             "includes": [
-                {"type": "js", "path": "stacktraces_node.js"}
+                {"path": "stacktraces_node.js"}
             ]
         }
     } 

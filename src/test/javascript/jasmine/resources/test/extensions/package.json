@@ -2,13 +2,13 @@
     "type": "module",
     "name": "test/extensions",
     "includes": [
-        {"type": "js", "path": "Test.js"},
-        {"type": "js", "path": "extensions.js"}
+        {"path": "Test.js"},
+        {"path": "extensions.js"}
     ],
     "extensions": {
         "server": {
             "includes": [
-                {"type": "js", "path": "extensions_server.js"}
+                {"path": "extensions_server.js"}
             ]
         }
     }

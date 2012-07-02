@@ -2,14 +2,14 @@
     "type": "module",
     "name": "test.conditional-extensions",
     "includes": [
-        {"type": "js", "path": "conditional-extensions.js"}
+        {"path": "conditional-extensions.js"}
     ],
     "extensions": {
         "test": {
             "condition": "extensions.contains('test.conditionals') && extensions.containsMatch('test.conditionals.*')",
             
             "includes": [
-                {"type": "js", "path": "conditional-extensions_test.js"}
+                {"path": "conditional-extensions_test.js"}
             ]
         },
         
@@ -17,14 +17,14 @@
             "condition": "extensions.contains('test2.conditionals') && extensions.containsMatch('test2.conditionals.*')",
             
             "includes": [
-                {"type": "js", "path": "conditional-extensions_test2.js"}
+                {"path": "conditional-extensions_test2.js"}
             ]
         },
         
         "test.conditional-extensions.test3": {
             
             "includes": [
-                {"type": "js", "path": "conditional-extensions_test3.js"}
+                {"path": "conditional-extensions_test3.js"}
             ]
         }
     }

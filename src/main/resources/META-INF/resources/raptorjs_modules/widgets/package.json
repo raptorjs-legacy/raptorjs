@@ -13,34 +13,34 @@
 
 
     "includes": [
-        {"type": "module", "name": "oop"},
-        {"type": "js", "path": "widgets.js"}
+        {"module": "oop"},
+        {"path": "widgets.js"}
     ],
     "extensions": [
         {
             "name": "server",
             "includes": [
-                {"type": "js", "path": "widgets_server.js"}
+                {"path": "widgets_server.js"}
             ]    
         },
         {
             "name": "rhino",
             "includes": [
-                {"type": "js", "path": "widgets_rhino.js"}
+                {"path": "widgets_rhino.js"}
             ]    
         },
         {
             "name": "browser",
             "includes": [		        
-		        {"type": "module", "name": "listeners"},
-		        {"type": "js", "path": "widgets_browser.js"},
-		        {"type": "js", "path": "Widget.js"}
+		        {"module": "listeners"},
+		        {"path": "widgets_browser.js"},
+		        {"path": "Widget.js"}
 		    ]    
         },
         {
             "name": "jquery",
             "includes": [
-                {"type": "js", "path": "Widget_jquery.js"}
+                {"path": "Widget_jquery.js"}
             ]
         }
     ]

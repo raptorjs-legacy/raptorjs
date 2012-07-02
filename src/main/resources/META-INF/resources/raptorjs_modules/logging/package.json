@@ -12,17 +12,17 @@
     ],
     
     "includes": [
-        {"type": "js", "path": "logging_stubs.js"}
+        {"path": "logging_stubs.js"}
     ],
     
     "extensions": {
         "logging.console": {
             "includes": [
-	            {"type": "module", "name": "strings"},
-	            {"type": "module", "name": "objects"},
-	            {"type": "js", "path": "ConsoleLogger.js"},
-	            {"type": "js", "path": "logging.js"},
-	            {"type": "js", "path": "LogHelper.js"}
+	            {"module": "strings"},
+	            {"module": "objects"},
+	            {"path": "ConsoleLogger.js"},
+	            {"path": "logging.js"},
+	            {"path": "LogHelper.js"}
 	        ] 
         }
     }

@@ -14,12 +14,12 @@
     "extensions": {
         "browser": {
             "includes": [
-                {"type": "js", "path": "console_browser.js"}
+                {"path": "console_browser.js"}
             ]
         },
         "node": {
             "includes": [
-                {"type": "js", "path": "console_node.js"}
+                {"path": "console_node.js"}
             ]
         }
     }

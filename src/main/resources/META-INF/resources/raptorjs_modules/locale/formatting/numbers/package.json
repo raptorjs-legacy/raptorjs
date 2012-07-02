@@ -6,6 +6,6 @@
     "authors": [
     ],
     "includes": [
-        {"type": "js", "path": "numbers.js"}
+        {"path": "numbers.js"}
     ]
 }

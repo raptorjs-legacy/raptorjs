@@ -12,24 +12,24 @@
     ],
 
     "includes": [
-        {"type": "module", "name": "listeners"},
-        {"type": "js", "path": "loader.js"}
+        {"module": "listeners"},
+        {"path": "loader.js"}
     ],
             
     "extensions": {
         "browser": {
             "includes": [
-                {"type": "js", "path": "loader_browser.js"}
+                {"path": "loader_browser.js"}
             ]
         },
         "jquery": {
             "includes": [
-                {"type": "js", "path": "loader_browser_jquery.js"}
+                {"path": "loader_browser_jquery.js"}
             ]
         },
         "loader.requires|browser": {
             "includes": [
-                {"type": "js", "path": "loader_browser_requires.js"}
+                {"path": "loader_browser_requires.js"}
             ]
         }
     }

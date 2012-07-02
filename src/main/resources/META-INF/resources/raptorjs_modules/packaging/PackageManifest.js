@@ -181,6 +181,22 @@ $rload(function(raptor) {
                         return;
                     }
                     
+                    if (!include.type) {
+                        var path = include.path;
+                        if (path) {
+                            var lastDot = path.lastIndexOf('.');
+                            if (lastDot !== -1) {
+                                include.type = path.substring(lastDot+1);
+                            }
+                        }
+                        else {
+                            if (include.hasOwnProperty('module')) {
+                                include.type = "module";
+                                include.name = include.module;
+                                delete include.module;
+                            }
+                        }
+                    }
                     callback.call(thisObj, include.type, include, extension);
                 }, this);
             };

@@ -11,6 +11,6 @@
         }
     ],
     "includes": [
-        {"type": "js", "path": "raptorBuilder.js"}
+        {"path": "raptorBuilder.js"}
     ]
 }

@@ -179,6 +179,19 @@ public class PackageManifest {
                 include.moduleName = properties.get("name");
             }
             
+            if (include.type == null) {
+                if (include.path != null) {
+                    int lastDot = include.path.lastIndexOf('.');
+                    if (lastDot != -1) {
+                        include.type = include.path.substring(lastDot+1);
+                    }
+                }
+                else if (properties.get("module") != null) {
+                    include.moduleName = properties.get("module");
+                    include.type = "module";
+                }
+            }
+            
             if (TYPE_JS_INCLUDE.equals(include.type)) {
                 include._isJS = true;                
             }
@@ -190,7 +203,7 @@ public class PackageManifest {
             }
             
             
-            if (include._isModule) {
+            if (include._isModule && include.moduleName == null) {
                 include.moduleName = properties.get("name");
             }
             

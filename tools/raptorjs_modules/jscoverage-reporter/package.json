@@ -14,9 +14,9 @@
     "extensions": {
         "server": {
             "includes": [
-                {"type": "js", "path": "DefaultHtmlPublisher.js"},
-                {"type": "js", "path": "CoverageReport.js"},
-                {"type": "js", "path": "jscoverage-reporter.js"}
+                {"path": "DefaultHtmlPublisher.js"},
+                {"path": "CoverageReport.js"},
+                {"path": "jscoverage-reporter.js"}
             ]
         }
     } 

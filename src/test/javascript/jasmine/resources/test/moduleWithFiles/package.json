@@ -2,19 +2,19 @@
     "type": "module",
     "name": "test/moduleWithFiles",
     "includes": [
-        {"type": "js", "path": "core/TestClass.js"},
-        {"type": "js", "path": "moduleWithFiles.js"}
+        {"path": "core/TestClass.js"},
+        {"path": "moduleWithFiles.js"}
     ],
     
     "extensions": {
         "jquery": {
             "includes": [
-                {"type": "js", "path": "jquery/jqueryTest.js"}
+                {"path": "jquery/jqueryTest.js"}
             ]
         },
         "browser": {
             "includes": [
-                {"type": "js", "path": "browser/browserTest.js"}
+                {"path": "browser/browserTest.js"}
             ]
         }
     }

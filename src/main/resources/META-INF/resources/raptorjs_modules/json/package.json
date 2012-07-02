@@ -11,33 +11,33 @@
         }
     ],
     "includes": [
-        {"type": "js", "path": "json.js"}
+        {"path": "json.js"}
     ],
 
     "extensions": {
         "jquery": {
             "includes": [
-                {"type": "js", "path": "json_jquery.js"}
+                {"path": "json_jquery.js"}
             ]
         },
         "json.raptor": {
             "includes": [
-                {"type": "module", "name": "json.parse"},
-                {"type": "module", "name": "json.stringify"},
-                {"type": "js", "path": "jsonParse_raptor.js"},
-                {"type": "js", "path": "jsonStringify_raptor.js"}
+                {"module": "json.parse"},
+                {"module": "json.stringify"},
+                {"path": "jsonParse_raptor.js"},
+                {"path": "jsonStringify_raptor.js"}
             ]
         },
         "json.raptorStringify": {
             "includes": [
-                {"type": "module", "name": "json.stringify"},
-                {"type": "js", "path": "jsonStringify_raptor.js"}
+                {"module": "json.stringify"},
+                {"path": "jsonStringify_raptor.js"}
             ]
         },
         "json.raptorParse": {
             "includes": [
-                {"type": "module", "name": "json.parse"},
-                {"type": "js", "path": "jsonParse_raptor.js"}
+                {"module": "json.parse"},
+                {"path": "jsonParse_raptor.js"}
             ]
         }
     }

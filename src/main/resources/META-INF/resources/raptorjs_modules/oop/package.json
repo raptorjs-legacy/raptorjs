@@ -12,21 +12,21 @@
     ],
     
     "includes": [
-        {"type": "js", "path": "oop.js"}        
+        {"path": "oop.js"}        
     ],
     
     "extensions": {
         "server": {
             "includes": [
-                {"type": "module", "name": "objects"},
-                {"type": "module", "name": "arrays"},
-                {"type": "module", "name": "packaging"},
-                {"type": "js", "path": "oop_server.js"}
+                {"module": "objects"},
+                {"module": "arrays"},
+                {"module": "packaging"},
+                {"path": "oop_server.js"}
             ]
         },
         "rhino": {
             "includes": [
-                {"type": "js", "path": "oop_rhino.js"}
+                {"path": "oop_rhino.js"}
             ]
         }
     }

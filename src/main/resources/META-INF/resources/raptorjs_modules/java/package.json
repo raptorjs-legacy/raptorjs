@@ -14,7 +14,7 @@
     "extensions": {
         "rhino": {
             "includes": [
-                {"type": "js", "path": "java_rhino.js"}
+                {"path": "java_rhino.js"}
             ]
         }
     }

@@ -12,8 +12,8 @@
     ],
     
     "includes": [
-        {"type": "module", "name": "raptorBuilder"},
-        {"type": "module", "name": "logging"},
-        {"type": "module", "name": "errors"}
+        {"module": "raptorBuilder"},
+        {"module": "logging"},
+        {"module": "errors"}
     ]
 }
