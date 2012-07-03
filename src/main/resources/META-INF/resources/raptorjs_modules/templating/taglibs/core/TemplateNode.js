@@ -75,7 +75,7 @@ raptor.defineClass(
 
                 
                 if (!name && !template.compiler.options.templateName) {
-                	throw template.compiler.syntaxError('The "name" attribute is required for the ' + this.toString() + ' tag.');
+                    throw template.compiler.syntaxError('The "name" attribute is required for the ' + this.toString() + ' tag.');
                 }
                 
                 template.setTemplateName(name);

@@ -277,7 +277,7 @@ raptor.defineClass(
                     else {
                         //There is a strip expression
                         if (!this.generateBeforeCode || !this.generateAfterCode) {
-                        	throw template.compiler.syntaxError("The c:strip directive is not supported for node " + this);
+                            throw template.compiler.syntaxError("The c:strip directive is not supported for node " + this);
                         }
                         
                         var nextStripVarId = template.getAttribute("nextStripVarId");
@@ -300,7 +300,7 @@ raptor.defineClass(
                     }
                 }
                 catch(e) {
-                	throw template.compiler.syntaxError("Unable to generate code for node " + this + " at position " + this.pos + ". Exception: " + e);
+                    throw template.compiler.syntaxError("Unable to generate code for node " + this + " at position " + this.pos + ". Exception: " + e);
                 }
             },
             

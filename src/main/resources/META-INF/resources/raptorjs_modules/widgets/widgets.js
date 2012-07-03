@@ -80,7 +80,7 @@ raptor.define('widgets', function(raptor) {
         
         hasWidgets: function(context) {
             var attributes = context.attributes;
-            return attributes.widgets && attributes.widgets.length != 0;
+            return attributes.widgets && attributes.widgets.length !== 0;
         },
         
         _nextDocId: function(context) {

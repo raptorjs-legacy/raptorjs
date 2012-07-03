@@ -62,7 +62,7 @@ raptor.defineClass(
                             if (!attrDef && attrUri) {
                                 //Try again with the short name for the URI in that's how the attribute was defined
                                 attrUri = compiler.taglibs.resolveShortName(attrUri);
-                                attrDef = tagDef.getAttributeDef(attrUri, attr.localName)
+                                attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
                             }
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
                                 value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true),
@@ -74,7 +74,7 @@ raptor.defineClass(
                             
                             if (!attrDef && !tagDef.dynamicAttributes) {
                                 //Tag doesn't allow dynamic attributes
-                            	throw compiler.syntaxError('The tag "' + tagDef.name + '" does not support attribute "' + attr + '"');
+                                throw new compiler.SyntaxError('The tag "' + tagDef.name + '" does not support attribute "' + attr + '"');
                             }
                             
                             callback.call(thisObj, uri, attr.localName, value);
@@ -92,7 +92,7 @@ raptor.defineClass(
                     var whenNode = new WhenNode({test: new Expression(whenAttr)});
                     replaced = node.parentNode.replaceChild(whenNode, node);
                     if (!replaced) {
-                    	throw template.compiler.syntaxError('Unable to process "when" node');
+                        throw new compiler.SyntaxError('Unable to process "when" node');
                     }
                     whenNode.appendChild(node);
                 }
@@ -103,7 +103,7 @@ raptor.defineClass(
                     var otherwiseNode = new OtherwiseNode({});
                     replaced = node.parentNode.replaceChild(otherwiseNode, node);
                     if (!replaced) {
-                        throw template.compiler.syntaxError('Unable to process "otherwise" node');
+                        throw new compiler.SyntaxError('Unable to process "otherwise" node');
                     }
                     otherwiseNode.appendChild(node);
                 }
@@ -138,7 +138,7 @@ raptor.defineClass(
                     //node with the new "forEach" node and then adding the current node as a child
                     replaced = node.parentNode.replaceChild(forEachNode, node);
                     if (!replaced) {
-                    	throw template.compiler.syntaxError('Unable to process "for" node');
+                        throw new compiler.SyntaxError('Unable to process "for" node');
                     }
                     forEachNode.appendChild(node);
                 }
@@ -167,7 +167,7 @@ raptor.defineClass(
                 if (node.getAttributeNS && (stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
                     node.removeAttributeNS(coreNS, "strip");
                     if (!node.setStripExpression) {
-                    	throw template.compiler.syntaxError("The c:strip directive is not supported for node " + node);
+                        throw new compiler.SyntaxError("The c:strip directive is not supported for node " + node);
                     }
                     node.setStripExpression(stripAttr);
                 }
@@ -215,7 +215,7 @@ raptor.defineClass(
                     
                 }
                 else if (uri && compiler.taglibs.isTaglib(uri)) {
-                	throw template.compiler.syntaxError('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"');
+                    throw new compiler.SyntaxError('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"');
                 }
             }
         };

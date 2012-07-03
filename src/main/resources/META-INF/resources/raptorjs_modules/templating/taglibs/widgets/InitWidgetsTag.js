@@ -1,6 +1,8 @@
 raptor.defineClass(
     'templating.taglibs.widgets.InitWidgetsTag',
     function(raptor) {
+        "use strict";
+        
         var widgets = raptor.require('widgets');
         
         return {

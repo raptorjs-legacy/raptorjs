@@ -34,7 +34,7 @@ raptor.defineClass(
                 var test = this.getProperty("test");
                 
                 if (!test) {
-                	throw template.compiler.syntaxError('"test" attribute is required');
+                    throw template.compiler.syntaxError('"test" attribute is required');
                 }
                 
                 template.addJavaScriptCode('if (' + test + '){');

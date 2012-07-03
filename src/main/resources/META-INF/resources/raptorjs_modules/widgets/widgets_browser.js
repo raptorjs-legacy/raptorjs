@@ -241,6 +241,8 @@ raptor.extend('widgets', function(raptor) {
 });
 
 raptor.global.$rwidgets = function() {
+    "use strict";
+    
     var widgets = raptor.require('widgets');
     widgets._initAll(raptor.arrayFromArguments(arguments));
 };

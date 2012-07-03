@@ -92,7 +92,8 @@ raptor.define('templating', function(raptor) {
                  * then it means that the template has not been fully loaded and initialized.
                  * Therefore, check if the template has been registerd with the name provided
                  */
-                templateFunc = registeredTemplates[templateName]
+                templateFunc = registeredTemplates[templateName];
+                
                 if (!templateFunc && this.findTemplate) {
                     this.findTemplate(templateName);
                     templateFunc = registeredTemplates[templateName];    

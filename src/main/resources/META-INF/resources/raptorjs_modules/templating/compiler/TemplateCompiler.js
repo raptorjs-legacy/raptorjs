@@ -29,15 +29,15 @@ raptor.defineClass(
         
         
         var SyntaxError = function(msg){
-        	this.message = msg;
-        	this.syntaxError = true;
+            this.message = msg;
+            this.syntaxError = true;
         };
         
         SyntaxError.prototype = new Error();
         
         SyntaxError.prototype.toString = function(){
-        	var self = this;
-        	return "Syntax error: " + self.message + (self.pos ? " at position " + self.pos : "");
+            var self = this;
+            return "Syntax error: " + self.message + (self.pos ? " at position " + self.pos : "");
         };
         
         
@@ -83,10 +83,10 @@ raptor.defineClass(
                         this);
                 }
                 catch(e) {
-                	if (e.syntaxError){
-                		e.pos = node.pos;
-                		throw e;
-                	}
+                    if (e.syntaxError){
+                        e.pos = node.pos;
+                        throw e;
+                    }
                     errors.throwError(new Error("Unable to compile node " + node + " at position [" + (node.pos || "(unknown)") + "]. Error: " + e.message), e);
                 }
                 
@@ -160,8 +160,8 @@ raptor.defineClass(
                 }
                 catch(e) {
                     if (e.syntaxError){
-                    	e.path = filePath;
-                    	throw e;
+                        e.path = filePath;
+                        throw e;
                     }
                     errors.throwError(new Error(e));
                 }
@@ -230,8 +230,10 @@ raptor.defineClass(
             },
             
             syntaxError: function(msg){
-            	return new SyntaxError(msg);
-            }
+                return new SyntaxError(msg);
+            },
+            
+            SyntaxError: SyntaxError
         };
         
         return TemplateCompiler;
