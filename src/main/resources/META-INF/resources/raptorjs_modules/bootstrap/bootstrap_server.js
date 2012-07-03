@@ -87,7 +87,7 @@ raptorBootstrap = {
         //Classes module
         this._require('oop/oop.js');
         this._require('oop/oop_server.js');
-        this._require('oop/oop_rhino.js');
+        this._require('oop/oop_rhino.js', RHINO);
 
         //Resources module
         this._require('resources/DirSearchPathEntry.js');
@@ -97,6 +97,10 @@ raptorBootstrap = {
         this._require('resources/SearchPathEntry.js');
         this._require('resources/SearchPath.js');
         this._require('resources/resources.js');
+        
+                
+        //AMD adapter
+        this._require('amd/amd_node.js', NODE);
     }
 };
 

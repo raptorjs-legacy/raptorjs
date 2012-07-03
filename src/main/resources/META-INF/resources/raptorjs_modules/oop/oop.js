@@ -179,15 +179,21 @@ $rload(function(raptor) {
                 EnumCtor,
                 enumValue;
 
+            loadedLookup[name] = modifiers.exports; 
+            
             if (factory) {
                 //The factory can be a function or just the type.
                 if (isFunction(factory)) {
                     //If it is a function then execute the function to produce the type
-                    type = factory(raptor);
+                    type = factory(raptor);                    
                 }
                 else {
                     //Otherwise, use it is as the type directly
                     type = factory;
+                }
+                
+                if (!type) {
+                    raptor.throwError(new Error("Invalid definition for " + name));
                 }
             }
             else if (isEnum) {
@@ -861,4 +867,6 @@ raptor.defineEnum(
     }
 
     raptor.defineModule = oop.define;
+    
+    raptor.define("raptor", raptor);
 });

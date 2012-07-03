@@ -21,6 +21,9 @@ var resourcesDir = nodePath.join(testsDir,     "/resources");
 
 createRaptor = function(override) {
     var config = {
+        amd: {
+    	    enabled: true
+        },
         logging: {
             loggers: GLOBAL.raptorLoggingConfig || {
                 'ROOT': {level: 'WARN'},
