@@ -77,10 +77,10 @@ $rload(function(raptor) {
             var proto = clazz[PROTOTYPE],
                 F = function() {};
               
-            F[PROTOTYPE] = isString(superclass) ?    //Is the superclass the name of a super class?
-                      _require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
-                      superclass[PROTOTYPE];
-                      
+            var inherit = isString(superclass)?_require(superclass):superclass;
+            _simpleExtend(clazz,inherit);
+            
+            F[PROTOTYPE] = inherit[PROTOTYPE]; 
             clazz.superclass = F[PROTOTYPE];
 
             clazz[PROTOTYPE] = new F();
