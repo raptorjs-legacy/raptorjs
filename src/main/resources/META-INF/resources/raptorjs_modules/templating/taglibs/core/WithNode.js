@@ -21,7 +21,8 @@ raptor.defineClass(
         "use strict";
         
         var errors = raptor.errors,
-            AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter');
+            AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter'),
+            varNameRegExp = /^[A-Za-z_][A-Za-z0-9_]*$/;
         
         var WithNode = function(props) {
             WithNode.superclass.constructor.call(this);
@@ -33,10 +34,11 @@ raptor.defineClass(
         WithNode.prototype = {
             
             doGenerateCode: function(template) {
-                var vars = this.getProperty("vars");
+                var vars = this.getProperty("vars"),
+                    _this = this;
                 
                 if (!vars) {
-                    throw template.compiler.syntaxError('"vars" attribute is required');
+                    this.addError('"vars" attribute is required');
                 }
                 
                 var withVars = AttributeSplitter.parse(
@@ -47,14 +49,20 @@ raptor.defineClass(
                             }
                         },
                         {
-                            ordered: true
+                            ordered: true,
+                            errorHandler: function(message) {
+                                _this.addError('Invalid variable declarations of "' + vars + '". Error: ' + message);
+                            }
                         });
                 
                 var varDefs = [];
                 
                 raptor.forEach(withVars, function(withVar) {
+                    if (!varNameRegExp.test(withVar.name)) {
+                        this.addError('Invalid variable name of "' + withVar.name + '" in "' + vars + '"');
+                    }
                     varDefs.push(withVar.name + (withVar.value ? ("=" + withVar.value) : ""));
-                });
+                }, this);
                 
                 
                 template.addJavaScriptCode('(function() {');

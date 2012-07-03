@@ -1,0 +1,60 @@
+<c:template 
+    xmlns:c="http://raptor.ebayopensource.org/core"
+    xmlns:w="http://raptor.ebayopensource.org/widgets"
+    c:functions="invalidFunction"
+    w:functions="invalidWidgetFunction">
+    
+    ${greeting("World")
+    <div>
+        ${invalid expression%}
+    </div>
+    
+    <div class="${invalid">
+    </div>
+    
+    <c:write value="${Test"/>
+    
+    <c:for>
+        Missing each attribute
+    </c:for>
+    
+    <c:for each="item">
+    </c:for>
+    
+    <c:for each="item in items" invalid="true">
+        Invalid attribute
+    </c:for>
+    
+    <c:invalidTag>
+    </c:invalidTag>
+    
+    <div c:for="item in items; invalid=true">
+    </div>
+    
+    <c:choose>
+        <c:when test="true">A</c:when>
+        <c:otherwise>INVALID</c:otherwise>
+        <c:when test="true">B</c:when>
+    </c:choose>
+    
+    <c:choose>
+        
+        <c:when test="false">A</c:when>
+        INVALID TEXT
+        <c:when test="true">TRUE</c:when>
+        <c:otherwise>C</c:otherwise>
+    </c:choose>
+    
+    <c:def>
+    </c:def>
+    
+    <c:def function="invalid-function-name()">
+        <c:invalidTag2></c:invalidTag2>
+    </c:def>
+    
+    <c:include>Missing template attribute</c:include>
+    
+    <c:with vars="x=1;b=2;1">
+    </c:with>
+    
+</c:template>

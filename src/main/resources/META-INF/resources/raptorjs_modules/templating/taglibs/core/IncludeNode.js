@@ -37,7 +37,7 @@ raptor.defineClass(
                 this.removeProperty("template");
                 
                 if (!templateName) {
-                    throw new Error('"template" attribute is required');
+                    this.addError('"template" attribute is required');
                 }
                 var propParts = [];
                 

@@ -156,8 +156,10 @@ raptor.defineClass(
                 var nodeParser = this.nodeParser,
                     filePath = this.filePath;
                 
+                var line = nodeParser.line + 1;
+                
                 return {
-                    line: nodeParser.line,
+                    line: line,
                     column: nodeParser.column,
                     filePath: filePath,
                     toString: function() {

@@ -175,6 +175,8 @@ raptor.defineClass(
          * @param thisObj
          */
         ExpressionParser.parse = function(str, callback, thisObj) {
+            
+            
             var textStart = 0, //The index of the start of the next text block
                 textEnd, //The index of the current text block
                 startMatches, //The matches found when searching for the possible start tokens
@@ -182,7 +184,17 @@ raptor.defineClass(
                 expressionStart, //The index of the start of the current expression
                 expression, //The current expression string
                 isScriptlet, //If true, then the expression is a scriptlet
-                startToken; //The start token for the current expression
+                startToken, //The start token for the current expression
+                handleError = function(message) {
+                    if (callback.error) {
+                        callback.error.call(thisObj, message);
+                        return;
+                    }
+                    else {
+                        raptor.throwError(new Error(message));
+                    }
+                };
+                
             
             var helper = new ExpressionParserHelper(callback, thisObj);
             
@@ -271,7 +283,7 @@ raptor.defineClass(
                     }
                     else if (endMatches[0] === '%}') {
                         if (!isScriptlet) {
-                            raptor.throwError(new Error('Ending "' + endMatches[0] + '" token was found but matched with starting "' + startToken + '" token. Location: ' + errorContext(str, endMatches.index, 10)));
+                            handleError('Ending "' + endMatches[0] + '" token was found but matched with starting "' + startToken + '" token. Location: ' + errorContext(str, endMatches.index, 10));
                         }
                     }
                     else {
@@ -309,7 +321,7 @@ raptor.defineClass(
                     
                 }
                 
-                raptor.throwError(new Error('Invalid expression. Ending "' + endingTokens[startToken] + '" token not found for "' + startToken + '" token. Location: ' + errorContext(str, startMatches.index, 10)));
+                handleError('Ending "' + endingTokens[startToken] + '" token not found for "' + startToken + '" token. Location: ' + errorContext(str, startMatches.index, 10) + "\n");
             }
             
             if (textStart !== str.length) {

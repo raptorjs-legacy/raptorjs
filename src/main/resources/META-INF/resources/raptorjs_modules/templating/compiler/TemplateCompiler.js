@@ -27,20 +27,6 @@ raptor.defineClass(
             TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
             TypeConverter = raptor.require('templating.compiler.TypeConverter');
         
-        
-        var SyntaxError = function(msg){
-            this.message = msg;
-            this.syntaxError = true;
-        };
-        
-        SyntaxError.prototype = new Error();
-        
-        SyntaxError.prototype.toString = function(){
-            var self = this;
-            return "Syntax error: " + self.message + (self.pos ? " at position " + self.pos : "");
-        };
-        
-        
         /**
          * @param taglibs {templating.compiler$TaglibCollection} The collection of taglibs that are available to the compiler
          * @param options {object} The options for the compiler.
@@ -48,6 +34,7 @@ raptor.defineClass(
         var TemplateCompiler = function(taglibs, options) {
             this.taglibs = taglibs;
             this.options = options;
+            this.errors = [];
         };
         
         TemplateCompiler.prototype = {
@@ -77,18 +64,16 @@ raptor.defineClass(
                             if (!node.isTransformerApplied(transformer)) { //Check to make sure a transformer of a certain type is only applied once to a node
                                 node.setTransformerApplied(transformer); //Mark the node as have been transformed by the current transformer
                                 this._transformerApplied = true; //Set the flag to indicate that a node was transformed
+                                node.compiler = this;
                                 transformer.getInstance().process(node, this, templateBuilder); //Have the transformer process the node (NOTE: Just because a node is being processed by the transformer doesn't mean that it has to modify the parse tree)
                             }
                         },
                         this);
                 }
                 catch(e) {
-                    if (e.syntaxError){
-                        e.pos = node.pos;
-                        throw e;
-                    }
-                    errors.throwError(new Error("Unable to compile node " + node + " at position [" + (node.pos || "(unknown)") + "]. Error: " + e.message), e);
+                    errors.throwError(new Error('Unable to compile template at path "' + templateBuilder.filePath + ". Error: " + e.message), e);
                 }
+                
                 
                 /*
                  * Now process the child nodes by looping over the child nodes
@@ -122,6 +107,21 @@ raptor.defineClass(
              * @returns {String} The JavaScript code for the compiled template
              */
             compile: function(xmlSrc, filePath) {
+                var _this = this,
+                    handleErrors = function() {
+                        var message = "Errors in template:\n",
+                            errors = _this.getErrors();
+                        
+                        for (var i=0, len=errors.length; i<len; i++) {
+                            message += (i+1) + ") " + (errors[i].pos ? "[" + errors[i].pos + "] " : "") + errors[i].message + "\n";
+                        }
+                        
+                        var error = new Error(message)
+                        
+                        error.errors = _this.getErrors();
+                        throw error;
+                    };
+                
                 try
                 {
                     /*
@@ -129,7 +129,7 @@ raptor.defineClass(
                      */
                     var rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
                     
-                    var templateBuilder = new TemplateBuilder(this); //The templateBuilder object is need to manage the compiled JavaScript output              
+                    var templateBuilder = new TemplateBuilder(this, filePath); //The templateBuilder object is need to manage the compiled JavaScript output              
 
                     /*
                      * The tree is continuously transformed until we go through an entire pass where 
@@ -142,29 +142,42 @@ raptor.defineClass(
                         this.transformTree(rootNode, templateBuilder); //Run the transforms on the tree                 
                     }
                     while (this._transformerApplied);
+                
+                }
+                catch(e) {
+                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
+                }
+                
+                
+//                if (this.hasErrors()) {
+//                    handleErrors();
+//                }
                     
+                
+                try
+                {
+                
                     /*
                      * The tree has been transformed and we can now generate
                      */
                     rootNode.generateCode(templateBuilder); //Generate the code and have all output be managed by the TemplateBuilder
-                    
-                    var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
-                    
 //                    console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
-                    
-                    if (minifier && this.options.minify !== false) {
-                        output = minifier.minify(output);
-                    }
-                    
-                    return output;
                 }
                 catch(e) {
-                    if (e.syntaxError){
-                        e.path = filePath;
-                        throw e;
-                    }
-                    errors.throwError(new Error(e));
+                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e, e));
                 }
+                
+                if (this.hasErrors()) {
+                    handleErrors();
+                }
+                
+                var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
+                
+                if (minifier && this.options.minify !== false) {
+                    output = minifier.minify(output);
+                }
+                
+                return output;
             },
             
             /**
@@ -185,16 +198,6 @@ raptor.defineClass(
                 catch(e) {
                     errors.throwError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);
                 }
-            },
-            
-            /**
-             * 
-             * @param message
-             * @param node
-             */
-            handleNodeError: function(message, node) {
-                var pos = node.pos;
-                throw this.syntaxError(message + " (" + (pos ? (pos.filePath + ":" + pos.line + ":" + pos.column) : "unknown position") + ")");
             },
             
             /**
@@ -229,11 +232,17 @@ raptor.defineClass(
                 return TypeConverter.convert(value, type, allowExpressions);
             },
             
-            syntaxError: function(msg){
-                return new SyntaxError(msg);
+            addError: function(message, pos) {
+                this.errors.push({message: message, pos: pos});
             },
             
-            SyntaxError: SyntaxError
+            hasErrors: function() {
+                return this.errors.length !== 0;
+            },
+            
+            getErrors: function() {
+                return this.errors;
+            }
         };
         
         return TemplateCompiler;

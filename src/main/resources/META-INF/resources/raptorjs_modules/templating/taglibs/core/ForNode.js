@@ -26,7 +26,7 @@ raptor.defineClass(
             parseForEach = function(value) {
                 var match = value.match(forEachRegEx);
                 if (!match) {
-                    errors.throwError(new Error("Invalid each attribute: " + value));
+                    throw new Error('Invalid each attribute of "' + value + '"');
                 }
                 return {
                     "var": match[1],
@@ -48,10 +48,21 @@ raptor.defineClass(
                     varStatus = this.getProperty("varStatus");
                 
                 if (!each) {
-                    throw template.compiler.syntaxError('"each" attribute is required');
+                    this.addError('"each" attribute is required');
+                    this.generateCodeForChildren(template);
+                    return;
                 }
                 
-                var parts = parseForEach(each);
+                var parts;
+                try
+                {
+                    parts = parseForEach(each);
+                }
+                catch(e) {
+                    this.addError(e.message);
+                    this.generateCodeForChildren(template);
+                    return;
+                }
                 
                 var items = template.makeExpression(parts["in"]);
                 var varName = parts["var"];

@@ -50,7 +50,25 @@ raptor.defineClass(
             }
         };
         
-        Node.prototype = { 
+        Node.prototype = {
+            getPosition: function() {
+                var pos = this.pos || this.getProperty("pos") || {
+                    toString: function() {
+                        return "(unknown position)";
+                    }
+                };
+                
+                return pos;
+                
+            },
+            addError: function(error) {
+                if (!this.compiler) {
+                    raptor.throwError(new Error("Template compiler not set for node " + this));
+                }
+                var pos = this.getPosition();
+                this.compiler.addError(error + " (" + this.toString() + ")", pos);
+            },
+            
             setProperty: function(name, value) {
                 this.setPropertyNS(null, name, value);
             },
@@ -266,6 +284,8 @@ raptor.defineClass(
             },
             
             generateCode: function(template) {
+                this.compiler = template.compiler;
+                
                 try
                 {
                     if (!this.stripExpression || this.stripExpression.toString() === 'false') {
@@ -277,7 +297,7 @@ raptor.defineClass(
                     else {
                         //There is a strip expression
                         if (!this.generateBeforeCode || !this.generateAfterCode) {
-                            throw template.compiler.syntaxError("The c:strip directive is not supported for node " + this);
+                            this.addError("The c:strip directive is not supported for node " + this);
                         }
                         
                         var nextStripVarId = template.getAttribute("nextStripVarId");
@@ -300,7 +320,7 @@ raptor.defineClass(
                     }
                 }
                 catch(e) {
-                    throw template.compiler.syntaxError("Unable to generate code for node " + this + " at position " + this.pos + ". Exception: " + e);
+                    raptor.throwError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e));
                 }
             },
             

@@ -41,7 +41,8 @@ raptor.defineClass(
             
             process: function(node, compiler) {
                 
-                var forEachAttr,
+                var _this = this,
+                    forEachAttr,
                     renderedIfAttr,
                     attrsAttr,
                     whenAttr,
@@ -65,16 +66,25 @@ raptor.defineClass(
                                 attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
                             }
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
-                                value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true),
+                                value,
                                 uri = attr.uri;
-                            
+                                
+                            try
+                            {
+                                value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true);
+                            }
+                            catch(e) {
+                                node.addError('Invalid attribute value of "' + attr.value + '" for attribute "' + attr.name + '": ' + e.message);
+                                value = attr.value;
+                            }
+                                
                             if (uri === tagDef.taglib.uri) {
                                 uri = '';
                             }
                             
                             if (!attrDef && !tagDef.dynamicAttributes) {
                                 //Tag doesn't allow dynamic attributes
-                                throw new compiler.SyntaxError('The tag "' + tagDef.name + '" does not support attribute "' + attr + '"');
+                                node.addError('The tag "' + tagDef.name + '" in taglib "' + uri + '" does not support attribute "' + attr + '"');
                             }
                             
                             callback.call(thisObj, uri, attr.localName, value);
@@ -89,22 +99,16 @@ raptor.defineClass(
                 if ((whenAttr = node.getAttributeNS(coreNS, "when")) != null) {
                     node.removeAttributeNS(coreNS, "when");
 
-                    var whenNode = new WhenNode({test: new Expression(whenAttr)});
-                    replaced = node.parentNode.replaceChild(whenNode, node);
-                    if (!replaced) {
-                        throw new compiler.SyntaxError('Unable to process "when" node');
-                    }
+                    var whenNode = new WhenNode({test: new Expression(whenAttr), pos: node.getPosition()});
+                    node.parentNode.replaceChild(whenNode, node);
                     whenNode.appendChild(node);
                 }
                 
                 if (node.getAttributeNS(coreNS, "otherwise") != null) {
                     node.removeAttributeNS(coreNS, "otherwise");
 
-                    var otherwiseNode = new OtherwiseNode({});
-                    replaced = node.parentNode.replaceChild(otherwiseNode, node);
-                    if (!replaced) {
-                        throw new compiler.SyntaxError('Unable to process "otherwise" node');
-                    }
+                    var otherwiseNode = new OtherwiseNode({pos: node.getPosition()});
+                    node.parentNode.replaceChild(otherwiseNode, node);
                     otherwiseNode.appendChild(node);
                 }
                 
@@ -129,17 +133,18 @@ raptor.defineClass(
                                 }
                             },
                             {
-                                defaultName: "each"
+                                defaultName: "each",
+                                errorHandler: function(message) {
+                                    node.addError('Invalid c:for attribute of "' + forEachAttr + '". Error: ' + message);
+                                }
                             });
                     
+                    forEachProps.pos = node.getPosition(); //Copy the position property
                     var forEachNode = new ForNode(forEachProps);
 
                     //Surround the existing node with an "forEach" node by replacing the current
                     //node with the new "forEach" node and then adding the current node as a child
-                    replaced = node.parentNode.replaceChild(forEachNode, node);
-                    if (!replaced) {
-                        throw new compiler.SyntaxError('Unable to process "for" node');
-                    }
+                    node.parentNode.replaceChild(forEachNode, node);
                     forEachNode.appendChild(node);
                 }
 
@@ -147,7 +152,8 @@ raptor.defineClass(
                     node.removeAttributeNS(coreNS, "if");
                     
                     var ifNode = new IfNode({
-                        test: new Expression(renderedIfAttr)
+                        test: new Expression(renderedIfAttr),
+                        pos: node.getPosition()
                     });
                     
                     //Surround the existing node with an "if" node by replacing the current
@@ -159,7 +165,7 @@ raptor.defineClass(
                 if ((contentAttr = node.getAttributeNS(coreNS, "bodyContent")) != null) {
                     node.removeAttributeNS(coreNS, "bodyContent");
                     
-                    var newChild = new WriteNode({expression: contentAttr});
+                    var newChild = new WriteNode({expression: contentAttr, pos: node.getPosition()});
                     node.removeChildren();
                     node.appendChild(newChild);
                 }
@@ -167,7 +173,7 @@ raptor.defineClass(
                 if (node.getAttributeNS && (stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
                     node.removeAttributeNS(coreNS, "strip");
                     if (!node.setStripExpression) {
-                        throw new compiler.SyntaxError("The c:strip directive is not supported for node " + node);
+                        node.addError("The c:strip directive is not allowed for target node");
                     }
                     node.setStripExpression(stripAttr);
                 }
@@ -175,7 +181,7 @@ raptor.defineClass(
                 if (node.getAttributeNS && (replaceAttr = node.getAttributeNS(coreNS, "replace")) != null) {
                     node.removeAttributeNS(coreNS, "replace");
                     
-                    var replaceWriteNode = new WriteNode({expression: replaceAttr});
+                    var replaceWriteNode = new WriteNode({expression: replaceAttr, pos: node.getPosition()});
                     //Replace the existing node with an node that only has children
                     node.parentNode.replaceChild(replaceWriteNode, node);
                     node = replaceWriteNode;
@@ -215,7 +221,7 @@ raptor.defineClass(
                     
                 }
                 else if (uri && compiler.taglibs.isTaglib(uri)) {
-                    throw new compiler.SyntaxError('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"');
+                    node.addError('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"');
                 }
             }
         };

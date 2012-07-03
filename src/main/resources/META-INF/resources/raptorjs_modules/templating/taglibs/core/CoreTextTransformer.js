@@ -47,6 +47,9 @@ raptor.defineClass(
                         
                         scriptlet: function(scriptlet) {
                             parts.push({scriptlet: scriptlet});
+                        },
+                        error: function(message) {
+                            node.addError(message);
                         }
                     }, 
                     this);

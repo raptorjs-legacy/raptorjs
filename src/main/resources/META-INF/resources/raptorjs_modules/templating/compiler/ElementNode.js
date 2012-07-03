@@ -120,13 +120,15 @@ raptor.defineClass(
              * @param prefix
              */
             setAttributeNS: function(uri, localName, value, prefix) {
+                
                 this.attributes[(uri || '') + ":" + localName] = {
                     localName: localName,
                     value: value,
                     prefix: prefix,
                     uri: uri,
+                    name: prefix ? (uri + ":" + localName) : localName,
                     toString: function() {
-                        return this.prefix ? (this.uri + ":" + this.localName) : this.localName;
+                        return this.name;
                     }
                 };
             },
@@ -232,8 +234,12 @@ raptor.defineClass(
                                     },
                                     expression: function(expression) {
                                         template.addWrite(expression, {escapeXmlAttr: true});
+                                    },
+                                    error: function(message) {
+                                        this.addError('Invalid expression found in attribute "' + name + '". ' + message);
                                     }
-                                });
+                                },
+                                this);
                             
                             template.addText('"');
                         }

@@ -38,12 +38,12 @@ raptor.defineClass(
 
                     if (child.isTextNode()) {
                         if (!strings.isEmpty(child.getText())) {
-                            raptor.throwError(new Error('Static text "' + strings.trim(child.getText()) + '" is not allowed in ' + this.toString() + " tag."));
+                            this.addError('Static text "' + strings.trim(child.getText()) + '" is not allowed in ' + this.toString() + " tag.");
                         }
                     }
                     else if (child.getNodeClass() === WhenNode){
                         if (otherwiseNode) {
-                            raptor.throwError(new Error(otherwiseNode + ' tag must be last child of tag ' + this + '.'));
+                            this.addError(otherwiseNode + ' tag must be last child of tag ' + this + '.');
                         }
                         
                         if (!foundWhenNode) {
@@ -56,7 +56,7 @@ raptor.defineClass(
                     }
                     else if (child.getNodeClass() === OtherwiseNode) {
                         if (otherwiseNode) {
-                            raptor.throwError(new Error('More than one ' + otherwiseNode + ' tag is not allowed as child of tag ' + this + '.'));
+                            this.addError('More than one ' + otherwiseNode + ' tag is not allowed as child of tag ' + this + '.');
                         }
                         
                         otherwiseNode = child;
@@ -64,12 +64,12 @@ raptor.defineClass(
                         child.generateCode(template);
                     }
                     else {
-                        raptor.throwError(new Error(child + ' tag is not allowed as child of tag ' + this + '.'));
+                        this.addError(child + ' tag is not allowed as child of tag ' + this + '.');
                     }
                 }, this);
                 
                 if (!foundWhenNode) {
-                    raptor.throwError(new Error('' + otherwiseNode + ' tag is required to have at least one <c:when> child.'));
+                    this.addError('' + otherwiseNode + ' tag is required to have at least one <c:when> child.');
                 }
             }
             

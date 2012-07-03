@@ -303,35 +303,6 @@ describe('templating module', function() {
         expect(output).toEqual('TRUE,TRUE');
     });
     
-    it("should not allow text as a child of a <c:choose> tag", function() {
-        
-        var e;
-        try
-        {
-            compileAndRender("/test-templates/choose-when-invalid-text.rhtml", {}, true /* invalid */);
-        }
-        catch(_e) {
-            e = _e;
-        }
-        
-        expect(e).toNotEqual(null);
-        expect(e.toString().indexOf("INVALID TEXT")).toNotEqual(-1);
-    });
-    
-    it("should not allow <c:otherwise> as only child of <c:choose> tag", function() {
-        
-        var e;
-        try
-        {
-            compileAndRender("/test-templates/choose-when-invalid-otherwise-only.rhtml", {}, true /* invalid */);
-        }
-        catch(_e) {
-            e = _e;
-        }
-        
-        expect(e).toNotEqual(null);
-    });
-    
     it("should not allow <c:otherwise> to be before a <c:when> tag", function() {
         
         var e;
@@ -480,6 +451,35 @@ describe('templating module', function() {
         
         var output = compileAndRender("/test-templates/imports3.rhtml", {}, false, context);
         expect(output).toEqual('Hello John Doe!');
+        
+    });
+    
+    it("should handle errors correctly", function() {
+
+        
+        
+        var tryTemplate = function(path, callback) {
+            try
+            {
+                compileAndRender(path, {}, true);
+                callback("", []);
+            }
+            catch(e) {
+                
+                if (!e.errors) {
+                    logger.error('Error message for template at path "' + path + '": ' + e, e);
+                }
+                else {
+                    console.log('Error message for template at path "' + path + '": ' + e)
+                }
+                callback(e.toString(), e.errors);
+            }
+        };
+        
+        tryTemplate("/test-templates/errors.rhtml", function(message, errors) {
+            expect(errors.length).toEqual(18);
+        });
+        
         
     });
     

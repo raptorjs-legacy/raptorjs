@@ -55,19 +55,25 @@ raptor.defineClass(
                 }
                 
                 this.forEachProperty(function(uri, name, value) {
+                    if (!uri) {
+                        uri = this.uri;
+                    }
+                    
                     if (name === 'functions') {
                         uriVarName = addUriVar(uri);
                         
                         forEach(value.split(/\s*,\s*/g), function(helper) {
                             var func = template.compiler.taglibs.getFunction(uri, helper);
                             if (!func) {
-                                raptor.throwError(new Error('Function with name "' + helper + '" not found in taglib "' + uri + '"'));
-                            }
-                            if (func.bindToContext === true) {
-                                template.addVar(helper, template.getContextHelperFunction("getContextHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");    
+                                this.addError('Function with name "' + helper + '" not found in taglib "' + uri + '"');
                             }
                             else {
-                                template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                                if (func.bindToContext === true) {
+                                    template.addVar(helper, template.getContextHelperFunction("getContextHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");    
+                                }
+                                else {
+                                    template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                                }    
                             }
                         }, this);
                     }
@@ -75,7 +81,7 @@ raptor.defineClass(
 
                 
                 if (!name && !template.compiler.options.templateName) {
-                    throw template.compiler.syntaxError('The "name" attribute is required for the ' + this.toString() + ' tag.');
+                    this.addError('The "name" attribute is required for the ' + this.toString() + ' tag.');
                 }
                 
                 template.setTemplateName(name);

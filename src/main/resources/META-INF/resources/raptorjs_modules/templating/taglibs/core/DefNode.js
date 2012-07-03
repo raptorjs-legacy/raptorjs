@@ -38,7 +38,9 @@ raptor.defineClass(
                 var func = this.getProperty("function");
                 
                 if (!func) {
-                    errors.throwError(new Error('"function" attribute is required'));
+                    this.addError('"function" attribute is required');
+                    this.generateCodeForChildren(template);
+                    return;
                 }
                 
                 func = strings.trim(func);
@@ -58,7 +60,9 @@ raptor.defineClass(
                     };
                 }
                 else {
-                    raptor.throwError(new Error('Invalid function name of "' + func + '".'));
+                    this.addError('Invalid function name of "' + func + '"');
+                    this.generateCodeForChildren(template);
+                    return;
                 }
                
                 template.addJavaScriptCode('function ' + func + '{return ' + template.getStaticHelperFunction("noEscapeXml", "nx") + '(context.captureString(function(){');

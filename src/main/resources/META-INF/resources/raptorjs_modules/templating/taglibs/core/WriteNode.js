@@ -31,7 +31,7 @@ raptor.defineClass(
         WriteNode.prototype = {   
                 
             doGenerateCode: function(template) {
-                var expression = this.getProperty("expression") || this.getProperty("value"),
+                var expression = this.getExpression(),
                     escapeXml = this.getProperty("escapeXml") !== false;
                 
                 if (expression) {
@@ -39,9 +39,12 @@ raptor.defineClass(
                 }
             },
             
+            getExpression: function() {
+                return this.getProperty("expression") || this.getProperty("value") || this.getAttribute("expression") || this.getAttribute("value");
+            },
             
             toString: function() {
-                return '[<c:write expression="' + this.getProperty('expression') + '"]';
+                return '<c:write expression="' + this.getExpression() + '">';
             }
         };
         

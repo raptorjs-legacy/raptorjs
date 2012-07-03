@@ -78,6 +78,15 @@ raptor.defineClass(
                 matches,
                 equalIndex = -1,
                 result = ordered ? [] : {},
+                handleError = function(message) {
+                    if (options.errorHandler) {
+                        options.errorHandler(message);
+                        return;
+                    }
+                    else {
+                        raptor.throwError(new Error(message));
+                    }
+                },
                 finishPart = function(endIndex) {
                     if (partStart === endIndex) {
                         //The part is an empty string... ignore it
@@ -123,7 +132,7 @@ raptor.defineClass(
                             }
                         }
                         else {
-                            raptor.throwError(new Error('Invalid sub-attribute name of "' + name + '"'));
+                            handleError('Invalid sub-attribute name of "' + name + '"');
                         }
                     }
                     if (ordered) {

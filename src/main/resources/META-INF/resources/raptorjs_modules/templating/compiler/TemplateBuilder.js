@@ -25,7 +25,8 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             forEach = raptor.forEach;
         
-        var TemplateBuilder = function(compiler) {
+        var TemplateBuilder = function(compiler, filePath) {
+            this.filePath = filePath;
             this.compiler = compiler;
             this.options = compiler.options;
             this.templateName = null;
@@ -48,8 +49,7 @@ raptor.defineClass(
             this.preserveWhitespace = 0;
         };
         
-        TemplateBuilder.prototype = {
-                
+        TemplateBuilder.prototype = {            
             getTemplateName: function() {
                 return (this.options ? this.options.templateName : null) || this.templateName;
             },
@@ -124,6 +124,10 @@ raptor.defineClass(
             },
             
             _endText: function() {
+                if (this.hasErrors()) {
+                    return;
+                }
+    
                 var curText = this.curText; 
                 if (curText) {
                     this.curText = null;
@@ -132,6 +136,10 @@ raptor.defineClass(
             },
             
             addText: function(text) {
+                if (this.hasErrors()) {
+                    return;
+                }
+                
                 if (this.curText === null) {
                     this.curText = text;
                 }
@@ -167,6 +175,10 @@ raptor.defineClass(
             },
             
             addWrite: function(expression, options) {
+                if (this.hasErrors()) {
+                    return;
+                }
+    
                 //console.log('addWrite: ' + expression);
                 this._endText();
                 
@@ -187,6 +199,9 @@ raptor.defineClass(
             
             addJavaScriptCode: function(code) {
                 //console.log('addJavaScriptCode: ' + code);
+                if (this.hasErrors()) {
+                    return;
+                }
                 
                 this._endText();
                 this._endWrites();
@@ -194,11 +209,16 @@ raptor.defineClass(
             },
             
             getOutput: function() {
+                if (this.hasErrors()) {
+                    return '';
+                }
+                
                 var out = strings.createStringBuilder();
                 
                 var templateName = this.getTemplateName();
                 if (!templateName) {
-                    throw this.compiler.syntaxError('Template name not defined in template');
+                    
+                    this.addError('Template name not defined in template at path "' + this.filePath + '"');
                 }
                 
                 var params = this.params;
@@ -239,7 +259,7 @@ raptor.defineClass(
                     return new Expression(expression);
                 }
                 else {
-                    throw this.compiler.syntaxError("Unsupported expression object: " + expression);
+                    raptor.throwError(new Error("Unsupported expression object: " + expression));
                 }
             },
             
@@ -254,6 +274,18 @@ raptor.defineClass(
             setAttribute: function(name, value) {
                 this.attributes[name] = value;
                 return value;
+            },
+            
+            hasErrors: function() {
+                return this.compiler.hasErrors();
+            },
+            
+            addError: function(message, pos) {
+                this.compiler.addError(message, pos);
+            },
+            
+            getErrors: function() {
+                return this.compiler.getErrors();
             }
             
         };
