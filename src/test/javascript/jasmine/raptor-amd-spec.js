@@ -67,15 +67,19 @@ describe('amd module', function() {
         
     	var moduleA,
             moduleB,
-            moduleC;
+            moduleC,
+            raptor;
        
-    	define("amd/callback/b", ["amd/moduleA", "amd/moduleB", "amd/moduleC"], function(_moduleA, _moduleB, _moduleC) {
+    	define("amd/callback/b", ["amd/moduleA", "amd/moduleB", "amd/moduleC", "raptor"], function(_moduleA, _moduleB, _moduleC, _raptor) {
             moduleA = _moduleA;
             moduleB = _moduleB;
             moduleC = _moduleC;
+            raptor = _raptor;
     	});
     	
     	require("amd/callback/b");
+    	
+    	expect(raptor.require).toNotEqual(null);
     	
     	expect(moduleB.moduleA).toEqual(moduleA);
         expect(moduleB.moduleC).toEqual(moduleC);
@@ -114,4 +118,21 @@ describe('amd module', function() {
     	expect(loadCounts.moduleC).toEqual(1);
     });
 
+    it('should allow require with a callback', function() {
+    	
+        var raptor,
+            moduleA;
+        
+    	define("amd/callback/d", function(require, exports, module) {
+    		require(["amd/moduleA", "raptor"], function(_moduleA, _raptor) {
+    		        raptor = _raptor;
+    		        moduleA = _moduleA;
+        	});
+    	});
+    	
+    	require("amd/callback/d");
+    	
+    	expect(raptor.require).toNotEqual(null);
+    	expect(moduleA.isModuleA).toEqual(true);
+    });
 });
