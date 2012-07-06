@@ -53,10 +53,10 @@ raptorBuilder.addLoader(function(raptor) {
 
             var F = function() {};
               
-            F[PROTOTYPE] = typeof superclass === STRING ?    //Is the superclass the name of a super class?
-                      raptor.require(superclass)[PROTOTYPE] :  //If it is a string, then look it up and using the prototype of that superclass
-                      superclass[PROTOTYPE];
-                      
+            var inherit = (typeof(superclass) == 'string')?raptor.require(superclass):superclass;
+            _simpleExtend(clazz,inherit);
+            
+            F[PROTOTYPE] = inherit[PROTOTYPE]; 
             clazz.superclass = F[PROTOTYPE];
 
             clazz[PROTOTYPE] = new F();
