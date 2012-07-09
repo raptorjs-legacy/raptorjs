@@ -1,0 +1,7 @@
+{
+    "type": "module",
+    "name": "test.bundler.moduleB",
+    "includes": [
+        {"path": "moduleB.js"}
+    ]
+}

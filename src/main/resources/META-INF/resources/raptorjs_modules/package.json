@@ -23,12 +23,12 @@
         "taglib/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
     },
 	
-	"include-handlers": {
-	    "js": {"class": "packaging.include-handlers.IncludeHandler_js", "path": "/packaging/include-handlers/IncludeHandler_js.js"},
-	    "css": {"class": "packaging.include-handlers.IncludeHandler_css", "path": "/packaging/include-handlers/IncludeHandler_css.js"},
-	    "module": {"class": "packaging.include-handlers.IncludeHandler_module", "path": "/packaging/include-handlers/IncludeHandler_module.js"},
-	    "rhtml": {"class": "packaging.include-handlers.IncludeHandler_rhtml", "path": "/packaging/include-handlers/IncludeHandler_rhtml.js"},
-	    "rtld": {"class": "packaging.include-handlers.IncludeHandler_rtld", "path": "/packaging/include-handlers/IncludeHandler_rtld.js"},
-	    "init-raptor": {"class": "packaging.include-handlers.IncludeHandler_init-raptor", "path": "/packaging/include-handlers/IncludeHandler_init-raptor.js"} 
+	"raptor-include-types": {
+	    "js": {"class": "packager.Include_js", "path": "/packager/Include_js.js"},
+	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
+	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
+	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
+	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
+	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"} 
 	}
 }

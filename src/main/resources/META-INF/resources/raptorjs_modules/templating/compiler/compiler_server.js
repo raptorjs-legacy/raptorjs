@@ -24,7 +24,7 @@ raptor.extend(
         
         var resources = raptor.require('resources'),
             json = raptor.require('json'),
-            packaging = raptor.require("packaging"),
+            packager = raptor.require("packager"),
             forEachEntry = raptor.forEachEntry,
             errors = raptor.errors,
             discoveryComplete = false,
@@ -69,7 +69,7 @@ raptor.extend(
                 }
                 discoveryComplete = true;
                 
-                packaging.forEachTopLevelPackageManifest(function(manifest) {
+                packager.forEachTopLevelPackageManifest(function(manifest) {
                     var taglibs = manifest['raptor-taglibs'];
                     if (taglibs) {
                         forEachEntry(taglibs, function(uri, rtldPath) {

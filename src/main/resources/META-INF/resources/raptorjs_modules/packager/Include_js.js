@@ -15,19 +15,29 @@
  */
 
 raptor.defineClass(
-    "packaging.include-handlers.IncludeHandler_css",
-    "packaging.IncludeHandler",
-    function() {
+    "packager.Include_js",
+    "packager.Include",
+    function(raptor) {
         "use strict";
         
+        var loaded = {};
+        
         return {
-            includeKey: function(include, manifest) {
-                return "css:" + this.resolvePathKey(include.path, manifest);
+            
+            getKey: function() {
+                return "js:" + this.resolvePathKey(this.path);
             },
             
-            aggregate: function(include, manifest, aggregator) {
-                var resource = manifest.resolveResource(include.path);
-                aggregator.addResourceCode("css", resource);
+            toString: function() {
+                return this.getResource().getPath();
+            },
+            
+            getResourcePath: function() {
+                return this.path;
+            },
+            
+            getContentType: function() {
+                return "application/javascript";
             }
         };
     });

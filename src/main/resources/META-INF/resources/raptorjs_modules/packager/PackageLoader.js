@@ -17,7 +17,7 @@
 $rload(function(raptor) {
     "use strict";
     
-    var packaging = raptor.packaging,
+    var packager = raptor.packager,
         runtime = raptor.runtime,
         loaded = {};
     
@@ -28,12 +28,12 @@ $rload(function(raptor) {
     PackageLoader.prototype = {
         /**
          * 
-         * @param resourcePath {String|packaging-PackageManifest}
+         * @param resourcePath {String|packager-PackageManifest}
          */
         loadPackage: function(resourcePath, options) {
             var manifest = resourcePath._isPackageManifest ? 
                     resourcePath :
-                    packaging.getPackageManifest(resourcePath),
+                    packager.getPackageManifest(resourcePath),
                 path = manifest.getPackageResource().getSystemPath(),
                 enabledExtensions = options.enabledExtensions;
             
@@ -46,17 +46,16 @@ $rload(function(raptor) {
             
             manifest.forEachInclude({
                 callback: function(type, include) {
-                    var handler = packaging.getIncludeHandler(type);
-                    if (!handler) {
-                        raptor.errors.throwError(new Error('Handler not found for include of type "' + include.type + '". Include: ' + JSON.stringify(include)));
+                    if (include.isPackageInclude()) {
+                        include.load(this);
                     }
                     else {
-                        var loadFunc = handler.load;
-                        if (!loadFunc) {
-                            raptor.errors.throwError(new Error('"load" function not found for include handler of type "' + include.type + '". Include: ' + JSON.stringify(include)));
-                        }
-                        loadFunc.call(handler, include, manifest, this);
+                        var contentType = include.getContentType();
+                        if (contentType === 'application/javascript') {
+                            include.load(this);
+                        }    
                     }
+                    
                 },
                 enabledExtensions: enabledExtensions,
                 thisObj: this
@@ -72,8 +71,8 @@ $rload(function(raptor) {
         }
     };
     
-    packaging.PackageLoader = PackageLoader;
+    packager.PackageLoader = PackageLoader;
     
-    packaging.PackageLoader.instance = new PackageLoader();
+    packager.PackageLoader.instance = new PackageLoader();
 });
 

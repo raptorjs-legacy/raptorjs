@@ -20,20 +20,22 @@ $rload(function(raptor) {
     var errors = raptor.errors,
         arrays = raptor.arrays,
         forEachEntry = raptor.forEachEntry,
-        logger = raptor.logging.logger('packaging-server'),
+        logger = raptor.logging.logger('packager-server'),
         packageManifests = {},
         _extensionsLookup = {},
-        includeHandlers = {},
+        includeClasses = {},
         discoveryComplete = false,
         searchPathListenerHandle = null;
     
     /**
-     * 
+     * @namespace
+     * @raptor
+     * @name packager
      */
-    raptor.defineCore('packaging', {
+    raptor.packager = /** @lends packager */ {
         config: raptor.config.create({
             "enabledExtensions": {
-                value: raptor.getModuleConfig('packaging').enabledExtensions,
+                value: raptor.getModuleConfig('packager').enabledExtensions,
                 onChange: function(value) {
                     _extensionsLookup = {};
                     
@@ -50,7 +52,7 @@ $rload(function(raptor) {
         
         /**
          * 
-         * @param resourcePath {String|packaging-PackageManifest}
+         * @param resourcePath {String|packager-PackageManifest}
          */
         loadPackage: function(resourcePath) {
             this.PackageLoader.instance.loadPackage(resourcePath, {enabledExtensions: _extensionsLookup});
@@ -72,18 +74,15 @@ $rload(function(raptor) {
             discoveryComplete = true;
             
             this.forEachTopLevelPackageManifest(function(manifest) {
-                var manifestIncludeHandlers = manifest["include-handlers"];
+                var manifestIncludeHandlers = manifest["raptor-include-types"];
                 
                 if (manifestIncludeHandlers) {
                     forEachEntry(manifestIncludeHandlers, function(type, handlerInfo) {
                         if (handlerInfo.path) {
                             raptor.runtime.evaluateResource(handlerInfo.path);
                         }
-                        var HandlerClass = raptor.require(handlerInfo["class"]);
-                        if (!HandlerClass.instance) {
-                            HandlerClass.instance = new HandlerClass();
-                        }
-                        this.registerIncludeHandler(type, HandlerClass.instance);
+                        var Include = raptor.require(handlerInfo["class"]);
+                        this.registerIncludeClass(type, Include);
                     }, this);
                 }
                 
@@ -92,18 +91,18 @@ $rload(function(raptor) {
             this._watchResourceSearchPath();
         },
         
-        registerIncludeHandler: function(type, handler) {
-            includeHandlers[type] = handler; 
+        registerIncludeClass: function(type, includeClass) {
+            includeClasses[type] = includeClass; 
         },
         
-        getIncludeHandler: function(type) {
+        getIncludeClass: function(type) {
             this._doDiscovery();
             
-            var handler = includeHandlers[type];
-            if (!handler) {
-                raptor.errors.throwError(new Error('Handler not found for include of type "' + type + '"'));
+            var includeClass = includeClasses[type];
+            if (!includeClass) {
+                raptor.errors.throwError(new Error('Include class not found for include of type "' + type + '"'));
             }
-            return handler;
+            return includeClass;
         },
         
         /**
@@ -173,6 +172,6 @@ $rload(function(raptor) {
                 callback.call(thisObj, manifest);
             }, this);
         }
-    });
+    };
 
 });

@@ -24,7 +24,7 @@ $rload(function(raptor) {
             return '/' + name.replace(/\./g, '/');
         },
         loaded = {},
-        findMissingClass = function(name) {
+        findMissingModuleResource = function(name) {
             var resources = raptor.resources;
             
             var resourcePath = '/' + name.replace(/\./g, '/') + '.js';
@@ -57,7 +57,7 @@ $rload(function(raptor) {
                 return undefined;                
             }
         },
-        findMissingModule = function(name, manifest) {
+        findMissingModulePackage = function(name, manifest) {
             if (!manifest) {
                 manifest = oop.getModuleManifest(name);
             }
@@ -67,7 +67,7 @@ $rload(function(raptor) {
                 return undefined;
             } 
             
-            raptor.packaging.loadPackage(manifest);
+            raptor.require('packager').loadPackage(manifest);
             
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
@@ -98,7 +98,7 @@ $rload(function(raptor) {
             }
             discoveryComplete = true;
             
-            raptor.require('packaging').forEachTopLevelPackageManifest(function(manifest) {
+            raptor.require('packager').forEachTopLevelPackageManifest(function(manifest) {
                 var manifestMappings = manifest["raptor-module-mappings"];
                 
                 if (manifestMappings) {
@@ -120,9 +120,9 @@ $rload(function(raptor) {
         _find: function(name) {
             this._doDiscovery();
             
-            var o = findMissingClass(name);
+            var o = findMissingModuleResource(name);
             if (o === undefined) {
-                o = findMissingModule(name);
+                o = findMissingModulePackage(name);
             }
             return o;
         },
@@ -138,17 +138,18 @@ $rload(function(raptor) {
          */
         getModuleManifest: function(name) {
             var path = mappings[name],
-                manifest;
+                manifest,
+                packager = raptor.require('packager');
 
             if (path) {
-                manifest = raptor.packaging.getPackageManifest(path);
+                manifest = packager.getPackageManifest(path);
             }
             else {
                 var dir = getModuleDirPath(name);
                 
-                manifest = raptor.packaging.getPackageManifest(dir + "/package.json");
+                manifest = packager.getPackageManifest(dir + "/package.json");
                 if (!manifest) {
-                    manifest = raptor.packaging.getPackageManifest(dir + "-package.json");
+                    manifest = packager.getPackageManifest(dir + "-package.json");
                 }
             }
             

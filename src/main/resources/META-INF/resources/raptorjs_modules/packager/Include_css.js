@@ -15,26 +15,30 @@
  */
 
 raptor.defineClass(
-    "packaging.include-handlers.IncludeHandler_init-raptor",
-    "packaging.IncludeHandler",
+    "packager.Include_css",
+    "packager.Include",
     function() {
         "use strict";
         
-        var loaded = {},
-            runtime = raptor.require('runtime');
-        
         return {
-            includeKey: function(include, manifest) {
-                return "init-raptor";
+            getKey: function() {
+                return "css:" + this.resolvePathKey(this.path);
             },
             
-            load: function(include, manifest, loader) {
-                $rcreate(include.config);
+            toString: function() {
+                return this.getResource().getPath();
             },
             
-            aggregate: function(include, manifest, aggregator) {
-                var config = include.config;
-                aggregator.addJavaScriptCode("$rcreate(" + JSON.stringify(config) + ");");
+            getCode: function(context) {
+                return this.getResource(context).readFully();
+            },
+            
+            getResourcePath: function() {
+                return this.path;
+            },
+            
+            getContentType: function() {
+                return "text/css"
             }
         };
     });

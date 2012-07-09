@@ -18,7 +18,7 @@ $rload(function(raptor) {
     "use strict";
     
     /**
-     * @parent packaging_Server
+     * @parent packager_Server
      */
     
     var arrays = raptor.arrays,
@@ -27,8 +27,45 @@ $rload(function(raptor) {
         errors = raptor.errors,
         forEach = raptor.forEach,
         forEachEntry = raptor.forEachEntry,
-        ExtensionCollection = raptor.packaging.ExtensionCollection;
+        packager = raptor.packager,
+        ExtensionCollection = raptor.packager.ExtensionCollection;
 
+    var createInclude = function(includeConfig, manifest) {
+                
+            if (includeConfig.__include) {
+                return includeConfig;
+            }
+            
+            if (!includeConfig.type) {
+                var path = includeConfig.path;
+                if (path) {
+                    var lastDot = path.lastIndexOf('.');
+                    if (lastDot !== -1) {
+                        includeConfig.type = path.substring(lastDot+1);
+                    }
+                }
+                else {
+                    if (includeConfig.hasOwnProperty('module')) {
+                        includeConfig.type = "module";
+                        includeConfig.name = includeConfig.module;
+                        delete includeConfig.module;
+                    }
+                }
+            }
+            
+            var IncludeClass = packager.getIncludeClass(includeConfig.type);
+
+            var include = new IncludeClass();
+            
+            raptor.extend(include, includeConfig);
+            
+            if (manifest) {
+                include.setParentManifest(manifest);
+            }
+
+            return include;
+        };
+   
     var PackageManifest = {
         /**
          * 
@@ -40,6 +77,10 @@ $rload(function(raptor) {
             this.packageResource = packageResource;
             this._isPackageManifest = true;
             
+            forEach(this.includes, function(include, i) {
+                    this.includes[i] = createInclude(include, this); 
+                }, this);
+
             if (this.extensions) {
                 var extensions = [];
                 
@@ -68,10 +109,14 @@ $rload(function(raptor) {
                 }
                 
                 forEach(this.extensions, function(extDef) {
+                    forEach(extDef.includes, function(include, i) {
+                        extDef.includes[i] = createInclude(include, this);
+                    }, this);
+                    
                     if (extDef.condition) {
                         extDef.condition = eval("(function(extensions) { return " + extDef.condition + ";})");
                     }
-                });
+                }, this);
             }
             
         },
@@ -141,6 +186,19 @@ $rload(function(raptor) {
          * @returns
          */
         forEachInclude: function(options) {
+             
+            if (typeof options === 'function') {
+                options = {
+                    callback: arguments[0],
+                    thisObj: arguments[1]
+                }
+                if (arguments[2]) {
+                    raptor.extend(options, arguments[2]);
+                }
+            }
+            
+            var _this = this;
+            
             if (!options) {
                 options = {};
             }
@@ -173,6 +231,7 @@ $rload(function(raptor) {
             
             var _handleIncludes = function(includes, extension) {
                 arrays.forEach(includes, function(include) {
+                    
                     if (include.extension && !_isExtensionIncluded(include.extension)) {
                         return;
                     }
@@ -180,29 +239,13 @@ $rload(function(raptor) {
                     if (includeFilter && !includeFilter.call(thisObj, include.type, include)) {
                         return;
                     }
-                    
-                    if (!include.type) {
-                        var path = include.path;
-                        if (path) {
-                            var lastDot = path.lastIndexOf('.');
-                            if (lastDot !== -1) {
-                                include.type = path.substring(lastDot+1);
-                            }
-                        }
-                        else {
-                            if (include.hasOwnProperty('module')) {
-                                include.type = "module";
-                                include.name = include.module;
-                                delete include.module;
-                            }
-                        }
-                    }
+                       
                     callback.call(thisObj, include.type, include, extension);
-                }, this);
+                });
             };
             
             if (this.includes) {
-                _handleIncludes(this.includes, null, null); //Only process the regular includes if they are not filtered out
+                _handleIncludes(this.includes, null); //Only process the regular includes if they are not filtered out
             }
             
             if (this.extensions) {
@@ -231,5 +274,7 @@ $rload(function(raptor) {
         }
     };
     
-    raptor.packaging.PackageManifest = PackageManifest;
+    raptor.packager.PackageManifest = PackageManifest;
+    
+    raptor.packager.createInclude = createInclude;
 });

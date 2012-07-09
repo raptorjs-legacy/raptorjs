@@ -18,7 +18,7 @@ $rload(function(raptor) {
     "use strict";
     
     /**
-     * @parent packaging_Server
+     * @parent packager_Server
      */
     
     var forEach = raptor.forEach,
@@ -92,5 +92,5 @@ $rload(function(raptor) {
         }
     };
     
-    raptor.packaging.ExtensionCollection = ExtensionCollection;
+    raptor.packager.ExtensionCollection = ExtensionCollection;
 });

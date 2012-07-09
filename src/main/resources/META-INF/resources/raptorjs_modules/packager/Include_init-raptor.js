@@ -15,28 +15,30 @@
  */
 
 raptor.defineClass(
-    "packaging.IncludeHandler",
-    function() {
+    "packager.Include_init-raptor",
+    "packager.Include",
+    function(raptor) {
         "use strict";
         
+        var loaded = {},
+            runtime = raptor.require('runtime');
+        
         return {
-            resolvePathKey: function(path, manifest) {
-                var relative = path.charAt(0) !== '/';
-                
-                if (relative && !manifest) {
-                    raptor.throwError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
-                }
-                else {
-                    return path + ":" + (manifest ? ":" + manifest.getSystemPath() : "");                    
-                }
+            getKey: function() {
+                return "init-raptor";
             },
             
-            includeKey: function(include) {
-                return "css:" + include.path;
+            toString: function() {
+                return "[init-raptor]";
             },
             
-            isPackageInclude: function(include) {
-                return this._isPackageInclude && this._isPackageInclude(include);
+            load: function(context) {
+                $rcreate(this.config);
+            },
+            
+            getCode: function(context) {
+                var config = this.config;
+                return "$rcreate(" + JSON.stringify(config) + ");";
             }
         };
     });

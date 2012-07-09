@@ -15,58 +15,65 @@
  */
 
 raptor.defineClass(
-    "packaging.include-handlers.IncludeHandler_rtld",
-    "packaging.IncludeHandler",
-    function() {
+    "packager.Include_rtld",
+    "packager.Include",
+    function(raptor) {
         "use strict";
-        
-        var invalidInclude = function(include, manifest) {
-            var stringify = raptor.require('json.stringify').stringify;
-            raptor.throwError(new Error('Invalid taglib include of ' + stringify(include) + '" found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
-        };
-        
+
         return {
             
-            includeKey: function(include, manifest) {
-                if (include.path) {
-                    return "rtld:" + this.resolvePathKey(include.path, manifest);
+            invalidInclude: function() {
+                var stringify = raptor.require('json.stringify').stringify;
+                raptor.throwError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
+            },
+            getKey: function() {
+                if (this.path) {
+                    return "rtld:" + this.resolvePathKey(this.path);
                 }
                 else {
-                    invalidInclude(include, manifest);
+                    this.invalidInclude();
                 }
             },
             
-            load: function(include, manifest) {
+            load: function(context) {
                 
-                if (include.path) {
+                if (this.path) {
                     //console.log('load_taglib: Loading taglib at path "' + include.path + '"...');
                     
                     
-                    var taglibResource = manifest.resolveResource(include.path);
+                    var taglibResource = this.resolveResource(this.path, context);
                     if (!taglibResource.exists()) {
-                        raptor.throwError(new Error('Taglib with path "' + include.path + '" not found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+                        raptor.throwError(new Error('Taglib with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
                     }
                     //console.log('load_taglib: taglibResource "' + taglibResource.getSystemPath() + '"');
                     
                     raptor.require("templating.compiler").loadTaglibXml(taglibResource.readFully(), taglibResource.getSystemPath());
                 }
                 else {
-                    invalidInclude(include, manifest);
+                    this.invalidInclude();
                 }
             },
             
-            aggregate: function(include, manifest, aggregator) {
-                if (include.path) {
-                    var taglibResource = manifest.resolveResource(include.path);
+            getContentType: function() {
+                return "application/javascript"
+            },
+            
+            getResourcePath: function() {
+                return this.path;
+            },
+            
+            getCode: function(context) {
+                if (this.path) {
+                    var taglibResource = this.getResource();
                     if (!taglibResource.exists()) {
-                        raptor.throwError(new Error('Taglib with path "' + include.path + '" not found in package at path "' + manifest.getPackageResource().getSystemPath() + '"'));
+                        raptor.throwError(new Error('Taglib with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
                     }
                     
                     var taglibJS = raptor.require("templating.compiler").compileTaglib(taglibResource.readFully(), taglibResource.getSystemPath());
-                    aggregator.addJavaScriptCode(taglibJS, taglibResource.getSystemPath());
+                    return taglibJS;
                 }
                 else {
-                    invalidInclude(include, manifest);
+                    this.invalidInclude();
                 }
             }
         };

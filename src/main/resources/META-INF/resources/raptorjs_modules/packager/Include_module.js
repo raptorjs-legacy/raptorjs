@@ -15,35 +15,37 @@
  */
 
 raptor.defineClass(
-    "packaging.include-handlers.IncludeHandler_module",
-    "packaging.IncludeHandler",
-    function() {
+    "packager.Include_module",
+    "packager.Include",
+    function(raptor) {
         "use strict";
         
         return {
-            includeKey: function(include, manifest) {
-                return "module:" + include.name;
+            getKey: function() {
+                return "module:" + this.name;
             },
             
-            load: function(include, manifest, loader) {
-                var moduleName = include.name;
+            toString: function() {
+                return "[module: " + this.name + "]";
+            },
+            
+            load: function(context) {
+                var moduleName = this.name;
                 
-                if (loader.isLoaded(moduleName)) {
+                if (context.isLoaded(moduleName)) {
                     return;
                 }
-                loader.setLoaded(moduleName);
-                
-                
+                context.setLoaded(moduleName);
                 
                 var newManifest = raptor.oop.getModuleManifest(moduleName);
-                raptor.packaging.loadPackage(newManifest);
+                raptor.packager.loadPackage(newManifest);
             },
 
-            getManifest: function(include) {
-                return raptor.oop.getModuleManifest(include.name);
+            getManifest: function() {
+                return raptor.oop.getModuleManifest(this.name);
             },
             
-            _isPackageInclude: function() {
+            isPackageInclude: function() {
                 return true;
             }
         };

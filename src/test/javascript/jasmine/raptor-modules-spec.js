@@ -77,8 +77,8 @@ describe('modules module', function() {
     
     it('should allow modules to have conditionals', function() {
         
-        raptor.packaging.enableExtension("test.conditionals");
-        raptor.packaging.enableExtension("test.conditionals.a");
+        raptor.require('packager').enableExtension("test.conditionals");
+        raptor.require('packager').enableExtension("test.conditionals.a");
         
         var conditional = raptor.require('test.conditional-extensions');
         expect(conditional["default"]).toEqual(true);

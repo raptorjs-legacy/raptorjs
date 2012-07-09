@@ -1,6 +1,6 @@
 {
     "type": "module",
-    "name": "oop",
+    "name": "packager.bundler",
     "version": "1.0",
     "description": "Object oriented programming support for JavaScript",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -12,22 +12,17 @@
     ],
     
     "includes": [
-        {"path": "oop.js"}        
     ],
     
-    "extensions": {
-        "server": {
+    "extensions": [
+        {
+            "name": "server",
             "includes": [
-                {"module": "objects"},
-                {"module": "arrays"},
-                {"module": "packager"},
-                {"path": "oop_server.js"}
-            ]
-        },
-        "rhino": {
-            "includes": [
-                {"path": "oop_rhino.js"}
+                {"path": "Bundle.js"},
+                {"path": "BundleMappings.js"},
+                {"path": "PageDependencies.js"},
+                {"path": "bundler.js"}
             ]
         }
-    }
+    ]
 }

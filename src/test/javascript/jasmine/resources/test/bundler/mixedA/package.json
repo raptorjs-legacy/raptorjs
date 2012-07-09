@@ -1,0 +1,8 @@
+{
+    "type": "mixed",
+    "name": "test.bundler.mixedA",
+    "includes": [
+        {"path": "mixedA.js"},
+        {"path": "mixedA.css"}
+    ]
+}
