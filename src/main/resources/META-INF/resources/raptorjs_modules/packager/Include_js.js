@@ -32,6 +32,10 @@ raptor.defineClass(
                 return this.getResource().getPath();
             },
             
+            getCode: function(context) {
+                return this.getResource(context).readFully();
+            },
+            
             getResourcePath: function() {
                 return this.path;
             },
