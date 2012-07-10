@@ -57,38 +57,43 @@ raptor.defineClass(
                 
                 var includes = bundle.getIncludes();
                 
-                bundler.forEachInclude(
-                    includes, 
-                    this.enabledExtensions,
-                    function(include, recursive, depth, parentPackage) {
-                        var key = include.getKey();
-                        var existingBundle = this.includeToBundleMapping[key];
-                        if (existingBundle) {
-                            
-                            return true; //Skip this include and don't recurse into nested dependencies
+                bundler.forEachInclude({
+                    includes: includes,
+                    recursive: false,
+                    enabledExtensions: this.enabledExtensions,
+                    handlePackageInclude: function(include, context) {
+                        if (this.includeToBundleMapping[include.getKey()]) {
+                            return false;
                         }
-                        if (include.isPackageInclude()) {
-                            
-                            if (recursive === true) {
-                                this.addIncludeToBundle(include, bundle.name);
-                            }
-                            
-                            if (recursive === true || depth === 0) {
-                                this.logger().info(leftPad(bundle.name, 30) + ": " + indent(depth) + 'Adding includes for package "' + include.getManifest().getPath() + '"');
-                            }
-                            else {
-                                this.logger().info(leftPad(bundle.name, 30) + ": " + indent(depth) + "***Skipping nested package " + include.getManifest().getPath() + ' for package "' + parentPackage.getPath() + '"');
-                                return true;
-                            }
+                        
+                        if (context.async === true) {
+                            return false; //Ignore asynchronous includes since they should not be part of asynchronous bundles 
+                        }
+                        
+                        if (context.recursive === true || context.depth === 0) {
+                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Adding includes for package "' + include.getManifest().getPath() + '"');
+                            return true; //Recurse into the package
                         }
                         else {
-                            this.addIncludeToBundle(include, bundle.name);
-                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(depth) + 'Added "' + include.toString() + '"');
+                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + "***Skipping nested package " + include.getManifest().getPath() + ' for package "' + context.parentPackage.getPath() + '"');
+                            return false;
                         }
-                        return false;
+                    },
+                    handleInclude: function(include, context) {
+                        if (context.async === true) {
+                            raptor.throwError(new Error("Illegal state. async should not be true"));
+                        }
+                        
+                        if (this.includeToBundleMapping[include.getKey()]) {
+                            return;
+                        }
+                        
+                        this.addIncludeToBundle(include, bundle.name);
+                        this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Added "' + include.toString() + '"');
                         
                     },
-                    this);
+                    thisObj: this
+                });
             },
             
             addIncludeToBundle: function(include, targetBundleName) {

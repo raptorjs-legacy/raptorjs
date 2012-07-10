@@ -1,0 +1,9 @@
+{
+    "type": "module",
+    "name": "test.bundler.nestedA",
+    "includes": [
+        {"module": "test.bundler.nestedB"},
+        {"path": "nestedA.js"},
+        {"path": "nestedA.css"}
+    ]
+}

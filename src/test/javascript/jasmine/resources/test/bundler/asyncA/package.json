@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "name": "test.bundler.asyncA",
+    "includes": [
+        {"module": "test.bundler.mixedA", "async": true},
+        {"module": "test.bundler.nestedA", "async": true},
+        {"module": "test.bundler.moduleA"},
+        {"path": "asyncA.js"},
+        {"path": "asyncA.css"}
+    ]
+}

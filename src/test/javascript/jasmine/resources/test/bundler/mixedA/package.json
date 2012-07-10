@@ -1,5 +1,5 @@
 {
-    "type": "mixed",
+    "type": "module",
     "name": "test.bundler.mixedA",
     "includes": [
         {"path": "mixedA.js"},

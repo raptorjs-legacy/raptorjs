@@ -131,6 +131,10 @@ raptor.defineClass(
                 }
                 return this._resource;
                 
+            },
+            
+            isAsync: function() {
+                return this.async === true;
             }
         };
     });

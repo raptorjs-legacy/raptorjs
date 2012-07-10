@@ -2,7 +2,7 @@
     "type": "location",
     "name": "test.bundler.locationB",
     "includes": [
-        {"path": "locationB.js"},
-        {"path": "locationB.css"}
+        {"path": "locationB.js", "location": "custom-body"},
+        {"path": "locationB.css", "location": "custom-head"}
     ]
 }
