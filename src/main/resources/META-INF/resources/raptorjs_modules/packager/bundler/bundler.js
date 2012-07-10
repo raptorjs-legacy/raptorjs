@@ -5,7 +5,7 @@ raptor.define(
         var forEach = raptor.forEach,
             packager = raptor.require('packager'),
             Bundle = raptor.require("packager.bundler.Bundle"),
-            BundleMappings = raptor.require("packager.bundler.BundleMappings"),
+            BundleSet = raptor.require("packager.bundler.BundleSet"),
             PageDependencies = raptor.require("packager.bundler.PageDependencies");
             
         return {
@@ -14,8 +14,8 @@ raptor.define(
                 return new Bundle(name);
             },
             
-            createBundleMappings: function(bundles, options) {
-                return new BundleMappings(bundles, options);
+            createBundleSet: function(bundles, options) {
+                return new BundleSet(bundles, options);
             },
             
             createPageDependencies: function(pageName, options) {

@@ -19,7 +19,7 @@
             "name": "server",
             "includes": [
                 {"path": "Bundle.js"},
-                {"path": "BundleMappings.js"},
+                {"path": "BundleSet.js"},
                 {"path": "PageDependencies.js"},
                 {"path": "bundler.js"}
             ]

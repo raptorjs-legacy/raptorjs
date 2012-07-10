@@ -61,7 +61,12 @@ raptor.defineClass(
 
             this.pageName = pageName;
             this.includes = options.includes;
-            this.bundleMappings = options.bundleMappings;
+            
+            /*
+             * We must create a new bundle set that has as its parent the provided bundle set so that 
+             * we don't modify the provided bundle set.
+             */
+            this.bundleSet = raptor.require('packager.bundler').createBundleSet(options.bundleSet);
             this.enabledExtensions = options.enabledExtensions;
 
             this.pageBundleLookup = {};
@@ -72,10 +77,10 @@ raptor.defineClass(
         };
         
         PageDependencies.prototype = {
-                
+             
             _build: function() {
                 var bundler = raptor.require('packager.bundler'),
-                    bundleMappings = this.bundleMappings,
+                    bundleSet = this.bundleSet,
                     asyncIncludes = [];
                     
                 bundler.forEachInclude({
@@ -89,11 +94,11 @@ raptor.defineClass(
                         },
                         handleInclude: function(include, context) {
 
-                            var bundle = bundleMappings.getBundleForInclude(include);
+                            var bundle = bundleSet.getBundleForInclude(include);
                             if (!bundle) {
                                 //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
                                 var targetBundleName = (context.async ? "page-async-" : "page-") + this.pageName; 
-                                bundle = bundleMappings.addIncludeToBundle(include, targetBundleName);
+                                bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
                             }
                             
                             if (context.async === true) {
@@ -120,8 +125,11 @@ raptor.defineClass(
                                 if (bundle.isJavaScript()) {
                                     bundlesForLocation.js.push(bundle);
                                 }
-                                else {
+                                else if (bundle.isStyleSheet()){
                                     bundlesForLocation.css.push(bundle);
+                                }
+                                else {
+                                    raptor.throwError(new Error("Invalid content for bundle: " + bundle.getContentType()));
                                 }
                             }
                         },
@@ -157,7 +165,7 @@ raptor.defineClass(
                     },
                     handleInclude: function(include, context) {
 
-                        var bundle = bundleMappings.getBundleForInclude(include),
+                        var bundle = bundleSet.getBundleForInclude(include),
                             bundleKey = bundle.getKey();
                         if (!this.pageBundleLookup[bundleKey]) { //Check if this async include is part of a page bundle
                             //This bundle is an asynchronous only bundle
@@ -174,6 +182,10 @@ raptor.defineClass(
                     thisObj: this
                 
                 });
+            },
+            
+            getBundleSet: function() {
+                return this.bundleSet;
             },
             
             forEachBundle: function(callback, thisObj) {

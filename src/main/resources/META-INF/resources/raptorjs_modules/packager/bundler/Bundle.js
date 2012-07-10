@@ -66,30 +66,19 @@ raptor.defineClass(
                 forEach(this.includes, callback, thisObj);
             },
             
-            getChecksum: function() {
-                if (!this._checksum) {
-                    var shasum = crypto.createHash('sha1');
-                    shasum.update(this.getCode())
-                    this._checksum = shasum.digest('hex');
-                }
-                return this._checksum;
+            calculateChecksum: function() {
+                var shasum = crypto.createHash('sha1');
+                shasum.update(this.readCode());
+                return shasum.digest('hex');
             },
             
-            getCode: function() {
-                if (!this._code) {
-                    var output = [];
-                    this.forEachInclude(function(include) {
-                        output.push(include.getCode());
-                    }, this);
-                    
-                    this._code = output.join("\n");  
-                }
+            readCode: function() {
+                var output = [];
+                this.forEachInclude(function(include) {
+                    output.push(include.getCode());
+                }, this);
                 
-                return this._code;
-            },
-            
-            clearCodeCache: function() {
-                this._code = undefined;
+                return output.join("\n");  
             }
         };
         

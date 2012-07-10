@@ -1,5 +1,5 @@
 raptor.defineClass(
-    "packager.bundler.BundleMappings",
+    "packager.bundler.BundleSet",
     function(raptor) {
         var packager = raptor.require('packager'), 
             forEach = raptor.forEach,
@@ -26,12 +26,23 @@ raptor.defineClass(
                 return location + "/" + include.getKey();
             };
         
-        var BundleMappings = function(bundles, options) {
+        var BundleSet = function(bundles, options) {
+            
+            
+            if (bundles instanceof BundleSet) {
+                this.parentBundleSet = bundles;
+                options = {
+                    enabledExtensions: bundles.enabledExtensions
+                };
+                
+                bundles = null;
+            }
+            
             if (!options) {
                 options = {};
             }
             
-            this.name = options.name;
+            
             this.enabledExtensions = options.enabledExtensions || [];
             this.includeToBundleMapping = {};
             this.bundlesByKey = {};
@@ -41,11 +52,15 @@ raptor.defineClass(
             }, this);
         };
         
-        BundleMappings.prototype = {
+        BundleSet.prototype = {
 
             getBundleForInclude: function(include) {
                 var key = include.getKey();
-                return this.includeToBundleMapping[key];
+                var bundle =  this.includeToBundleMapping[key];
+                if (!bundle && this.parentBundleSet) {
+                    bundle = this.parentBundleSet.getBundleForInclude(include);
+                }
+                return bundle;
             },
             
             getEnabledExtensions: function() {
@@ -62,10 +77,7 @@ raptor.defineClass(
                     recursive: false,
                     enabledExtensions: this.enabledExtensions,
                     handlePackageInclude: function(include, context) {
-                        if (this.includeToBundleMapping[include.getKey()]) {
-                            return false;
-                        }
-                        
+
                         if (context.async === true) {
                             return false; //Ignore asynchronous includes since they should not be part of asynchronous bundles 
                         }
@@ -84,7 +96,7 @@ raptor.defineClass(
                             raptor.throwError(new Error("Illegal state. async should not be true"));
                         }
                         
-                        if (this.includeToBundleMapping[include.getKey()]) {
+                        if (this.getBundleForInclude(include)) {
                             return;
                         }
                         
@@ -127,5 +139,5 @@ raptor.defineClass(
             }
         };
         
-        return BundleMappings;
+        return BundleSet;
     });
