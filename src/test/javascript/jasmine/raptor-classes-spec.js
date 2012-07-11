@@ -383,5 +383,43 @@ describe('classes module', function() {
         expect(ostrich.fly).toNotEqual(null);
     });
     
-
+    it('should allow static properties of a superclass to be inherited', function() {
+        raptor.defineClass(
+            'test.classes.StaticsSuper', 
+            function(raptor, type) {
+                var StaticsSuper = function() {
+                    
+                };
+                
+                StaticsSuper.prototype = {
+                                      
+                };
+                
+                StaticsSuper.MyStatic = "StaticsSuper";
+                
+                return StaticsSuper;
+            });
+    
+        raptor.defineClass(
+            'test.classes.StaticsSub',
+            'test.classes.StaticsSuper',
+            function(raptor, type) {
+                var StaticsSub = function() {
+                    
+                };
+                
+                StaticsSub.prototype = {
+                                      
+                };
+                
+                StaticsSub.MyStatic = "StaticsSub";
+                
+                return StaticsSub;
+            });
+        
+        var StaticsSuper = raptor.require('test.classes.StaticsSuper');
+        var StaticsSub = raptor.require('test.classes.StaticsSub');
+        expect(StaticsSuper.MyStatic).toEqual("StaticsSuper");
+        expect(StaticsSub.MyStatic).toEqual("StaticsSub");
+    });
 });
