@@ -91,7 +91,7 @@ raptor.defineClass(
                 raptor.throwError(new Error("getKey() not implemented for include: " + this.toString()));
             },
             
-            getCode: function() {
+            getCode: function(context) {
                 if (this.getResource) {
                     var resource = this.getResource();
                     if (resource.exists()) {

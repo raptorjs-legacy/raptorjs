@@ -17,6 +17,10 @@ raptor.defineClass(
         };
         
         Bundle.prototype = {
+            isInline: function() {
+                return false;
+            },
+            
             addInclude: function(include) {
             
                 this.includes.push(packager.createInclude(include));
@@ -66,16 +70,20 @@ raptor.defineClass(
                 forEach(this.includes, callback, thisObj);
             },
             
-            calculateChecksum: function() {
+            calculateChecksum: function(code) {
+                
                 var shasum = crypto.createHash('sha1');
-                shasum.update(this.readCode());
+                shasum.update(code || this.readCode());
                 return shasum.digest('hex');
             },
             
-            readCode: function() {
+            readCode: function(context) {
                 var output = [];
                 this.forEachInclude(function(include) {
-                    output.push(include.getCode());
+                    var code = include.getCode(context);
+                    if (code) {
+                        output.push(code);    
+                    }
                 }, this);
                 
                 return output.join("\n");  

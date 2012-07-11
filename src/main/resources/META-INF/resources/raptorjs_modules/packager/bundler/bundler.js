@@ -18,8 +18,19 @@ raptor.define(
                 return new BundleSet(bundles, options);
             },
             
-            createPageDependencies: function(pageName, options) {
-                return new PageDependencies(pageName, options);
+            createPageDependenciesFileWriter: function(config) {
+                var PageDependenciesFileWriter = raptor.require("packager.bundler.PageDependenciesFileWriter");
+                return new PageDependenciesFileWriter(config);
+            },
+            
+            createSimpleUrlBuilder: function(config) {
+                var SimpleUrlBuilder = raptor.require("packager.bundler.SimpleUrlBuilder");
+                return new SimpleUrlBuilder(config);
+            },
+            
+            buildPageDependencies: function(config) {
+                return new PageDependencies(config
+                    );
             },
             
             forEachInclude: function(options) {

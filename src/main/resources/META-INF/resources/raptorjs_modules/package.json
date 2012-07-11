@@ -29,6 +29,7 @@
 	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
 	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
 	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
-	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"} 
+	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},
+	    "loader-metadata": {"class": "packager.Include_loader-metadata", "path": "/packager/Include_loader-metadata.js"} 
 	}
 }

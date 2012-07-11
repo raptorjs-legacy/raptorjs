@@ -43,6 +43,10 @@ raptor.defineClass(
                 return bundleKeys;
             },
             
+            hasRequires: function() {
+                return this.requires.length > 0;
+            },
+            
             getRequires: function() {
                 return this.requires;
             },
@@ -54,20 +58,17 @@ raptor.defineClass(
             }
         };
         
-        var PageDependencies = function(pageName, options) {
-            if (!options) {
-                options = {};
-            }
+        var PageDependencies = function(config) {
 
-            this.pageName = pageName;
-            this.includes = options.includes;
+            this.pageName = config.pageName;
+            this.includes = config.includes;
             
             /*
              * We must create a new bundle set that has as its parent the provided bundle set so that 
              * we don't modify the provided bundle set.
              */
-            this.bundleSet = raptor.require('packager.bundler').createBundleSet(options.bundleSet);
-            this.enabledExtensions = options.enabledExtensions;
+            this.bundleSet = raptor.require('packager.bundler').createBundleSet(config.bundleSet);
+            this.enabledExtensions = config.enabledExtensions;
 
             this.pageBundleLookup = {};
             this.bundlesByLocation = {};
@@ -182,13 +183,15 @@ raptor.defineClass(
                     thisObj: this
                 
                 });
+                
+                
             },
             
             getBundleSet: function() {
                 return this.bundleSet;
             },
             
-            forEachBundle: function(callback, thisObj) {
+            forEachPageBundle: function(callback, thisObj) {
                 forEachEntry(this.bundlesByLocation, function(location, bundlesByContentType) {
                     
                     //Loop over CSS bundles first
@@ -210,8 +213,16 @@ raptor.defineClass(
                 });
             },
             
+            hasAsyncRequires: function() {
+                return !raptor.require('objects').isEmpty(this.asyncRequiresByName);
+            },
+            
             getBundleCount: function() {
                 return this.bundleCount;
+            },
+            
+            getPageName: function() {
+                return this.pageName;
             }
         };
         

@@ -20,7 +20,7 @@ describe('packager.bundler module', function() {
             });
             
             //Create the bundle mappings from the bundle set
-            var bundleMappings = bundler.createBundleMappings(
+            var bundleSet = bundler.createBundleSet(
                 bundles,
                 {
                     enabledExtensions: config.enabledExtensions
@@ -29,11 +29,10 @@ describe('packager.bundler module', function() {
             //Get the page dependencies
             var pageIncludes = config.pageIncludes;
             
-            var pageDependencies = bundler.createPageDependencies(
-                config.pageName,
-                {
+            var pageDependencies = bundler.buildPageDependencies({
+                    pageName: config.pageName,
                     includes: pageIncludes,
-                    bundleMappings: bundleMappings,
+                    bundleSet: bundleSet,
                     enabledExtensions: config.enabledExtensions
                 });
             
@@ -44,14 +43,14 @@ describe('packager.bundler module', function() {
                 includeCountsByBundle = {};
             
             var bundleToString = function(bundle, indent) {
-                var code = bundle.getCode();
+                var code = bundle.readCode();
                 if (code) {
                     code = code.replace(/[\n]/g, '\\n');
                 }
-                return indent + "name: " + bundle.getName() + "\n" + indent + "location: " + bundle.getLocation() + "\n" + indent + "contentType: " + bundle.getContentType() + "\n" + indent + "code: " + code + "\n" + indent + "checksum: " + bundle.getChecksum();
+                return indent + "name: " + bundle.getName() + "\n" + indent + "location: " + bundle.getLocation() + "\n" + indent + "contentType: " + bundle.getContentType() + "\n" + indent + "code: " + code + "\n" + indent + "checksum: " + bundle.calculateChecksum();
             };
             
-            pageDependencies.forEachBundle(function(bundle) {
+            pageDependencies.forEachPageBundle(function(bundle) {
                 var actualBundles = actualBundlesByLocation[bundle.getLocation()];
                 if (!actualBundles) {
                     actualBundles = actualBundlesByLocation[bundle.getLocation()] = [];
@@ -86,7 +85,7 @@ describe('packager.bundler module', function() {
                     expect(expected.contentType).toEqual(actual.getContentType());
                 }
                 if (expected.code) {
-                    expect(expected.code).toEqual(actual.getCode());
+                    expect(expected.code).toEqual(actual.readCode());
                 }
             };
             
@@ -158,7 +157,7 @@ describe('packager.bundler module', function() {
                     config.enabledExtensions,
                     function(include) {
                         if (!include.isPackageInclude()) {
-                            var targetBundle = bundleMappings.getBundleForInclude(include),
+                            var targetBundle = pageDependencies.getBundleSet().getBundleForInclude(include),
                                 targetBundleName = targetBundle ? targetBundle.getName() : undefined;
                                 
                             if (!targetBundleName && expected.toBundle) {
@@ -176,7 +175,11 @@ describe('packager.bundler module', function() {
             }
             
             if (config.test) {
-                config.test(pageDependencies, bundles, bundleMappings);    
+                config.test(pageDependencies, bundles, bundleSet);    
+            }
+            
+            if (config.done) {
+                config.done(pageDependencies, bundles, bundleSet);    
             }
             
         };
@@ -379,6 +382,8 @@ describe('packager.bundler module', function() {
             }
         });
     });
+    
+    
     it('should allow asynchronous modules', function() {
         testBundler({
             bundleSet: [
@@ -470,6 +475,133 @@ describe('packager.bundler module', function() {
                         }
                     ]
                 }
+            }
+        });
+    });
+    
+    it('should allow page dependencies to be written to disk', function() {
+        testBundler({
+            bundleSet: [
+                { 
+                    name: "bundleA",
+                    includes: [{ "module": "test.bundler.mixedA" },
+                               { "module": "test.bundler.nestedA" }]
+                },
+                { 
+                    name: "bundleB",
+                    includes: [{ "module": "test.bundler.asyncA" }]
+                }
+            ],
+            enabledExtensions: ["jquery", "browser"],
+            pageName: "pageE",
+            pageIncludes: [{ "module": "test.bundler.asyncA" },
+                           { type: "loader-metadata" }],
+
+            expectedBundles: {
+                "head": [
+                    {
+                        name: "bundleB",
+                        contentType: "text/css",
+                        code: "asyncA_css"
+                    }
+                ],
+
+                "body": [
+                    {
+                        name: "page-pageE",
+                        contentType: "application/javascript",
+                        code: "moduleA"
+                    },
+                    {
+                        name: "bundleB",
+                        contentType: "application/javascript",
+                        code: "asyncA_js"
+                    }
+                ]
+            },
+            expectedAsyncRequires: {
+                "test.bundler.mixedA": {
+                    requires: [],
+                    bundles: [
+                        {
+                            name: "bundleA",
+                            location: "body",
+                            contentType: "application/javascript",
+                            code: "mixedA_js\nnestedA_js"
+                        },
+                        {
+                            name: "bundleA",
+                            location: "head",
+                            contentType: "text/css",
+                            code: "mixedA_css\nnestedA_css"
+                        }
+                    ]
+                },
+                "test.bundler.nestedA": {
+                    requires: ["test.bundler.nestedB"],
+                    bundles: [
+                        {
+                            name: "bundleA",
+                            location: "body",
+                            contentType: "application/javascript",
+                            code: "mixedA_js\nnestedA_js"
+                        },
+                        {
+                            name: "bundleA",
+                            location: "head",
+                            contentType: "text/css",
+                            code: "mixedA_css\nnestedA_css"
+                        }
+                    ]
+                },
+                "test.bundler.nestedB": {
+                    requires: [],
+                    bundles: [
+                        {
+                            name: "page-async-pageE",
+                            location: "body",
+                            contentType: "application/javascript",
+                            code: "nestedB_js"
+                        },
+                        {
+                            name: "page-async-pageE",
+                            location: "head",
+                            contentType: "text/css",
+                            code: "nestedB_css"
+                        }
+                    ]
+                }
+            },
+            
+            done: function(pageDependencies) {
+                var bundler = raptor.require("packager.bundler");
+                
+                var writer = bundler.createPageDependenciesFileWriter({
+                    outputDir: "/static",
+                    checksumLength: 8
+                });
+                
+                writer.setUrlBuilder(bundler.createSimpleUrlBuilder({
+                    prefix: "http://localhost:8080/static/"
+                }));
+                
+                var writtenFiles = {};
+                
+                writer.writeBundleFile = function(outputPath, code) {
+                    console.log('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+                    writtenFiles[outputPath] = code;
+                };
+                
+                writer.writePageIncludeHtmlFile = function(outputPath, html) {
+                    console.log('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
+                    writtenFiles[outputPath] = html;
+                }
+                
+                
+                writer.writePageDependencies(pageDependencies);
+
+                expect(writtenFiles["/static/bundleA-3b5cde50.js"]).toNotEqual(null);
+                expect(Object.keys(writtenFiles).length).toEqual(9);
             }
         });
     });
