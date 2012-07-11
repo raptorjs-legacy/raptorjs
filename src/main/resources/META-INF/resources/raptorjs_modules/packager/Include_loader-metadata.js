@@ -35,7 +35,7 @@ raptor.defineClass(
             getCode: function(context) {
                 var loaderMetadata = context && context.loaderMetadata;
                 if (loaderMetadata) {
-                    return "var loaderMetadata=" + JSON.stringify(loaderMetadata) + ";";
+                    return "$rloaderMeta=" + JSON.stringify(loaderMetadata) + ";";
                 }
             },
             

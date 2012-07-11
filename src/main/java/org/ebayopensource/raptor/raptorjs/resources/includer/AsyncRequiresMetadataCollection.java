@@ -37,7 +37,7 @@ public class AsyncRequiresMetadataCollection {
         if (moduleJSONByName == null || moduleJSONByName.isEmpty()) return;
         
         Iterator<Map.Entry<String, String>> i = moduleJSONByName.entrySet().iterator();
-        out.write("_asyncModules={");
+        out.write("$rloaderMeta={");
         while (i.hasNext()) {
             Map.Entry<String, String> entry = i.next();
             String moduleName = entry.getKey();

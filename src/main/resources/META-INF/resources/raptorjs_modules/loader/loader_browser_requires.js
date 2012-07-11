@@ -41,7 +41,7 @@ raptor.extend('loader', function(raptor) {
         
         //The metadata for the requires should have been serialized to a global variable
         //This information is required so that we know what the dependencies are for the require
-        var asyncModulesMetadata = raptor.global._asyncModules;
+        var asyncModulesMetadata = raptor.global.$rloaderMeta;
         
         var missing = function() {
             throw new Error('Dependencies missing: "' + require + '"');
