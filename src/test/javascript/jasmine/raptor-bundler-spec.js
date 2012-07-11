@@ -1,14 +1,15 @@
 require('./_helper.js');
 
 describe('packager.bundler module', function() {
-    var forEachEntry = raptor.forEachEntry,
+    var logger = raptor.require('logging').logger('raptor-bundler-spec'),
+        forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
         testBundler = function(config) {
         
             var bundler = raptor.require("packager.bundler");
             
-            console.log("--------------------");
-            console.log('Begin bundler test for page "' + config.pageName + '":');
+            logger.debug("--------------------");
+            logger.debug('Begin bundler test for page "' + config.pageName + '":');
             //Build the bundle set
             var bundles = [];
             forEach(config.bundleSet, function(bundleConfig) {
@@ -57,7 +58,7 @@ describe('packager.bundler module', function() {
                 }
                 
                 actualBundles.push(bundle);
-                console.log("Bundle for " + config.pageName + ":\n"+ bundleToString(bundle, "  "));
+                logger.debug("Bundle for " + config.pageName + ":\n"+ bundleToString(bundle, "  "));
                 bundle.forEachInclude(function(include) {
                     
                     var key = include.getKey();
@@ -102,9 +103,9 @@ describe('packager.bundler module', function() {
                 
                 forEach(asyncRequires, function(asyncRequire) {
                     
-                    console.log("\nAsync require " + config.pageName + ":\n  name: " + asyncRequire.getName() + "\n  requires: [" + asyncRequire.getRequires().join(", ") + "]");
+                    logger.debug("\nAsync require " + config.pageName + ":\n  name: " + asyncRequire.getName() + "\n  requires: [" + asyncRequire.getRequires().join(", ") + "]");
                     forEach(asyncRequire.getBundles(), function(bundle) {
-                        console.log("  Bundle:\n" +  bundleToString(bundle, "    "));
+                        logger.debug("  Bundle:\n" +  bundleToString(bundle, "    "));
                     });
                     
                     var expectedAsyncRequire = config.expectedAsyncRequires[asyncRequire.getName()];
@@ -588,12 +589,12 @@ describe('packager.bundler module', function() {
                 var writtenFiles = {};
                 
                 writer.writeBundleFile = function(outputPath, code) {
-                    console.log('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+                    logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
                     writtenFiles[outputPath] = code;
                 };
                 
                 writer.writePageIncludeHtmlFile = function(outputPath, html) {
-                    console.log('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
+                    logger.debug('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
                     writtenFiles[outputPath] = html;
                 }
                 
