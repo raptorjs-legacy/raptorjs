@@ -2,7 +2,7 @@
     "type": "module",
     "name": "optimizer",
     "version": "1.0",
-    "description": "Object oriented programming support for JavaScript",
+    "description": "Web application optimization utility module",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
     "authors": [
         {
