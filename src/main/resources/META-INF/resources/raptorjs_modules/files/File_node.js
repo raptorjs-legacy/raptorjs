@@ -18,7 +18,10 @@ $rload(function(raptor) {
     "use strict";
     
     var nodePath = require("path"),
-        nodeFS = require("fs");
+        nodeFS = require("fs"),
+        existsSync = function(path) {
+            return nodeFS.existsSync ? nodeFS.existsSync(path) : nodePath.existsSync(path);
+        };
         
     var File = function(path) {
         if (arguments.length === 1) {
@@ -54,7 +57,7 @@ $rload(function(raptor) {
         },
         
         exists: function() {
-            return nodeFS.existsSync ? nodeFS.existsSync(this._path) : nodePath.existsSync(this._path);
+            return existsSync(this._path);
         },
         
         isDirectory: function() {
@@ -103,7 +106,7 @@ $rload(function(raptor) {
         listFiles: function() {
             var path = this._path;
             
-            if (!nodePath.existsSync(path)) {
+            if (!existsSync(path)) {
                 raptor.throwError(new Error("File does not exist: " + path));
             }
             

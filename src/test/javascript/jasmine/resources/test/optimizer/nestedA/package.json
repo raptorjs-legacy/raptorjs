@@ -1,0 +1,9 @@
+{
+    "type": "module",
+    "name": "test.optimizer.nestedA",
+    "includes": [
+        {"module": "test.optimizer.nestedB"},
+        {"path": "nestedA.js"},
+        {"path": "nestedA.css"}
+    ]
+}

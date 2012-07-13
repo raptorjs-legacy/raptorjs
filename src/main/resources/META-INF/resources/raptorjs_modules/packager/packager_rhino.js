@@ -18,7 +18,7 @@ $rload(function(raptor) {
     "use strict";
     
     /**
-     * @extension Server
+     * @extension Rhino
      */
     raptor.extendCore('packager', {
         rhinoCreateExtensions: function(javaExtensionSet) {

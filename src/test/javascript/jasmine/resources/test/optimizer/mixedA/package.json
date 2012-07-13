@@ -1,0 +1,8 @@
+{
+    "type": "module",
+    "name": "test.optimizer.mixedA",
+    "includes": [
+        {"path": "mixedA.js"},
+        {"path": "mixedA.css"}
+    ]
+}

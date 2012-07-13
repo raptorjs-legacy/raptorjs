@@ -1,0 +1,7 @@
+{
+    "type": "module",
+    "name": "test.optimizer.moduleD",
+    "includes": [
+        {"path": "moduleD.js"}
+    ]
+}

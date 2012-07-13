@@ -19,7 +19,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var runtime = raptor.require('runtime')
+        var runtime = raptor.require('runtime');
         
         return {
             __include: true,

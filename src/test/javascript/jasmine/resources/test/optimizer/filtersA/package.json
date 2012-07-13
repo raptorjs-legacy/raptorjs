@@ -1,0 +1,8 @@
+{
+    "type": "module",
+    "name": "test.optimizer.filtersA",
+    "includes": [
+        {"path": "filtersA.js"},
+        {"path": "filtersA.css"}
+    ]
+}

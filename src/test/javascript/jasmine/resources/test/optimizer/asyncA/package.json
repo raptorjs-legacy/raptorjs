@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "name": "test.optimizer.asyncA",
+    "includes": [
+        {"module": "test.optimizer.mixedA", "async": true},
+        {"module": "test.optimizer.nestedA", "async": true},
+        {"module": "test.optimizer.moduleA"},
+        {"path": "asyncA.js"},
+        {"path": "asyncA.css"}
+    ]
+}

@@ -1,19 +1,19 @@
 require('./_helper.js');
 
-describe('packager.bundler module', function() {
-    var logger = raptor.require('logging').logger('raptor-bundler-spec'),
+describe('optimizer module', function() {
+    var logger = raptor.require('logging').logger('raptor-optimizer-spec'),
         forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
         testBundler = function(config) {
         
-            var bundler = raptor.require("packager.bundler");
+            var optimizer = raptor.require("optimizer");
             
             logger.debug("--------------------");
-            logger.debug('Begin bundler test for page "' + config.pageName + '":');
+            logger.debug('Begin optimizer test for page "' + config.pageName + '":');
             //Build the bundle set
             var bundles = [];
             forEach(config.bundleSet, function(bundleConfig) {
-                var bundle = bundler.createBundle(bundleConfig.name);
+                var bundle = optimizer.createBundle(bundleConfig.name);
                 forEach(bundleConfig.includes, function(include) {
                     bundle.addInclude(include);
                 });
@@ -21,7 +21,7 @@ describe('packager.bundler module', function() {
             });
             
             //Create the bundle mappings from the bundle set
-            var bundleSet = bundler.createBundleSet(
+            var bundleSet = optimizer.createBundleSet(
                 bundles,
                 {
                     enabledExtensions: config.enabledExtensions
@@ -30,7 +30,7 @@ describe('packager.bundler module', function() {
             //Get the page dependencies
             var pageIncludes = config.pageIncludes;
             
-            var pageDependencies = bundler.buildPageDependencies({
+            var pageDependencies = optimizer.buildPageDependencies({
                     pageName: config.pageName,
                     includes: pageIncludes,
                     bundleSet: bundleSet,
@@ -153,7 +153,7 @@ describe('packager.bundler module', function() {
             expect(duplicates).toEqualArray([]);
             
             forEach(config.expectedMappings, function(expected) {
-                bundler.forEachInclude(
+                optimizer.forEachInclude(
                     expected.include,
                     config.enabledExtensions,
                     function(include) {
@@ -195,31 +195,31 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.moduleA" },
-                               { "module": "test.bundler.moduleB" }]
+                    includes: [{ "module": "test.optimizer.moduleA" },
+                               { "module": "test.optimizer.moduleB" }]
                 },
                 { 
                     name: "bundleB",
-                    includes: [{ "module": "test.bundler.moduleB" },
-                               { "module": "test.bundler.moduleC" }]
+                    includes: [{ "module": "test.optimizer.moduleB" },
+                               { "module": "test.optimizer.moduleC" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageA",
-            pageIncludes: [{ "module": "test.bundler.moduleA" },
-                           { "module": "test.bundler.moduleB" },
-                           { "module": "test.bundler.moduleC" }],
+            pageIncludes: [{ "module": "test.optimizer.moduleA" },
+                           { "module": "test.optimizer.moduleB" },
+                           { "module": "test.optimizer.moduleC" }],
                      
             expectedMappings: [{
-                                  include: { "module": "test.bundler.moduleA" },
+                                  include: { "module": "test.optimizer.moduleA" },
                                   toBundle: "bundleA"
                               },
                               {
-                                  include: { "module": "test.bundler.moduleB" },
+                                  include: { "module": "test.optimizer.moduleB" },
                                   toBundle: "bundleA"
                               },
                               {
-                                  include: { "module": "test.bundler.moduleC" },
+                                  include: { "module": "test.optimizer.moduleC" },
                                   toBundle: "bundleB"
                               }],
             expectedBundles: {
@@ -245,29 +245,29 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.moduleA" }]
+                    includes: [{ "module": "test.optimizer.moduleA" }]
                 },
                 { 
                     name: "bundleB",
-                    includes: [{ "module": "test.bundler.moduleB" }]
+                    includes: [{ "module": "test.optimizer.moduleB" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageB",
-            pageIncludes: [{ "module": "test.bundler.moduleA" },
-                           { "module": "test.bundler.moduleB" },
-                           { "module": "test.bundler.moduleC" }],
+            pageIncludes: [{ "module": "test.optimizer.moduleA" },
+                           { "module": "test.optimizer.moduleB" },
+                           { "module": "test.optimizer.moduleC" }],
                            
             expectedMappings: [{
-                                  include: { "module": "test.bundler.moduleA" },
+                                  include: { "module": "test.optimizer.moduleA" },
                                   toBundle: "bundleA"
                               },
                               {
-                                  include: { "module": "test.bundler.moduleB" },
+                                  include: { "module": "test.optimizer.moduleB" },
                                   toBundle: "bundleB"
                               },
                               {
-                                  include: { "module": "test.bundler.moduleC" },
+                                  include: { "module": "test.optimizer.moduleC" },
                                   toBundle: "page-pageB"
                               }],
             expectedBundles: {
@@ -297,14 +297,14 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.mixedA" },
-                               { "module": "test.bundler.locationA" }]
+                    includes: [{ "module": "test.optimizer.mixedA" },
+                               { "module": "test.optimizer.locationA" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageC",
-            pageIncludes: [{ "module": "test.bundler.mixedA" },
-                           { "module": "test.bundler.locationA" }],
+            pageIncludes: [{ "module": "test.optimizer.mixedA" },
+                           { "module": "test.optimizer.locationA" }],
 
             expectedBundles: {
                 "head": [
@@ -340,14 +340,14 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.mixedA" },
-                               { "module": "test.bundler.locationB" }]
+                    includes: [{ "module": "test.optimizer.mixedA" },
+                               { "module": "test.optimizer.locationB" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageD",
-            pageIncludes: [{ "module": "test.bundler.mixedA" },
-                           { "module": "test.bundler.locationB" }],
+            pageIncludes: [{ "module": "test.optimizer.mixedA" },
+                           { "module": "test.optimizer.locationB" }],
 
             expectedBundles: {
                 "head": [
@@ -390,17 +390,17 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.mixedA" },
-                               { "module": "test.bundler.nestedA" }]
+                    includes: [{ "module": "test.optimizer.mixedA" },
+                               { "module": "test.optimizer.nestedA" }]
                 },
                 { 
                     name: "bundleB",
-                    includes: [{ "module": "test.bundler.asyncA" }]
+                    includes: [{ "module": "test.optimizer.asyncA" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageE",
-            pageIncludes: [{ "module": "test.bundler.asyncA" }],
+            pageIncludes: [{ "module": "test.optimizer.asyncA" }],
 
             expectedBundles: {
                 "head": [
@@ -425,7 +425,7 @@ describe('packager.bundler module', function() {
                 ]
             },
             expectedAsyncRequires: {
-                "test.bundler.mixedA": {
+                "test.optimizer.mixedA": {
                     requires: [],
                     bundles: [
                         {
@@ -442,8 +442,8 @@ describe('packager.bundler module', function() {
                         }
                     ]
                 },
-                "test.bundler.nestedA": {
-                    requires: ["test.bundler.nestedB"],
+                "test.optimizer.nestedA": {
+                    requires: ["test.optimizer.nestedB"],
                     bundles: [
                         {
                             name: "bundleA",
@@ -459,7 +459,7 @@ describe('packager.bundler module', function() {
                         }
                     ]
                 },
-                "test.bundler.nestedB": {
+                "test.optimizer.nestedB": {
                     requires: [],
                     bundles: [
                         {
@@ -485,17 +485,17 @@ describe('packager.bundler module', function() {
             bundleSet: [
                 { 
                     name: "bundleA",
-                    includes: [{ "module": "test.bundler.mixedA" },
-                               { "module": "test.bundler.nestedA" }]
+                    includes: [{ "module": "test.optimizer.mixedA" },
+                               { "module": "test.optimizer.nestedA" }]
                 },
                 { 
                     name: "bundleB",
-                    includes: [{ "module": "test.bundler.asyncA" }]
+                    includes: [{ "module": "test.optimizer.asyncA" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageE",
-            pageIncludes: [{ "module": "test.bundler.asyncA" },
+            pageIncludes: [{ "module": "test.optimizer.asyncA" },
                            { type: "loader-metadata" }],
 
             expectedBundles: {
@@ -521,7 +521,7 @@ describe('packager.bundler module', function() {
                 ]
             },
             expectedAsyncRequires: {
-                "test.bundler.mixedA": {
+                "test.optimizer.mixedA": {
                     requires: [],
                     bundles: [
                         {
@@ -538,8 +538,8 @@ describe('packager.bundler module', function() {
                         }
                     ]
                 },
-                "test.bundler.nestedA": {
-                    requires: ["test.bundler.nestedB"],
+                "test.optimizer.nestedA": {
+                    requires: ["test.optimizer.nestedB"],
                     bundles: [
                         {
                             name: "bundleA",
@@ -555,7 +555,7 @@ describe('packager.bundler module', function() {
                         }
                     ]
                 },
-                "test.bundler.nestedB": {
+                "test.optimizer.nestedB": {
                     requires: [],
                     bundles: [
                         {
@@ -575,14 +575,14 @@ describe('packager.bundler module', function() {
             },
             
             done: function(pageDependencies) {
-                var bundler = raptor.require("packager.bundler");
+                var optimizer = raptor.require("optimizer");
                 
-                var writer = bundler.createPageDependenciesFileWriter({
-                    outputDir: "/static",
+                var writer = optimizer.createPageDependenciesFileWriter({
+                    outputDir: "/some/dir/static",
                     checksumLength: 8
                 });
                 
-                writer.setUrlBuilder(bundler.createSimpleUrlBuilder({
+                writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
                     prefix: "http://localhost:8080/static/"
                 }));
                 
@@ -601,8 +601,66 @@ describe('packager.bundler module', function() {
                 
                 writer.writePageDependencies(pageDependencies);
 
-                expect(writtenFiles["/static/bundleA-3b5cde50.js"]).toNotEqual(null);
+                expect(writtenFiles["/some/dir/static/bundleA-3b5cde50.js"]).toNotEqual(null);
+                expect(writtenFiles["/some/dir/static/pageE-body.html"]).toNotEqual(null);
                 expect(Object.keys(writtenFiles).length).toEqual(9);
+            }
+        });
+    });
+    
+    it('should allow output filters', function() {
+        testBundler({
+            bundleSet: [
+                { 
+                    name: "bundleA",
+                    includes: [{ "module": "test.optimizer.filtersA" }]
+                }
+            ],
+            enabledExtensions: ["jquery", "browser"],
+            pageName: "filters",
+            pageIncludes: [{ "module": "test.optimizer.filtersA" }],
+
+            done: function(pageDependencies) {
+                var optimizer = raptor.require("optimizer");
+                
+                var writer = optimizer.createPageDependenciesFileWriter({
+                    outputDir: "/some/dir/static",
+                    checksumLength: 8
+                });
+                
+                writer.addFilter(function(code, contentType) {
+                    if (contentType === 'application/javascript') {
+                        return code.toUpperCase();
+                    }
+                    else if (contentType === 'text/css') {
+                        return code.toLowerCase();
+                    }
+                    else {
+                        return code;
+                    }
+                });
+                
+                
+                writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
+                    prefix: "http://localhost:8080/static/"
+                }));
+                
+                var writtenCode = {};
+                
+                writer.writeBundleFile = function(outputPath, code) {
+                    logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+                    writtenCode[code] = outputPath;
+                };
+                
+                writer.writePageIncludeHtmlFile = function(outputPath, html) {
+                    logger.debug('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
+                };
+
+                writer.writePageDependencies(pageDependencies);
+
+                expect(writtenCode["FILTERSA_JS"]).toNotEqual(null);
+                expect(writtenCode["filtersa_css"]).toNotEqual(null);
+                
             }
         });
     });

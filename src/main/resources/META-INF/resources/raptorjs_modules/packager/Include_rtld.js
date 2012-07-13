@@ -55,7 +55,7 @@ raptor.defineClass(
             },
             
             getContentType: function() {
-                return "application/javascript"
+                return "application/javascript";
             },
             
             getResourcePath: function() {

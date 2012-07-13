@@ -191,7 +191,8 @@ $rload(function(raptor) {
                 options = {
                     callback: arguments[0],
                     thisObj: arguments[1]
-                }
+                };
+                
                 if (arguments[2]) {
                     raptor.extend(options, arguments[2]);
                 }

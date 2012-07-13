@@ -66,7 +66,7 @@ raptor.define(
                         }
                         
                         if (type._set) {
-                            type._set(t, curObj);
+                            type._set(curObj, name, t);
                         }
                         else if (type._targetProp) {
                             curObj[type._targetProp] = t;
@@ -103,13 +103,49 @@ raptor.define(
                     
                     startElement: function (el) {
                         
-                        
-                        var typeKey = el.getURI() ? el.getURI() + ":" + el.getLocalName() : el.getLocalName(),
-                            type = curType[typeKey];
-                        
+                        var getType = function(el, nodeType) {
+                                var lookupType = function(key) {
+                                    var type;
+                                    
+                                    if (nodeType === 'attribute') {
+                                        type = curType['@' + key];
+                                    }
+                                    else if (nodeType === 'element') {
+                                        type = curType['<' + key + '>'];
+                                    }
+                                    if (!type) {
+                                        type = curType[key];
+                                    }
+                                    return type;
+                                };
+                                
+                                var uri = el.getURI();
+                                if (uri) {
+                                    type = lookupType(uri + ":" + el.getLocalName());
+                                    if (!type) {
+                                        type = lookupType(uri + ":*");                                        
+                                    }
+                                }
+                                else {
+                                    type = lookupType(el.getLocalName());
+                                }
+                                
+                                if (!type) {
+                                    type = lookupType("*");                                        
+                                }
+                                
+                                if (typeof type === 'function') {
+                                    type = type(el, nodeType);
+                                }
+                                
+                                return type;
+                            },
+                            type = getType(el, "element");
+                            
                         if (!type) {
-                            _handleError("Unexpected element: <" + el.getQName() + ">(" + typeKey + "). Expected one of: " + _expected());
+                            _handleError("Unexpected element: <" + el.getQName() + ">. Expected one of: " + _expected());
                         }
+                        
                         
                         curType = type;
                         typeStack.push(type);
@@ -118,14 +154,11 @@ raptor.define(
                             curProp = el.getLocalName();
                             
                             if (type._begin) {
-                                type._begin(curObj);
+                                type._begin(curObj, el.getLocalName(), el.getURI());
                             }
                         }
                         else if (type._type === OBJECT) {
-                            if (!type._begin) {
-                                throw new Error(el.getLocalName() + " is a type, but does not implement '_begin'");
-                            }
-                            curObj = type._begin();
+                            curObj = type._begin ? type._begin(curObj, el) : {};
                             if (!curObj) {
                                 throw new Error('_begin() for "' + el.getLocalName() + '" did not return an object.');
                             }
@@ -139,9 +172,9 @@ raptor.define(
                         
                         forEach(el.getAttributes(), function(attr) {
                             
-                            var type = curType[attr.getURI() ? attr.getURI() + ":" + attr.getLocalName() : attr.getLocalName()];
+                            var type = getType(attr, "attribute");
                             if (!type) {
-                                _handleError("Unexpected attribute: " + attr.name + ". Expected one of: " + _expected(true));
+                                _handleError("Unexpected attribute: " + attr.getQName() + ". Expected one of: " + _expected(true));
                             }
                             
                             _setProp(attr.getLocalName(), type, attr.getValue());
@@ -175,7 +208,7 @@ raptor.define(
                                 curType._end(completedObj, curObj);
                             }
                         }
-                        else {
+                        else if (curType._type) {
                             throw new Error("Invalid type: " + curType._type);
                         }
                         

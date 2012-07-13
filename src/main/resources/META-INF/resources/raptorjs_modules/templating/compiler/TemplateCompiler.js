@@ -108,6 +108,8 @@ raptor.defineClass(
              */
             compile: function(xmlSrc, filePath) {
                 var _this = this,
+                    rootNode,
+                    templateBuilder,
                     handleErrors = function() {
                         var message = "Errors in template:\n",
                             errors = _this.getErrors();
@@ -116,7 +118,7 @@ raptor.defineClass(
                             message += (i+1) + ") " + (errors[i].pos ? "[" + errors[i].pos + "] " : "") + errors[i].message + "\n";
                         }
                         
-                        var error = new Error(message)
+                        var error = new Error(message);
                         
                         error.errors = _this.getErrors();
                         throw error;
@@ -127,9 +129,8 @@ raptor.defineClass(
                     /*
                      * First build the parse tree for the tempate
                      */
-                    var rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
-                    
-                    var templateBuilder = new TemplateBuilder(this, filePath); //The templateBuilder object is need to manage the compiled JavaScript output              
+                    rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
+                    templateBuilder = new TemplateBuilder(this, filePath); //The templateBuilder object is need to manage the compiled JavaScript output              
 
                     /*
                      * The tree is continuously transformed until we go through an entire pass where 
@@ -164,7 +165,7 @@ raptor.defineClass(
 //                    console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                 }
                 catch(e) {
-                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e, e));
+                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
                 }
                 
                 if (this.hasErrors()) {

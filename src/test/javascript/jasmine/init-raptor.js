@@ -27,7 +27,8 @@ createRaptor = function(override) {
         logging: {
             loggers: GLOBAL.raptorLoggingConfig || {
                 'ROOT': {level: 'WARN'},
-                'packager.bundler': {level: 'DEBUG'},
+                'optimizer': {level: 'DEBUG'},
+                'raptor-optimizer-spec': {level: 'DEBUG'},
                 'oop-server': {level: 'WARN'},
                 'resources': {level: 'WARN'}
             }

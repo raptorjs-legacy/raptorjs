@@ -1,8 +1,0 @@
-{
-    "type": "module",
-    "name": "test.bundler.mixedB",
-    "includes": [
-        {"path": "mixedB.js"},
-        {"path": "mixedB.css"}
-    ]
-}

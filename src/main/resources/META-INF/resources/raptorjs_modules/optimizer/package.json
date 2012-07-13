@@ -1,0 +1,28 @@
+{
+    "type": "module",
+    "name": "optimizer",
+    "version": "1.0",
+    "description": "Object oriented programming support for JavaScript",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+    ],
+    
+    "extensions": [
+        {
+            "name": "server",
+            "includes": [
+                {"path": "Bundle.js"},
+                {"path": "BundleSet.js"},
+                {"path": "PageDependencies.js"},
+                {"path": "optimizer.js"}
+            ]
+        }
+    ]
+}

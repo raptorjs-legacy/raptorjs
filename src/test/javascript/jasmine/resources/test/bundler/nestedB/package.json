@@ -1,8 +1,0 @@
-{
-    "type": "module",
-    "name": "test.bundler.nestedB",
-    "includes": [
-        {"path": "nestedB.js"},
-        {"path": "nestedB.css"}
-    ]
-}

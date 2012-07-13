@@ -1,7 +1,0 @@
-{
-    "type": "module",
-    "name": "test.bundler.moduleD",
-    "includes": [
-        {"path": "moduleD.js"}
-    ]
-}

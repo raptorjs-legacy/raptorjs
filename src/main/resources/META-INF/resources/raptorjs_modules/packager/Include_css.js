@@ -38,7 +38,7 @@ raptor.defineClass(
             },
             
             getContentType: function() {
-                return "text/css"
+                return "text/css";
             }
         };
     });
