@@ -1,12 +1,11 @@
-var startRegExp = /<!--\s*\[\s*includes\s+(\w+)\s*\]\s*-->/g,
-    endRegExp = /<!--\s*\[\/\s*includes\s*\]\s*-->/g;
+var startRegExp = /<!--\s*\[\s*include\s+(\w+)\s*\]\s*-->/g,
+    endRegExp = /<!--\s*\[\/\s*include\s*\]\s*-->/g;
     
 exports.createInjector = function(pageHtml, pagePath) {
     var injectIndexes = {},
         startMatches, 
         endMatch,
         parts = [],
-        injects = [],
         begin = 0;
         
         
@@ -23,13 +22,15 @@ exports.createInjector = function(pageHtml, pagePath) {
         endRegExp.lastIndex = startRegExp.lastIndex;
         
         endMatch = endRegExp.exec(pageHtml);
-        if (!endMatch) {
-            raptor.throwError(new Error('Ending marker not found for location "' + locationName + '" in page "' + pagePath + '"'));
+        if (endMatch) {
+            begin = endMatch.index;
+            startRegExp.lastIndex = endRegExp.lastIndex;
+        }
+        else {
+            begin = startRegExp.lastIndex;
+            parts.push('<!-- [/include] -->');
         }
         
-        begin = endMatch.index;
-        
-        startRegExp.lastIndex = endRegExp.lastIndex;
     }
     
     if (begin < pageHtml.length) {
@@ -50,5 +51,5 @@ exports.createInjector = function(pageHtml, pagePath) {
         getHtml: function() {
             return parts.join('');
         }
-    }
+    };
 };

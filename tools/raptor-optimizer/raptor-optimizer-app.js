@@ -1,4 +1,4 @@
-require("raptor").createRaptor({
+require("../../").createRaptor({
     logging: {
         loggers: {
             'ROOT': {level: 'WARN'},
@@ -24,7 +24,6 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     strings = raptor.require('strings'),
     parseArgs = function(args) {
         var config={};
-            
         args.forEach(function(arg, i) {
             var matches;
             if ((matches = configArgRegExp.exec(arg))) {
@@ -44,9 +43,9 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
 var Config = require('./Config.js');
 
 
-exports.run = function(args) {
-    var configFilePath = null;
-    var args = parseArgs(process.argv.slice(1));
+exports.run = function() {
+    
+    var args = parseArgs(process.argv.slice(2));
     
     var config = new Config();
     
@@ -55,12 +54,14 @@ exports.run = function(args) {
     });
     
     var configFile = args["config-file"];
+    
     if (!configFile) {
+        
         configFile = files.joinPaths(cwd, 'optimizer-config.xml');
     };
     
     if (!files.exists(configFile)) {
-        console.error('Bundler configuration file not found at location "' + configFile + '". Quitting.');
+        console.error('Optimizer configuration file not found at location "' + configFile + '". Quitting.');
     }
     
     logger.info('Using optimizer configuration file at location "' + configFile + '"');
@@ -160,7 +161,7 @@ exports.run = function(args) {
         
         if (injector) {
             var pageHtml = injector.getHtml();
-            logger.info('Inject includes into HTML page at path "' + pagePath + '"...');
+            logger.info('Injecting includes into HTML page at path "' + pagePath + '"...');
             files.writeFully(pagePath, pageHtml);
         }
         writer.writePageIncludeHtml = oldWrite;
