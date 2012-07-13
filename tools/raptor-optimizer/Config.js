@@ -7,17 +7,22 @@ var BundleDef = require('./BundleDef.js'),
 
     
 var Config = function() {
-    this.bundlesOutputDir = "static/bundles";
+    this.bundlesOutputDir = "dist/static/bundles";
     this.scriptsOutputDir = null;
     this.styleSheetsOutputDir = null;
-    this.htmlOutputDir = "inc/page-dependencies";
-    
+    this.htmlOutputDir = "dist/inc/page-dependencies";
+    this.pageOutputDir = "dist/pages";
+    this.scriptsUrlPrefix = null;
+    this.styleSheetsUrlPrefix = null;
+    this.urlPrefix = null;
+    this.modifyPages = false;
     this.enabledExtensions = {};
     this.params = {};
     this.pages = [];
     this.bundleSetDefsByName = {};
     this.loadedBundleSets = {};
     this.pageSearchPath = [];
+    this.keepHtmlMarkers = true;
 };
 
 Config.prototype = {
@@ -289,6 +294,10 @@ Config.prototype = {
                         _type: "string",
                         _targetProp: "outputDir"
                     },
+                    "bundles-output-dir": {
+                        _type: "string",
+                        _targetProp: "bundlesOutputDir"
+                    },
                     "js-output-dir": {
                         _type: "string",
                         _targetProp: "scriptsOutputDir"
@@ -301,9 +310,21 @@ Config.prototype = {
                         _type: "string",
                         _targetProp: "htmlOutputDir"
                     },
+                    "page-output-dir": {
+                        _type: "string",
+                        _targetProp: "pageOutputDir"
+                    },
+                    "modify-pages": {
+                        _type: "boolean",
+                        _targetProp: "modifyPages"
+                    },
                     "inject-html-includes": {
                         _type: "boolean",
                         _targetProp: "injectHtmlIncludes"
+                    },
+                    "keep-html-markers": {
+                        _type: "boolean",
+                        _targetProp: "keepHtmlMarkers"
                     },
                     "url-prefix": {
                         _type: "string",
@@ -332,6 +353,12 @@ Config.prototype = {
                     },
                     "<bundles>": bundlesHandler, //End "bundles"
                     
+                    "raptor-config": {
+                        _type: "string",
+                        _set: function(config, name, value) {
+                            config.raptorConfigJSON = JSON.stringify(eval('(' + value + ')'));
+                        }
+                    },
                     "<pages>": {
                         "<page>": {
                             _type: "object",

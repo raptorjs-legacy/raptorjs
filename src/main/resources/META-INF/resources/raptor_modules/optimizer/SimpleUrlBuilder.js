@@ -7,6 +7,9 @@ raptor.defineClass(
             this.prefix = config.prefix;
             this.scriptsPrefix = config.scriptsPrefix;
             this.styleSheetsPrefix = config.styleSheetsPrefix;
+            this.scriptsDir = config.scriptsDir;
+            this.styleSheetsDir = config.styleSheetsDir;
+            this.pageDir = null;
         };
         
         SimpleUrlBuilder.prototype = {
@@ -27,6 +30,7 @@ raptor.defineClass(
                 }
                 else {
                     raptor.throwError(new Error("Unsupported content type: " + contentType));
+                    return null;
                 }
             },
             
@@ -41,6 +45,25 @@ raptor.defineClass(
                 }
                 else {
                     raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                }
+                
+                if (!prefix) {
+                    var toPath,
+                        fromPath;
+                    
+                    if (bundle.isJavaScript()) {
+                        toPath = this.scriptsDir;
+                    }
+                    else if (bundle.isStyleSheet()) {
+                        toPath = this.styleSheetsDir;
+                    }
+                    else {
+                        raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                    }
+                    
+                    fromPath = this.pageDir;
+                    
+                    prefix = require('path').relative(fromPath, toPath) + '/';
                 }
                 return prefix;
             }

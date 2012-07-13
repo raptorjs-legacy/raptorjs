@@ -30,7 +30,8 @@ exports.findPages = function(config) {
                                 if (pageFile.exists()) {
                                     pageDef.path = pageFile.getAbsolutePath();
                                 }
-
+                                pageDef.basePath = searchPathEntry.path;
+                                
                                 var fileResource = raptor.require("resources").createFileResource(file.getAbsolutePath());
                                 var manifest = packager.getPackageManifest(fileResource);
                                 

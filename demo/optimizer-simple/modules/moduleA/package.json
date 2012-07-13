@@ -3,6 +3,7 @@
     "name": "moduleA",
     "includes": [
         {"path": "moduleA.js"},
-        {"path": "moduleA.css"}
+        {"path": "moduleA.css"},
+        {"path": "greeting.rhtml"}
     ]
 }

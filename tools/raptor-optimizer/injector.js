@@ -1,7 +1,7 @@
 var startRegExp = /<!--\s*\[\s*include\s+(\w+)\s*\]\s*-->/g,
     endRegExp = /<!--\s*\[\/\s*include\s*\]\s*-->/g;
     
-exports.createInjector = function(pageHtml, pagePath) {
+exports.createInjector = function(pageHtml, pagePath, keepMarkers) {
     var injectIndexes = {},
         startMatches, 
         endMatch,
@@ -15,7 +15,13 @@ exports.createInjector = function(pageHtml, pagePath) {
     while ((startMatches = startRegExp.exec(pageHtml))) {
         var locationName = startMatches[1];
         
-        parts.push(pageHtml.substring(begin, startRegExp.lastIndex));
+        if (keepMarkers) {
+            parts.push(pageHtml.substring(begin, startRegExp.lastIndex));    
+        }
+        else {
+            parts.push(pageHtml.substring(begin, startMatches.index));
+        }
+        
         injectIndexes[locationName] = parts.length;
         parts.push('');
         
@@ -23,12 +29,21 @@ exports.createInjector = function(pageHtml, pagePath) {
         
         endMatch = endRegExp.exec(pageHtml);
         if (endMatch) {
-            begin = endMatch.index;
+            if (keepMarkers) {
+                begin = endMatch.index;
+            }
+            else {
+                begin = endRegExp.lastIndex;
+            }
+            
             startRegExp.lastIndex = endRegExp.lastIndex;
         }
         else {
             begin = startRegExp.lastIndex;
-            parts.push('<!-- [/include] -->');
+            if (keepMarkers) {
+                parts.push('<!-- [/include] -->');    
+            }
+            
         }
         
     }

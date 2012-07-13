@@ -15,21 +15,39 @@
     
     <minify-js>${minify}</minify-js>
     <clean-output-dirs>true</clean-output-dirs>
-    <js-output-dir>static/bundles/js</js-output-dir>
-    <css-output-dir>static/bundles/css</css-output-dir>
+<!--     <js-output-dir>dist/bundles</js-output-dir> -->
+<!--     <css-output-dir>dist/bundles</css-output-dir> -->
+    <bundles-output-dir>dist/static</bundles-output-dir>
+    <page-output-dir>dist</page-output-dir>
     
-    <html-output-dir>inc/page-dependencies</html-output-dir>
+        
+    <html-output-dir>dist/inc/page-dependencies</html-output-dir>
     <inject-html-includes>true</inject-html-includes>
+    <keep-html-markers>false</keep-html-markers>
     
+    <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
+    <modify-pages>false</modify-pages>
     
-    <js-url-prefix>/static/bundles/js/</js-url-prefix>
-    <css-url-prefix>/static/bundles/css/</css-url-prefix>
+<!--     <js-url-prefix></js-url-prefix> -->
+<!--     <css-url-prefix></css-url-prefix> -->
     
     <enabledExtensions>jquery,browser</enabledExtensions>
+    
+    <raptor-config>
+    {
+        logging: {
+            loggers: {
+                'ROOT': {level: 'DEBUG'}
+            }
+        }
+    }
+    </raptor-config>
 
     <bundles name="default">
         <bundle name="core">
             <module name="core" recursive="true"/>
+            <module name="oop" recursive="true"/>
+            <init-raptor/>
         </bundle>
         <bundle name="templating">
             <module name="templating" recursive="true"/>

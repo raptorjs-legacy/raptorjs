@@ -73,6 +73,7 @@ exports.run = function() {
     ["outputDir",
      "scriptsOutputDir",
      "styleSheetsOutputDir",
+     "pageOutputDir",
      "htmlOutputDir"].forEach(function(dir) {
          if (config[dir]) {
              config[dir] = path.resolve(cwd, config[dir]);
@@ -118,11 +119,16 @@ exports.run = function() {
         });
     }
     
-    writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
+    var urlBuilder = optimizer.createSimpleUrlBuilder({
+            scriptsDir: config.getScriptsOutputDir(),
+            styleSheetsDir: config.getStyleSheetsOutputDir(),
             prefix: config.urlPrefix,
             scriptsPrefix: config.scriptsUrlPrefix,
             styleSheetsPrefix: config.styleSheetsUrlPrefix
-        }));
+        });
+    
+    writer.setUrlBuilder(urlBuilder);
+    writer.context.raptorConfig = config.raptorConfigJSON;
     
     raptor.require('resources').getSearchPath().addDir(cwd);
     
@@ -135,34 +141,60 @@ exports.run = function() {
         var bundleSetDef = page.getBundleSetDef(),
             enabledExtensions = page.getEnabledExtensions(),
             bundleSet = config.createBundleSet(bundleSetDef, enabledExtensions),
-            pageDependencies = optimizer.buildPageDependencies({
-                pageName: page.name,
-                includes: page.includes,
-                bundleSet: bundleSet,
-                enabledExtensions: enabledExtensions
-            });
+            pageDependencies,
+            pagePath,
+            outputPagePath;
+
+        pageDependencies = optimizer.buildPageDependencies({
+            pageName: page.name,
+            includes: page.includes,
+            bundleSet: bundleSet,
+            enabledExtensions: enabledExtensions
+        });
             
         var oldWrite,
-            injector,
-            pagePath;
+            injector;
+        
+        urlBuilder.pageDir = null; //Reset out the page output directory for the URL builder  
         
         if (page.path && config.injectHtmlIncludes) {
-            oldWrite = writer.writePageIncludeHtml;
             pagePath = path.resolve(cwd, page.path);
-            injector = require('./injector').createInjector(files.readFully(pagePath), pagePath);
+            
+            if (config.modifyPages === false) {
+
+                if (page.basePath) {
+                    outputPagePath = path.join(config.pageOutputDir, pagePath.substring(page.basePath.length));
+                }
+                else {
+                    outputPagePath = path.join(config.pageOutputDir, new files.File(pagePath).getName());    
+                }
+            }
+            else {
+                outputPagePath = pagePath;
+            }
+            
+            urlBuilder.pageDir = new files.File(outputPagePath).getParent();
+            
+            oldWrite = writer.writePageIncludeHtml;
+            
+            injector = require('./injector').createInjector(files.readFully(pagePath), pagePath, config.keepHtmlMarkers !== false);
             
             writer.writePageIncludeHtml = function(pageName, location, html) {
                 injector.inject(location, html);
             };
         }
+        
         console.log();
         logger.info('Writing dependencies for page "' + page.name + '"...');
         writer.writePageDependencies(pageDependencies);
         
         if (injector) {
             var pageHtml = injector.getHtml();
-            logger.info('Injecting includes into HTML page at path "' + pagePath + '"...');
-            files.writeFully(pagePath, pageHtml);
+            
+            logger.info('Writing page to "' + outputPagePath + '"...');
+            var outputPageFile = new files.File(outputPagePath);
+            outputPageFile.writeFully(pageHtml);
+            
         }
         writer.writePageIncludeHtml = oldWrite;
     });

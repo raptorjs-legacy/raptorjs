@@ -36,9 +36,13 @@ raptor.defineClass(
                 $rcreate(this.config);
             },
             
+            getContentType: function() {
+                return "application/javascript";
+            },
+            
             getCode: function(context) {
-                var config = this.config;
-                return "$rcreate(" + JSON.stringify(config) + ");";
+                var config = this.config || context.raptorConfig || {};
+                return "$rcreate(" + (typeof config === 'string' ? config : JSON.stringify(config)) + ");";
             }
         };
     });

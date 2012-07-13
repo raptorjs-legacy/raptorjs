@@ -9,7 +9,7 @@ raptor.defineClass(
         var PageDependenciesWriter = function(config) {
             this.checksumLength = 8;
             this.urlBuilder = null;
-            this.context = null;
+            this.context = {};
             
             raptor.extend(this, config);
             
@@ -17,6 +17,9 @@ raptor.defineClass(
                 this.filters = [];
             }
             
+            if (!this.context) {
+                this.context = {};
+            }
         };
         
         PageDependenciesWriter.prototype = {
@@ -36,7 +39,7 @@ raptor.defineClass(
                 var _this = this,
                     bundleChecksums = {},
                     writtenFiles = {},
-                    context = {},
+                    context = this.context,
                     writeBundle = function(bundle) {
                         
                         var checksum = bundleChecksums[bundle.getKey()];
