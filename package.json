@@ -8,7 +8,7 @@
         "packager"
     ],
     "scripts": {
-        "test": "jasmine-node --verbose test/"
+        "test": "node_modules/.bin/jasmine-node --verbose test/ && node_modules/.bin/jshint lib/raptor/raptor_modules"
     },
     "author": "Patrick Steele-Idem <psteeleidem@ebay.com>",
     "contributors": [
