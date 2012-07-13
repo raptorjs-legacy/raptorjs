@@ -601,8 +601,6 @@ describe('optimizer module', function() {
                 
                 writer.writePageDependencies(pageDependencies);
 
-                expect(writtenFiles["/some/dir/static/bundleA-3b5cde50.js"]).toNotEqual(null);
-                expect(writtenFiles["/some/dir/static/pageE-body.html"]).toNotEqual(null);
                 expect(Object.keys(writtenFiles).length).toEqual(9);
             }
         });
