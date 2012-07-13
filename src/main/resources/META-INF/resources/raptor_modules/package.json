@@ -1,0 +1,35 @@
+{
+    "type": "library",
+    "name": "raptor",
+    "version": "1.0",
+    "description": "RaptorJS",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor-taglibs": {
+        "http://raptor.ebayopensource.org/core": "/templating/taglibs/core/core.rtld",
+        "http://raptor.ebayopensource.org/html": "/templating/taglibs/html/html.rtld",
+        "http://raptor.ebayopensource.org/widgets": "/templating/taglibs/widgets/widgets.rtld"
+    },
+    
+    "raptor-module-mappings": {
+        "taglib/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
+        "taglib/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
+        "taglib/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
+    },
+	
+	"raptor-include-types": {
+	    "js": {"class": "packager.Include_js", "path": "/packager/Include_js.js"},
+	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
+	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
+	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
+	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
+	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},
+	    "loader-metadata": {"class": "packager.Include_loader-metadata", "path": "/packager/Include_loader-metadata.js"} 
+	}
+}

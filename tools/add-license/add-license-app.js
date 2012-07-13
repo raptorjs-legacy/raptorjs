@@ -1,4 +1,4 @@
-require("raptorjs").createRaptor({
+require("raptor").createRaptor({
     logging: {
         loggers: {
             'ROOT': {level: 'WARN'},
@@ -13,7 +13,7 @@ var files = raptor.require("files"),
 
 var licenseText = files.readFully(__dirname + "/LICENSE");
 
-var raptorJSModulesDir = files.joinPaths(__dirname, "../../src/main/resources/META-INF/resources/raptorjs_modules");
+var raptorJSModulesDir = files.joinPaths(__dirname, "../../src/main/resources/META-INF/resources/raptor_modules");
 var javaSrcDir = files.joinPaths(__dirname, "../../src/main/java");
 
 var walker = raptor.require("files.walker");

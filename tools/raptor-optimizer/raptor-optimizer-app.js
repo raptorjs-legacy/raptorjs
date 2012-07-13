@@ -1,13 +1,16 @@
-require("raptorjs").createRaptor({
+require("raptor").createRaptor({
     logging: {
         loggers: {
             'ROOT': {level: 'WARN'},
             'oop-server': {level: 'WARN'},
             "optimizer": {level: "INFO"},
+            "raptor-optimizer-app": {level: "INFO"},
             'resources': {level: 'WARN'}
         }
     }
 });
+
+var logger = raptor.require('logging').logger('raptor-optimizer-app');
 
 
 
@@ -18,6 +21,7 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     files = raptor.require('files'),
     path = require('path'),
     fs = require('fs'),
+    strings = raptor.require('strings'),
     parseArgs = function(args) {
         var config={};
             
@@ -59,7 +63,8 @@ exports.run = function(args) {
         console.error('Bundler configuration file not found at location "' + configFile + '". Quitting.');
     }
     
-    console.log('Using optimizer configuration file at location "' + configFile + '"\n');
+    logger.info('Using optimizer configuration file at location "' + configFile + '"');
+    console.log();
     
     config.parseXml(files.readFully(configFile), configFile);
     
@@ -72,7 +77,7 @@ exports.run = function(args) {
              config[dir] = path.resolve(cwd, config[dir]);
              
              if (config.cleanOutputDirs === true && files.exists(config[dir])) {
-                 console.log("Cleaning directory: " + config[dir]);
+                 logger.info("Cleaning directory: " + config[dir]);
                  files.remove(config[dir]);
              }    
          }
@@ -88,10 +93,10 @@ exports.run = function(args) {
         },
         padding=24;
 
-    console.log('Bundler output directories:\n' + 
+    logger.info('Bundler output directories:\n' + 
         leftPad('JavaScript bundles: ', padding) + config.getScriptsOutputDir() + '\n' + 
         leftPad('CSS bundles: ', padding) + config.getStyleSheetsOutputDir() + '\n' + 
-        leftPad('HTML includes: ', padding) + config.getHtmlOutputDir() + '\n');
+        leftPad('HTML includes: ', padding) + config.getHtmlOutputDir());
     
     var optimizer = raptor.require("optimizer");
     var writer = optimizer.createPageDependenciesFileWriter({
@@ -121,8 +126,11 @@ exports.run = function(args) {
     raptor.require('resources').getSearchPath().addDir(cwd);
     
    
+    require('./page-finder.js').findPages(config);
     
     config.forEachPage(function(page) {
+        console.log();
+        logger.info('Building bundles for page "' + page.name + '"...');
         var bundleSetDef = page.getBundleSetDef(),
             enabledExtensions = page.getEnabledExtensions(),
             bundleSet = config.createBundleSet(bundleSetDef, enabledExtensions),
@@ -146,16 +154,19 @@ exports.run = function(args) {
                 injector.inject(location, html);
             };
         }
-        
+        console.log();
+        logger.info('Writing dependencies for page "' + page.name + '"...');
         writer.writePageDependencies(pageDependencies);
         
         if (injector) {
             var pageHtml = injector.getHtml();
+            logger.info('Inject includes into HTML page at path "' + pagePath + '"...');
             files.writeFully(pagePath, pageHtml);
         }
         writer.writePageIncludeHtml = oldWrite;
     });
     
-    console.log('\Optimization complete!');
+    console.log();
+    logger.info('\Optimization complete!');
     
 }

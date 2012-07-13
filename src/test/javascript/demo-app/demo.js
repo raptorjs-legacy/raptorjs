@@ -1,5 +1,5 @@
 
-require('raptorjs').createRaptor({
+require('raptor').createRaptor({
         resources: {
             searchPath: [
                 {

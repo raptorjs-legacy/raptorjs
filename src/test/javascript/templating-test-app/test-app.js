@@ -1,4 +1,4 @@
-require("raptorjs").createRaptor({
+require("raptor").createRaptor({
     logging: {
         loggers: {
             'ROOT': {level: 'WARN'},

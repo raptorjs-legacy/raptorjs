@@ -1,0 +1,8 @@
+{
+    "includes": [
+        { "module": "core", "recursive": true },
+        { "module": "templating", "recursive": true },
+        { "module": "moduleA" },
+        { "module": "loader" }
+     ]
+}

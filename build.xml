@@ -1,16 +1,16 @@
 <project name="RaptorJS" basedir="." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
 
     
-    <property name="node_modules.raptorjs.dir" location="node_modules/raptorjs"/>
+    <property name="node_modules.raptor.dir" location="node_modules/raptor"/>
 	<property name="src.node_modules.dir" location="src/main/node_modules"/>
 	
-    <property name="raptorjs_modules.dir" location="src/main/resources/META-INF/resources/raptorjs_modules"/>
+    <property name="raptor_modules.dir" location="src/main/resources/META-INF/resources/raptor_modules"/>
     
-    <property name="dist.raptorjs-node.dir" location="dist/node-raptorjs"/>
-	<property name="dist.raptorjs-node.node_modules.dir" location="${dist.raptorjs-node.dir}/node_modules"/>
-    <property name="dist.raptorjs-node.raptorjs_modules.dir" location="${dist.raptorjs-node.dir}/lib/raptorjs/raptorjs_modules"/>
+    <property name="dist.node-raptor.dir" location="dist/node-raptor"/>
+	<property name="dist.node-raptor.node_modules.dir" location="${dist.node-raptor.dir}/node_modules"/>
+    <property name="dist.node-raptor.raptor_modules.dir" location="${dist.node-raptor.dir}/lib/raptor/raptor_modules"/>
     
-    <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+    <path id="maven-ant-tasks.classpath" path="ant-lib/maven-ant-tasks-2.1.3.jar" />
     
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
            uri="antlib:org.apache.maven.artifact.ant"
@@ -23,7 +23,6 @@
     </target>
         
     <target name="package">
-        <echo message="PACKAGE"/>
         <mvn:mvn pom="pom.xml">
             <arg value="package"/>
         </mvn:mvn>
@@ -33,16 +32,12 @@
     	<delete dir="dist" />
         <mkdir dir="dist" />
     	
-        <copy todir="${dist.raptorjs-node.dir}">
-            <fileset dir="${node_modules.raptorjs.dir}" />
-        </copy>
-    	
-    	<copy todir="${dist.raptorjs-node.node_modules.dir}">
-            <fileset dir="${src.node_modules.dir}" />
+        <copy todir="${dist.node-raptor.dir}">
+            <fileset dir="${node_modules.raptor.dir}" includes="bin lib test" />
         </copy>
         
-        <copy todir="${dist.raptorjs-node.raptorjs_modules.dir}">
-            <fileset dir="${raptorjs_modules.dir}" />
+        <copy todir="${dist.node-raptor.raptor_modules.dir}">
+            <fileset dir="${raptor_modules.dir}" />
         </copy>
     </target>
 

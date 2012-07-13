@@ -1,8 +1,10 @@
 var BundleDef = require('./BundleDef.js'),
     BundleSetDef = require('./BundleSetDef.js'),
     PageDef = require('./PageDef.js'),
-    optimizer = raptor.require('optimizer');
+    optimizer = raptor.require('optimizer'),
+    strings = raptor.require('strings');
     
+
     
 var Config = function() {
     this.bundlesOutputDir = "static/bundles";
@@ -15,11 +17,27 @@ var Config = function() {
     this.pages = [];
     this.bundleSetDefsByName = {};
     this.loadedBundleSets = {};
+    this.pageSearchPath = [];
 };
 
 Config.prototype = {
     addParam: function(name, value) {
+        if (this.params.hasOwnProperty(name)) {
+            return; //Params are only write-once
+        }
         this.params[name] = value;
+    },
+    
+    addPageSearchDir: function(path) {
+        this.pageSearchPath.push({type: "dir", path: path});
+    },
+    
+    hasPageSearchPath: function() {
+        return this.pageSearchPath.length > 0;
+    },
+    
+    forEachPageSearchPathEntry: function(callback, thisObj) {
+        raptor.forEach(this.pageSearchPath, callback, thisObj);
     },
     
     getScriptsOutputDir: function() {
@@ -235,6 +253,26 @@ Config.prototype = {
                         }
                     },
                     
+                    "page-search-path": {
+                        "<dir>": {
+                            _type: "object",
+                            _begin: function() {
+                                return {};
+                            },
+                            _end: function(entry, config) {
+                                var path = entry.path;
+                                if (!entry.path) {
+                                    raptor.throwError(new Error('"path" is required for directory resource search path entry'));
+                                }
+                                path = require('path').resolve(process.cwd(), path);
+                                config.addPageSearchDir(path);
+                            },
+                            "@path": {
+                                _type: "string"
+                            }
+                        }
+                    },
+                    
                     "clean-output-dirs": {
                         _type: "boolean",
                         _targetProp: "cleanOutputDirs"
@@ -302,6 +340,7 @@ Config.prototype = {
                                 config.addPage(page);
                                 return page;
                             },
+                            
                             "path": {
                                 _type: "string"
                             },
@@ -318,6 +357,12 @@ Config.prototype = {
                     } //End "<pages>"
                    
                 } //End "bundle-config"
+            },
+            { //objectMapper options
+                parseProp: function(value, name) {
+                    var result = strings.merge(value, config.params);
+                    return result;
+                }
             });
     }
 };

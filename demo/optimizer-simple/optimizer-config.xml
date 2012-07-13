@@ -1,6 +1,7 @@
 <optimizer-config>
     
     <params>
+        <minify>true</minify>
         <scripts-dir>./</scripts-dir>
     </params>
     
@@ -8,7 +9,11 @@
         <dir path="modules"/>
     </resource-search-path>
     
-    <minify-js>true</minify-js>
+    <page-search-path>
+        <dir path="pages"/>
+    </page-search-path>
+    
+    <minify-js>${minify}</minify-js>
     <clean-output-dirs>true</clean-output-dirs>
     <js-output-dir>static/bundles/js</js-output-dir>
     <css-output-dir>static/bundles/css</css-output-dir>
@@ -30,19 +35,5 @@
             <module name="templating" recursive="true"/>
         </bundle>
     </bundles>
-    
-    <pages>
-        <page name="test">
-            <path>pages/PageA.html</path>
-            
-            <includes>
-                <module name="core" recursive="true"/>
-                <module name="templating" recursive="true"/>
-                <module name="moduleA"/>
-                <module name="loader"/>
-            </includes>
-            
-        </page>
-    </pages>
     
 </optimizer-config>
