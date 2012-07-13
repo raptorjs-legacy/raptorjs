@@ -1,0 +1,8 @@
+{
+    "type": "mixed",
+    "name": "moduleB",
+    "includes": [
+        {"path": "mixedB.js"},
+        {"path": "mixedB.css"}
+    ]
+}

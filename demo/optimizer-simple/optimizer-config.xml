@@ -1,0 +1,48 @@
+<bundler-config>
+    
+    <params>
+        <scripts-dir>./</scripts-dir>
+    </params>
+    
+    <resource-search-path>
+        <dir path="modules"/>
+    </resource-search-path>
+    
+    <minify-js>true</minify-js>
+    <clean-output-dirs>true</clean-output-dirs>
+    <js-output-dir>static/bundles/js</js-output-dir>
+    <css-output-dir>static/bundles/css</css-output-dir>
+    
+    <html-output-dir>inc/page-dependencies</html-output-dir>
+    <inject-html-includes>true</inject-html-includes>
+    
+    
+    <js-url-prefix>/static/bundles/js/</js-url-prefix>
+    <css-url-prefix>/static/bundles/css/</css-url-prefix>
+    
+    <enabledExtensions>jquery,browser</enabledExtensions>
+
+    <bundles name="default">
+        <bundle name="core">
+            <module name="core" recursive="true"/>
+        </bundle>
+        <bundle name="templating">
+            <module name="templating" recursive="true"/>
+        </bundle>
+    </bundles>
+    
+    <pages>
+        <page name="test">
+            <path>pages/PageA.html</path>
+            
+            <includes>
+                <module name="core" recursive="true"/>
+                <module name="templating" recursive="true"/>
+                <module name="moduleA"/>
+                <module name="loader"/>
+            </includes>
+            
+        </page>
+    </pages>
+    
+</bundler-config>

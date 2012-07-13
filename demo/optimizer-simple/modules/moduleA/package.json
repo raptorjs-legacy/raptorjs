@@ -1,0 +1,8 @@
+{
+    "type": "module",
+    "name": "moduleA",
+    "includes": [
+        {"path": "moduleA.js"},
+        {"path": "moduleA.css"}
+    ]
+}
