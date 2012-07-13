@@ -16,3 +16,4 @@ MANIFEST.MF
 */src/main/resources/buildinfo.properties
 /.idea/
 
+/node_modules
