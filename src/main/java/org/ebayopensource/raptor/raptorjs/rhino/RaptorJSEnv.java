@@ -46,10 +46,10 @@ public abstract class RaptorJSEnv {
     }
 
     private void findCoreModulesDir() {
-        this.coreModulesDir = "/raptorjs_modules";
+        this.coreModulesDir = "/raptor_modules";
         URL bootstrapUrl = RaptorJSEnv.class.getResource(coreModulesDir + "/bootstrap/bootstrap_server.js");
         if (bootstrapUrl == null) {
-            this.coreModulesDir = "/META-INF/resources/raptorjs_modules";
+            this.coreModulesDir = "/META-INF/resources/raptor_modules";
         }
     }
     
