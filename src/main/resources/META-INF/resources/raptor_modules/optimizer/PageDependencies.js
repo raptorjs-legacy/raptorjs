@@ -64,6 +64,7 @@ raptor.defineClass(
 
             this.pageName = config.pageName;
             this.includes = config.includes;
+            this.config = config;
             
             /*
              * We must create a new bundle set that has as its parent the provided bundle set so that 
@@ -76,6 +77,7 @@ raptor.defineClass(
             this.bundlesByLocation = {};
             this.bundleCount = 0;
             this.asyncRequiresByName = {};
+                        
             this._build();
         };
         
@@ -84,6 +86,7 @@ raptor.defineClass(
             _build: function() {
                 var optimizer = raptor.require('optimizer'),
                     bundleSet = this.bundleSet,
+                    config = this.config,
                     asyncIncludes = [];
                     
                 optimizer.forEachInclude({
@@ -97,11 +100,34 @@ raptor.defineClass(
                         },
                         handleInclude: function(include, context) {
 
-                            var bundle = bundleSet.getBundleForInclude(include);
+                            var bundle = bundleSet.getBundleForInclude(include),
+                                targetBundleName;
                             if (!bundle) {
-                                //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                var targetBundleName = (context.async ? "page-async-" : "page-") + this.pageName; 
-                                bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
+                                
+                                var sourceResource = include.getResource();
+                                
+                                if (config.inPlaceDeploymentEnabled === true) {
+                                    
+                                    targetBundleName = sourceResource ? sourceResource.getName() : include.getKey(); 
+                                    bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
+                                    if (sourceResource && include.isInPlaceDeploymentAllowed()) {
+                                        bundle.inPlaceDeployment = true;
+                                        bundle.sourceResource = sourceResource;
+                                    }
+                                    else {
+                                        bundle.includeLocationInUrl = false;
+                                        bundle.requireChecksum = true;
+                                    }
+                                    
+                                    
+                                }
+                                
+                                if (!bundle) {
+                                    //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
+                                    targetBundleName = (context.async ? "page-async-" : "page-") + this.pageName; 
+                                    bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
+                                }
+                                
                             }
                             
                             if (context.async === true) {

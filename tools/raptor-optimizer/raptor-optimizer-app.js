@@ -19,8 +19,10 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     paramArgRegExp=/^(\w+)(?:=(\w+))?$/,
     cwd = process.cwd(),
     files = raptor.require('files'),
+    File = files.File,
     path = require('path'),
     fs = require('fs'),
+    packager = raptor.require('packager'),
     strings = raptor.require('strings'),
     parseArgs = function(args) {
         var config={};
@@ -73,6 +75,7 @@ exports.run = function() {
     ["outputDir",
      "scriptsOutputDir",
      "styleSheetsOutputDir",
+     "bundlesOutputDir",
      "pageOutputDir",
      "htmlOutputDir"].forEach(function(dir) {
          if (config[dir]) {
@@ -97,11 +100,13 @@ exports.run = function() {
 
     logger.info('Bundler output directories:\n' + 
         leftPad('JavaScript bundles: ', padding) + config.getScriptsOutputDir() + '\n' + 
-        leftPad('CSS bundles: ', padding) + config.getStyleSheetsOutputDir() + '\n' + 
+        leftPad('CSS bundles: ', padding) + config.getStyleSheetsOutputDir() + '\n' +
+        leftPad('Pages: ', padding) + config.pageOutputDir + '\n' +
         leftPad('HTML includes: ', padding) + config.getHtmlOutputDir());
     
     var optimizer = raptor.require("optimizer");
     var writer = optimizer.createPageDependenciesFileWriter({
+            checksumsEnabled: config.checksumsEnabled !== false,
             scriptsOutputDir: config.getScriptsOutputDir(),
             styleSheetsOutputDir: config.getStyleSheetsOutputDir(),
             htmlOutputDir: config.getHtmlOutputDir(),
@@ -109,14 +114,7 @@ exports.run = function() {
         });
 
     if (config.minifyJs === true) {
-        writer.addFilter(function(code, contentType) {
-            if (contentType === 'application/javascript') {
-                return raptor.require("js-minifier").minify(code);
-            }
-            else {
-                return code;
-            }
-        });
+        writer.addFilter('optimizer.MinifyJSFilter');
     }
     
     var urlBuilder = optimizer.createSimpleUrlBuilder({
@@ -143,9 +141,28 @@ exports.run = function() {
             bundleSet = config.createBundleSet(bundleSetDef, enabledExtensions),
             pageDependencies,
             pagePath,
+            packagePath = page.packagePath,
             outputPagePath;
 
+        
+        
+        if (packagePath) {
+            packagePath = path.resolve(cwd, packagePath);
+            
+            var packageResource = raptor.require("resources").createFileResource(packagePath);
+            var manifest = packager.getPackageManifest(packageResource);
+            
+            manifest.forEachInclude(
+                function(type, pageInclude) {
+                    page.addInclude(pageInclude);
+                },
+                this,
+                {
+                    enabledExtensions: config.getEnabledExtensions()
+                });
+        }
         pageDependencies = optimizer.buildPageDependencies({
+            inPlaceDeploymentEnabled: config.inPlaceDeploymentEnabled,
             pageName: page.name,
             includes: page.includes,
             bundleSet: bundleSet,
@@ -157,8 +174,8 @@ exports.run = function() {
         
         urlBuilder.pageDir = null; //Reset out the page output directory for the URL builder  
         
-        if (page.path && config.injectHtmlIncludes) {
-            pagePath = path.resolve(cwd, page.path);
+        if (page.htmlPath && config.injectHtmlIncludes) {
+            pagePath = path.resolve(cwd, page.htmlPath);
             
             if (config.modifyPages === false) {
 
@@ -166,14 +183,14 @@ exports.run = function() {
                     outputPagePath = path.join(config.pageOutputDir, pagePath.substring(page.basePath.length));
                 }
                 else {
-                    outputPagePath = path.join(config.pageOutputDir, new files.File(pagePath).getName());    
+                    outputPagePath = path.join(config.pageOutputDir, new File(pagePath).getName());    
                 }
             }
             else {
                 outputPagePath = pagePath;
             }
             
-            urlBuilder.pageDir = new files.File(outputPagePath).getParent();
+            urlBuilder.pageDir = new File(outputPagePath).getParent();
             
             oldWrite = writer.writePageIncludeHtml;
             
@@ -192,14 +209,17 @@ exports.run = function() {
             var pageHtml = injector.getHtml();
             
             logger.info('Writing page to "' + outputPagePath + '"...');
-            var outputPageFile = new files.File(outputPagePath);
+            var outputPageFile = new File(outputPagePath);
             outputPageFile.writeFully(pageHtml);
             
         }
-        writer.writePageIncludeHtml = oldWrite;
+        if (oldWrite) {
+            writer.writePageIncludeHtml = oldWrite;    
+        }
+        
     });
     
     console.log();
-    logger.info('\Optimization complete!');
+    logger.info('Optimization complete!');
     
 }

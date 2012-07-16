@@ -13,8 +13,11 @@
         <dir path="pages"/>
     </page-search-path>
     
-    <minify-js>${minify}</minify-js>
+    <bundling-enabled>true</bundling-enabled>
+    <in-place-deployment-enabled>false</in-place-deployment-enabled>
+    <minify-js>true</minify-js>
     <clean-output-dirs>true</clean-output-dirs>
+    <checksums-enabled>false</checksums-enabled>
 <!--     <js-output-dir>dist/bundles</js-output-dir> -->
 <!--     <css-output-dir>dist/bundles</css-output-dir> -->
     <bundles-output-dir>dist/static</bundles-output-dir>
@@ -28,8 +31,8 @@
     <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
     <modify-pages>false</modify-pages>
     
-<!--     <js-url-prefix></js-url-prefix> -->
-<!--     <css-url-prefix></css-url-prefix> -->
+<!--     <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
+<!--     <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
     
     <enabledExtensions>jquery,browser</enabledExtensions>
     
@@ -46,12 +49,23 @@
     <bundles name="default">
         <bundle name="core">
             <module name="core" recursive="true"/>
-            <module name="oop" recursive="true"/>
             <init-raptor/>
         </bundle>
         <bundle name="templating">
             <module name="templating" recursive="true"/>
         </bundle>
     </bundles>
+    
+<!--     <pages> -->
+<!--         <page name="PageA"> -->
+<!--             <includes> -->
+<!--                 <module name="core" recursive="true"/> -->
+<!--                 <init-raptor/> -->
+<!--                 <module name="templating" recursive="true"/> -->
+<!--                 <module name="moduleA"/> -->
+<!--                 <module name="loader"/> -->
+<!--             </includes> -->
+<!--         </page> -->
+<!--     </pages> -->
     
 </optimizer-config>

@@ -1,11 +1,15 @@
 <html>
     <head>
         <title>Bundler: PageA</title>
-        <!-- [include head] -->
+        <!-- [raptor-include: head] -->
     </head>
     <body>
         Hello World!
-        <!-- [include body] -->
+        <!-- [raptor-include: body] -->        
+        <script>
+        var templating = raptor.require("templating");
+        document.write(templating.renderToString("moduleA/greeting", {count: 30, name: "Frank"}));
+        </script>
     </body>
 </html>
 

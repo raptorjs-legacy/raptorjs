@@ -122,9 +122,14 @@ raptor.defineClass(
                 }
             },
             
+            getResourcePath: function(context) {
+                return null;
+            },
+            
             getResource: function(context) {
                 if (this._resource === undefined) {
-                    this._resource = this.resolveResource(this.getResourcePath(), context);
+                    var resourcePath = this.getResourcePath(context);
+                    this._resource = resourcePath ? this.resolveResource(resourcePath, context) : null;
                     if (!this._resource) {
                         this._resource = null;
                     }
@@ -135,6 +140,14 @@ raptor.defineClass(
             
             isAsync: function() {
                 return this.async === true;
+            },
+            
+            isCompiled: function() {
+                return false;
+            },
+            
+            isInPlaceDeploymentAllowed: function() {
+                return false;
             }
         };
     });

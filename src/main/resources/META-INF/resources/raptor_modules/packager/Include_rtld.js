@@ -75,6 +75,10 @@ raptor.defineClass(
                 else {
                     this.invalidInclude();
                 }
+            },
+            
+            isCompiled: function() {
+                return true;
             }
         };
     });

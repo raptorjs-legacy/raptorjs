@@ -1,5 +1,5 @@
 var BundleSetDef = function() {
-    this.name = null;
+    this.name = "default";
     this.ref = null;
     this.children = [];
 };

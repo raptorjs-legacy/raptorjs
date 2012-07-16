@@ -1,7 +1,8 @@
 {
     "includes": [
-        { "module": "core", "recursive": true },
-        { "module": "templating", "recursive": true },
+        { "module": "core" },
+        { "type": "init-raptor" },
+        { "module": "templating" },
         { "module": "moduleA" },
         { "module": "loader" }
      ]

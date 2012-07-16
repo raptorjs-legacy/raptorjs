@@ -42,6 +42,10 @@ raptor.defineClass(
             
             getContentType: function() {
                 return "application/javascript";
+            },
+            
+            isInPlaceDeploymentAllowed: function() {
+                return true;
             }
         };
     });

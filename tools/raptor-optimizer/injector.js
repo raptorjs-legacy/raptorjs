@@ -1,5 +1,5 @@
-var startRegExp = /<!--\s*\[\s*include\s+(\w+)\s*\]\s*-->/g,
-    endRegExp = /<!--\s*\[\/\s*include\s*\]\s*-->/g;
+var startRegExp = /<!--\s*\[\s*raptor-include\:?\s+(\w+)\s*\]\s*-->/g,
+    endRegExp = /<!--\s*\[\/\s*raptor-include\s*\]\s*-->/g;
     
 exports.createInjector = function(pageHtml, pagePath, keepMarkers) {
     var injectIndexes = {},
@@ -41,7 +41,7 @@ exports.createInjector = function(pageHtml, pagePath, keepMarkers) {
         else {
             begin = startRegExp.lastIndex;
             if (keepMarkers) {
-                parts.push('<!-- [/include] -->');    
+                parts.push('<!-- [/raptor-include] -->');    
             }
             
         }

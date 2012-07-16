@@ -49,6 +49,10 @@ raptor.defineClass(
                 var xmlSource = resource.readFully();
                 var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
                 return rhtmlJs;
+            },
+            
+            isCompiled: function() {
+                return true;
             }
         };
     });

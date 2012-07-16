@@ -28,21 +28,10 @@ exports.findPages = function(config) {
                                 var pageDef = new PageDef();
                                 pageDef.name = pageName;
                                 if (pageFile.exists()) {
-                                    pageDef.path = pageFile.getAbsolutePath();
+                                    pageDef.htmlPath = pageFile.getAbsolutePath();
                                 }
                                 pageDef.basePath = searchPathEntry.path;
-                                
-                                var fileResource = raptor.require("resources").createFileResource(file.getAbsolutePath());
-                                var manifest = packager.getPackageManifest(fileResource);
-                                
-                                manifest.forEachInclude(
-                                    function(type, pageInclude) {
-                                        pageDef.addInclude(pageInclude);
-                                    },
-                                    this,
-                                    {
-                                        enabledExtensions: config.getEnabledExtensions()
-                                    });
+                                pageDef.packagePath = file.getAbsolutePath();
                                 config.addPage(pageDef);
                             }
                             

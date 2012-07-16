@@ -41,6 +41,9 @@ raptor.defineClass(
                     writtenFiles = {},
                     context = this.context,
                     writeBundle = function(bundle) {
+                        if (bundle.inPlaceDeployment === true) {
+                            return;
+                        }
                         
                         var checksum = bundleChecksums[bundle.getKey()];
                             
@@ -118,6 +121,7 @@ raptor.defineClass(
                                 
                 raptor.forEachEntry(htmlByLocation, function(location, html) {
                     html = html.join('');
+                    
                     this.writePageIncludeHtml(pageDependencies.getPageName(), location, html);
                 }, this);
             },
@@ -142,18 +146,32 @@ raptor.defineClass(
                 return urlBuilder.buildBundleUrl(bundle, checksum);
             },
             
-            applyFilter: function(code, contentType, bundle) {
+            applyFilter: function(code, contentType, include, bundle) {
     
                 forEach(this.filters, function(filter) {
-                    var output;
+                    var output,
+                        filterFunc,
+                        filterThisObj;
                     
                     if (typeof filter === 'function') {
-                        output = filter(code, contentType, bundle);
+                        filterFunc = filter;
                     }
-                    else {
-                        output = filter.filter(code, contentType, bundle);
+                    else if (typeof filter === 'string') {
+                        filter = raptor.require(filter);
+                        if (typeof filter === 'function') {
+                            var FilterClass = filter;
+                            filter = new FilterClass();
+                        }
+                        filterFunc = filter.filter;
+                        filterThisObj = filter;
+                    }
+                    else if (typeof filter === 'object'){
+                        filterFunc = filter.filter;
+                        filterThisObj = filter;
                     }
                         
+                    output = filterFunc.call(filterThisObj, code, contentType, include, bundle);
+                    
                     if (output) {
                         code = output;
                     }
@@ -163,21 +181,26 @@ raptor.defineClass(
             },
             
             readBundle: function(bundle, context) {
-                var checksum,
-                    bundleCode = [];
+                var bundleCode = [];
                     
                 bundle.forEachInclude(function(include) {
                     var code = include.getCode(context);
                     if (code) {
-                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), bundle));    
+                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), include, bundle));    
                     }
                 }, this);
                 
                 bundleCode = bundleCode.join("\n");  
                 
+                var checksum;
+                
+                if (this.checksumsEnabled !== false || bundle.requireChecksum) {
+                    checksum = this.calculateChecksum(bundleCode);
+                }
+                
                 return {
                     code: bundleCode,
-                    checksum: this.calculateChecksum(bundleCode)
+                    checksum: checksum
                 };
             },
             

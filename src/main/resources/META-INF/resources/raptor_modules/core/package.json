@@ -14,6 +14,7 @@
     "includes": [
         {"module": "raptorBuilder"},
         {"module": "logging"},
-        {"module": "errors"}
+        {"module": "errors"},
+        {"module": "oop"}
     ]
 }

@@ -2,14 +2,45 @@ var BundleDef = require('./BundleDef.js'),
     BundleSetDef = require('./BundleSetDef.js'),
     PageDef = require('./PageDef.js'),
     optimizer = raptor.require('optimizer'),
-    strings = raptor.require('strings');
+    strings = raptor.require('strings'),
+    includeHandler = {
+        _type: "object",
+        _begin: function(parent, el) {
+            var include = { 
+                    type: el.getLocalName(),
+                    toString: function() { 
+                        return JSON.stringify(this);
+                    }
+                };
+            parent.addInclude(include);
+            return include;
+        },
+        
+        "@*": {
+            _type: "string",
+            _set: function(include, name, value) {
+                if (value === 'true') {
+                    value = true;
+                }
+                else if (value === 'false') {
+                    value = false;
+                }
+                else if ("" + parseInt(value, 10) === value) {
+                     value = parseInt(value, 10);
+                }
+                include[name] = value;
+            }
+        } //End include attribute
+    };
     
 
     
 var Config = function() {
+    this.bundlingEnabled = true;
     this.bundlesOutputDir = "dist/static/bundles";
     this.scriptsOutputDir = null;
     this.styleSheetsOutputDir = null;
+    this.checksumsEnabled = true;
     this.htmlOutputDir = "dist/inc/page-dependencies";
     this.pageOutputDir = "dist/pages";
     this.scriptsUrlPrefix = null;
@@ -23,6 +54,30 @@ var Config = function() {
     this.loadedBundleSets = {};
     this.pageSearchPath = [];
     this.keepHtmlMarkers = true;
+};
+
+Config.parseIncludes = function(xml, path, config) {
+    var objectMapper = raptor.require('xml.sax.objectMapper');
+    var includes = objectMapper.read(
+        xml,
+        path,
+        {
+            "<includes>": {
+                _type: "object",
+                
+                _begin: function() {
+                    return [];
+                },
+                "<includes>": includeHandler
+            }
+        },
+        { //objectMapper options
+            parseProp: function(value, name) {
+                var result = strings.merge(value, config.params);
+                return result;
+            }
+        });
+    return includes;
 };
 
 Config.prototype = {
@@ -91,33 +146,39 @@ Config.prototype = {
     },
     
     createBundleSet: function(bundleSetDef, enabledExtensions) {
-    
+        
         var config = this,
             bundles = [],
             foundBundleToIndex = {},
             addBundles = function(o) {
                 if (o.bundlesRef) {
-                    var bundleSetDef = config.getBundleSetDef(o.bundlesRef);
-                    if (!bundleSetDef) {
+                    var referencedBundleSetDef = config.getBundleSetDef(o.bundlesRef);
+                    if (!referencedBundleSetDef) {
                         raptor.throwError(new Error('Bundles not found with name "' + o.bundlesRef + '"'));
                     }
-                    addBundles(bundleSetDef);
+                    addBundles(referencedBundleSetDef);
                     return;
                 }
                 else if (o instanceof BundleDef) {
-                    if (!o.name) {
+                    var bundleName = o.name;
+                    
+                    if (!bundleName) {
                         raptor.throwError(new Error("Illegal state. Bundle name is required"));
                     }
-                    var bundle = optimizer.createBundle(o.name);
+                    if (config.checksumsEnabled === false) {
+                        bundleName = bundleSetDef.name + "-" + bundleName; //Prefix the bundle name with the bundle set name to keep the bundle names unique
+                    }
+                    
+                    var bundle = optimizer.createBundle(bundleName);
                     o.forEachInclude(function(include) {
                         bundle.addInclude(include);
                     });
                     
-                    if (foundBundleToIndex[o.name]) {
-                        foundBundleToIndex[o.name] = bundle; 
+                    if (foundBundleToIndex[bundleName]) {
+                        foundBundleToIndex[bundleName] = bundle; 
                     }
                     else {
-                        foundBundleToIndex[o.name] = bundles.length;
+                        foundBundleToIndex[bundleName] = bundles.length;
                         bundles.push(bundle);
                     }
                 }
@@ -126,7 +187,9 @@ Config.prototype = {
                 }
             };
             
-        addBundles(bundleSetDef);
+        if (this.bundlingEnabled !== false) {
+            addBundles(bundleSetDef);    
+        };
         
         var bundleSet = optimizer.createBundleSet(
                 bundles,
@@ -144,35 +207,6 @@ Config.prototype = {
     parseXml: function(xml, path) {
         var config = this,
             objectMapper = raptor.require('xml.sax.objectMapper'),
-            includeHandler = {
-                _type: "object",
-                _begin: function(parent, el) {
-                    var include = { 
-                            type: el.getLocalName(),
-                            toString: function() { 
-                                return JSON.stringify(this);
-                            }
-                        };
-                    parent.addInclude(include);
-                    return include;
-                },
-                
-                "@*": {
-                    _type: "string",
-                    _set: function(include, name, value) {
-                        if (value === 'true') {
-                            value = true;
-                        }
-                        else if (value === 'false') {
-                            value = false;
-                        }
-                        else if ("" + parseInt(value, 10) === value) {
-                             value = parseInt(value, 10);
-                        }
-                        include[name] = value;
-                    }
-                } //End include attribute
-            },
             bundlesHandler = {
                 _type: "object",
                 _begin: function() {
@@ -276,6 +310,21 @@ Config.prototype = {
                                 _type: "string"
                             }
                         }
+                    },
+                    
+                    "checksums-enabled": {
+                        _type: "boolean",
+                        _targetProp: "checksumsEnabled"
+                    },
+                    
+                    "bundling-enabled": {
+                        _type: "boolean",
+                        _targetProp: "bundlingEnabled"
+                    },
+                    
+                    "in-place-deployment-enabled": {
+                        _type: "boolean",
+                        _targetProp: "inPlaceDeploymentEnabled"
                     },
                     
                     "clean-output-dirs": {
