@@ -167,8 +167,8 @@ raptor.defineClass(
                                 },
                                 "uri": {
                                     _type: STRING,
-                                    _begin: function(tag) {
-                                        tag.uri = '';
+                                    _set: function(tag, name, value, context) {
+                                        tag.uri = value || '';
                                     }
                                 },
                                 "id": {

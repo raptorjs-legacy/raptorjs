@@ -26,205 +26,292 @@ raptor.define(
             strings = raptor.require("strings"),
             STRING = "string",
             BOOLEAN = "boolean",
-            OBJECT = "object";
-        
-        return {
-            
-            read: function(xmlSrc, filePath, schema, options) {
+            OBJECT = "object",
+            getSchema = function(el, nodeType, parentSchema) {
+                var lookupSchema = function(key) {
+                    var schema;
+                    
+                    if (nodeType === 'attribute') {
+                        schema = parentSchema['@' + key];
+                    }
+                    else if (nodeType === 'element') {
+                        schema = parentSchema['<' + key + '>'];
+                    }
+                    if (!schema) {
+                        schema = parentSchema[key];
+                    }
+                    return schema;
+                };
                 
-                if (!options) {
-                    options = {};
+                var uri = el.getURI(),
+                    schema;
+                
+                if (uri) {
+                    schema = lookupSchema(uri + ":" + el.getLocalName());
+                    if (!type) {
+                        schema = lookupSchema(uri + ":*");                                        
+                    }
+                }
+                else {
+                    schema = lookupSchema(el.getLocalName());
                 }
                 
-                var typeStack = [],
-                    objStack = [],
-                    rootObj = null,
-                    curType = schema,
-                    curProp = null,
-                    curObj = null,
-                    curText = null,
-                    saxParser = sax.parser({
-                        trim: true,
-                        normalize: true
-                    }),
-                    trimText = options.trimText !== false;
+                if (!schema) {
+                    schema = lookupSchema("*");                                        
+                }
                 
-                var _handleError = function(message) {
-                    raptor.throwError(new Error(message + " (" + saxParser.getPos() + ")")); 
-                };
+                if (typeof schema === 'function') {
+                    schema = schema(el, nodeType);
+                }
                 
-                var _setProp = function(name, type, t) {
-                    if (trimText && t) {
-                        t = strings.trim(t);
+                return schema;
+            },
+            _expected = function(parentSchema, isAttribute) {
+                var expected = [];
+                //console.log(curType);
+                forEachEntry(parentSchema, function(key, value) {
+                    if (strings.startsWith(key, "_")) {
+                        return;
                     }
                     
-                    if (name) {
-                        if (options.parseProp) {
-                            t = options.parseProp(t, name, type);
-                        }
-
-                        if (type._type === BOOLEAN) {
-                            t = t.toLowerCase();
-                            t = t == 'true' || t == 'yes';
-                        }
-                        
-                        if (type._set) {
-                            type._set(curObj, name, t);
-                        }
-                        else if (type._targetProp) {
-                            curObj[type._targetProp] = t;
-                        }
-                        else {
-                            //console.log('SETTING PROP: ', name, type);
-                            curObj[name] = t;
-                        }
+                    if (isAttribute && value._type === OBJECT) {
+                        return;
                     }
-                };
+                    
+                    expected.push(isAttribute ? key : key.charAt(0) === '<' ? key : "<" + key + ">");
+                    
+                }, this);
+                return '[' + expected.join(', ') + ']';
+            };
+        
+        var Reader = function(schema, options) {
+            if (!options) {
+                options = {};
+            }
+            this.skipping = false;
+            this.options = options;
+            this.trimText = options.trimText !== false;
+            this.contextStack = [];
+            this.schema = schema;
+        };
+        
+        Reader.prototype = {
+            _parseProp: function(value, context) {
+                var parsePropFunc = this.options.parseProp;
                 
-                var _expected = function(isAttribute) {
-                    var expected = [];
-                    //console.log(curType);
-                    forEachEntry(curType, function(key, value) {
-                        if (strings.startsWith(key, "_")) {
-                            return;
-                        }
-                        
-                        if (isAttribute && value._type === OBJECT) {
-                            return;
-                        }
-                        
-                        expected.push(isAttribute ? key : "<" + key + ">");
-                        
-                    }, this);
-                    return '[' + expected.join(', ') + ']';
-                };
+                if (parsePropFunc) { //If a property parser is provide then invoke that to get the actual text
+                    value = parsePropFunc(value, context);
+                }
+                return value;
+            },
+            
+            _setProperty: function(el, schema, targetObject, value, context) {
+                if (typeof value === 'string') {
+                    if (this.trimText) { //Trim the text if that option is enabled
+                        value = strings.trim(value);
+                    }
+                    
+                    value = this._parseProp(value, context);
+                    
+                    if (schema._type === BOOLEAN) {
+                        /*
+                         * Convert the text to a boolean value
+                         */
+                        value = value.toLowerCase();
+                        value = value === 'true' || value === 'yes';
+                    }
+                }
+                
+                var propertyName = schema._targetProp || (typeof el === 'string' ? el : (el.getURI() ? el.getURI() + ":" + el.getLocalName() : el.getLocalName()));
+                
+                if (schema._set) {
+                    schema._set(targetObject, propertyName, value, context);
+                }
+                else {
+                    targetObject[propertyName] = value;
+                }
+            },
+                
+            skipCurrentElement: function() {
+                if (this.skipping) {
+                    return;
+                }
+                
+                var context = this.getCurrentContext();
+                context.skip = true;
+                this.skipping = true;
+            },
+            
+            error: function(message) {
+                raptor.throwError(new Error(message + " (" + this.saxParser.getPos() + ")"));
+            },
+            
+            getCurrentContext: function() {
+                return arrays.peek(this.contextStack);
+            },
+            
+            read: function(xmlSrc, filePath) {
+                
+                this.saxParser = sax.parser({
+                    trim: true,
+                    normalize: true
+                });
+                
+                this.contextStack = [];
+                this.skipping = false;
+                
+                var _this = this,
+                    rootObject,
+                    saxParser = this.saxParser;
                 
                 saxParser.on({
                     error: function (e) {
-                        throw e;
+                        _this.error(e);
                     },
                     
                     startElement: function (el) {
+                        var parentContext = _this.getCurrentContext(),
+                            parentSchema = parentContext ? parentContext.schema : _this.schema,
+                            curSchema;
                         
-                        var getType = function(el, nodeType) {
-                                var lookupType = function(key) {
-                                    var type;
-                                    
-                                    if (nodeType === 'attribute') {
-                                        type = curType['@' + key];
-                                    }
-                                    else if (nodeType === 'element') {
-                                        type = curType['<' + key + '>'];
-                                    }
-                                    if (!type) {
-                                        type = curType[key];
-                                    }
-                                    return type;
-                                };
-                                
-                                var uri = el.getURI();
-                                if (uri) {
-                                    type = lookupType(uri + ":" + el.getLocalName());
-                                    if (!type) {
-                                        type = lookupType(uri + ":*");                                        
-                                    }
-                                }
-                                else {
-                                    type = lookupType(el.getLocalName());
-                                }
-                                
-                                if (!type) {
-                                    type = lookupType("*");                                        
-                                }
-                                
-                                if (typeof type === 'function') {
-                                    type = type(el, nodeType);
-                                }
-                                
-                                return type;
-                            },
-                            type = getType(el, "element");
-                            
-                        if (!type) {
-                            _handleError("Unexpected element: <" + el.getQName() + ">. Expected one of: " + _expected());
+                        var context = {
+                           el: el, 
+                           tagName: el.getLocalName(),
+                           uri: el.getURI(),
+                           parentContext: parentContext
+                        };
+                        
+                        _this.contextStack.push(context);
+                        
+                        if (_this.skipping) {
+                            return;
                         }
                         
-                        
-                        curType = type;
-                        typeStack.push(type);
-                        
-                        if (type._type === STRING || type._type === BOOLEAN) {
-                            curProp = el.getLocalName();
+                        context.schema = curSchema = getSchema(el, "element", parentSchema);
                             
-                            if (type._begin) {
-                                type._begin(curObj, el.getLocalName(), el.getURI());
+                        if (!curSchema) {
+                            console.error("EL: ", el);
+                            console.error("parentSchema: ", parentSchema);
+                            _this.error("Unexpected element: <" + el.getQName() + ">. Expected one of: " + _expected(parentSchema));
+                        }
+                        
+                        if (curSchema._type === STRING || curSchema._type === BOOLEAN) {
+                            if (curSchema._begin) {
+                                curSchema._begin(parentContext ? parentContext.object : null, context);
                             }
                         }
-                        else if (type._type === OBJECT) {
-                            curObj = type._begin ? type._begin(curObj, el) : {};
-                            if (!curObj) {
+                        else if (curSchema._type === OBJECT) {
+                            
+                            context.object = curSchema._begin ? curSchema._begin(parentContext ? parentContext.object : null, context) || {} : {};
+                            if (!context.object) {
                                 throw new Error('_begin() for "' + el.getLocalName() + '" did not return an object.');
                             }
-                            objStack.push(curObj);
-                            
-                            if (objStack.length === 1) {
-                                rootObj = curObj;
-                            }
                         }
                         
-                        
-                        forEach(el.getAttributes(), function(attr) {
-                            
-                            var type = getType(attr, "attribute");
-                            if (!type) {
-                                _handleError("Unexpected attribute: " + attr.getQName() + ". Expected one of: " + _expected(true));
-                            }
-                            
-                            _setProp(attr.getLocalName(), type, attr.getValue());
-                            
-                        });
-                        
+                        if (!_this.skipping) {
+                            forEach(el.getAttributes(), function(attr) {
+                                if (_this.skipping) {
+                                    return false;
+                                }
+                                
+                                var attrSchema = getSchema(attr, "attribute", curSchema);
+                                if (!attrSchema) {
+                                    _this.error("Unexpected attribute: " + attr.getQName() + ". Expected one of: " + _expected(curSchema, true));
+                                }
+                                
+                                var attrContext = raptor.extend({}, context);
+                                attrContext.attr = attr;
+                                _this._setProperty(
+                                        attr, //Current attribute
+                                        attrSchema,  //Schema associated with the attribute
+                                        context.object,  //Target object
+                                        attr.getValue(),  //The value of the property
+                                        attrContext); //The context for the attribute
+                                
+                                return true;
+                                
+                            });
+                        }
                     },
     
-                    characters: function (t) {
-                        if (!curProp && strings.trim(t)) {
-                            _handleError('Unexpected text: "' + t + '"');
+                    characters: function (text) {
+                        if (_this.skipping === true) {
+                            return;
                         }
-                        curText = curText ? curText + t : t;
+                        
+                        var context = _this.getCurrentContext();
+                        context.text = context.text ? context.text + text : text;
                     },
     
                     endElement: function () {
-                        if (curText) {
-                            _setProp(curProp, curType, curText);
-                        }
-                        curText = null;
                         
-                        if (curType._type === STRING || curType._type === BOOLEAN) {
-                            curProp = null;
-                        }
-                        else if (curType._type === OBJECT) {
-    
-                            var completedObj = arrays.pop(objStack);
-                            curObj = arrays.peek(objStack);
+                        var context = _this.getCurrentContext(),
+                            parentContext = context.parentContext,
+                            curSchema = context.schema;
+                        
+                        if (_this.skipping !== true) {
                             
-                            if (curType._end) {
-                                curType._end(completedObj, curObj);
+                            if (curSchema._type === STRING || curSchema._type === BOOLEAN) {
+                                
+                                _this._setProperty(context.el, curSchema, parentContext ? parentContext.object : null, context.text, context);
+                                
+                                if (curSchema._end) {
+                                    curSchema._end(context.object, parentContext ? parentContext.object : null, context);
+                                }
                             }
+                            else if (curSchema._type === OBJECT) {
+                                
+                                if (context.text != null && strings.trim(context.text)) {
+                                    if (curSchema._text) {
+                                        _this._setProperty("text", curSchema._text, context.object, context.text, context);
+                                    }
+                                    else if (curSchema._setText) {
+                                        curSchema._setText(context.object, _this._parseProp(context.text, context));
+                                    }
+                                    else {
+                                        _this.error("Unexpected text: " + context.text);
+                                    }
+                                }
+                                if (curSchema._end) {
+                                    curSchema._end(context.object, parentContext ? parentContext.object : null, context);
+                                }
+                                
+                                if (curSchema._targetProp) {
+                                    _this._setProperty(context.el, curSchema, parentContext ? parentContext.object : null, context.object);                                    
+                                }
+                                
+                            }
+                            else if (curSchema._type) {
+                                throw new Error("Invalid type: " + curSchema._type);
+                            }
+                        } //End: this.skipping !== true
+                        
+                        if (_this.contextStack.length === 1) {
+                            rootObject = context.object;
                         }
-                        else if (curType._type) {
-                            throw new Error("Invalid type: " + curType._type);
+                        
+                        arrays.pop(_this.contextStack);
+                        
+                        if (context.skip === true) {
+                            _this.skipping = false;
                         }
-                        
-                        
-                        arrays.pop(typeStack);
-                        curType = arrays.peek(typeStack);
-                        
                     }
                 });
                 
                 saxParser.parse(xmlSrc, filePath);
                 
-                return rootObj;
+                return rootObject;
             }
+        };
+        
+        return {
+            createReader: function(schema, options) {
+                return new Reader(schema, options);
+            },
+            
+            read: function(xmlSrc, filePath, schema, options) {
+                return this.createReader(schema, options).read(xmlSrc, filePath);
+            }
+            
         };
     });
