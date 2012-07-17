@@ -98,6 +98,9 @@ raptor.defineClass(
                         enabledExtensions: this.enabledExtensions,
                         handlePackageInclude: function(include, context) {
                             var manifest = include.getManifest();
+                            if (!manifest) {
+                                raptor.throwError(new Error("Manifest not found for include: " + include.toString()));
+                            }
                             if (!this.foundPackagePaths[manifest.getSystemPath()]) {
                                 this.foundPackagePaths[manifest.getSystemPath()] = true;
                                 this.packageManifests.push(include.getManifest());

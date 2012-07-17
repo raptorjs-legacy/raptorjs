@@ -7,9 +7,9 @@
         Hello World!!
         <!-- [raptor-include: body] -->        
         <script>
-        raptor.require("moduleA").greet();
+        raptor.require("greeting").greet();
         var templating = raptor.require("templating");
-        document.write(templating.renderToString("moduleA/greeting", {count: 30, name: "Frank"}));
+        document.write(templating.renderToString("greeting", {count: 30, name: "Frank"}));
         </script>
     </body>
 </html>

@@ -42,7 +42,11 @@ raptor.defineClass(
             },
 
             getManifest: function() {
-                return raptor.oop.getModuleManifest(this.name);
+                var manifest = raptor.oop.getModuleManifest(this.name);
+                if (!manifest) {
+                    raptor.throwError(new Error('Package manifest not found for module "' + this.name + '"'));    
+                }
+                return manifest;
             },
             
             isPackageInclude: function() {

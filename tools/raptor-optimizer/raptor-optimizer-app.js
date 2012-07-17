@@ -24,28 +24,34 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     fs = require('fs'),
     packager = raptor.require('packager'),
     strings = raptor.require('strings'),
-    pageWatchers = [],
-    includeWatchers = [],
-    configWatcher = [],
-    packageWatchers = [],
-    watchedPackages = {},
-    closeWatchers = function(watchers) {
-        raptor.forEach(watchers, function(w) {
+    watchers = [],
+
+    closeWatchers = function(_watchers) {
+        if (!_watchers) {
+            _watchers = watchers;
+        }
+        _watchers.forEach(function(w) {
             w.close();
         });
-        watchers.splice(0, watchers.length);
+        _watchers.splice(0, watchers.length);
+    },
+    hasWatchers = function(category) {
+        return arguments.length === 1 ? watchers['has' + category] === true : watchers.length > 0;
+    },
+    watchFile = function(path, category, callback) {
+        if (!watchers[path]) {
+            var watcher = fs.watch(path, callback);
+            watchers.push(watcher);
+            watchers[path] = true;
+            watchers['has' + category] = true;
+        }
     },
     watchPackage = function(manifest) {
-        var path = manifest.getSystemPath();
-        if (!watchedPackages[path]) {
-            var watcher = fs.watch(path, function() {
-                raptor.require('packager').removePackageManifestFromCache(manifest);
-                logger.info('Package modified: ' + path);
-                exports.run();
-            });
-            packageWatchers.push(watcher);
-            watchedPackages[path] = true;
-        }
+        watchFile(manifest.getSystemPath(), "packages", function() {
+            raptor.require('packager').removePackageManifestFromCache(manifest);
+            logger.info('Package modified: ' + path);
+            rerun();
+        });
     },
     parseArgs = function(args) {
         var config={};
@@ -67,18 +73,27 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     
 var Config = require('./Config.js');
 
-
-
-exports.run = function() {
-    /*
-     * Close all watchers in-case the optimizer is being re-executed
-     */
-    closeWatchers(includeWatchers);
-    closeWatchers(pageWatchers);
-    closeWatchers(configWatcher);
-    closeWatchers(packageWatchers);
-    watchedPackages = {};
+var rerun = function() {
+    var oldWatchers = watchers;
     
+    watchers = []; //Reset the watchers
+    
+    try
+    {
+        exports.run();
+        closeWatchers(watchers);
+    }
+    catch(e) {
+        closeWatchers(); //Close any newly created watchers that might have been added
+        
+        logger.error(e);
+        //Something with wrong, restore the state
+        watchers = oldWatchers;
+    }
+};
+
+
+exports.run = function() {    
     var args = parseArgs(process.argv.slice(2));
     
     var config = new Config();
@@ -163,14 +178,19 @@ exports.run = function() {
                 outputPath = eventArgs.file.getAbsolutePath();
             
             if (!bundle.watching && bundle.sourceResource && !bundle.inPlaceDeployment) {
-                
-                var watcher = fs.watch(bundle.sourceResource.getSystemPath(), function() {
+                watchFile(bundle.sourceResource.getSystemPath(), 'includes', function() {
                     logger.info('Include modified: ' + bundle.sourceResource.getSystemPath());
-                    writer.rewriteBundle(outputPath, bundle);
+                    try
+                    {
+                        writer.rewriteBundle(outputPath, bundle);    
+                    }
+                    catch(e) {
+                        logger.error('Unable to rewrite include "' + include.toString() + '". Exception: ' + e, e);
+                    }
+                    
                 });
                 
                 bundle.watching = true;
-                includeWatchers.push(watcher);
             }
             eventArgs = null;
         });
@@ -289,14 +309,11 @@ exports.run = function() {
             injectPageDependencies();
             
             if (config.isWatchPagesEnabled()) {
-                var watcher = require('fs').watch(pagePath, function() {
+                watchFile(pagePath, 'pages', function() {
                     logger.info('Page modified: ' + pagePath);
                     injectPageDependencies();
                 });
-                
-                pageWatchers.push(watcher);
             }
-            
         }
         if (oldWrite) {
             writer.writePageIncludeHtml = oldWrite;    
@@ -308,24 +325,23 @@ exports.run = function() {
     logger.info('Optimization complete!');
     
     if (config.isWatchConfigEnabled()) {
-        var watcher = fs.watch(configFile, function() {
-            exports.run();
+        watchFile(configFile, 'config', function() {
+            rerun();
         });
-        configWatcher.push(watcher);
     }
     
-    if (pageWatchers.length || includeWatchers.length || configWatcher.length || packageWatchers.length) {
+    if (hasWatchers()) {
         console.log();
-        if (pageWatchers.length) {
+        if (hasWatchers('pages')) {
             logger.info("Watching page HTML files for changes");    
         }
-        if (includeWatchers.length) {
+        if (hasWatchers('includes')) {
             logger.info("Watching includes for changes");    
         }
-        if (configWatcher.length) {
+        if (hasWatchers('config')) {
             logger.info("Watching configuration file for changes");    
         }
-        if (packageWatchers.length) {
+        if (hasWatchers('packages')) {
             logger.info("Watching packages for changes");    
         }
     }

@@ -30,8 +30,8 @@
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>
-        <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix>
-        <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix>
+<!--         <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
+<!--         <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
         <raptor-config>
         {
         }

@@ -3,7 +3,9 @@
         { "module": "core" },
         { "type": "init-raptor" },
         { "module": "templating" },
-        { "module": "moduleA" },
-        { "module": "loader" }
+        { "module": "greeting" },
+        { "module": "loader" },
+        { "module": "moduleB", "async": true },
+        { "type": "loader-metadata" }
      ]
 }

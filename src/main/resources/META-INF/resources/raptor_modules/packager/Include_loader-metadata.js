@@ -20,8 +20,6 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var loaded = {};
-        
         return {
             
             getKey: function() {

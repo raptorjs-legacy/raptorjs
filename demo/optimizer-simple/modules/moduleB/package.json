@@ -1,8 +1,8 @@
 {
-    "type": "mixed",
+    "type": "raptor-module",
     "name": "moduleB",
     "includes": [
-        {"path": "mixedB.js"},
-        {"path": "mixedB.css"}
+        {"path": "moduleB.js"},
+        {"path": "moduleB.css"}
     ]
 }
