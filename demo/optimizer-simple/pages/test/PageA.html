@@ -4,9 +4,10 @@
         <!-- [raptor-include: head] -->
     </head>
     <body>
-        Hello World!
+        Hello World!!
         <!-- [raptor-include: body] -->        
         <script>
+        raptor.require("moduleA").greet();
         var templating = raptor.require("templating");
         document.write(templating.renderToString("moduleA/greeting", {count: 30, name: "Frank"}));
         </script>

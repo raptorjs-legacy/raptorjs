@@ -1,9 +1,44 @@
 <optimizer-config>
     
     <params>
-        <minify>true</minify>
-        <scripts-dir>./</scripts-dir>
+        <profile>development</profile>
     </params>
+    
+    <set-profile>${profile}</set-profile>
+    
+    <profile name="development">
+        <raptor-config>
+        {
+            logging: {
+                loggers: {
+                    'ROOT': {level: 'DEBUG'}
+                }
+            }
+        }
+        </raptor-config>
+        <enabledExtensions>jquery,browser,logging.console</enabledExtensions>
+        <bundling-enabled>false</bundling-enabled>
+        <in-place-deployment-enabled>true</in-place-deployment-enabled>
+        <minify-js>false</minify-js>
+        <checksums-enabled>false</checksums-enabled>
+        <watch-pages-enabled>true</watch-pages-enabled>
+        <watch-includes-enabled>true</watch-includes-enabled>
+    </profile>
+    
+    <profile name="production">
+        <checksums-enabled>true</checksums-enabled>
+        <enabledExtensions>jquery,browser</enabledExtensions>
+        <bundling-enabled>true</bundling-enabled>
+        <in-place-deployment-enabled>false</in-place-deployment-enabled>
+        <minify-js>true</minify-js>
+        <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix>
+        <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix>
+        <raptor-config>
+        {
+        }
+        </raptor-config>
+    </profile>
+    
     
     <resource-search-path>
         <dir path="modules"/>
@@ -12,12 +47,11 @@
     <page-search-path>
         <dir path="pages"/>
     </page-search-path>
+
+    <clean-dirs>
+        <dir path="dist"/>
+    </clean-dirs>
     
-    <bundling-enabled>true</bundling-enabled>
-    <in-place-deployment-enabled>false</in-place-deployment-enabled>
-    <minify-js>true</minify-js>
-    <clean-output-dirs>true</clean-output-dirs>
-    <checksums-enabled>false</checksums-enabled>
 <!--     <js-output-dir>dist/bundles</js-output-dir> -->
 <!--     <css-output-dir>dist/bundles</css-output-dir> -->
     <bundles-output-dir>dist/static</bundles-output-dir>
@@ -30,21 +64,6 @@
     
     <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
     <modify-pages>false</modify-pages>
-    
-<!--     <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
-<!--     <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
-    
-    <enabledExtensions>jquery,browser</enabledExtensions>
-    
-    <raptor-config>
-    {
-        logging: {
-            loggers: {
-                'ROOT': {level: 'DEBUG'}
-            }
-        }
-    }
-    </raptor-config>
 
     <bundles name="default">
         <bundle name="core">
@@ -59,9 +78,9 @@
 <!--     <pages> -->
 <!--         <page name="PageA"> -->
 <!--             <includes> -->
-<!--                 <module name="core" recursive="true"/> -->
+<!--                 <module name="core"/> -->
 <!--                 <init-raptor/> -->
-<!--                 <module name="templating" recursive="true"/> -->
+<!--                 <module name="templating"/> -->
 <!--                 <module name="moduleA"/> -->
 <!--                 <module name="loader"/> -->
 <!--             </includes> -->

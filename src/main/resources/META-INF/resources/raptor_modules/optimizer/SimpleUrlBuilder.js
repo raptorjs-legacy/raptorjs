@@ -22,7 +22,7 @@ raptor.defineClass(
             },
             
             getBundleFilename: function(bundle, checksum) {
-                return bundle.getName().replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "") + "." + this.getFileExtension(bundle.getContentType());
+                return bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "") + "." + this.getFileExtension(bundle.getContentType());
             },
             
             getFileExtension: function(contentType) {

@@ -24,6 +24,8 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     fs = require('fs'),
     packager = raptor.require('packager'),
     strings = raptor.require('strings'),
+    pageWatchers = [],
+    includeWatchers = [],
     parseArgs = function(args) {
         var config={};
         args.forEach(function(arg, i) {
@@ -88,6 +90,13 @@ exports.run = function() {
          }
      });
     
+    config.cleanDirs.forEach(function(dir) {
+        if (files.exists(dir)) {
+            logger.info("Cleaning directory: " + dir);
+            files.remove(dir);
+        }    
+     });
+    
     console.log();
     
     var leftPad = function(str, len) {
@@ -112,6 +121,25 @@ exports.run = function() {
             htmlOutputDir: config.getHtmlOutputDir(),
             checksumLength: 8
         });
+    
+    if (config.watchIncludesEnabled) {
+        writer.subscribe('bundleWritten', function(eventArgs) {
+            var bundle = eventArgs.bundle,
+                outputPath = eventArgs.file.getAbsolutePath();
+            
+            if (!bundle.watching && bundle.sourceResource && !bundle.inPlaceDeployment) {
+                
+                var watcher = fs.watch(bundle.sourceResource.getSystemPath(), function() {
+                    logger.info('Include modified: ' + bundle.sourceResource.getSystemPath());
+                    writer.rewriteBundle(outputPath, bundle);
+                });
+                
+                bundle.watching = true;
+                includeWatchers.push(watcher);
+            }
+            eventArgs = null;
+        });
+    }
 
     if (config.minifyJs === true) {
         writer.addFilter('optimizer.MinifyJSFilter');
@@ -170,7 +198,8 @@ exports.run = function() {
         });
             
         var oldWrite,
-            injector;
+            injector,
+            injects = [];
         
         urlBuilder.pageDir = null; //Reset out the page output directory for the URL builder  
         
@@ -193,11 +222,9 @@ exports.run = function() {
             urlBuilder.pageDir = new File(outputPagePath).getParent();
             
             oldWrite = writer.writePageIncludeHtml;
-            
-            injector = require('./injector').createInjector(files.readFully(pagePath), pagePath, config.keepHtmlMarkers !== false);
-            
+
             writer.writePageIncludeHtml = function(pageName, location, html) {
-                injector.inject(location, html);
+                injects.push({location: location, html: html});
             };
         }
         
@@ -205,12 +232,31 @@ exports.run = function() {
         logger.info('Writing dependencies for page "' + page.name + '"...');
         writer.writePageDependencies(pageDependencies);
         
-        if (injector) {
-            var pageHtml = injector.getHtml();
+        if (injects.length) {
+            var injectPageDependencies = function() {
+                injector = require('./injector').createInjector(files.readFully(pagePath), pagePath, config.keepHtmlMarkers !== false);
+                
+                injects.forEach(function(inject) {
+                    injector.inject(inject.location, inject.html);
+                });
+                
+                var pageHtml = injector.getHtml();
+                
+                logger.info('Writing page to "' + outputPagePath + '"...');
+                var outputPageFile = new File(outputPagePath);
+                outputPageFile.writeFully(pageHtml);
+            };
             
-            logger.info('Writing page to "' + outputPagePath + '"...');
-            var outputPageFile = new File(outputPagePath);
-            outputPageFile.writeFully(pageHtml);
+            injectPageDependencies();
+            
+            if (config.watchPagesEnabled === true) {
+                var watcher = require('fs').watch(pagePath, function() {
+                    logger.info('Page modified: ' + pagePath);
+                    injectPageDependencies();
+                });
+                
+                pageWatchers.push(watcher);
+            }
             
         }
         if (oldWrite) {
@@ -222,4 +268,13 @@ exports.run = function() {
     console.log();
     logger.info('Optimization complete!');
     
+    if (pageWatchers.length || includeWatchers.length) {
+        console.log();
+        if (pageWatchers.length) {
+            logger.info("Watching page HTML files for changes");    
+        }
+        if (includeWatchers.length) {
+            logger.info("Watching includes for changes");    
+        }
+    }
 }

@@ -5,9 +5,9 @@ var BundleDef = require('./BundleDef.js'),
     strings = raptor.require('strings'),
     includeHandler = {
         _type: "object",
-        _begin: function(parent, el) {
+        _begin: function(parent, context) {
             var include = { 
-                    type: el.getLocalName(),
+                    type: context.el.getLocalName(),
                     toString: function() { 
                         return JSON.stringify(this);
                     }
@@ -54,6 +54,10 @@ var Config = function() {
     this.loadedBundleSets = {};
     this.pageSearchPath = [];
     this.keepHtmlMarkers = true;
+    this.cleanOutputDirs = false;
+    this.cleanDirs = [];
+    this.watchPagesEnabled = false;
+    this.watchIncludesEnabled = false;
 };
 
 Config.parseIncludes = function(xml, path, config) {
@@ -81,6 +85,10 @@ Config.parseIncludes = function(xml, path, config) {
 };
 
 Config.prototype = {
+    addCleanDir: function(path) {
+        this.cleanDirs.push(path);
+    },
+    
     addParam: function(name, value) {
         if (this.params.hasOwnProperty(name)) {
             return; //Params are only write-once
@@ -207,6 +215,7 @@ Config.prototype = {
     parseXml: function(xml, path) {
         var config = this,
             objectMapper = raptor.require('xml.sax.objectMapper'),
+            reader,
             bundlesHandler = {
                 _type: "object",
                 _begin: function() {
@@ -250,189 +259,243 @@ Config.prototype = {
                     
                     "<*>": includeHandler
                 } //End "bundle"
-            };
+            },
+            optimizerConfigHandler = {
+                _type: "object",
+                
+                _begin: function(parent, tagName) {
+                    return config;
+                },
+                "<params>": {
+                    "<*>": {
+                        _type: "string",
+                        _set: function(params, name, value) {
+                            config.addParam(name, value);
+                        }
+                    }
+                },
+                
+                "resource-search-path": {
+                    "<dir>": {
+                        _type: "object",
+                        _begin: function() {
+                            return {};
+                        },
+                        _end: function(entry) {
+                            var dirPath = entry.path;
+                            if (!dirPath) {
+                                raptor.throwError(new Error('"path" is required for directory resource search path entry'));
+                            }
+                            dirPath = require('path').resolve(process.cwd(), dirPath);
+                            raptor.require('resources').getSearchPath().addDir(dirPath);
+                        },
+                        "@path": {
+                            _type: "string"
+                        }
+                    }
+                },
+                
+                "page-search-path": {
+                    "<dir>": {
+                        _type: "object",
+                        _begin: function() {
+                            return {};
+                        },
+                        _end: function(entry) {
+                            var dirPath = entry.path;
+                            if (!dirPath) {
+                                raptor.throwError(new Error('"path" is required for directory page search path entry'));
+                            }
+                            dirPath = require('path').resolve(process.cwd(), dirPath);
+                            config.addPageSearchDir(dirPath);
+                        },
+                        "@path": {
+                            _type: "string"
+                        }
+                    }
+                },
+                
+                "watch-pages-enabled": {
+                    _type: "boolean",
+                    _targetProp: "watchPagesEnabled"
+                },
+                "watch-includes-enabled": {
+                    _type: "boolean",
+                    _targetProp: "watchIncludesEnabled"
+                }, 
+                
+                "checksums-enabled": {
+                    _type: "boolean",
+                    _targetProp: "checksumsEnabled"
+                },
+                
+                "bundling-enabled": {
+                    _type: "boolean",
+                    _targetProp: "bundlingEnabled"
+                },
+                
+                "in-place-deployment-enabled": {
+                    _type: "boolean",
+                    _targetProp: "inPlaceDeploymentEnabled"
+                },
+                
+                "clean-output-dirs": {
+                    _type: "boolean",
+                    _targetProp: "cleanOutputDirs"
+                },
+                "<clean-dirs>": {
+                    "<dir>": {
+                        _type: "object",
+                        _begin: function() {
+                            return {};
+                        },
+                        _end: function(entry) {
+                            var dirPath = entry.path;
+                            if (!dirPath) {
+                                raptor.throwError(new Error('"path" is required for directory page search path entry'));
+                            }
+                            dirPath = require('path').resolve(process.cwd(), dirPath);
+                            config.addCleanDir(dirPath);
+                        },
+                        "@path": {
+                            _type: "string"
+                        }
+                    }
+                },
+                "minify-js": {
+                    _type: "boolean",
+                    _targetProp: "minifyJs"
+                },
+                "minify-css": {
+                    _type: "boolean",
+                    _targetProp: "minifyCss"
+                },
+                "output-dir": {
+                    _type: "string",
+                    _targetProp: "outputDir"
+                },
+                "bundles-output-dir": {
+                    _type: "string",
+                    _targetProp: "bundlesOutputDir"
+                },
+                "js-output-dir": {
+                    _type: "string",
+                    _targetProp: "scriptsOutputDir"
+                },
+                "css-output-dir": {
+                    _type: "string",
+                    _targetProp: "styleSheetsOutputDir"
+                },
+                "html-output-dir": {
+                    _type: "string",
+                    _targetProp: "htmlOutputDir"
+                },
+                "page-output-dir": {
+                    _type: "string",
+                    _targetProp: "pageOutputDir"
+                },
+                "modify-pages": {
+                    _type: "boolean",
+                    _targetProp: "modifyPages"
+                },
+                "inject-html-includes": {
+                    _type: "boolean",
+                    _targetProp: "injectHtmlIncludes"
+                },
+                "keep-html-markers": {
+                    _type: "boolean",
+                    _targetProp: "keepHtmlMarkers"
+                },
+                "url-prefix": {
+                    _type: "string",
+                    _targetProp: "urlPrefix"
+                },
+                "js-url-prefix": {
+                    _type: "string",
+                    _targetProp: "scriptsUrlPrefix"
+                },
+                "css-url-prefix": {
+                    _type: "string",
+                    _targetProp: "styleSheetsUrlPrefix"
+                },
+                "enabledExtensions": {
+                    _type: "string",
+                    _set: function(config, name, value) {
+                        var parts = value.split(/\s*,\s*/);
+                        parts.forEach(function(extension) {
+                            config.enableExtension(extension);
+                        });
+                    }
+                },
+                
+                "<output-dir>": {
+                    _type: "string"
+                },
+                "<bundles>": bundlesHandler, //End "bundles"
+                
+                "raptor-config": {
+                    _type: "string",
+                    _set: function(config, name, value) {
+                        config.raptorConfigJSON = JSON.stringify(eval('(' + value + ')'));
+                    }
+                },
+                "<pages>": {
+                    "<page>": {
+                        _type: "object",
+                        _begin: function() {
+                            var page = new PageDef();
+                            config.addPage(page);
+                            return page;
+                        },
+                        
+                        "path": {
+                            _type: "string"
+                        },
+                        
+                        "@name": {
+                        },
+                        
+                        "<bundles>": bundlesHandler,
+                        
+                        "<includes>": {
+                            "<*>": includeHandler
+                        }
+                    } //End <page>
+                } //End "<pages>"
+               
+            }; //End "optimizer-config" 
         
-        
-        objectMapper.read(
-            xml,
-            path,
+        reader = objectMapper.createReader(
             {
-                "<optimizer-config>": {
-                    _type: "object",
-                    
-                    _begin: function() {
-                        return config;
+                "<optimizer-config>": raptor.extend(optimizerConfigHandler, {
+                    "set-profile": {
+                        _type: "string",
+                        _targetProp: "profileName"
                     },
-                    "<params>": {
-                        "<*>": {
+                    
+                    "<profile>": raptor.extend(optimizerConfigHandler, {
+                        _type: "object",
+                        _begin: function() {
+                            return config;
+                        },
+                        "@name": {
                             _type: "string",
-                            _set: function(params, name, value) {
-                                config.addParam(name, value);
-                            }
-                        }
-                    },
-                    
-                    "resource-search-path": {
-                        "<dir>": {
-                            _type: "object",
-                            _begin: function() {
-                                return {};
-                            },
-                            _end: function(entry) {
-                                var path = entry.path;
-                                if (!entry.path) {
-                                    raptor.throwError(new Error('"path" is required for directory resource search path entry'));
+                            _set: function(parent, name, value) {
+                                if (value !== config.profileName) {
+                                    reader.skipCurrentElement();    
                                 }
-                                path = require('path').resolve(process.cwd(), path);
-                                raptor.require('resources').getSearchPath().addDir(path);
-                            },
-                            "@path": {
-                                _type: "string"
                             }
-                        }
-                    },
-                    
-                    "page-search-path": {
-                        "<dir>": {
-                            _type: "object",
-                            _begin: function() {
-                                return {};
-                            },
-                            _end: function(entry, config) {
-                                var path = entry.path;
-                                if (!entry.path) {
-                                    raptor.throwError(new Error('"path" is required for directory resource search path entry'));
+                        },
+                        "@enabled": {
+                            _type: "boolean",
+                            _set: function(parent, name, value) {
+                                if (value !== true) {
+                                    reader.skipCurrentElement();    
                                 }
-                                path = require('path').resolve(process.cwd(), path);
-                                config.addPageSearchDir(path);
-                            },
-                            "@path": {
-                                _type: "string"
                             }
                         }
-                    },
-                    
-                    "checksums-enabled": {
-                        _type: "boolean",
-                        _targetProp: "checksumsEnabled"
-                    },
-                    
-                    "bundling-enabled": {
-                        _type: "boolean",
-                        _targetProp: "bundlingEnabled"
-                    },
-                    
-                    "in-place-deployment-enabled": {
-                        _type: "boolean",
-                        _targetProp: "inPlaceDeploymentEnabled"
-                    },
-                    
-                    "clean-output-dirs": {
-                        _type: "boolean",
-                        _targetProp: "cleanOutputDirs"
-                    },
-                    "minify-js": {
-                        _type: "boolean",
-                        _targetProp: "minifyJs"
-                    },
-                    "minify-css": {
-                        _type: "boolean",
-                        _targetProp: "minifyCss"
-                    },
-                    "output-dir": {
-                        _type: "string",
-                        _targetProp: "outputDir"
-                    },
-                    "bundles-output-dir": {
-                        _type: "string",
-                        _targetProp: "bundlesOutputDir"
-                    },
-                    "js-output-dir": {
-                        _type: "string",
-                        _targetProp: "scriptsOutputDir"
-                    },
-                    "css-output-dir": {
-                        _type: "string",
-                        _targetProp: "styleSheetsOutputDir"
-                    },
-                    "html-output-dir": {
-                        _type: "string",
-                        _targetProp: "htmlOutputDir"
-                    },
-                    "page-output-dir": {
-                        _type: "string",
-                        _targetProp: "pageOutputDir"
-                    },
-                    "modify-pages": {
-                        _type: "boolean",
-                        _targetProp: "modifyPages"
-                    },
-                    "inject-html-includes": {
-                        _type: "boolean",
-                        _targetProp: "injectHtmlIncludes"
-                    },
-                    "keep-html-markers": {
-                        _type: "boolean",
-                        _targetProp: "keepHtmlMarkers"
-                    },
-                    "url-prefix": {
-                        _type: "string",
-                        _targetProp: "urlPrefix"
-                    },
-                    "js-url-prefix": {
-                        _type: "string",
-                        _targetProp: "scriptsUrlPrefix"
-                    },
-                    "css-url-prefix": {
-                        _type: "string",
-                        _targetProp: "styleSheetsUrlPrefix"
-                    },
-                    "enabledExtensions": {
-                        _type: "string",
-                        _set: function(config, name, value) {
-                            var parts = value.split(/\s*,\s*/);
-                            parts.forEach(function(extension) {
-                                config.enableExtension(extension);
-                            });
-                        }
-                    },
-                    
-                    "<output-dir>": {
-                        _type: "string"
-                    },
-                    "<bundles>": bundlesHandler, //End "bundles"
-                    
-                    "raptor-config": {
-                        _type: "string",
-                        _set: function(config, name, value) {
-                            config.raptorConfigJSON = JSON.stringify(eval('(' + value + ')'));
-                        }
-                    },
-                    "<pages>": {
-                        "<page>": {
-                            _type: "object",
-                            _begin: function() {
-                                var page = new PageDef();
-                                config.addPage(page);
-                                return page;
-                            },
-                            
-                            "path": {
-                                _type: "string"
-                            },
-                            
-                            "@name": {
-                            },
-                            
-                            "<bundles>": bundlesHandler,
-                            
-                            "<includes>": {
-                                "<*>": includeHandler
-                            }
-                        } //End <page>
-                    } //End "<pages>"
-                   
-                } //End "bundle-config"
+                    })
+                })
             },
             { //objectMapper options
                 parseProp: function(value, name) {
@@ -440,6 +503,10 @@ Config.prototype = {
                     return result;
                 }
             });
+        
+        reader.read(
+            xml,
+            path);
     }
 };
 

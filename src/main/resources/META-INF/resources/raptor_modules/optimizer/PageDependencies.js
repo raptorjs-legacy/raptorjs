@@ -108,11 +108,17 @@ raptor.defineClass(
                                 
                                 if (config.inPlaceDeploymentEnabled === true) {
                                     
-                                    targetBundleName = sourceResource ? sourceResource.getName() : include.getKey(); 
+                                    targetBundleName = include.isInPlaceDeploymentAllowed() ? sourceResource.getSystemPath() : (sourceResource ? sourceResource.getPath() : include.getKey()); 
                                     bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
-                                    if (sourceResource && include.isInPlaceDeploymentAllowed()) {
-                                        bundle.inPlaceDeployment = true;
-                                        bundle.sourceResource = sourceResource;
+                                    if (sourceResource) {
+                                        bundle.sourceResource = sourceResource;    
+                                        
+                                        if (include.isInPlaceDeploymentAllowed()) {
+                                            bundle.inPlaceDeployment = true;
+                                        }
+                                        else if (include.isCompiled()) {
+                                            bundle.includeLocationInUrl = false;
+                                        }
                                     }
                                     else {
                                         bundle.includeLocationInUrl = false;

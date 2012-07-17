@@ -1,7 +1,9 @@
 raptor.define("moduleA", function() {
     return {
         greet: function() {
-            return "Hello from moduleA";
+            var message = "Hello from moduleA";
+            this.logger().info(message);
+            return message;
         }
     };
 });

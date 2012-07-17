@@ -4,10 +4,12 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var files = raptor.require('files');
+        var files = raptor.require('files'),
+            listeners = raptor.require('listeners');
         
         var PageDependenciesFileWriter = function(config) {
             PageDependenciesFileWriter.superclass.constructor.call(this, config);
+            listeners.makeObservable(this, PageDependenciesFileWriter.prototype, ['bundleWritten']);
         };
         
         PageDependenciesFileWriter.prototype = {
@@ -57,13 +59,25 @@ raptor.defineClass(
             writeBundle: function(bundle, code, checksum) {
                 var outputDir = this.getBundleOutputDir(bundle);
                 var outputPath = files.joinPaths(outputDir, this.getBundleFilename(bundle, checksum));
-                this.logger().info('Writing bundle file to "' + outputPath + '"...');
-                this.writeBundleFile(outputPath, code, checksum);
+                
+                this.writeBundleFile(outputPath, code, checksum, bundle);
             },
             
-            writeBundleFile: function(path, code, checksum) {
+            writeBundleFile: function(path, code, checksum, bundle) {
+                this.logger().info('Writing bundle file to "' + path + '"...');
                 var outputFile = new files.File(path);
                 outputFile.writeFully(code, "UTF-8");
+                this.publish('bundleWritten', {
+                    bundle: bundle,
+                    file: outputFile,
+                    code: code,
+                    checksum: checksum
+                });
+            },
+            
+            rewriteBundle: function(path, bundle) {
+                var bundleData = this.readBundle(bundle, this.context);
+                this.writeBundleFile(path, bundleData.code, bundleData.checksum, bundle);    
             },
             
             getPageIncludeFilename: function(pageName, location) {
