@@ -26,6 +26,27 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
     strings = raptor.require('strings'),
     pageWatchers = [],
     includeWatchers = [],
+    configWatcher = [],
+    packageWatchers = [],
+    watchedPackages = {},
+    closeWatchers = function(watchers) {
+        raptor.forEach(watchers, function(w) {
+            w.close();
+        });
+        watchers.splice(0, watchers.length);
+    },
+    watchPackage = function(manifest) {
+        var path = manifest.getSystemPath();
+        if (!watchedPackages[path]) {
+            var watcher = fs.watch(path, function() {
+                raptor.require('packager').removePackageManifestFromCache(manifest);
+                logger.info('Package modified: ' + path);
+                exports.run();
+            });
+            packageWatchers.push(watcher);
+            watchedPackages[path] = true;
+        }
+    },
     parseArgs = function(args) {
         var config={};
         args.forEach(function(arg, i) {
@@ -47,7 +68,16 @@ var configArgRegExp=/^--(\w+)(?:=(\w+))?$/
 var Config = require('./Config.js');
 
 
+
 exports.run = function() {
+    /*
+     * Close all watchers in-case the optimizer is being re-executed
+     */
+    closeWatchers(includeWatchers);
+    closeWatchers(pageWatchers);
+    closeWatchers(configWatcher);
+    closeWatchers(packageWatchers);
+    watchedPackages = {};
     
     var args = parseArgs(process.argv.slice(2));
     
@@ -93,7 +123,12 @@ exports.run = function() {
     config.cleanDirs.forEach(function(dir) {
         if (files.exists(dir)) {
             logger.info("Cleaning directory: " + dir);
-            files.remove(dir);
+            try {
+                files.remove(dir);    
+            }
+            catch(e) {
+                logger.warn("Unable to clean directory: " + dir, e);
+            }
         }    
      });
     
@@ -122,7 +157,7 @@ exports.run = function() {
             checksumLength: 8
         });
     
-    if (config.watchIncludesEnabled) {
+    if (config.isWatchIncludesEnabled()) {
         writer.subscribe('bundleWritten', function(eventArgs) {
             var bundle = eventArgs.bundle,
                 outputPath = eventArgs.file.getAbsolutePath();
@@ -197,6 +232,10 @@ exports.run = function() {
             enabledExtensions: enabledExtensions
         });
             
+        if (config.isWatchPackagesEnabled()) {
+            pageDependencies.getPackageManifests().forEach(watchPackage);
+        }
+        
         var oldWrite,
             injector,
             injects = [];
@@ -249,7 +288,7 @@ exports.run = function() {
             
             injectPageDependencies();
             
-            if (config.watchPagesEnabled === true) {
+            if (config.isWatchPagesEnabled()) {
                 var watcher = require('fs').watch(pagePath, function() {
                     logger.info('Page modified: ' + pagePath);
                     injectPageDependencies();
@@ -268,13 +307,26 @@ exports.run = function() {
     console.log();
     logger.info('Optimization complete!');
     
-    if (pageWatchers.length || includeWatchers.length) {
+    if (config.isWatchConfigEnabled()) {
+        var watcher = fs.watch(configFile, function() {
+            exports.run();
+        });
+        configWatcher.push(watcher);
+    }
+    
+    if (pageWatchers.length || includeWatchers.length || configWatcher.length || packageWatchers.length) {
         console.log();
         if (pageWatchers.length) {
             logger.info("Watching page HTML files for changes");    
         }
         if (includeWatchers.length) {
             logger.info("Watching includes for changes");    
+        }
+        if (configWatcher.length) {
+            logger.info("Watching configuration file for changes");    
+        }
+        if (packageWatchers.length) {
+            logger.info("Watching packages for changes");    
         }
     }
 }

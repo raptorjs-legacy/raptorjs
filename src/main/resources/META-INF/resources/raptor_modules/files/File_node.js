@@ -138,17 +138,15 @@ $rload(function(raptor) {
         },
         
         mkdirs: function() {
-            var file = this, 
-                missing = [],
-                parentFile;
+            var missing = [],
+                dir = this;
             
-            while ((parentFile = file.getParentFile())) {
-                if (parentFile.exists()) {
+            while ((dir = dir.getParentFile())) {
+                if (dir.exists()) {
                     break;
                 }
                 else {
-                    missing.push(parentFile);
-                    file = file.getParentFile();
+                    missing.push(dir);
                 }
             }
             

@@ -21,8 +21,7 @@
         <in-place-deployment-enabled>true</in-place-deployment-enabled>
         <minify-js>false</minify-js>
         <checksums-enabled>false</checksums-enabled>
-        <watch-pages-enabled>true</watch-pages-enabled>
-        <watch-includes-enabled>true</watch-includes-enabled>
+        <watch-files-enabled>true</watch-files-enabled>
     </profile>
     
     <profile name="production">
@@ -38,8 +37,7 @@
         }
         </raptor-config>
     </profile>
-    
-    
+   
     <resource-search-path>
         <dir path="modules"/>
     </resource-search-path>

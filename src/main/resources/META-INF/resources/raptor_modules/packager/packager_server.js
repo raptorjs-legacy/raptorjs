@@ -105,6 +105,10 @@ $rload(function(raptor) {
             return includeClass;
         },
         
+        removePackageManifestFromCache: function(manifest) {
+            delete packageManifests[manifest.getSystemPath()];
+        },
+        
         /**
          * 
          * @param resourcePath

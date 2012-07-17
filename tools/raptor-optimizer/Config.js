@@ -56,8 +56,11 @@ var Config = function() {
     this.keepHtmlMarkers = true;
     this.cleanOutputDirs = false;
     this.cleanDirs = [];
+    this.watchFilesEnabled = false;
     this.watchPagesEnabled = false;
     this.watchIncludesEnabled = false;
+    this.watchConfigEnabled = false;
+    this.watchPackagesEnabled = false;
 };
 
 Config.parseIncludes = function(xml, path, config) {
@@ -85,6 +88,22 @@ Config.parseIncludes = function(xml, path, config) {
 };
 
 Config.prototype = {
+    isWatchPagesEnabled: function() {
+        return this.watchPagesEnabled || this.watchFilesEnabled;
+    },
+    
+    isWatchIncludesEnabled: function() {
+        return this.watchIncludesEnabled || this.watchFilesEnabled;
+    },
+    
+    isWatchConfigEnabled: function() {
+        return this.watchConfigEnabled || this.watchFilesEnabled;
+    },
+    
+    isWatchPackagesEnabled: function() {
+        return this.watchPackagesEnabled || this.watchFilesEnabled;
+    },
+    
     addCleanDir: function(path) {
         this.cleanDirs.push(path);
     },
@@ -314,7 +333,10 @@ Config.prototype = {
                         }
                     }
                 },
-                
+                "watch-files-enabled": {
+                    _type: "boolean",
+                    _targetProp: "watchFilesEnabled"
+                },
                 "watch-pages-enabled": {
                     _type: "boolean",
                     _targetProp: "watchPagesEnabled"
@@ -322,6 +344,16 @@ Config.prototype = {
                 "watch-includes-enabled": {
                     _type: "boolean",
                     _targetProp: "watchIncludesEnabled"
+                }, 
+                
+                "watch-config-enabled": {
+                    _type: "boolean",
+                    _targetProp: "watchConfigEnabled"
+                }, 
+                
+                "watch-packages-enabled": {
+                    _type: "boolean",
+                    _targetProp: "watchPackagesEnabled"
                 }, 
                 
                 "checksums-enabled": {

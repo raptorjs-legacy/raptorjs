@@ -78,6 +78,9 @@ raptor.defineClass(
             this.bundleCount = 0;
             this.asyncRequiresByName = {};
                         
+            this.packageManifests = [];
+            this.foundPackagePaths = {};
+            
             this._build();
         };
         
@@ -94,6 +97,12 @@ raptor.defineClass(
                         recursive: true, //We want to make sure every single include is part of a bundle
                         enabledExtensions: this.enabledExtensions,
                         handlePackageInclude: function(include, context) {
+                            var manifest = include.getManifest();
+                            if (!this.foundPackagePaths[manifest.getSystemPath()]) {
+                                this.foundPackagePaths[manifest.getSystemPath()] = true;
+                                this.packageManifests.push(include.getManifest());
+                            }
+                            
                             if (context.async === true) {
                                 asyncIncludes.push(include); //We'll handle async includes later
                             }
@@ -191,8 +200,7 @@ raptor.defineClass(
                             return;
                         }
                     
-                        var packageManifest = include.getManifest(),
-                            parentPackageManifest = context;
+                        var packageManifest = include.getManifest();
                         
                         var asyncRequire = getAsyncRequire(context.parentPackage.getName());
                         asyncRequire.addRequire(packageManifest.getName());
@@ -257,6 +265,10 @@ raptor.defineClass(
             
             getPageName: function() {
                 return this.pageName;
+            },
+            
+            getPackageManifests: function() {
+                return this.packageManifests;
             }
         };
         
