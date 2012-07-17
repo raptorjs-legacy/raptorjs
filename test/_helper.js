@@ -3,38 +3,76 @@ require('./init-raptor.js');
 var logger = raptor.require('logging').logger('_helper');
 var codeCoverageReporter = require('./code-coverage-reporter.js');
 
-jasmine.Matchers.prototype.toNotStrictlyEqual = function(expected) {
-    return this.actual !== expected;
-};
-
-jasmine.Matchers.prototype.toStrictlyEqual = function(expected) {
-    return this.actual === expected;
-};
-
-jasmine.Matchers.prototype.toEqualArray = function(expected) {
-    if (this.actual == expected) {
-        return true;
-    }
-    
-    if (!this.actual || !expected) return false;
-    
-    if (this.actual.constructor !== Array) return false;
-    if (expected.constructor !== Array) return false;
-    
-    
-    if (this.actual.length != expected.length) return false;
-    var i=0,
-        len=this.actual.length;
-    
-    
-    
-    for (;i<len; i++) {
-        if (this.actual[i] != expected[i]) {
-            return false;
+beforeEach(function() {
+    this.addMatchers({
+        toNotStrictlyEqual: function(expected) {
+            return this.actual !== expected;
+        },
+        
+        toStrictlyEqual: function(expected) {
+            return this.actual === expected;
+        },
+        
+        toEqualArray: function(expected) {
+            if (this.actual == expected) {
+                return true;
+            }
+            
+            if (!this.actual || !expected) return false;
+            
+            if (this.actual.constructor !== Array) return false;
+            if (expected.constructor !== Array) return false;
+            
+            
+            if (this.actual.length != expected.length) return false;
+            var i=0,
+                len=this.actual.length;
+            
+            
+            
+            for (;i<len; i++) {
+                if (this.actual[i] != expected[i]) {
+                    return false;
+                }
+            }
+            return true;
         }
-    }
-    return true;
-};
+    });
+});
+
+//jasmine.Matchers.prototype.toNotStrictlyEqual = function(expected) {
+//    return this.actual !== expected;
+//};
+//
+//jasmine.Matchers.prototype.toStrictlyEqual = function(expected) {
+//    console.error("toStrictlyEqual args: ", arguments, ' THIS: ', this.actual, new Error().stack);
+//    return this.actual === expected;
+//};
+//
+//jasmine.Matchers.prototype.toEqualArray = function(expected) {
+//    if (this.actual == expected) {
+//        return true;
+//    }
+//    
+//    if (!this.actual || !expected) return false;
+//    
+//    if (this.actual.constructor !== Array) return false;
+//    if (expected.constructor !== Array) return false;
+//    
+//    
+//    if (this.actual.length != expected.length) return false;
+//    var i=0,
+//        len=this.actual.length;
+//    
+//    
+//    
+//    for (;i<len; i++) {
+//        if (this.actual[i] != expected[i]) {
+//            return false;
+//        }
+//    }
+//    return true;
+//};
 
 //Add support for "before" and "after" methods
 getEnv().addReporter({
