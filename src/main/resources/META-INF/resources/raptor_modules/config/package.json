@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "config",    
     "version": "1.0",
     "description": "Configuration object support with getters, setters and onchange listeners",

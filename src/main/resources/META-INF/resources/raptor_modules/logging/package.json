@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "logging",
     "version": "1.0",
     "description": "Logging framework for Raptor",

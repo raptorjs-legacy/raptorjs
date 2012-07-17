@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "test.optimizer.moduleA",
     "includes": [
         {"path": "moduleA.js"}

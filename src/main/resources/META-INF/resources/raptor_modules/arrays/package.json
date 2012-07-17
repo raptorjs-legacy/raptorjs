@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "arrays",
     "version": "1.0",
     "description": "Utility functions for working with arrays",

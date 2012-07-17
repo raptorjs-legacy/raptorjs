@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "listeners",
     "version": "1.0",
     "description": "Provides support for listener lists and observables",

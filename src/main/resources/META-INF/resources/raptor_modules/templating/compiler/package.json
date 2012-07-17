@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "templating.compiler",
     "version": "1.0",
     "description": "RaptorJS JavaScript Template Compiler",

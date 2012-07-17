@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "xml.sax.objectMapper",
     "version": "1.0",
     "description": "Simple SAX-based object mapper to build objects from XML",

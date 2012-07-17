@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "debug",
     "version": "1.0",
     "description": "Utility functions and classes for debugging",

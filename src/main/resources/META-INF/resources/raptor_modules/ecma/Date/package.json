@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "ecma.date",
     "version": "1.0",
     "description": "ECMA-compatible Date object",

@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "test/simple",
     "includes": [
         {"path": "simple.js"}

@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "resources",
     "version": "1.0",
     "description": "Module to find and access resources in the Raptor resource search path",

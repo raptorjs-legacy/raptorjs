@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "regexp",
     "version": "1.0",
     "description": "Utility functions for working with regular expressions",

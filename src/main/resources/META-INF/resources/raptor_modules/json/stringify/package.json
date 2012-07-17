@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "json.stringify",
     "version": "1.0",
     "description": "Raptor module which exposes a new stringify function with additional options beyond the standard JSON.stringify function",

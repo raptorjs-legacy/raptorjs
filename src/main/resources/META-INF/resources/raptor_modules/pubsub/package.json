@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "pubsub",
     "version": "1.0",
     "description": "Raptor Module: pubsub",

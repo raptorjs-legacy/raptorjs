@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "xml.sax",
     "version": "1.0",
     "description": "SAX-based XML parser",

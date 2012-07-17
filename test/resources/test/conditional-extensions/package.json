@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "test.conditional-extensions",
     "includes": [
         {"path": "conditional-extensions.js"}

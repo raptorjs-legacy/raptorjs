@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "optimizer",
     "version": "1.0",
     "description": "Web application optimization utility module",

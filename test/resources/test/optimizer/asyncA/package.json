@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "raptor-module",
     "name": "test.optimizer.asyncA",
     "includes": [
         {"module": "test.optimizer.mixedA", "async": true},
