@@ -174,7 +174,7 @@ raptor.defineClass(
                 
                 var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
                 
-                if (minifier && this.options.minify !== false) {
+                if (minifier && this.options.minify === true) {
                     output = minifier.minify(output);
                 }
                 

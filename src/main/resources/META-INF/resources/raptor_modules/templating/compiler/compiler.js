@@ -24,6 +24,7 @@ raptor.define(
             extend = raptor.extend,
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             defaultOptions = {
+                minify: false,
                 preserveWhitespace: {
                     'pre': true,
                     'textarea': true
