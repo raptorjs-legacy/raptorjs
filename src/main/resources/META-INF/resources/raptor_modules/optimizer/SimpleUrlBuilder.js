@@ -3,6 +3,8 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
+        var strings = raptor.require('strings');
+        
         var SimpleUrlBuilder = function(config) {
             this.prefix = config.prefix;
             this.scriptsPrefix = config.scriptsPrefix;
@@ -22,7 +24,12 @@ raptor.defineClass(
             },
             
             getBundleFilename: function(bundle, checksum) {
-                return bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "") + "." + this.getFileExtension(bundle.getContentType());
+                var filename = bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "");
+                var ext = "." + this.getFileExtension(bundle.getContentType());
+                if (!strings.endsWith(filename, ext)) {
+                    filename += ext;
+                }
+                return filename;
             },
             
             getFileExtension: function(contentType) {

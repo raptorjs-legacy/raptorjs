@@ -185,7 +185,7 @@ exports.run = function() {
                         writer.rewriteBundle(outputPath, bundle);    
                     }
                     catch(e) {
-                        logger.error('Unable to rewrite include "' + include.toString() + '". Exception: ' + e, e);
+                        logger.error('Unable to rewrite include "' + bundle.sourceResource.getSystemPath() + '". Exception: ' + e, e);
                     }
                     
                 });
@@ -311,7 +311,14 @@ exports.run = function() {
             if (config.isWatchPagesEnabled()) {
                 watchFile(pagePath, 'pages', function() {
                     logger.info('Page modified: ' + pagePath);
-                    injectPageDependencies();
+                    if (files.exists(pagePath)) {
+                        injectPageDependencies();
+                    }
+                    else {
+                        logger.info('Modified page no longer exists: ' + pagePath);
+                        rerun(); //The page might have been moved...
+                    }
+                    
                 });
             }
         }

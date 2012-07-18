@@ -12,11 +12,13 @@ exports.findPages = function(config) {
                             
                             var pageName,
                                 pageFile,
-                                filename = file.getName();
+                                filename = file.getName(),
+                                isPage;
                             
                             if (filename === 'package.json') {
-                                pageName = file.getParentFile().getName();
-                                pageFile = new files.File(file, pageName).getAbsolutePath();
+                                var dir = file.getParentFile();
+                                pageName = dir.getName();
+                                pageFile = new files.File(dir, pageName + ".html");
                             }
                             else if (strings.endsWith(filename, "-package.json")) {
                                 pageName = filename.substring(0, filename.length - "-package.json".length);
@@ -24,9 +26,9 @@ exports.findPages = function(config) {
                             }
                 
                             if (pageName) {
-                                
                                 var pageDef = new PageDef();
                                 pageDef.name = pageName;
+                                
                                 if (pageFile.exists()) {
                                     pageDef.htmlPath = pageFile.getAbsolutePath();
                                 }

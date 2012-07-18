@@ -120,15 +120,16 @@ raptor.defineClass(
                                 
                                 if (config.inPlaceDeploymentEnabled === true) {
                                     
-                                    targetBundleName = include.isInPlaceDeploymentAllowed() ? sourceResource.getSystemPath() : (sourceResource ? sourceResource.getPath() : include.getKey()); 
+                                    var inPlaceDeploymentAllowed = include.isInPlaceDeploymentAllowed();
+                                    targetBundleName = inPlaceDeploymentAllowed ? sourceResource.getSystemPath() : (sourceResource ? sourceResource.getPath() : include.getKey()); 
                                     bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
                                     if (sourceResource) {
                                         bundle.sourceResource = sourceResource;    
                                         
-                                        if (include.isInPlaceDeploymentAllowed()) {
+                                        if (inPlaceDeploymentAllowed) { //We can't allow in-place deployment for async includes because of URL restrictions (can't refer to files out of subdirector of HTML)
                                             bundle.inPlaceDeployment = true;
                                         }
-                                        else if (include.isCompiled()) {
+                                        else {
                                             bundle.includeLocationInUrl = false;
                                         }
                                     }
