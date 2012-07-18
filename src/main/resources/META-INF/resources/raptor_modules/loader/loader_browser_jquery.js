@@ -36,6 +36,7 @@ raptor.extend('loader', function(raptor) {
             $.ajax({
                 url: src,
                 dataType: "script",
+                crossDomain: true,
                 success: function(result) {
                     _this.logger().debug('Downloaded: "' + src + '"');
                     

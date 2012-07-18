@@ -27,9 +27,9 @@
                 {"path": "loader_browser_jquery.js"}
             ]
         },
-        "loader.requires|browser": {
+        "loader.requires": {
             "includes": [
-                {"path": "loader_browser_requires.js"}
+                {"module": "loader.requires"}
             ]
         }
     }
