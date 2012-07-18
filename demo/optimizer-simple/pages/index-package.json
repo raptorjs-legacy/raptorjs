@@ -4,8 +4,8 @@
         { "type": "init-raptor" },
         { "module": "templating" },
         { "module": "greeting" },
-        { "module": "loader" },
-        { "module": "moduleB", "async": true },
+        { "module": "loader.requires" },
+        { "module": "async-module", "async": true },
         { "type": "loader-metadata" }
      ]
 }

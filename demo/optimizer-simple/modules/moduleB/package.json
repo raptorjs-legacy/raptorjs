@@ -1,8 +1,0 @@
-{
-    "type": "raptor-module",
-    "name": "moduleB",
-    "includes": [
-        {"path": "moduleB.js"},
-        {"path": "moduleB.css"}
-    ]
-}
