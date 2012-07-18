@@ -180,6 +180,10 @@ $rload(function(raptor) {
             return resource;
         },
         
+        load: function() {
+            raptor.require('packager').load(this);
+        },
+        
         /**
          * 
          * @param options
@@ -275,7 +279,6 @@ $rload(function(raptor) {
         }
     };
     
-    raptor.packager.PackageManifest = PackageManifest;
-    
+    raptor.packager.PackageManifest = PackageManifest; 
     raptor.packager.createInclude = createInclude;
 });

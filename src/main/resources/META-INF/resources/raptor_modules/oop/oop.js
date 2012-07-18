@@ -140,20 +140,14 @@ $rload(function(raptor) {
             }
             
             var loaded = loadedLookup[name]; //See if the object has already been loaded
-            
-            if (loaded !== undefined)
-            {
-                //If loaded, then just return it
-                return loaded;
+            if (loaded === undefined) {
+                loaded = oop._load(name, 1);
             }
             
-            //Otherwise, try to load the object with the specified name
-            loaded = oop._load(name);
-            
-            //If we didn't find the object then throw an error
-            if (loaded === undefined && ignoreMissing !== true) {
+            if (!loaded && !ignoreMissing) {
                 oop._missing(name);
             }
+            
             return loaded;
         },
         /**
@@ -354,7 +348,7 @@ $rload(function(raptor) {
             return def;
         },
         _find = function(name) {
-            return _require(name, 0, 0, true); //Checks for the existing of an object
+            return _require(name, 0, 0, 1); //Checks for the existence of an object
         }; 
    
     /**
@@ -607,18 +601,6 @@ raptor.defineEnum(
          */
         find: _find,
         
-
-        /**
-         * Attempts to load the object with the specified name. If the object
-         * is not found then null is returned.
-         * 
-         * Synonym for "find"
-         * 
-         * @param name The name of the class/module/mixin/enum
-         * @returns Returns an instance of an object if it exists, otherwise null
-         */
-        load: _find,
-        
         /**
          * Obtains reference(s) to the requested class/module/mixin/enum (either synchronously or asynchronously). If the requested objects
          * have not already been initialized then they will be lazily initialized.
@@ -724,38 +706,18 @@ raptor.defineEnum(
         _load: function(name, find) {
             //See if the definition for the object can be found or if the object has already been loaded
             var def = definitionsLookup[name],
-                loaded = loadedLookup[name];
+                loaded;
             
-            if (raptor.hasOwnProperty(name)) {
-                loaded = raptor[name];
-            }
-            
-            if (def && !loaded) {
-                //We found a definition, just build the object based on that definition
-                loaded = _build(name, def);
-                loadedLookup[name] = loaded;
-            }
-            
-               
-            if (loaded || loaded === null) {
-                return loaded;
-            }
-            
-            //Otherwise, try to find
-            if (oop._find) {
-                if (find !== false) {
+            if (!(loaded = raptor[name])) {
+                if (def) {
+                    //We found a definition, just build the object based on that definition
+                    loaded = _build(name, def);
+                }
+                else if (find && oop._find) { //Otherwise, try to find
                     loaded =  oop._find(name);
                 }
             }
-            else {
-                loaded = null;
-            }
-            
-            if (loaded === null) {
-                loadedLookup[name] = loaded = null; //Give up
-            }
-            
-            return loaded;
+            return (loadedLookup[name] = loaded || null);
         },
         
         /**
@@ -856,7 +818,7 @@ raptor.defineEnum(
         inherit: _inherit,
         
         _missing: function(name) {
-            throw new Error('Missing ' + name);
+            throw new Error('Not found: ' + name);
         }
     };
 

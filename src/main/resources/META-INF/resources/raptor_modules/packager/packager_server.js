@@ -54,8 +54,8 @@ $rload(function(raptor) {
          * 
          * @param resourcePath {String|packager-PackageManifest}
          */
-        loadPackage: function(resourcePath) {
-            this.PackageLoader.instance.loadPackage(resourcePath, {enabledExtensions: _extensionsLookup});
+        load: function(resourcePath) {
+            this.PackageLoader.instance.load(resourcePath, {enabledExtensions: _extensionsLookup});
         },
         
         _watchResourceSearchPath: function() {

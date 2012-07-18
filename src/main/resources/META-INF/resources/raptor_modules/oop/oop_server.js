@@ -23,7 +23,6 @@ $rload(function(raptor) {
         getModuleDirPath = function(name) {
             return '/' + name.replace(/\./g, '/');
         },
-        loaded = {},
         findMissingModuleResource = function(name) {
             var resources = raptor.resources;
             
@@ -67,7 +66,7 @@ $rload(function(raptor) {
                 return undefined;
             } 
             
-            raptor.require('packager').loadPackage(manifest);
+            raptor.require('packager').load(manifest);
             
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
@@ -77,7 +76,8 @@ $rload(function(raptor) {
             raptor.extend(mappings, _mappings);
         },
         searchPathListenerHandle,
-        discoveryComplete = false;
+        discoveryComplete = false,
+        missing = {};
     
     /**
      * @extension Server
@@ -108,6 +108,28 @@ $rload(function(raptor) {
             }, this);
             
             this._watchResourceSearchPath();
+        },
+        
+        /**
+         * Attempts to load the package for the specified module
+         * 
+         * @param name The name of the class/module/mixin/enum
+         * @returns void
+         */
+        load: function(name) {
+            var manifest;
+            
+            if (!missing[name]) {
+                manifest = oop.getModuleManifest(name); 
+            }
+            
+            if (!manifest) {
+                missing[name] = true;
+                oop._missing(name);
+            }
+            else {
+                manifest.load();    
+            }
         },
         
         /**
@@ -156,5 +178,7 @@ $rload(function(raptor) {
             return manifest;
         }
     });
+    
+    raptor.load = raptor.oop.load;
 });
 

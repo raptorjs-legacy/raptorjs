@@ -38,7 +38,7 @@ raptor.defineClass(
                 context.setLoaded(moduleName);
                 
                 var newManifest = raptor.oop.getModuleManifest(moduleName);
-                raptor.packager.loadPackage(newManifest);
+                raptor.packager.load(newManifest);
             },
 
             getManifest: function() {

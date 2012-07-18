@@ -30,7 +30,7 @@ $rload(function(raptor) {
          * 
          * @param resourcePath {String|packager-PackageManifest}
          */
-        loadPackage: function(resourcePath, options) {
+        load: function(resourcePath, options) {
             var manifest = resourcePath._isPackageManifest ? 
                     resourcePath :
                     packager.getPackageManifest(resourcePath),
