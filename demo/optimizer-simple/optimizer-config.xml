@@ -16,7 +16,7 @@
             }
         }
         </raptor-config>
-        <enabledExtensions>jquery,browser,logging.console</enabledExtensions>
+        <enabled-extensions>jquery,browser,logging.console</enabled-extensions>
         <bundling-enabled>false</bundling-enabled>
         <in-place-deployment-enabled>true</in-place-deployment-enabled>
         <minify-js>false</minify-js>
@@ -26,7 +26,7 @@
     
     <profile name="production">
         <checksums-enabled>true</checksums-enabled>
-        <enabledExtensions>jquery,browser</enabledExtensions>
+        <enabled-extensions>jquery,browser</enabled-extensions>
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>

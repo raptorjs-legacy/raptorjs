@@ -450,7 +450,7 @@ Config.prototype = {
                     _type: "string",
                     _targetProp: "styleSheetsUrlPrefix"
                 },
-                "enabledExtensions": {
+                "enabled-extensions": {
                     _type: "string",
                     _set: function(config, name, value) {
                         var parts = value.split(/\s*,\s*/);
