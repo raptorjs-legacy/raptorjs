@@ -64,6 +64,7 @@ raptor.defineClass(
 
             this.pageName = config.pageName;
             this.includes = config.includes;
+            this.bundlingEnabled = config.bundlingEnabled !== false;
             this.config = config;
             
             /*
@@ -112,39 +113,45 @@ raptor.defineClass(
                         },
                         handleInclude: function(include, context) {
 
-                            var bundle = bundleSet.getBundleForInclude(include),
-                                targetBundleName;
+                            var bundle = bundleSet.getBundleForInclude(include);
+                            
                             if (!bundle) {
                                 
                                 var sourceResource = include.getResource();
                                 
-                                if (config.inPlaceDeploymentEnabled === true) {
-                                    
-                                    var inPlaceDeploymentAllowed = include.isInPlaceDeploymentAllowed();
-                                    targetBundleName = inPlaceDeploymentAllowed ? sourceResource.getSystemPath() : (sourceResource ? sourceResource.getPath() : include.getKey()); 
-                                    bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
-                                    if (sourceResource) {
-                                        bundle.sourceResource = sourceResource;    
+                                if (!this.bundlingEnabled) {
+                                    //Create a bundle with a single include for each include
+                                    if (config.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
                                         
-                                        if (inPlaceDeploymentAllowed) { //We can't allow in-place deployment for async includes because of URL restrictions (can't refer to files out of subdirector of HTML)
+                                        var sourceUrl;
+                                        
+                                        if (this.config.sourceUrlResolver) {
+                                            sourceUrl = this.config.sourceUrlResolver(sourceResource.getSystemPath());
+                                        }
+                                        
+                                        if (!this.config.sourceUrlResolver || sourceUrl) {
+                                            bundle = bundleSet.addIncludeToBundle(include, sourceResource.getSystemPath());
+                                            if (sourceUrl) {
+                                                bundle.url = sourceUrl;    
+                                            }
+                                            bundle.sourceResource = sourceResource;
                                             bundle.inPlaceDeployment = true;
                                         }
-                                        else {
-                                            bundle.includeLocationInUrl = false;
+                                    }
+                                    
+                                    if (!bundle) {
+                                        bundle = bundleSet.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
+                                        bundle.sourceResource = sourceResource;
+                                        bundle.includeLocationInUrl = false;
+                                        if (!sourceResource) {
+                                            bundle.requireChecksum = true;
                                         }
                                     }
-                                    else {
-                                        bundle.includeLocationInUrl = false;
-                                        bundle.requireChecksum = true;
-                                    }
-                                    
-                                    
                                 }
                                 
                                 if (!bundle) {
                                     //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                    targetBundleName = (context.async ? "page-async-" : "page-") + this.pageName; 
-                                    bundle = bundleSet.addIncludeToBundle(include, targetBundleName);
+                                    bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName);
                                 }
                                 
                             }
@@ -273,6 +280,10 @@ raptor.defineClass(
             
             getPackageManifests: function() {
                 return this.packageManifests;
+            },
+            
+            setSourceUrlResolver: function(sourceUrlResolver) {
+                this.sourceUrlResolver = sourceUrlResolver;
             }
         };
         

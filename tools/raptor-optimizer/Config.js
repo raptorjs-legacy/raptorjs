@@ -45,7 +45,7 @@ var Config = function() {
     this.pageOutputDir = "dist/pages";
     this.scriptsUrlPrefix = null;
     this.styleSheetsUrlPrefix = null;
-    this.urlPrefix = null;
+    this.resourceUrlPrefix = null;
     this.modifyPages = false;
     this.enabledExtensions = {};
     this.params = {};
@@ -61,6 +61,9 @@ var Config = function() {
     this.watchIncludesEnabled = false;
     this.watchConfigEnabled = false;
     this.watchPackagesEnabled = false;
+    this.pageFileExtensions = ["html"];
+    this.inPlaceDeploymentEnabled = false;
+    this.serverSourceMappings = [];
 };
 
 Config.parseIncludes = function(xml, path, config) {
@@ -88,6 +91,38 @@ Config.parseIncludes = function(xml, path, config) {
 };
 
 Config.prototype = {
+    isBundlingEnabled: function() {
+        return this.bundlingEnabled;
+    },
+    
+    addServerSourceMapping: function(baseDir, baseUrl) {
+        this.serverSourceMappings.push({baseDir: baseDir, baseUrl: baseUrl});
+    },
+    
+    hasServerSourceMappings: function() {
+        return this.serverSourceMappings.length != 0;
+    },
+    
+    getUrlForSourceFile: function(path) {
+        
+        var url;
+        
+        this.serverSourceMappings.forEach(function(mapping) {
+            if (strings.startsWith(path, mapping.baseDir)) {
+                var relativePath = path.substring(mapping.baseDir.length);
+                url = mapping.baseUrl + relativePath;
+                return false;
+            }
+            return true; //Keep going
+        });
+        
+        return url;
+    },
+    
+    setPageFileExtensions: function(extensions) {
+        this.pageFileExtensions = extensions || []; 
+    },
+    
     isWatchPagesEnabled: function() {
         return this.watchPagesEnabled || this.watchFilesEnabled;
     },
@@ -125,6 +160,14 @@ Config.prototype = {
     
     forEachPageSearchPathEntry: function(callback, thisObj) {
         raptor.forEach(this.pageSearchPath, callback, thisObj);
+    },
+    
+    getScriptsUrlPrefix: function() {
+        return this.scriptsUrlPrefix || this.resourceUrlPrefix;
+    },
+    
+    getStyleSheetsUrlPrefix: function() {
+        return this.styleSheetsUrlPrefix || this.resourceUrlPrefix;
     },
     
     getScriptsOutputDir: function() {
@@ -231,7 +274,7 @@ Config.prototype = {
         return "[Config]";
     },
     
-    parseXml: function(xml, path) {
+    parseXml: function(xml, configFilePath) {
         var config = this,
             objectMapper = raptor.require('xml.sax.objectMapper'),
             reader,
@@ -313,6 +356,13 @@ Config.prototype = {
                         }
                     }
                 },
+                "page-file-extensions": {
+                    _type: "string",
+                    _set: function(config, name, value) {
+                        var parts = value.split(/\s*,\s*/);
+                        config.setPageFileExtensions(parts);
+                    }
+                },
                 
                 "page-search-path": {
                     "<dir>": {
@@ -369,6 +419,29 @@ Config.prototype = {
                 "in-place-deployment-enabled": {
                     _type: "boolean",
                     _targetProp: "inPlaceDeploymentEnabled"
+                },
+                
+                "<in-place-deployment>": {
+                    _type: "object",
+                    "enabled": {
+                        _type: "boolean",
+                        _targetProp: "inPlaceDeploymentEnabled",
+                        _set: function(parent, name, value) {
+                            config[name] = value;
+                        }
+                    },
+                    "<source-mapping>": {
+                        _type: "object",
+                        _end: function(mapping) {
+                            config.addServerSourceMapping(path.resolve(cwd, mapping["base-dir"]), mapping["base-url"]);
+                        },
+                        "base-dir": {
+                            type: "string"
+                        },
+                        "base-url": {
+                            type: "string"
+                        }
+                    }
                 },
                 
                 "clean-output-dirs": {
@@ -438,9 +511,9 @@ Config.prototype = {
                     _type: "boolean",
                     _targetProp: "keepHtmlMarkers"
                 },
-                "url-prefix": {
+                "resource-url-prefix": {
                     _type: "string",
-                    _targetProp: "urlPrefix"
+                    _targetProp: "resourceUrlPrefix"
                 },
                 "js-url-prefix": {
                     _type: "string",
@@ -538,7 +611,7 @@ Config.prototype = {
         
         reader.read(
             xml,
-            path);
+            configFilePath);
     }
 };
 

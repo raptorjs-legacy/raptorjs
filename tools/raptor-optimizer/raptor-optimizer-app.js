@@ -118,8 +118,9 @@ exports.run = function() {
     
     config.parseXml(files.readFully(configFile), configFile);
     
+    console.log("Configuration: ", config);
     
-    ["outputDir",
+    ["bundlesOutputDir",
      "scriptsOutputDir",
      "styleSheetsOutputDir",
      "bundlesOutputDir",
@@ -163,6 +164,11 @@ exports.run = function() {
         leftPad('Pages: ', padding) + config.pageOutputDir + '\n' +
         leftPad('HTML includes: ', padding) + config.getHtmlOutputDir());
     
+    if (config.profileName) {
+        console.log();
+        logger.info('Using profile "' + config.profileName + '"');    
+    }
+    
     var optimizer = raptor.require("optimizer");
     var writer = optimizer.createPageDependenciesFileWriter({
             checksumsEnabled: config.checksumsEnabled !== false,
@@ -203,10 +209,11 @@ exports.run = function() {
     var urlBuilder = optimizer.createSimpleUrlBuilder({
             scriptsDir: config.getScriptsOutputDir(),
             styleSheetsDir: config.getStyleSheetsOutputDir(),
-            prefix: config.urlPrefix,
-            scriptsPrefix: config.scriptsUrlPrefix,
-            styleSheetsPrefix: config.styleSheetsUrlPrefix
+            scriptsPrefix: config.getScriptsUrlPrefix(),
+            styleSheetsPrefix: config.getStyleSheetsUrlPrefix() 
         });
+    
+    
     
     writer.setUrlBuilder(urlBuilder);
     writer.context.raptorConfig = config.raptorConfigJSON;
@@ -244,14 +251,20 @@ exports.run = function() {
                     enabledExtensions: config.getEnabledExtensions()
                 });
         }
+        var sourceUrlResolver = config.hasServerSourceMappings() ? function(path) {
+                return config.getUrlForSourceFile(path);
+            } : null;
+            
         pageDependencies = optimizer.buildPageDependencies({
             inPlaceDeploymentEnabled: config.inPlaceDeploymentEnabled,
+            bundlingEnabled: config.isBundlingEnabled(),
             pageName: page.name,
             includes: page.includes,
             bundleSet: bundleSet,
+            sourceUrlResolver: sourceUrlResolver,
             enabledExtensions: enabledExtensions
         });
-            
+        
         if (config.isWatchPackagesEnabled()) {
             pageDependencies.getPackageManifests().forEach(watchPackage);
         }
@@ -278,7 +291,7 @@ exports.run = function() {
                 outputPagePath = pagePath;
             }
             
-            urlBuilder.pageDir = new File(outputPagePath).getParent();
+            urlBuilder.basePath = new File(outputPagePath).getParent();
             
             oldWrite = writer.writePageIncludeHtml;
 

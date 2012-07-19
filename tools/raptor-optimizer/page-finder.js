@@ -13,23 +13,33 @@ exports.findPages = function(config) {
                             var pageName,
                                 pageFile,
                                 filename = file.getName(),
-                                isPage;
+                                pageFileDir;
                             
                             if (filename === 'package.json') {
-                                var dir = file.getParentFile();
+                                
+                                pageFileDir = file.getParentFile();
                                 pageName = dir.getName();
-                                pageFile = new files.File(dir, pageName + ".html");
+                                
                             }
                             else if (strings.endsWith(filename, "-package.json")) {
+                                pageFileDir = file.getParentFile();
                                 pageName = filename.substring(0, filename.length - "-package.json".length);
-                                pageFile = new files.File(file.getParentFile(), pageName + ".html");
                             }
-                
+
                             if (pageName) {
+                                raptor.forEach(config.pageFileExtensions, function(ext) {
+                                    var possiblePageFile = new files.File(pageFileDir, pageName + "." + ext);
+                                    if (possiblePageFile.exists()) {
+                                        pageFile = possiblePageFile;
+                                        return false;
+                                    }
+                                    return true;
+                                });
+                                
                                 var pageDef = new PageDef();
                                 pageDef.name = pageName;
                                 
-                                if (pageFile.exists()) {
+                                if (pageFile) {
                                     pageDef.htmlPath = pageFile.getAbsolutePath();
                                 }
                                 pageDef.basePath = searchPathEntry.path;

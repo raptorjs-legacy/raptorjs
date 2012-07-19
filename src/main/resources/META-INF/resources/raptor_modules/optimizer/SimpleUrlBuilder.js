@@ -11,17 +11,22 @@ raptor.defineClass(
             this.styleSheetsPrefix = config.styleSheetsPrefix;
             this.scriptsDir = config.scriptsDir;
             this.styleSheetsDir = config.styleSheetsDir;
-            this.pageDir = null;
+            this.basePath = null;
         };
         
         SimpleUrlBuilder.prototype = {
             buildBundleUrl: function(bundle, checksum) {
-                if (bundle.inPlaceDeployment === true && bundle.sourceResource) {
-                    return require('path').relative(this.pageDir, bundle.sourceResource.getSystemPath());
+                if (bundle.url) {
+                    return bundle.url;
+                }
+                else if (bundle.inPlaceDeployment === true && bundle.sourceResource) {
+                    return require('path').relative(this.basePath, bundle.sourceResource.getSystemPath());
                 }
                 
                 return this.getPrefix(bundle) + this.getBundleFilename(bundle, checksum);
             },
+            
+            
             
             getBundleFilename: function(bundle, checksum) {
                 var filename = bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "");
@@ -58,23 +63,26 @@ raptor.defineClass(
                     raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                 }
                 
+                
                 if (!prefix) {
                     var toPath,
                         fromPath;
                     
-                    if (bundle.isJavaScript()) {
-                        toPath = this.scriptsDir;
+                    if (this.basePath) {
+                        if (bundle.isJavaScript()) {
+                            toPath = this.scriptsDir;
+                        }
+                        else if (bundle.isStyleSheet()) {
+                            toPath = this.styleSheetsDir;
+                        }
+                        else {
+                            raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                        }
+                        
+                        fromPath = this.basePath;
+                        
+                        prefix = require('path').relative(fromPath, toPath) + '/';
                     }
-                    else if (bundle.isStyleSheet()) {
-                        toPath = this.styleSheetsDir;
-                    }
-                    else {
-                        raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
-                    }
-                    
-                    fromPath = this.pageDir;
-                    
-                    prefix = require('path').relative(fromPath, toPath) + '/';
                 }
                 return prefix;
             }
