@@ -248,6 +248,17 @@
             <type>string</type>
         </attribute>
         
+        <attribute>
+            <name>resource</name>
+            <type>string</type>
+        </attribute>
+        
+        <attribute>
+            <name>static</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
         <dynamic-attributes>true</dynamic-attributes>
         
     </tag>

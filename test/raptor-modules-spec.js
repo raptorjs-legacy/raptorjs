@@ -1,3 +1,4 @@
+require('./_helper.js');
 
 describe('modules module', function() {
 
@@ -85,5 +86,39 @@ describe('modules module', function() {
         expect(conditional["test"]).toEqual(true);
         expect(conditional["test2"]).toNotEqual(true);
         expect(conditional["test3"]).toNotEqual(true);
+    });
+    
+    it("should throw an error when a missing module is requested to be loaded", function() {
+        var missingError;
+        try
+        {
+            raptor.load("MISSING_MODULE");
+        }
+        catch(e) {
+            missingError = e;
+        }
+        
+        expect(missingError).toNotEqual(null);
+        
+        var findCalled = false;
+        
+        var oldFind = raptor.oop._find;
+        raptor.oop._find = function() {
+            findCalled = true;
+        };
+        
+        
+        try
+        {
+            raptor.load("MISSING_MODULE");
+        }
+        catch(e) {
+            missingError = e;
+        }
+        raptor.oop._find = oldFind;
+        
+        expect(missingError).toNotEqual(null);
+        expect(findCalled).toEqual(false);
+        
     });
 });

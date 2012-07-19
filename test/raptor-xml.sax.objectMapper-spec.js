@@ -345,4 +345,53 @@ describe('xml.sax.objectMapper module', function() {
         expect(root.object.uri).toStrictlyEqual('');
         
     });
+    
+    it('should allow begin for simple types', function() {
+        var xml = '<root><object a="true"><nested-object b="b" c="c"/></object></root>';
+        var root = {isRoot: true};
+        
+        var returnedRoot = raptor.require('xml.sax.objectMapper').read(
+            xml, 
+            'test', 
+            {
+                "<root>": {
+                    _type: "object",
+                    _begin: function() {
+                        return root;
+                    },
+                    "<object>": {
+                        _type: "object",
+                        _targetProp: "object",
+                        "a": {
+                            _type: "boolean",
+                            _targetProp: "myA",
+                            _set: function(parent, name, value) {
+                                parent[name] = value;
+                            }
+                        },
+                        "<nested-object>": {
+                            _type: "object",
+                            _end: function(nestedObj) {
+                                root.nestedObject = nestedObj;
+                            },
+                            "b": {
+                                type: "string"
+                            },
+                            "c": {
+                                type: "string"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                
+            });
+        
+        expect(returnedRoot).toStrictlyEqual(root);
+        expect(root.object.myA).toEqual(true);
+        expect(root.nestedObject.b).toEqual("b");
+        expect(root.nestedObject.c).toEqual("c");
+        
+    });
 });

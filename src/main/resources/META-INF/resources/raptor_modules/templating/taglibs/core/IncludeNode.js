@@ -33,20 +33,37 @@ raptor.defineClass(
         IncludeNode.prototype = {
             doGenerateCode: function(template) {
                 
-                var templateName = this.getProperty("template");
-                this.removeProperty("template");
+                var templateName = this.getProperty("template"),
+                    resourcePath;
                 
-                if (!templateName) {
-                    this.addError('"template" attribute is required');
+                if (templateName) {
+                    this.removeProperty("template");
+                    
+                    
+                    var propParts = [];
+                    
+                    this.forEachPropertyNS('', function(name, value) {
+                        propParts.push(stringify(name) + ": " + value);
+                    }, this);
+                    
+                    var propsStr = template.getContextHelperFunction("include", "i") + "(" + templateName + ",{" + propParts.join(",") + "});";
+                    template.addJavaScriptCode(propsStr);
                 }
-                var propParts = [];
-                
-                this.forEachPropertyNS('', function(name, value) {
-                    propParts.push(stringify(name) + ": " + value);
-                }, this);
-                
-                var propsStr = template.getContextHelperFunction("include", "i") + "(" + templateName + ",{" + propParts.join(",") + "});";
-                template.addJavaScriptCode(propsStr);
+                else if ((resourcePath = this.getAttribute("resource"))) {
+                    var isStatic = this.getProperty("static") !== false;
+                    if (isStatic) {
+                        var resource = raptor.require('resources').findResource(resourcePath);
+                        if (!resource.exists()) {
+                            this.addError('"each" attribute is required');
+                            return;
+                        }
+                        
+                        template.addWrite(raptor.require('json.stringify').stringify(resource.readFully()));
+                    }
+                }
+                else {
+                    this.addError('"template" or "resource" attribute is required');
+                }
             }
             
         };

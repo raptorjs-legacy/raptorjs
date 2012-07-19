@@ -483,6 +483,12 @@ describe('templating module', function() {
         
     });
     
+    it("should allow static file includes", function() {
+
+        var output = compileAndRender("/test-templates/include-resource-static.rhtml", {});
+        expect(output).toEqual('BEGINHello World!END');        
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
