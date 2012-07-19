@@ -68,6 +68,12 @@ $rload(function(raptor) {
         remove: function(path) {
             var file = new raptor.files.File(path);
             file.remove();
+        },
+        
+        resolveRelativeFile: function(dir, relPath) {
+            var paths = raptor.require('paths');
+            var absPath = paths.resolve(dirPath, relativePath);
+            return new raptor.files.File(absPath);
         }
     };
 });

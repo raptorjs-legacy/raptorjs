@@ -177,6 +177,15 @@ $rload(function(raptor) {
         
         isResourceInstance: function(o) {
             return o instanceof Resource;
+        },
+        
+        /**
+         * Resolves a possibly path relative to a directory to an absolute path.
+         */
+        resolvePath: function(dirPath, relativePath) {
+            
+            var paths = raptor.require('paths');
+            return paths.resolve(dirPath, relativePath);
         }
     });    
     
