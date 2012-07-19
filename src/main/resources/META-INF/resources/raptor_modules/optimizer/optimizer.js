@@ -7,10 +7,46 @@ raptor.define(
             packager = raptor.require('packager'),
             Bundle = raptor.require("optimizer.Bundle"),
             BundleSet = raptor.require("optimizer.BundleSet"),
-            PageDependencies = raptor.require("optimizer.PageDependencies");
+            PageDependencies = raptor.require("optimizer.PageDependencies"),
+            fileWatcher = raptor.require('file-watcher');
             
         return {
-
+            createOptimizer: function(configXmlPath, params) {
+                var config = this.createConfig(configXmlPath, params);
+                var OptimizerEngine = raptor.require('optimizer.OptimizerEngine');
+                var optimizerEngine = new OptimizerEngine(config);
+                var logger = this.logger();
+                
+                if (config.isWatchConfigEnabled()) {
+                    fileWatcher.watch(configXmlPath, function(eventArgs) {
+                        logger.info("Optimizer configuration file modified: " + configXmlPath);
+                        try
+                        {
+                            config = this.createConfig(configXmlPath, params);
+                            if (!config.isWatchConfigEnabled()) {
+                                eventArgs.closeWatcher();
+                            }
+                            optimizerEngine.reloadConfig(config);    
+                        }
+                        catch(e) {
+                            logger.error('Unable to reload optimizier configuration file at path "' + configXmlPath + '". Exception: ' + e, e);
+                        }
+                        
+                    }, this);
+                }
+                
+                return optimizerEngine;
+            },
+            
+            createConfig: function(configXmlPath, params) {
+                var Config = raptor.require('optimizer.Config');
+                var configXml = raptor.require('files').readFully(configXmlPath);
+                var config = new Config(params);
+                config.parseXml(configXml, configXmlPath);
+                config.findPages();
+                return config;
+            },
+            
             createBundle: function(name) {
                 return new Bundle(name);
             },

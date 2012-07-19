@@ -11,7 +11,7 @@
         {
             logging: {
                 loggers: {
-                    'ROOT': {level: 'DEBUG'}
+                    'ROOT': {level: 'WARN'}
                 }
             }
         }
@@ -53,15 +53,15 @@
 <!--     <js-output-dir>dist/bundles</js-output-dir> -->
 <!--     <css-output-dir>dist/bundles</css-output-dir> -->
     <bundles-output-dir>dist/static</bundles-output-dir>
-    <page-output-dir>dist</page-output-dir>
-    
         
     <html-output-dir>dist/inc/page-dependencies</html-output-dir>
-    <inject-html-includes>true</inject-html-includes>
-    <keep-html-markers>false</keep-html-markers>
     
-    <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
-    <modify-pages>false</modify-pages>
+    <inject-html-includes>
+        <enabled>true</enabled>
+        <keep-html-markers>false</keep-html-markers>
+        <modify-pages>false</modify-pages> <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
+        <page-output-dir>dist</page-output-dir>
+    </inject-html-includes>
 
     <bundles name="default">
         <bundle name="core">
@@ -72,17 +72,5 @@
             <module name="templating" recursive="true"/>
         </bundle>
     </bundles>
-    
-<!--     <pages> -->
-<!--         <page name="PageA"> -->
-<!--             <includes> -->
-<!--                 <module name="core"/> -->
-<!--                 <init-raptor/> -->
-<!--                 <module name="templating"/> -->
-<!--                 <module name="moduleA"/> -->
-<!--                 <module name="loader"/> -->
-<!--             </includes> -->
-<!--         </page> -->
-<!--     </pages> -->
     
 </optimizer-config>

@@ -1,0 +1,16 @@
+{
+    "type": "raptor-module",
+    "name": "paths",
+    "version": "1.0",
+    "description": "Raptor Module: paths",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "includes": [
+        {"path": "paths.js"}
+    ]
+}

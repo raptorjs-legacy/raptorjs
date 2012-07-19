@@ -593,15 +593,11 @@ describe('optimizer module', function() {
                     writtenFiles[outputPath] = code;
                 };
                 
-                writer.writePageIncludeHtmlFile = function(outputPath, html) {
-                    logger.debug('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
-                    writtenFiles[outputPath] = html;
-                }
                 
-                
-                writer.writePageDependencies(pageDependencies);
-
-                expect(Object.keys(writtenFiles).length).toEqual(9);
+                var htmlByLocation = writer.writePageDependencies(pageDependencies);
+                expect(htmlByLocation.head).toNotEqual(null);
+                expect(htmlByLocation.body).toNotEqual(null);
+                expect(Object.keys(writtenFiles).length).toEqual(7);
             }
         });
     });

@@ -1,0 +1,28 @@
+{
+    "type": "raptor-module",
+    "name": "file-watcher",
+    "version": "1.0",
+    "description": "Utility functions for working with files on the server",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "extensions": [
+        {
+            "name": "server",
+            "includes": [
+                {"path": "file-watcher.js"}
+            ]
+        },
+        {
+            "name": "node",
+            "includes": [
+                {"path": "file-watcher_node.js" }
+            ]
+        }
+    ]
+}

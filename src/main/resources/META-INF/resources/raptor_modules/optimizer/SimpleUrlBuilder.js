@@ -11,7 +11,7 @@ raptor.defineClass(
             this.styleSheetsPrefix = config.styleSheetsPrefix;
             this.scriptsDir = config.scriptsDir;
             this.styleSheetsDir = config.styleSheetsDir;
-            this.basePath = null;
+            this.baseDir = null;
         };
         
         SimpleUrlBuilder.prototype = {
@@ -20,12 +20,15 @@ raptor.defineClass(
                     return bundle.url;
                 }
                 else if (bundle.inPlaceDeployment === true && bundle.sourceResource) {
-                    return require('path').relative(this.basePath, bundle.sourceResource.getSystemPath());
+                    return require('path').relative(this.baseDir, bundle.sourceResource.getSystemPath());
                 }
                 
                 return this.getPrefix(bundle) + this.getBundleFilename(bundle, checksum);
             },
             
+            setBaseDir: function(baseDir) {
+                this.baseDir = baseDir;
+            },
             
             
             getBundleFilename: function(bundle, checksum) {
@@ -68,7 +71,7 @@ raptor.defineClass(
                     var toPath,
                         fromPath;
                     
-                    if (this.basePath) {
+                    if (this.baseDir) {
                         if (bundle.isJavaScript()) {
                             toPath = this.scriptsDir;
                         }
@@ -79,11 +82,16 @@ raptor.defineClass(
                             raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                         }
                         
-                        fromPath = this.basePath;
+                        fromPath = this.baseDir;
                         
                         prefix = require('path').relative(fromPath, toPath) + '/';
                     }
+                    else {
+                        raptor.throwError(new Error('Neither a URL prefix or base directory is set. Unable to calculate prefix for bundle URL.'));
+                    }
                 }
+                
+                
                 return prefix;
             }
         };

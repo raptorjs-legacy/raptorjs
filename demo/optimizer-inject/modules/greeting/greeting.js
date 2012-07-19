@@ -1,9 +1,10 @@
 raptor.define("greeting", function() {
     return {
-        greet: function() {
-            var message = "Hello from the 'greeting' module!";
-            this.logger().info(message);
-            return message;
+        renderToEl: function(el) {
+            var message = "Hello from 'greeting'!";
+            var templating = raptor.require("templating");
+            var html = templating.renderToString("greeting", {message: message});
+            el.innerHTML = html;
         }
     };
 });

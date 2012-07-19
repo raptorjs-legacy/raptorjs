@@ -118,12 +118,12 @@ raptor.defineClass(
                         addHtml(bundle.getLocation(), this.getBundleIncludeHtml(bundle, checksum));
                     }
                 }, this);
-                                
+                
                 raptor.forEachEntry(htmlByLocation, function(location, html) {
-                    html = html.join('');
-                    
-                    this.writePageIncludeHtml(pageDependencies.getPageName(), location, html);
+                    htmlByLocation[location] = html.join('');
                 }, this);
+                
+                return htmlByLocation;
             },
             getBundleIncludeHtml: function(bundle, checksum) {
                 var url = this.getBundleUrl(bundle, checksum);

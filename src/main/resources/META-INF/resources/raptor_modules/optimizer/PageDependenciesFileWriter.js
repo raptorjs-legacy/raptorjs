@@ -78,25 +78,6 @@ raptor.defineClass(
             rewriteBundle: function(path, bundle) {
                 var bundleData = this.readBundle(bundle, this.context);
                 this.writeBundleFile(path, bundleData.code, bundleData.checksum, bundle);    
-            },
-            
-            getPageIncludeFilename: function(pageName, location) {
-                
-                return pageName + "-" + location + ".html";
-            },
-            
-            
-            writePageIncludeHtml: function(pageName, location, html) {
-                var outputDir = this.getHtmlOutputDir();
-                var outputPath = files.joinPaths(outputDir, this.getPageIncludeFilename(pageName, location));
-                this.logger().info('Writing HTML include for page "' + pageName + '" to "' + outputPath + '"...');
-                this.writePageIncludeHtmlFile(outputPath, html);
-            },
-            
-            writePageIncludeHtmlFile: function(path, html) {
-                
-                var outputFile = new files.File(path);
-                outputFile.writeFully(html, "UTF-8");
             }
         };
 

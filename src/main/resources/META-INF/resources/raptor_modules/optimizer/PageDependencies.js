@@ -63,7 +63,7 @@ raptor.defineClass(
         var PageDependencies = function(config) {
 
             this.pageName = config.pageName;
-            this.includes = config.includes;
+            this.includes = config.includes || [];
             this.bundlingEnabled = config.bundlingEnabled !== false;
             this.config = config;
             
@@ -81,6 +81,21 @@ raptor.defineClass(
                         
             this.packageManifests = [];
             this.foundPackagePaths = {};
+            
+            if (config.packagePath) {
+                
+                var packageResource = raptor.require("resources").createFileResource(config.packagePath);
+                var manifest = raptor.require('packager').getPackageManifest(packageResource);
+                
+                manifest.forEachInclude(
+                    function(type, pageInclude) {
+                        this.includes.push(pageInclude);
+                    },
+                    this,
+                    {
+                        enabledExtensions: config.enabledExtensions
+                    });
+            }
             
             this._build();
         };

@@ -1,22 +1,23 @@
 <html>
     <head>
-        <title>Bundler: PageA</title>
+        <title>Optimizer Demo</title>
         <!-- [raptor-include: head] -->
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     </head>
     <body>
-        Hello World!!
-        <div id="asyncModuleDiv">
-        </div>
+        Hello World!
+        <div id="greetingDiv"></div>
+        <div id="greetingAsyncDiv"></div>
         
         <!-- [raptor-include: body] -->        
         <script>
-        raptor.require("greeting").greet();
-        var templating = raptor.require("templating");
-        document.write(templating.renderToString("greeting", {count: 30, name: "Frank"}));
+        $(function() {
+            raptor.require("greeting").renderToEl(document.getElementById("greetingDiv"));    
+        })
         
-        raptor.require('async-module', function(asyncModule) {
-            asyncModule.renderToEl(document.getElementById("asyncModuleDiv"));
+        
+        raptor.require('greeting-async', function(greetingAsync) {
+            greetingAsync.renderToEl(document.getElementById("greetingAsyncDiv"));
         });
         </script>
     </body>

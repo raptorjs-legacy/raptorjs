@@ -1,0 +1,9 @@
+{
+    "type": "raptor-module",
+    "name": "greeting-async",
+    "includes": [
+        {"path": "greeting-async.js"},
+        {"path": "greeting-async.css"},
+        {"path": "greeting-async.rhtml"}
+    ]
+}

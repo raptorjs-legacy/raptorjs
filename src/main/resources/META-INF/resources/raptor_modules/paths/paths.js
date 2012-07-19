@@ -5,7 +5,7 @@ raptor.define(
             /**
              * Resolves a possibly path relative to a directory to an absolute path.
              */
-            resolvePath: function(dirPath, relativePath) {
+            resolve: function(dirPath, relativePath) {
                 
                 if (relativePath.charAt(0) === '/') {
                     return relativePath;

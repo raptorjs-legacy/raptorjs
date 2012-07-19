@@ -1,9 +1,0 @@
-{
-    "type": "raptor-module",
-    "name": "async-module",
-    "includes": [
-        {"path": "async-module.js"},
-        {"path": "async-module.css"},
-        {"path": "async-module.rhtml"}
-    ]
-}

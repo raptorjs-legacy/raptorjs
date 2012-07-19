@@ -86,6 +86,10 @@ $rload(function(raptor) {
         
         writeFully: function(path, data, encoding) {
             nodeFs.writeFileSync(path, data, encoding || "UTF-8");
+        },
+        
+        resolvePath: function(from, to) {
+            return nodePath.resolve.apply(nodePath, arguments);
         }
     });
 
