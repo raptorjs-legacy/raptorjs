@@ -197,6 +197,7 @@ raptor.defineClass(
                     eval(compiledSrc); //Evaluate the compiled code and register the template
                 }
                 catch(e) {
+                    this.logger().error("Unable to load compiled template: " + compiledSrc, e);
                     errors.throwError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);
                 }
             },

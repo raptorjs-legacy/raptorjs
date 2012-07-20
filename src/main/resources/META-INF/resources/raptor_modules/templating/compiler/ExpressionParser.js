@@ -41,7 +41,7 @@ raptor.defineClass(
                 return new RegExp(parts.join("|"), "g");
             },
             startRegExp = createStartRegExp(["{%", "${", "$"]),
-            variableRegExp = /([_a-zA-Z]\w*)/g,
+            variableRegExp = /^([_a-zA-Z]\w*)/g,
             getLine = function(str, pos) {
                 var lines = str.split("\n");
                 var index = 0;
@@ -247,14 +247,20 @@ raptor.defineClass(
                 
                 var endToken = endingTokens[startToken]; //Look up the end token
                 if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
-                    variableRegExp.lastIndex = expressionStart; //Reset the variable search regular expression to start searching from where the expression begins
-                    var variableMatches = variableRegExp.exec(str); //Find the variable name that follows the starting "$" token
-                    if (!variableMatches) { //We did not find a valid variable name after the starting "$" token
-                        raptor.throwError('Invalid expression "$' + str.substring(expressionStart) + '"'); //TODO: Provide a more helpful error message
-                    }
-                    helper.addExpression(variableMatches[1]); //Add the variable as an expression
+                    variableRegExp.lastIndex = 0;
+                    var variableMatches = variableRegExp.exec(str.substring(expressionStart)); //Find the variable name that follows the starting "$" token
                     
-                    startRegExp.lastIndex = textStart = variableMatches.index + variableMatches[1].length; //Start searching from where the end token ended
+                    if (!variableMatches) { //We did not find a valid variable name after the starting "$" token
+                        //handleError('Invalid simple variable expression. Location: ' + errorContext(str, expressionStart, 10)); //TODO: Provide a more helpful error message
+                        helper.addText(startMatches[0]);
+                        startRegExp.lastIndex = textStart = expressionStart;
+                        continue outer;
+                    }
+                    
+                    var varName = variableMatches[1];
+                    helper.addExpression(varName); //Add the variable as an expression
+                    startRegExp.lastIndex = textStart = expressionStart = expressionStart + varName.length;
+                    
                     continue outer;
                 }
                 

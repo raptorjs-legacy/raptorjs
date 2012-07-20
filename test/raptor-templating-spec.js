@@ -489,6 +489,12 @@ describe('templating module', function() {
         expect(output).toEqual('BEGINHello World!END');        
     });
     
+    it("should allow HTML pages with inline script", function() {
+
+        var output = compileAndRender("/test-templates/inline-script.rhtml", {name: "World"});
+        expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World!<script>$(function() { alert(\'test\'); })</script></body></html>');        
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
