@@ -1,0 +1,37 @@
+<c:template
+    xmlns:c="core"
+    params="name,includes">
+    
+    <html>
+        <head>
+            <title>Optimizer Demo: Server</title>
+            ${includes.head}
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        </head>
+        <body>
+            Hello $name!
+            <div id="greetingDiv"></div>
+            <div id="greetingAsyncDiv"></div>
+        
+            ${includes.body}
+            
+            <script>
+            try
+            {
+                $(function() {
+                    raptor.require("greeting").renderToEl(document.getElementById("greetingDiv"));    
+                });
+                
+                
+                raptor.require('greeting-async', function(greetingAsync) {
+                    greetingAsync.renderToEl(document.getElementById("greetingAsyncDiv"));
+                });
+            }
+            catch(e) {
+                console.log("ERROR: " + e);
+            }
+            </script>
+        </body>
+    </html>
+</c:template>
+
