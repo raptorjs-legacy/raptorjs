@@ -49,13 +49,19 @@ exports.run = function() {
     console.log();
 
     var optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
-    optimizer.writeAllPages();
+    var run = function() {
+        optimizer.cleanDirs();
+        optimizer.writeAllPages();
+    };
+    run();
+    
+    
     optimizer.subscribe({
         "configReloaded": function() {
-            optimizer.writeAllPages();
+            run();
         },
         "packageModified": function() {
-            optimizer.writeAllPages();
+            run();
         }
     }, this);
     
