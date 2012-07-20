@@ -22,23 +22,34 @@ raptor.extend('templating', function(raptor) {
     "use strict";
     
     var strings = raptor.require('strings'),
-        resources = raptor.require('resources');
+        resources = raptor.require('resources'),
+        files = raptor.require('files');
 
     return {
         findTemplate: function(name) {
             var path = name,
                 resource;
-            if (!strings.startsWith(path, '/')) {
-                path = '/' + path;
+            
+            if (files.exists(name)) {
+                resource = resources.createFileResource(name);
+            }
+            else {
+                if (!strings.startsWith(path, '/')) {
+                    path = '/' + path;
+                }
+                
+                if (!strings.endsWith(path, '.rhtml')) {
+                    path += '.rhtml';
+                }
+                
+                resource = resources.findResource(path);
+                if (!resource.exists()) {
+                    resource = null;
+                }
             }
             
-            if (!strings.endsWith(path, '.rhtml')) {
-                path += '.rhtml';
-            }
-            
-            resource = resources.findResource(path);
-            if (resource.exists()) {
-                raptor.require('templating.compiler').compileAndLoadResource(resource, {templateName: name});
+            if (resource) {
+                raptor.require('templating.compiler').compileAndLoadResource(resource, {templateName: name})
             }
         }
     };

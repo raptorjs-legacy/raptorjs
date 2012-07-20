@@ -28,7 +28,9 @@ raptor.extend(
             forEachEntry = raptor.forEachEntry,
             errors = raptor.errors,
             discoveryComplete = false,
-            searchPathListenerHandler = null;
+            searchPathListenerHandler = null,
+            watchingEnabled = false,
+            watchers = [];
         
         return {
             /**
@@ -45,6 +47,14 @@ raptor.extend(
                 return this.compile(src, resource.getSystemPath(), options);
             },
             
+            enableWatching: function() {
+                watchingEnabled = true;
+            },
+            
+            disableWatching: function() {
+                watchingEnabled = false;
+            },
+            
             /**
              * 
              * @param path
@@ -55,8 +65,20 @@ raptor.extend(
                 if (!resource.exists()) {
                     errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
-                var src = resource.readFully(src);
-                this.compileAndLoad(src, resource.getSystemPath(), options);
+                
+                
+                
+                this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);
+                
+                if (watchingEnabled && resource.isFileResource()) {
+                    raptor.require('file-watcher').watch(
+                        resource.getSystemPath(), 
+                        function() {
+                            this.logger().info('Template modified at path "' + resource.getSystemPath() + '". Reloading template...');
+                            this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);
+                        },
+                        this);
+                }
             },
             
             /**
