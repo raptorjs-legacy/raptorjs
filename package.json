@@ -25,13 +25,17 @@
     },
     "dependencies": {
         "uglify-js" : ">= 1.2.6",
-        "sax" : ">= 0.3.5"
+        "sax" : ">= 0.3.5",
+        "express": ">= 3.0"
     },
     "devDependencies": {
         "jasmine-node" : ">= 0.1.0",
         "jsdom" : ">= 0.2.14",
         "xmlhttprequest" : ">= 0.3.0",
         "jshint" : ">= 0.7.0"
+    },
+    "bin": {
+        "raptor-optimizer": "bin/raptor-optimizer"  
     },
     "main": "lib/raptor/raptor-node-main"
 }
