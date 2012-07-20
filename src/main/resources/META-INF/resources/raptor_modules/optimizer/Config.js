@@ -2,6 +2,7 @@ raptor.defineClass(
     "optimizer.Config",
     function(raptor) {
         
+        var strings = raptor.require('strings');
         
         var Config = function(params) {
             this.bundlingEnabled = true;
@@ -41,6 +42,9 @@ raptor.defineClass(
         };
         
         Config.prototype = {
+            forEachCleanDir: function(callback, thisObj) {
+                this.cleanDirs.forEach(callback, thisObj);
+            },
             
             findPages: function() {
                 var PageFileFinder = raptor.require('optimizer.PageFileFinder');
@@ -49,6 +53,9 @@ raptor.defineClass(
                 if (this.hasPageSearchPath()) {
                     this.forEachPageSearchPathEntry(function(searchPathEntry) {
                         if (searchPathEntry.type === 'dir') {
+                            if (!searchPathEntry.path) {
+                                raptor.throwError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
+                            }
                             pageFileFinder.findPages(searchPathEntry.path, this);
                         }
                     }, this);

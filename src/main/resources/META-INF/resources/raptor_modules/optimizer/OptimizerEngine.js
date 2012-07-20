@@ -9,7 +9,7 @@ raptor.defineClass(
         
         var OptimizerEngine = function(config) {
             this.config = config;
-            this.pageIncludes = {};
+            this.pageIncludeCache = {};
             this.writer = this.createWriter();
             this.watchers = [];
             listeners.makeObservable(this, OptimizerEngine.prototype, ['configReloaded', 'packageModified']);
@@ -49,7 +49,7 @@ raptor.defineClass(
             },
             
             clearCaches: function() {
-                this.pageIncludes = {};
+                this.pageIncludeCache = {};
             },
 
             closeWatchers: function() {
@@ -117,10 +117,16 @@ raptor.defineClass(
             
             getPageIncludes: function(pageName, options) {
                 options = options || {};
+                //TODO Use the enabled extensions and the page name as the cache key
                 //var pageDef = 
                 //var lookupKey
-                var pageDef = this.config.getPageDef(pageName);
-                var htmlIncludesByLocation = this.buildPageIncludes(pageDef, options);
+                
+                var htmlIncludesByLocation = this.pageIncludeCache[pageName];
+                if (!htmlIncludesByLocation) {
+                    var pageDef = this.config.getPageDef(pageName);
+                    htmlIncludesByLocation = this.pageIncludeCache[pageName] = this.buildPageIncludes(pageDef, options);    
+                }
+                
                 return htmlIncludesByLocation;
             },
             
@@ -255,6 +261,20 @@ raptor.defineClass(
                         }
                         
                     }
+                }, this);
+            },
+            
+            cleanDirs: function() {
+                this.config.forEachCleanDir(function(dir) {
+                    if (files.exists(dir)) {
+                        this.logger().info("Cleaning directory: " + dir);
+                        try {
+                            files.remove(dir);    
+                        }
+                        catch(e) {
+                            this.logger().warn("Unable to clean directory: " + dir, e);
+                        }
+                    }    
                 }, this);
             }
         };

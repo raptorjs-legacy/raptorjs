@@ -43,7 +43,14 @@ raptor.defineClass(
         };
         
         ConfigXmlParser.prototype = {
+            
             parse: function(xml, configFilePath, config) {
+                var configDir = new File(configFilePath).getParent();
+                
+                var resolvePath = function(path) {
+                    return files.resolvePath(configDir, path);
+                };
+                
                 var objectMapper = raptor.require('xml.sax.objectMapper'),
                     reader,
                     bundlesHandler = {
@@ -116,7 +123,7 @@ raptor.defineClass(
                                     if (!dirPath) {
                                         raptor.throwError(new Error('"path" is required for directory resource search path entry'));
                                     }
-                                    dirPath = require('path').resolve(process.cwd(), dirPath);
+                                    dirPath = resolvePath(dirPath);
                                     raptor.require('resources').getSearchPath().addDir(dirPath);
                                 },
                                 "@path": {
@@ -143,7 +150,7 @@ raptor.defineClass(
                                     if (!dirPath) {
                                         raptor.throwError(new Error('"path" is required for directory page search path entry'));
                                     }
-                                    dirPath = require('path').resolve(process.cwd(), dirPath);
+                                    dirPath = resolvePath(dirPath);
                                     config.addPageSearchDir(dirPath);
                                 },
                                 "@path": {
@@ -201,7 +208,7 @@ raptor.defineClass(
                             "<source-mapping>": {
                                 _type: "object",
                                 _end: function(mapping) {
-                                    config.addServerSourceMapping(path.resolve(cwd, mapping["base-dir"]), mapping["base-url"]);
+                                    config.addServerSourceMapping(resolvePath(mapping["base-dir"]), mapping["base-url"]);
                                 },
                                 "base-dir": {
                                     type: "string"
@@ -227,7 +234,7 @@ raptor.defineClass(
                                     if (!dirPath) {
                                         raptor.throwError(new Error('"path" is required for directory page search path entry'));
                                     }
-                                    dirPath = require('path').resolve(process.cwd(), dirPath);
+                                    dirPath = resolvePath(dirPath);
                                     config.addCleanDir(dirPath);
                                 },
                                 "@path": {
@@ -390,7 +397,7 @@ raptor.defineClass(
                     configFilePath);
                 
                 
-                var configDir = new File(configFilePath).getParent();
+                
                 
                 ["bundlesOutputDir",
                  "scriptsOutputDir",
@@ -399,7 +406,7 @@ raptor.defineClass(
                  "pageOutputDir",
                  "htmlOutputDir"].forEach(function(dir) {
                      if (config[dir]) {
-                         config[dir] = files.resolvePath(configDir, config[dir]);
+                         config[dir] = resolvePath(config[dir]);
                      }
                  });  
                 
