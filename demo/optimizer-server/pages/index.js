@@ -1,5 +1,5 @@
-exports.controller = function(context) {
+exports.controller = function(req, res, next) {
     return {
-        name: 'World'
+        name: 'John'
     };
 };

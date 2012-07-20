@@ -37,12 +37,12 @@
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>
-<!--         <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
-<!--         <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
+        <resource-url-prefix>/bundles/</resource-url-prefix>
         <raptor-config>
         {
         }
         </raptor-config>
+        <watch-config-enabled>true</watch-config-enabled>
     </profile>
    
     <resource-search-path>

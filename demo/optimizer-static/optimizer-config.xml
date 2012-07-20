@@ -36,6 +36,7 @@
         {
         }
         </raptor-config>
+        <watch-config-enabled>true</watch-config-enabled>
     </profile>
    
     <resource-search-path>

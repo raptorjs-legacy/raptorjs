@@ -3,64 +3,7 @@ var templating = raptor.require('templating'),
     path = require('path');
 
 var proto = {
-    page: function(pagePath) {
-        var pagesPath = this.pagesPath;
-        var rootDir = this.root;
-        var optimizer = this.optimizer;
-        var watch = this.watch;
-        var watchers = this.watchers;
-        
-        var controllerModuleName = path.join(rootDir, pagesPath, pagePath) + ".js";
-        var controller = require(controllerModuleName).controller;
-        
-        if (watch === true) {
-            var watcher = require('raptor').watchNodeModule(
-                    require, 
-                    controllerModuleName,
-                    function(name, newModule, oldModule) {
-                        controller = newModule.controller;
-                        logger.info('Reloading page controller at path "' + controllerModuleName + '"...');
-                    });
-            watchers.push(watcher);
-        }
-        
-        
-        var templatePath = path.join(rootDir, pagesPath, pagePath) + ".rhtml";
-        var templateResource = raptor.require('resources').createFileResource(templatePath);
-        raptor.require('templating.compiler').compileAndLoadResource(templateResource, {templateName: templatePath});
-        
-        
-        
-        return function(req, res) {
-            var context = {
-                request: req,
-                response: res
-            };
-            
-            try
-            {
-                var viewModel = controller(context);
-                var includes = optimizer.getPageIncludes(pagePath);
-                var _wrappedIncludes = includes._wrapped;
-                if (!_wrappedIncludes) {
-                    /*
-                     * We wrap the includes in an object so that the HTML will not be automatically escaped
-                     */
-                    _wrappedIncludes = includes._wrapped = {};
-                    raptor.forEachEntry(includes, function(location, html) {
-                        _wrappedIncludes[location] = {toString: function() { return html; }};
-                    });
-                }
-                viewModel.includes = _wrappedIncludes;
-                var html = raptor.require('templating').renderToString(templatePath, viewModel);
-                res.send(html);
-            }
-            catch(e) {
-                logger.error('An error occurred while handling request with URL "' + req.url + '". Exception: ' + e, e); //TODO Provide better error handling
-            }
-            
-        };
-    }
+    page: require('./middleware/page.js')
 };
 
 exports.createServer = function(options) {
@@ -88,11 +31,11 @@ exports.createServer = function(options) {
         optimizerConfig = {};        
     }
     
-    var profile = optimizerConfig.profile;
-    if (!profile) {
-        optimizerConfig.profile = process.env.NODE_ENV || 'development';
-    }
-    
+//    var profile = optimizerConfig.profile;
+//    if (!profile) {
+//        optimizerConfig.profile = process.env.NODE_ENV || 'development';
+//    }
+//    
     var optimizer = raptor.require('optimizer').createOptimizer(path.join(rootDir, 'optimizer-config.xml'), optimizerConfig);
     
     var logger = raptor.require('logging').logger('express-raptor');
@@ -126,37 +69,38 @@ exports.createServer = function(options) {
     
     require(routes)(app);
     
+    if (options.watch === true) {
+        raptor.require('file-watcher').watch(require.resolve(routes), function() {
+            var k;
+            
+            logger.info("Server routes modified. Reloading routes...");
+            
+            //Clear out the existing routes
+            for (k in app.routes) {
+                delete app.routes[k];
+            }
+            
+            //Add back the original routes
+            for (k in originalRoutes) {
+                app.routes[k] = originalRoutes[k];
+            }
+            
+            //Clear the existing stack
+            app.stack.splice(0, app.stack.length);
+            
+            //Add back the original stack
+            originalStack.forEach(function(o) {
+                app.stack.push(o);
+            });
     
-    raptor.require('file-watcher').watch(require.resolve(routes), function() {
-        var k;
-        
-        logger.info("Server routes modified. Reloading routes...");
-        
-        //Clear out the existing routes
-        for (k in app.routes) {
-            delete app.routes[k];
-        }
-        
-        //Add back the original routes
-        for (k in originalRoutes) {
-            app.routes[k] = originalRoutes[k];
-        }
-        
-        //Clear the existing stack
-        app.stack.splice(0, app.stack.length);
-        
-        //Add back the original stack
-        originalStack.forEach(function(o) {
-            app.stack.push(o);
+            delete require.cache[require.resolve(routes)];
+            app.raptor.closeWatchers();
+            require(routes)(app); 
+            
+            logger.info("Routes reloaded");
+    
         });
-
-        delete require.cache[require.resolve(routes)];
-        app.raptor.closeWatchers();
-        require(routes)(app); 
-        
-        logger.info("Routes reloaded");
-
-    });
+    }
     
     return app;
 };

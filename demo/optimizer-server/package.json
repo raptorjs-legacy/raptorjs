@@ -8,6 +8,7 @@
   },
   "dependencies": {
       "send": "0.0.3",
-      "express": ">= 3.0"
+      "express": ">= 3.0",
+      "express-raptor": ">= 1.0.0"
     }
 }
