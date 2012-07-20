@@ -37,6 +37,7 @@ raptor.extend('loader', function(raptor) {
                 url: src,
                 dataType: "script",
                 crossDomain: true,
+                cache: true,
                 success: function(result) {
                     _this.logger().debug('Downloaded: "' + src + '"');
                     
