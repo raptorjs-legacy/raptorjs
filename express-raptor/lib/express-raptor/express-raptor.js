@@ -14,7 +14,7 @@ var proto = {
         var controller = require(controllerModuleName).controller;
         
         if (watch === true) {
-            var watcher = require('./raptor-node-main.js').watchNodeModule(
+            var watcher = require('raptor').watchNodeModule(
                     require, 
                     controllerModuleName,
                     function(name, newModule, oldModule) {

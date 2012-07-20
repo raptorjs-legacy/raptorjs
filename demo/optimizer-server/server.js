@@ -1,4 +1,4 @@
-require("../../").create({
+require("raptor").create({
     logging: {
         loggers: {
             'ROOT': {level: 'WARN'},
@@ -16,7 +16,7 @@ var logger = raptor.require('logging').logger('server');
 raptor.require('resources').getSearchPath().addDir(__dirname);
 raptor.require('resources').getSearchPath().addDir(path.join(__dirname, 'raptor_modules'));
 
-var expressRaptor = require("../../").expressRaptor();
+var expressRaptor = require("express-raptor");
 
 var server = expressRaptor.createServer({
     root: __dirname,
