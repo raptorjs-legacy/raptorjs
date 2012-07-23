@@ -4,6 +4,7 @@
     "includes": [
         {"path": "greeting.js"},
         {"path": "greeting.css"},
+        {"path": "greeting.less"},
         {"path": "greeting.rhtml" }
     ]
 }

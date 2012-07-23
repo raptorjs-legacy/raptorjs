@@ -26,6 +26,7 @@
 	"raptor-include-types": {
 	    "js": {"class": "packager.Include_js", "path": "/packager/Include_js.js"},
 	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
+	    "less": {"class": "packager.Include_less", "path": "/packager/Include_less.js"},
 	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
 	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
 	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
