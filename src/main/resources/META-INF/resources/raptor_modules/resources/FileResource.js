@@ -88,6 +88,11 @@ $rload(function(raptor) {
                 
                 writeFully: function(str, encoding) {
                     files.writeFile(this.filePath, str, encoding);
+                },
+                
+                getFile: function() {
+                    var File = files.File;
+                    return new File(this.getSystemPath());
                 }
             };
             return FileResource;
