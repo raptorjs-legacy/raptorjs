@@ -19,8 +19,7 @@
  * @extension Raptor Stringify
  * 
  */
-raptor.extend('json', {
-    extend: function(target) {
+raptor.extend('json', function(raptor, target) {
         "use strict";
         
         var stringify = raptor.require("json.stringify").stringify;
@@ -36,5 +35,4 @@ raptor.extend('json', {
              */
             raptorStringify: stringify
         };
-    }
-});
+    });

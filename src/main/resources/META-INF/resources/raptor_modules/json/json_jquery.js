@@ -19,8 +19,9 @@
  * @extension jQuery Parse
  * 
  */
-raptor.extend('json', {
-    extend: function(target) {
+raptor.extend(
+    'json', 
+    function(raptor, target) {
         "use strict";
         
         var parse = $.parseJSON;
@@ -38,6 +39,4 @@ raptor.extend('json', {
              */
             jqueryParse: parse
         };
-        
-    }
-});
+    });

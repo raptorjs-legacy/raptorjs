@@ -19,8 +19,7 @@
  * @extension Raptor Parse
  * 
  */
-raptor.extend('json', {
-    extend: function(target) {
+raptor.extend('json', function(raptor, target) {
         "use strict";
         
         var parse = raptor.require("json.parse").parse;
@@ -37,5 +36,4 @@ raptor.extend('json', {
              */
             raptorParse: parse
         };
-    }
-});
+    });

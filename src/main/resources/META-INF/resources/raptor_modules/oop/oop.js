@@ -165,11 +165,11 @@ $rload(function(raptor) {
                 targetTypeName, //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
                 modifiers = def[MODIFIERS_IDX],   //Modifiers for the object being defined
                 superClassName,
-                onlyStatics, //If true, then an object with static methods will be returned and not a constructor function
                 mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
                 factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
                 enumValues = def[ENUM_VALUES_IDX],
                 isEnum = targetType == ENUM,
+                isMixin = targetType == MIXIN,
                 EnumCtor,
                 enumValue;
 
@@ -177,7 +177,7 @@ $rload(function(raptor) {
             
             if (factory) {
                 //The factory can be a function or just the type.
-                if (isFunction(factory)) {
+                if (isFunction(factory) && (!isMixin || modifiers.singleton)) {
                     //If it is a function then execute the function to produce the type
                     type = factory(raptor);                    
                 }
@@ -196,51 +196,52 @@ $rload(function(raptor) {
             else {
                 raptor.throwError(new Error(name + ' invalid'));
             }
-
-            if (isFunction(type) || modifiers.superclass) {
-                targetType = CLASS;
-            }
-            
-            targetTypeName = typeNames[targetType];
-            
-            onlyStatics = targetType == MODULE || targetType == MIXIN;
             
             clazz = mixinsTarget = type;
-            
-            //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
-            //and the output simply becomes the input type with modifications applied (e.g. mixins)
-            if (!onlyStatics) {
-                /*
-                 * We have a "type" object which contains the methods and constructors. We now
-                 * need to initialize a JavaScript "class" with the correct constructor function
-                 * and the correct prototype
-                 */
-                if (!isFunction(type)) {
-                    clazz = type.init || function() {};
-                    clazz[PROTOTYPE] = type;
-                }
 
-                if ((superClassName = modifiers.superclass))
-                {
-                    _inherit(clazz, superClassName, true);
+            if (!isMixin) {
+                
+                if (!isEnum && (isFunction(type) || modifiers.superclass)) {
+                    targetType = CLASS;
                 }
                 
-                proto = clazz[PROTOTYPE];
+                targetTypeName = typeNames[targetType];
 
-                _addTypeInfo(proto, name, targetTypeName);      //Add hidden fields to the prototype for the class so we can reflect on it
-                if (proto.toString === Object[PROTOTYPE].toString) {   //Add a default toString method if it doesn't already have one
-                    proto.toString = isEnum ? _enumValueName : _instanceToString;
+                //If the object define consists of only statics then we don't need to mess with prototypes or inheritance
+                //and the output simply becomes the input type with modifications applied (e.g. mixins)
+                if (targetType == CLASS || isEnum) {
+                    /*
+                     * We have a "type" object which contains the methods and constructors. We now
+                     * need to initialize a JavaScript "class" with the correct constructor function
+                     * and the correct prototype
+                     */
+                    if (!isFunction(type)) {
+                        clazz = type.init || function() {};
+                        clazz[PROTOTYPE] = type;
+                    }
+    
+                    if ((superClassName = modifiers.superclass))
+                    {
+                        _inherit(clazz, superClassName, true);
+                    }
+                    
+                    proto = clazz[PROTOTYPE];
+    
+                    _addTypeInfo(proto, name, targetTypeName);      //Add hidden fields to the prototype for the class so we can reflect on it
+                    if (proto.toString === Object[PROTOTYPE].toString) {   //Add a default toString method if it doesn't already have one
+                        proto.toString = isEnum ? _enumValueName : _instanceToString;
+                    }
+                    proto.getClass = _instanceGetClass;  //Add the ability to lookup the class for an instance of a class
+                    proto.init = proto.constructor = clazz;   //Add init/constructor properties for convenience
+                    mixinsTarget = proto;                       //Add all mixins to the prototype of the class
                 }
-                proto.getClass = _instanceGetClass;  //Add the ability to lookup the class for an instance of a class
-                proto.init = proto.constructor = clazz;   //Add init/constructor properties for convenience
-                mixinsTarget = proto;                       //Add all mixins to the prototype of the class
-            }
-            
-            if (targetType != MIXIN) {
-                _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
-                clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
-                clazz.toString = _staticToString;
-                mixinsTarget.logger = _createLoggerFunction(name);
+                
+                if (modifiers.addins !== false) {
+                    _addTypeInfo(clazz, name, targetTypeName);          //Add type info to the resulting object
+                    clazz.getName = _getName;                //Helper method to return the name of the class/module/enum/mixin
+                    clazz.toString = _staticToString;
+                    mixinsTarget.logger = _createLoggerFunction(name);    
+                }
             }
 
             //Handle extensions
@@ -284,35 +285,6 @@ $rload(function(raptor) {
             
         },
 
-        getDefFromArgs = function(args) {
-            var i=0,
-                len=args.length,
-                arg,
-                name,
-                modifiers = {},
-                factory;
-            
-            for (; i<len; i++) {
-                arg = args[i];
-                if (isString(arg)) {
-                    if (!name) {
-                        name = arg;
-                    }
-                    else {
-                        modifiers.superclass = arg;
-                    }
-                }
-                else if (i == len-1) {
-                    factory = arg;  //An object in the last position is the implementation
-                }
-                else {
-                    modifiers = arg;
-                }
-            }
-
-            return [name, modifiers, factory];
-        },
-
         /**
          * 
          * @param name
@@ -347,6 +319,35 @@ $rload(function(raptor) {
             
             return def;
         },
+        _defineFromArgs = function(args, type) {
+            var i=0,
+                len=args.length,
+                arg,
+                name,
+                modifiers = {},
+                factory;
+            
+            for (; i<len; i++) {
+                arg = args[i];
+                if (isString(arg)) {
+                    if (!name) {
+                        name = arg;
+                    }
+                    else {
+                        modifiers.superclass = arg;
+                    }
+                }
+                else if (i == len-1) {
+                    factory = arg;  //An object in the last position is the implementation
+                }
+                else {
+                    modifiers = arg;
+                }
+            }
+    
+            return _define([name, modifiers, factory, type]);  
+        },
+        
         _find = function(name) {
             return _require(name, 0, 0, 1); //Checks for the existence of an object
         }; 
@@ -448,8 +449,9 @@ $rload(function(raptor) {
          * 
          * @returns {void|function|object} Returns the module definition or class constructor function if the module/class is anonymous, otherwise nothing is returned
          */
-        define: function(name, modifiers, factory) {
-            return _define(getDefFromArgs(arguments).concat(MODULE));
+        define: function() {
+            return _defineFromArgs(arguments, MODULE);
+            
         },
         
         /**
@@ -495,8 +497,8 @@ $rload(function(raptor) {
          * 
          * @returns {void|function} Returns the class constructor function if the class is anonymous, otherwise nothing is returned
          */
-        defineClass: function(name, modifiers, factory) {
-            return _define(getDefFromArgs(arguments).concat(CLASS));
+        defineClass: function() {
+            return _defineFromArgs(arguments, CLASS);
         },
         
         /**
@@ -582,8 +584,8 @@ raptor.defineEnum(
          * @param factory
          * @returns
          */
-        defineMixin: function(name, factory) {
-            return _define([name, {}, factory, MIXIN]);
+        defineMixin: function() {
+            return _defineFromArgs(arguments, MIXIN);
         },
         
         /**
@@ -735,7 +737,6 @@ raptor.defineEnum(
             
             var def,
                 extensions,
-                createMixin,
                 loaded;
             
             if (isString(target)) {
@@ -773,32 +774,24 @@ raptor.defineEnum(
                 }
             }
             
+            if (isString(source))
+            {
+                //The source is the name of the source so load the source
+                source = _require(source);
+            }
+            
             if (isFunction(source)) {
                 //If the source is a function then treat it as a factory function
                 //that will return the mixins
                 if (!overridden) {
                     overridden = {}; //Allows the source to know which properties it has overridden in the target object and to refer to them
                 }
-                source = source(raptor, target, overridden); //Execute the factory function with three parameters
-            }
-            else if (isString(source))
-            {
-                //The source is the name of the source so load the source
-                source = _require(source);
-            }
-            
-            createMixin = source.createMixin || source.extend;
-            
-            if (createMixin) {
-                if (!overridden) {
-                    overridden = {};
-                }
-
-                source = createMixin.call(source, target, overridden);
+                source = source.call(target, raptor, target, overridden); //Execute the factory function with three parameters
             }
             
             if (doNotOverride || overridden) {
                 _extend(target, source, overridden, doNotOverride);
+                return target;
             }
             else {
                 return _simpleExtend(target, source);

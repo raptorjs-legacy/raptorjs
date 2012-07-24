@@ -66,11 +66,9 @@ describe('modules module', function() {
             };
         });
         
-        raptor.extend('extendLazy', {
-            extend: function(target) {
+        raptor.extend('extendLazy', function(raptor, target) {
                 target.test();
-            }
-        });
+            });
         
         var extendLazy = raptor.require('extendLazy');
         expect(extendLazy.testExecuted).toEqual(true);
