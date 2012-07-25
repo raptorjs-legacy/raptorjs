@@ -113,8 +113,14 @@ public class IncludePackageCommand implements IncludeCommand {
                         @Override
                         public void handleInclude(Include include,
                                 Extension extension) {
-                            IncludeCommand includeCommand = context.getResourceIncluder().buildIncludeCommand(include, manifest, context);
-                            extensionIncludeCommands.includeCommands.add(includeCommand);
+                            try
+                            {
+                                IncludeCommand includeCommand = context.getResourceIncluder().buildIncludeCommand(include, manifest, context);
+                                extensionIncludeCommands.includeCommands.add(includeCommand);
+                            }
+                            catch(Exception e) {
+                                throw new RuntimeException("Invalid include in package \"" + manifest.getSystemPath() + "\". Include properties: " + include.getProperties() + ". Exception: " + e, e);
+                            }
                         }
                         
                     });

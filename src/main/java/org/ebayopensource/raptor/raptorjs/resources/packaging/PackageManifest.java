@@ -48,6 +48,7 @@ public class PackageManifest {
     @JsonDeserialize(contentAs=Include.class)
     public List<Include> includes = null;
     private Extensions extensions = null;
+    private String systemPath = null;
     
     public PackageManifest() {
     }
@@ -76,6 +77,14 @@ public class PackageManifest {
         }
     }
     
+    public String getSystemPath() {
+        return systemPath;
+    }
+
+    public void setSystemPath(String systemPath) {
+        this.systemPath = systemPath;
+    }
+
     public void forEachExtension(ExtensionCallback callback) {
         if (this.extensions != null) {
             for (Extension ext : this.extensions.extensions) {

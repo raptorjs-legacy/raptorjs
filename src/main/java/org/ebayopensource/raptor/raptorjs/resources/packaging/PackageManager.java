@@ -70,6 +70,7 @@ public class PackageManager {
         try {
             PackageManifest manifest = mapper.readValue(resource.getResourceAsStream(), PackageManifest.class);
             manifest.setPackagePath(packageJsonPath);
+            manifest.setSystemPath(resource.getSystemPath());
             manifest.init(this.raptorJSEnv);
             manifest.setModuleDirPath(moduleDirPath);
             return manifest;
