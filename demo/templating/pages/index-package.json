@@ -4,6 +4,8 @@
         { "type": "init-raptor" },
         { "module": "templating" },
         { "module": "templating.compiler" },
-        { "module": "taglib/core/compile-time" }
+        { "module": "taglib/core/compile-time" },
+        { "module": "taglib/html/compile-time" },
+        { "module": "taglib/widgets/compile-time" }
      ]
 }
