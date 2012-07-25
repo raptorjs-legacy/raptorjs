@@ -37,10 +37,10 @@
             </tr>
             
         </table>
-        <button id="compileButton" type="button">Compile</button>
+        <button id="renderButton" type="button">Render</button>
         <!-- [raptor-include: body] -->
         <script>
-        $("#compileButton").click(function() {
+        $("#renderButton").click(function() {
             var templateSrc = $("#template").val();
             var compiler = raptor.require('templating.compiler');
             var templateName;
@@ -57,6 +57,9 @@
             
             var jsonData = $("#data").val();
             var data = eval("(" + jsonData + ")");
+            
+            raptor.require('templating').unload(templateName);
+            
             var output = raptor.require('templating').renderToString(templateName, data);
             $("#output").val(output);
         });
