@@ -114,7 +114,7 @@ raptor.defineClass(
                     for (var i=0, len=javaAttributes.getLength(); i<len; i++) {
                         var localName = java.convertString(javaAttributes.getLocalName(i)),
                             qName = java.convertString(javaAttributes.getQName(i)),
-                            uri = java.convertString(javaAttributes.getNamespaceURI(i)),
+                            uri = java.convertString(javaAttributes.getURI(i)),
                             value = java.convertString(javaAttributes.getValue(i));
 
                         if (!localName) {
