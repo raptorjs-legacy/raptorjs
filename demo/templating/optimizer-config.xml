@@ -54,8 +54,6 @@
 <!--     <js-output-dir>dist/bundles</js-output-dir> -->
 <!--     <css-output-dir>dist/bundles</css-output-dir> -->
     <bundles-output-dir>dist/static</bundles-output-dir>
-        
-    <html-output-dir>dist/inc/page-dependencies</html-output-dir>
     
     <inject-html-includes>
         <enabled>true</enabled>
