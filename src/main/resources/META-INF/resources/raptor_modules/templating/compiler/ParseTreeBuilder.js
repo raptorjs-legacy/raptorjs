@@ -46,7 +46,7 @@ raptor.defineClass(
                     prevTextNode = null,
                     imports;
                 
-                var parser = sax.parser({
+                var parser = sax.createParser({
                         trim: false,
                         normalize: false
                     });
@@ -82,13 +82,13 @@ raptor.defineClass(
                         elementNode.prefix = el.getPrefix();
                         elementNode.localName = el.getLocalName();
                         elementNode.qName = el.getQName();
-                        elementNode.uri = taglibs.resolveURI(el.getURI());
+                        elementNode.uri = taglibs.resolveURI(el.getNamespaceURI());
                         elementNode.addNamespaceMappings(el.getNamespaceMappings());
                         
                         elementNode.pos = parser.getPos();
                         
                         forEach(el.getAttributes(), function(attr) {
-                            if (attr.getLocalName() === 'imports' && !attr.getURI()) {
+                            if (attr.getLocalName() === 'imports' && !attr.getNamespaceURI()) {
                                 importsAttr = attr.getValue();
                             }
                         }, this);
@@ -107,7 +107,7 @@ raptor.defineClass(
                         }
                         
                         forEach(el.getAttributes(), function(attr) {
-                            var attrURI = taglibs.resolveURI(attr.getURI()),
+                            var attrURI = taglibs.resolveURI(attr.getNamespaceURI()),
                                 attrLocalName = attr.getLocalName(),
                                 attrPrefix = attr.getPrefix();
                             

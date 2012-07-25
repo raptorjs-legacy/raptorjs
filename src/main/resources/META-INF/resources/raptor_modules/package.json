@@ -28,6 +28,7 @@
 	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
 	    "less": {"class": "packager.Include_less", "path": "/packager/Include_less.js"},
 	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
+	    "package": {"class": "packager.Include_package", "path": "/packager/Include_package.js"},
 	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
 	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
 	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},

@@ -51,7 +51,7 @@ raptor.defineClass(
                     return files.resolvePath(configDir, path);
                 };
                 
-                var objectMapper = raptor.require('xml.sax.objectMapper'),
+                var objectMapper = raptor.require('xml.sax.object-mapper'),
                     reader,
                     bundlesHandler = {
                         _type: "object",

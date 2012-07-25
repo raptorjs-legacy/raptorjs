@@ -15,7 +15,7 @@
  */
 
 raptor.define(
-    'xml.sax.objectMapper',
+    'xml.sax.object-mapper',
     function(raptor) {
         "use strict";
         
@@ -43,7 +43,7 @@ raptor.define(
                     return schema;
                 };
                 
-                var uri = el.getURI(),
+                var uri = el.getNamespaceURI(),
                     schema;
                 
                 if (uri) {
@@ -122,7 +122,7 @@ raptor.define(
                     }
                 }
                 
-                var propertyName = schema._targetProp || (typeof el === 'string' ? el : (el.getURI() ? el.getURI() + ":" + el.getLocalName() : el.getLocalName()));
+                var propertyName = schema._targetProp || (typeof el === 'string' ? el : (el.getNamespaceURI() ? el.getNamespaceURI() + ":" + el.getLocalName() : el.getLocalName()));
                 
                 if (schema._set) {
                     schema._set(targetObject, propertyName, value, context);
@@ -152,7 +152,7 @@ raptor.define(
             
             read: function(xmlSrc, filePath) {
                 
-                this.saxParser = sax.parser({
+                this.saxParser = sax.createParser({
                     trim: true,
                     normalize: true
                 });
@@ -177,7 +177,7 @@ raptor.define(
                         var context = {
                            el: el, 
                            tagName: el.getLocalName(),
-                           uri: el.getURI(),
+                           uri: el.getNamespaceURI(),
                            parentContext: parentContext
                         };
                         

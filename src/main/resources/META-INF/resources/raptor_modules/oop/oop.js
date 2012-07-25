@@ -812,7 +812,9 @@ raptor.defineEnum(
         
         _missing: function(name) {
             throw new Error('Not found: ' + name);
-        }
+        },
+        
+        cache: loadedLookup
     };
 
     for (k in oop) {

@@ -92,5 +92,5 @@ $rload(function(raptor) {
         }
     };
     
-    raptor.packager.ExtensionCollection = ExtensionCollection;
+    raptor.ExtensionCollection = ExtensionCollection;
 });

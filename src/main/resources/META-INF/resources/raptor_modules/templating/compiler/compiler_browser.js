@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-raptor.define(
-    "xml.sax",
-    function() {
+/**
+ * @extension Server
+ */
+raptor.extend(
+    "templating.compiler",
+    function(raptor, compiler) {
         "use strict";
+        
+        var discoveryComplete = false;
         
         return {
             
             /**
              * 
-             * @param options
              * @returns
              */
-            createParser: function(options) {
-                var SaxParser = raptor.require("xml.sax.SaxParser");
-                return new SaxParser(options);
-            },
-            
-            domToSax: function(elNode, handlers) {
-                var DomToSax = raptor.require('xml.sax.DomToSax');
-                var domToSax = new DomToSax();
-                domToSax.generateEventsForNode(elNode, handlers);
+            discoverTaglibs: function() {
+                if (discoveryComplete) {
+                    return;
+                }
+                discoveryComplete = true;
+                
+                var taglibs = $rget("rtld");
+                
+                raptor.forEachEntry(taglibs, function(path, taglibXml) {
+                    this.loadTaglibXml(taglibXml, path);
+                }, this);
             }
+           
         };
-        
     });

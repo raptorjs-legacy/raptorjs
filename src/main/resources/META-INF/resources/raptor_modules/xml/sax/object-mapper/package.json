@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "xml.sax.objectMapper",
+    "name": "xml.sax.object-mapper",
     "version": "1.0",
     "description": "Simple SAX-based object mapper to build objects from XML",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -12,6 +12,8 @@
     ],
     
     "includes": [
-        {"path": "objectMapper.js"}
+        {"module": "xml.sax"},
+        {"module": "arrays"},
+        {"path": "object-mapper.js"}
     ]
 }

@@ -12,6 +12,8 @@
     ],
     
     "includes": [
+        {"module": "listeners"},
+        {"module": "xml.dom"},
         {"path": "sax.js"},
         {"path": "BaseSaxParser.js"}
     ],
@@ -25,6 +27,13 @@
         "rhino": {
             "includes": [
                 {"path": "SaxParser_rhino.js"}
+            ]
+        },
+        "jquery": {
+            "includes": [
+                {"module": "xml.dom"},
+                {"module": "xml.dom-to-sax"},
+                {"path": "SaxParser_dom.js"}
             ]
         }
     }

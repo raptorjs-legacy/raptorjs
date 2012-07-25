@@ -112,19 +112,6 @@ raptor.extend(
                     }, this);
                 }
             },
-
-            /**
-             * 
-             * @param taglibXml
-             * @param path
-             * @returns
-             */
-            loadTaglibXml: function(taglibXml, path) {
-                var TaglibXmlLoader = raptor.require("templating.compiler.TaglibXmlLoader");
-                var taglib = TaglibXmlLoader.load(taglibXml, path);
-                compiler.addTaglib(taglib);
-                return taglib;
-            },
             
             /**
              * 

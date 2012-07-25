@@ -127,8 +127,7 @@ raptor.extend('widgets', function(raptor) {
                     
                     var i=0,
                         len = widgetDefs.length,
-                        doc,
-                        nestedDoc;
+                        doc;
                     
                     for (; i<len; i++) {
                         

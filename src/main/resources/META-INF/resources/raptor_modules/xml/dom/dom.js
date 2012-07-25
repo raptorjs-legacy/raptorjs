@@ -15,7 +15,7 @@
  */
 
 raptor.define(
-    "xml.sax",
+    "xml.dom",
     function() {
         "use strict";
         
@@ -27,14 +27,8 @@ raptor.define(
              * @returns
              */
             createParser: function(options) {
-                var SaxParser = raptor.require("xml.sax.SaxParser");
-                return new SaxParser(options);
-            },
-            
-            domToSax: function(elNode, handlers) {
-                var DomToSax = raptor.require('xml.sax.DomToSax');
-                var domToSax = new DomToSax();
-                domToSax.generateEventsForNode(elNode, handlers);
+                var DomParser = raptor.require("xml.dom.DomParser");
+                return new DomParser(options);
             }
         };
         

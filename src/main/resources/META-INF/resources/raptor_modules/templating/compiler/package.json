@@ -12,9 +12,12 @@
     ],
     
     "includes": [
+        {"module": "regexp"},
         {"module": "strings"},
         {"module": "listeners"},
+        {"module": "json.stringify"},
         {"module": "xml.utils"},
+        {"module": "xml.sax.object-mapper"},
         {"path": "Expression.js"},
         {"path": "ExpressionParser.js"},
         {"path": "TypeConverter.js"},
@@ -27,21 +30,27 @@
         {"path": "Node.js"},
         {"path": "ElementNode.js"},
         {"path": "TextNode.js"},
-        {"path": "ParseTreeBuilder.js"}
+        {"path": "ParseTreeBuilder.js"},
+        {"path": "TaglibXmlLoader.js"}
     ],
     
     "extensions": [
         {   
             "name": "server",
             "includes": [
-                {"path": "compiler_server.js"},
-                {"path": "TaglibXmlLoader.js"}
+                {"path": "compiler_server.js"}
             ]
         },
         {   
             "name": "rhino",
             "includes": [
                 {"path": "compiler_rhino.js"}
+            ]
+        },
+        {   
+            "name": "browser",
+            "includes": [
+                {"path": "compiler_browser.js"}
             ]
         }
     ]

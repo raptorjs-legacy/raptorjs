@@ -176,9 +176,14 @@ $rload(function(raptor) {
             }
             
             return manifest;
+        },
+        
+        uncache: function(name) {
+            delete raptor.oop.cache[name];
         }
     });
     
     raptor.load = raptor.oop.load;
+    raptor.uncache = raptor.oop.uncache;
 });
 

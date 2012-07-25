@@ -17,7 +17,9 @@
 raptor.define('templating', function(raptor) {
     "use strict";
     
-    var registeredTemplates = {},
+    var getRegisteredTemplate = function(name) {
+            return $rget('rhtml', name);
+        },
         loadedTemplates = {},
         forEachEntry = raptor.forEachEntry,
         isArray = raptor.isArray,
@@ -92,11 +94,11 @@ raptor.define('templating', function(raptor) {
                  * then it means that the template has not been fully loaded and initialized.
                  * Therefore, check if the template has been registerd with the name provided
                  */
-                templateFunc = registeredTemplates[templateName];
+                templateFunc = getRegisteredTemplate(templateName);
                 
                 if (!templateFunc && this.findTemplate) {
                     this.findTemplate(templateName);
-                    templateFunc = registeredTemplates[templateName];    
+                    templateFunc = getRegisteredTemplate(templateName);    
                 }
                 
                 if (templateFunc) { //Check the registered templates lookup to see if a factory function has been register
@@ -163,16 +165,12 @@ raptor.define('templating', function(raptor) {
         },
         
         /**
-         * Registers a template factory function and associates it with the
-         * provided template name. When the compiled JavaScript code for a 
-         * template is evaluated this function will be invoked.
+         * Unloads a template so that it can be reloaded.
          * 
-         * @param name {String} The name of the template
-         * @param templateFactoryFunc {Function} The template factory function 
+         * @param templateName
          */
-        register: function(name, templateFactoryFunc) {
-            registeredTemplates[name] = templateFactoryFunc; //Add the factory function to the lookup
-            delete loadedTemplates[name]; //If a template is re-registered then deleted the loaded instance (if any)
+        unload: function(templateName) {
+            delete loadedTemplates[templateName];
         },
         
         /**
@@ -326,8 +324,3 @@ raptor.define('templating', function(raptor) {
     return templating;
     
 });
-
-raptor.global.$rtmpl = function(name, func) {
-    "use strict";
-    raptor.require('templating').register(name, func);
-};

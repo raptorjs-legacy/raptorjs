@@ -79,12 +79,15 @@ raptor.defineClass(
                     }
                 }, this);
 
-                
-                if (!name && !template.compiler.options.templateName) {
-                    this.addError('The "name" attribute is required for the ' + this.toString() + ' tag.');
+
+                if (name) {
+                    template.setTemplateName(name);
+                }
+                else if (!template.getTemplateName()) {
+                    this.addError('The "name" attribute is required for the ' + this.toString() + ' tag or it must be passed in as a compiler option.');
                 }
                 
-                template.setTemplateName(name);
+                
                 
                 this.generateCodeForChildren(template);
             }

@@ -145,6 +145,20 @@ startTagOnly: {
                 this.createCompiler(options).compileAndLoad(xmlSource, path);
             },
             
+
+            /**
+             * 
+             * @param taglibXml
+             * @param path
+             * @returns
+             */
+            loadTaglibXml: function(taglibXml, path) {
+                var TaglibXmlLoader = raptor.require("templating.compiler.TaglibXmlLoader");
+                var taglib = TaglibXmlLoader.load(taglibXml, path);
+                this.addTaglib(taglib);
+                return taglib;
+            },
+            
             /**
              * Adds a {@link templating.compiler$Taglib} instance to the internal {@link templating.compiler$TaglibCollection} so
              * that the taglib is available to all compilers.
@@ -183,7 +197,9 @@ startTagOnly: {
              */
             registerCustomExpressionHandler: function(name, func) {
                 ExpressionParser.custom[name] = func;
-            }
+            },
+            
+            taglibs: taglibs
         };
     });
 

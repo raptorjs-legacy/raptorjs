@@ -21,6 +21,12 @@
         {"type": "js", "path": "WriteNode.js"},
         {"type": "js", "path": "InvokeNode.js"},
         {"type": "js", "path": "ScriptletNode.js"},
+        {"type": "js", "path": "ChooseNode.js"},
+        {"type": "js", "path": "DefNode.js"},
+        {"type": "js", "path": "IncludeNode.js"},
+        {"type": "js", "path": "OtherwiseNode.js"},
+        {"type": "js", "path": "WhenNode.js"},
+        {"type": "js", "path": "WithNode.js"},
         {"type": "rtld", "path": "core.rtld"}
     ]
 }

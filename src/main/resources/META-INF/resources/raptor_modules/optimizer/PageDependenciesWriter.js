@@ -120,7 +120,7 @@ raptor.defineClass(
                 }, this);
                 
                 raptor.forEachEntry(htmlByLocation, function(location, html) {
-                    htmlByLocation[location] = html.join('');
+                    htmlByLocation[location] = html.join('\n');
                 }, this);
                 
                 return htmlByLocation;

@@ -30,7 +30,7 @@ raptor.defineClass(
              * 
              * @returns
              */
-            getURI: function() {
+            getNamespaceURI: function() {
                 return this.uri;
             },
             

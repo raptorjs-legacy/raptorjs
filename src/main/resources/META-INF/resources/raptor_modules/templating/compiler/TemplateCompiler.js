@@ -33,7 +33,7 @@ raptor.defineClass(
          */
         var TemplateCompiler = function(taglibs, options) {
             this.taglibs = taglibs;
-            this.options = options;
+            this.options = options || {};
             this.errors = [];
         };
         
@@ -106,7 +106,7 @@ raptor.defineClass(
              * @param filePath {String} The path to the input template for debugging/error reporting only
              * @returns {String} The JavaScript code for the compiled template
              */
-            compile: function(xmlSrc, filePath) {
+            compile: function(xmlSrc, filePath, callback, thisObj) {
                 var _this = this,
                     rootNode,
                     templateBuilder,
@@ -178,6 +178,19 @@ raptor.defineClass(
                     output = minifier.minify(output);
                 }
                 
+                if (callback) {
+                    callback.call(thisObj, {
+                        source: output,
+                        templateName: templateBuilder.getTemplateName()
+                    });
+                }
+                
+                var options = this.options;
+                
+                if (options && options.nameCallback) {
+                    options.nameCallback(templateBuilder.getTemplateName());
+                }
+                
                 return output;
             },
             
@@ -188,9 +201,9 @@ raptor.defineClass(
              * @return {void}
              */
             compileAndLoad: function(xmlSrc, filePath) {
-                var compiledSrc = this.compile(xmlSrc, filePath); //Get the compiled output for the template
-                
-                raptor.require("templating"); //Make sure the templating module is loaded before the compiled code is evaluated
+                var compiledSrc = this.compile(xmlSrc, filePath, function(result) { //Get the compiled output for the template
+                    raptor.require('templating').unload(result.templateName); //Unload any existing template with the same name
+                }); 
                 
                 try
                 {

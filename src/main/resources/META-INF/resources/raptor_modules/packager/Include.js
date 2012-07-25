@@ -125,7 +125,7 @@ raptor.defineClass(
             getResourcePath: function(context) {
                 return null;
             },
-            
+
             getResource: function(context) {
                 if (this._resource === undefined) {
                     var resourcePath = this.getResourcePath(context);

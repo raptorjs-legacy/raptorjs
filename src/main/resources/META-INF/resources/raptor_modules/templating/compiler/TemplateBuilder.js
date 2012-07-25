@@ -51,7 +51,8 @@ raptor.defineClass(
         
         TemplateBuilder.prototype = {            
             getTemplateName: function() {
-                return (this.options ? this.options.templateName : null) || this.templateName;
+                var options = this.options || {};
+                return options.templateName || this.templateName || options.defaultTemplateName;
             },
             
             beginPreserveWhitespace: function() {
@@ -229,7 +230,7 @@ raptor.defineClass(
                     params = ["context"];
                 }
                 
-                out.append('$rtmpl(');
+                out.append('$rset("rhtml",');
                 out.append(stringify(templateName));
                 out.append(',');
                 out.append('function(helpers){');

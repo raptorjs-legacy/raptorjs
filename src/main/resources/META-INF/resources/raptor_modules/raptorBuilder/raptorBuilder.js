@@ -18,6 +18,7 @@
     /*jshint strict:false */
     
     var global = this,
+        lookup = {},
         loaders = [],
         slice = Array.prototype.slice,
         isArray = function(o)
@@ -298,6 +299,27 @@
     
     $rcreate = function(config) {
         raptor = raptorBuilder.createRaptor(config);
+    };
+    
+    $rset = function(category, key, data) {
+        var catData = lookup[category];
+        if (!catData) {
+            catData = lookup[category] = {};
+        }
+        catData[key] = data;
+    };
+    
+    $radd = function(category, data) {
+        var catData = lookup[category];
+        if (!catData) {
+            catData = lookup[category] = [];
+        }
+        catData.push(data);
+    };
+    
+    $rget = function(category, key) {
+        var catData = lookup[category];
+        return arguments.length === 2 ? catData && catData[key] : catData; 
     };
 
 }());

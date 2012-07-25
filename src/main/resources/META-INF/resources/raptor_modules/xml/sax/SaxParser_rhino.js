@@ -43,7 +43,7 @@ raptor.defineClass(
         
         Attribute.prototype = {
 
-            getURI: function() {
+            getNamespaceURI: function() {
                 var prefix = this.getPrefix();
                 return prefix ? this.uri : '';
             },
@@ -85,7 +85,7 @@ raptor.defineClass(
         
         Element.prototype = {
 
-            getURI: function() {
+            getNamespaceURI: function() {
                 var prefix = this.getPrefix();
                 return prefix ? this.uri : '';
             },
@@ -114,7 +114,7 @@ raptor.defineClass(
                     for (var i=0, len=javaAttributes.getLength(); i<len; i++) {
                         var localName = java.convertString(javaAttributes.getLocalName(i)),
                             qName = java.convertString(javaAttributes.getQName(i)),
-                            uri = java.convertString(javaAttributes.getURI(i)),
+                            uri = java.convertString(javaAttributes.getNamespaceURI(i)),
                             value = java.convertString(javaAttributes.getValue(i));
 
                         if (!localName) {
@@ -139,7 +139,7 @@ raptor.defineClass(
                 }, this);
                 attributes = attributes.join(", ");
                 
-                return "[Element: uri=" + this.getURI() + ", localName=" + this.localName + ", qName=" + this.qName + ", prefix=" + this.getPrefix() + ", attributes=[" + attributes + "]]";
+                return "[Element: uri=" + this.getNamespaceURI() + ", localName=" + this.localName + ", qName=" + this.qName + ", prefix=" + this.getPrefix() + ", attributes=[" + attributes + "]]";
             }
         };
         

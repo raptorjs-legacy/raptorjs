@@ -307,7 +307,8 @@ helpers = {
            
            var html = config.html,
                scripts = jsdomScripts(config.require),
-               done = false;
+               done = false,
+               DOMParser = require('xmldom').DOMParser;;
            
            runs(function() {
                try {
@@ -327,6 +328,8 @@ helpers = {
                                return;
                            }
                            window.console = console;
+                           window.DOMParser = DOMParser;
+                           
                            config.ready(window, window.raptor, function() {
                                done = true;
                            });

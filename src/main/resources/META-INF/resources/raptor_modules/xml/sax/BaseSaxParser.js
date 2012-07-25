@@ -23,7 +23,7 @@ raptor.defineClass(
             arrayFromArguments = raptor.arrayFromArguments;
         
         var BaseSaxParser = function() {
-            this.observable = listeners.createObservable(['startElement', 'endElement', 'characters', 'error']);
+            this.observable = listeners.createObservable(['startElement', 'endElement', 'characters', 'comment', 'error']);
         };
         
         BaseSaxParser.prototype = {
@@ -52,6 +52,10 @@ raptor.defineClass(
             _error: function() {
                 var args = arrayFromArguments(arguments);
                 this.observable.publish("error", args);
+            },
+            
+            getPos: function() {
+                return "(unknown)";
             }
         };
         

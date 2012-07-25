@@ -32,7 +32,7 @@ raptor.defineClass(
         
         Attribute.prototype = {
 
-            getURI: function() {
+            getNamespaceURI: function() {
                 var attr = this.nodeAttr;
                 return attr.prefix ? attr.uri : '';
             },
@@ -62,7 +62,7 @@ raptor.defineClass(
         
         Element.prototype = {
 
-            getURI: function() {
+            getNamespaceURI: function() {
                 return this.nodeElement.uri;
             },
 

@@ -19,12 +19,11 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var objectMapper = raptor.require('xml.sax.objectMapper'),
+        var objectMapper = raptor.require('xml.sax.object-mapper'),
             STRING = "string",
             BOOLEAN = "boolean",
             OBJECT = "object",
-            transformerUniqueId = 0,
-            resources = raptor.require('resources');
+            transformerUniqueId = 0;
         
         var TaglibXmlLoader = function(src, path) {
             this.src = src;
@@ -348,7 +347,7 @@ raptor.defineClass(
                                 
                                 _end: function(importedTaglib) {
                                     var path = importedTaglib.path,
-                                        taglibResource = resources.findResource(path),
+                                        taglibResource = raptor.require('resources').findResource(path),
                                         importedXmlSource;
                                     
                                     if (!taglibResource.exists()) {

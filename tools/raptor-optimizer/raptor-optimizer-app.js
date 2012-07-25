@@ -48,36 +48,45 @@ exports.run = function() {
     logger.info('Using optimizer configuration file at location "' + configFile + '"');
     console.log();
 
-    var optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
+    var optimizer;
+    
     var run = function() {
+        if (optimizer) {
+            optimizer.closeWatchers();
+        }
+        
+        optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
+        
         optimizer.cleanDirs();
         optimizer.writeAllPages();
+        
+        optimizer.subscribe({
+            "configReloaded": function() {
+                run();
+            },
+            "packageModified": function(eventArgs) {
+                run();
+            }
+        }, this);
+        
+        if (optimizer.hasWatchers() || optimizer.getConfig().isWatchConfigEnabled()) {
+            console.log();
+            if (optimizer.hasWatchers('pages')) {
+                logger.info("Watching page HTML files for changes");    
+            }
+            if (optimizer.hasWatchers('includes')) {
+                logger.info("Watching includes for changes");    
+            }
+            if (optimizer.getConfig().isWatchConfigEnabled()) {
+                logger.info("Watching configuration file for changes");    
+            }
+            if (optimizer.hasWatchers('packages')) {
+                logger.info("Watching packages for changes");    
+            }
+        }
     };
     run();
     
     
-    optimizer.subscribe({
-        "configReloaded": function() {
-            run();
-        },
-        "packageModified": function() {
-            run();
-        }
-    }, this);
     
-    if (optimizer.hasWatchers() || optimizer.getConfig().isWatchConfigEnabled()) {
-        console.log();
-        if (optimizer.hasWatchers('pages')) {
-            logger.info("Watching page HTML files for changes");    
-        }
-        if (optimizer.hasWatchers('includes')) {
-            logger.info("Watching includes for changes");    
-        }
-        if (optimizer.getConfig().isWatchConfigEnabled()) {
-            logger.info("Watching configuration file for changes");    
-        }
-        if (optimizer.hasWatchers('packages')) {
-            logger.info("Watching packages for changes");    
-        }
-    }
 };

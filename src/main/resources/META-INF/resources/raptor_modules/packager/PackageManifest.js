@@ -50,6 +50,11 @@ $rload(function(raptor) {
                         includeConfig.name = includeConfig.module;
                         delete includeConfig.module;
                     }
+                    else if (includeConfig.hasOwnProperty('package')) {
+                        includeConfig.type = "package";
+                        includeConfig.path = includeConfig['package'];
+                        delete includeConfig['package'];
+                    }
                 }
             }
             
@@ -208,10 +213,15 @@ $rload(function(raptor) {
                 options = {};
             }
             var enabledExtensions = options.enabledExtensions;
-            if (enabledExtensions) {
-                enabledExtensions = new ExtensionCollection(enabledExtensions);
+            if (enabledExtensions === undefined) {
+                enabledExtensions = raptor.require('packager').getEnabledExtensions();
             }
-            
+            else {
+                if (!(enabledExtensions instanceof ExtensionCollection)) {
+                    enabledExtensions = new ExtensionCollection(enabledExtensions);
+                }
+            }
+
             var includeFilter = options.includeFilter,
                 callback = options.callback,
                 thisObj = options.thisObj,

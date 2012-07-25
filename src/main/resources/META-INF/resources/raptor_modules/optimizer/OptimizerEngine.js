@@ -133,6 +133,7 @@ raptor.defineClass(
             watchPackage: function(manifest) {
                 this._watchFile(manifest.getSystemPath(), 'packages', function(eventArgs) {
                     this.logger().info('Package modified: ' + manifest.getSystemPath());
+                    raptor.require('packager').removePackageManifestFromCache(manifest);
                     if (files.exists(manifest.getSystemPath())) {
                         this.publish('packageModified', {
                             optimizer: this,

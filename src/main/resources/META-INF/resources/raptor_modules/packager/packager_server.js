@@ -22,10 +22,17 @@ $rload(function(raptor) {
         forEachEntry = raptor.forEachEntry,
         logger = raptor.logging.logger('packager-server'),
         packageManifests = {},
-        _extensionsLookup = {},
+        enabledExtensions = null,
         includeClasses = {},
         discoveryComplete = false,
-        searchPathListenerHandle = null;
+        searchPathListenerHandle = null,
+        getEnabledExtensions = function() {
+            if (!enabledExtensions) {
+                var ExtensionCollection = raptor.ExtensionCollection;
+                enabledExtensions = new ExtensionCollection();    
+            }
+            return enabledExtensions;
+        };
     
     /**
      * @namespace
@@ -33,21 +40,25 @@ $rload(function(raptor) {
      * @name packager
      */
     raptor.packager = /** @lends packager */ {
+        ExtensionCollection: raptor.ExtensionCollection,
+        
         config: raptor.config.create({
             "enabledExtensions": {
                 value: raptor.getModuleConfig('packager').enabledExtensions,
                 onChange: function(value) {
-                    _extensionsLookup = {};
-                    
                     arrays.forEach(value, function(ext) {
-                        _extensionsLookup[ext] = true;
+                        getEnabledExtensions().add(ext);
                     });
                 }
             }
         }),
         
         enableExtension: function(extensionName) {
-            _extensionsLookup[extensionName] = true;
+            getEnabledExtensions().add(extensionName);
+        },
+        
+        getEnabledExtensions: function() {
+            return getEnabledExtensions();
         },
         
         /**
@@ -55,7 +66,7 @@ $rload(function(raptor) {
          * @param resourcePath {String|packager-PackageManifest}
          */
         load: function(resourcePath) {
-            this.PackageLoader.instance.load(resourcePath, {enabledExtensions: _extensionsLookup});
+            this.PackageLoader.instance.load(resourcePath, {enabledExtensions: getEnabledExtensions()});
         },
         
         _watchResourceSearchPath: function() {
