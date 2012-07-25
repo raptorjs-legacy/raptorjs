@@ -14,6 +14,7 @@
     "includes": [
         {"module": "regexp"},
         {"module": "strings"},
+        {"module": "objects"},
         {"module": "listeners"},
         {"module": "json.stringify"},
         {"module": "xml.utils"},
