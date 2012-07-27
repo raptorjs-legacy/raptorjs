@@ -308,7 +308,7 @@ helpers = {
            var html = config.html,
                scripts = jsdomScripts(config.require),
                done = false,
-               DOMParser = require('xmldom').DOMParser;;
+               DOMParser = require('xmldom').DOMParser;
            
            runs(function() {
                try {

@@ -131,7 +131,10 @@ raptor.defineClass(
                     _this._startElement(el);
                 },
 
-
+                oncdata: function(text) {
+                    _this._characters(text);
+                },
+                
                 onclosetag: function () {
                     
                     var el = arrays.pop(stack);
@@ -139,7 +142,7 @@ raptor.defineClass(
                     _this._endElement(el);
                 },
 
-                comment: function (comment) {
+                oncomment: function (comment) {
                     _this._comment(comment);
                 }
             });

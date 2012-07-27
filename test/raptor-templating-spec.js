@@ -495,6 +495,12 @@ describe('templating module', function() {
         expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World!<script>$(function() { alert(\'test\'); })</script></body></html>');        
     });
     
+    it("should allow CDATA inside templates", function() {
+
+        var output = compileAndRender("/test-templates/cdata.rhtml", {name: "World"});
+        expect(output).toEqual('<hello>');        
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
