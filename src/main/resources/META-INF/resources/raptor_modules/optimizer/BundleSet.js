@@ -78,18 +78,18 @@ raptor.defineClass(
                     includes: includes,
                     recursive: false,
                     enabledExtensions: this.enabledExtensions,
-                    handlePackageInclude: function(include, context) {
+                    handlePackage: function(manifest, context) {
 
                         if (context.async === true) {
                             return false; //Ignore asynchronous includes since they should not be part of asynchronous bundles 
                         }
                         
                         if (context.recursive === true || context.depth === 0) {
-                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Adding includes for package "' + include.getManifest().getPath() + '"');
+                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Adding includes for package "' + manifest.getPath() + '"');
                             return true; //Recurse into the package
                         }
                         else {
-                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + "***Skipping nested package " + include.getManifest().getPath() + ' for package "' + context.parentPackage.getPath() + '"');
+                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + "***Skipping nested package " + manifest.getPath() + ' for package "' + context.parentPackage.getPath() + '"');
                             return false;
                         }
                     },

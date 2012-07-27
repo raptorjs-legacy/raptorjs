@@ -29,7 +29,7 @@ raptor.defineClass(
             
             process: function(node, compiler) {
                 
-                if (node.parentNode && node.parentNode.allowBodyExpressions === false) {
+                if (node.parentNode && node.parentNode.parseBodyText === false) {
                     return; //Don't try to parse expressions
                 }
                 

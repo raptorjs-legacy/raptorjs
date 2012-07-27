@@ -1,8 +1,10 @@
 var express = require('express'),
+    expressRaptor = require('express-raptor'),
     path = require('path');
 
 module.exports = function(app) {
-    app.get('/', app.raptor.page('/index'));
+    app.get('/', expressRaptor.page('/index'));
+    app.get('/test', expressRaptor.page('/test'));
     app.use('/bundles', express.static(__dirname + '/build/static/bundles'));
     
     app.configure('development', function(){    

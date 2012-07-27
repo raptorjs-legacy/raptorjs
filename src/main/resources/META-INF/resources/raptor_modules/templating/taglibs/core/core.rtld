@@ -73,7 +73,7 @@
         </attribute>
         
         <attribute>
-            <name>allowBodyExpressions</name>
+            <name>parseBodyText</name>
             <type>boolean</type>
             <allow-expressions>false</allow-expressions>
         </attribute>

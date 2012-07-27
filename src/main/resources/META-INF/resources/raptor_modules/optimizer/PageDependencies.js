@@ -82,19 +82,10 @@ raptor.defineClass(
             this.packageManifests = [];
             this.foundPackagePaths = {};
             
+            
             if (config.packagePath) {
-                
                 var packageResource = raptor.require("resources").createFileResource(config.packagePath);
-                var manifest = raptor.require('packager').getPackageManifest(packageResource);
-                
-                manifest.forEachInclude(
-                    function(type, pageInclude) {
-                        this.includes.push(pageInclude);
-                    },
-                    this,
-                    {
-                        enabledExtensions: config.enabledExtensions
-                    });
+                this.packageManifest = raptor.require('packager').getPackageManifest(packageResource);
             }
             
             this._build();
@@ -106,106 +97,104 @@ raptor.defineClass(
                 var optimizer = raptor.require('optimizer'),
                     bundleSet = this.bundleSet,
                     config = this.config,
-                    asyncIncludes = [];
+                    asyncPackages = [];
                     
                 optimizer.forEachInclude({
-                        includes: this.includes,
-                        recursive: true, //We want to make sure every single include is part of a bundle
-                        enabledExtensions: this.enabledExtensions,
-                        handlePackageInclude: function(include, context) {
-                            var manifest = include.getManifest();
-                            if (!manifest) {
-                                raptor.throwError(new Error("Manifest not found for include: " + include.toString()));
-                            }
-                            if (!this.foundPackagePaths[manifest.getSystemPath()]) {
-                                this.foundPackagePaths[manifest.getSystemPath()] = true;
-                                this.packageManifests.push(include.getManifest());
-                            }
-                            
-                            if (context.async === true) {
-                                asyncIncludes.push(include); //We'll handle async includes later
-                            }
-                        },
-                        handleInclude: function(include, context) {
+                    includes: this.includes,
+                    packages: this.packageManifest,
+                    recursive: true, //We want to make sure every single include is part of a bundle
+                    enabledExtensions: this.enabledExtensions,
+                    handlePackage: function(manifest, context) {
+                        
+                        if (!this.foundPackagePaths[manifest.getSystemPath()]) {
+                            this.foundPackagePaths[manifest.getSystemPath()] = true;
+                            this.packageManifests.push(manifest);
+                        }
+                        
+                        if (context.async === true) {
+                            asyncPackages.push(manifest); //We'll handle async includes later
+                        }
+                    },
+                    handleInclude: function(include, context) {
 
-                            var bundle = bundleSet.getBundleForInclude(include);
+                        var bundle = bundleSet.getBundleForInclude(include);
+                        
+                        if (!bundle) {
                             
-                            if (!bundle) {
-                                
-                                var sourceResource = include.getResource();
-                                
-                                if (!this.bundlingEnabled) {
-                                    //Create a bundle with a single include for each include
-                                    if (config.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
-                                        
-                                        var sourceUrl;
-                                        
-                                        if (this.config.sourceUrlResolver) {
-                                            sourceUrl = this.config.sourceUrlResolver(sourceResource.getSystemPath());
-                                        }
-                                        
-                                        if (!this.config.sourceUrlResolver || sourceUrl) {
-                                            bundle = bundleSet.addIncludeToBundle(include, sourceResource.getSystemPath());
-                                            if (sourceUrl) {
-                                                bundle.url = sourceUrl;    
-                                            }
-                                            bundle.sourceResource = sourceResource;
-                                            bundle.inPlaceDeployment = true;
-                                        }
+                            var sourceResource = include.getResource();
+                            
+                            if (!this.bundlingEnabled) {
+                                //Create a bundle with a single include for each include
+                                if (config.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
+                                    
+                                    var sourceUrl;
+                                    
+                                    if (this.config.sourceUrlResolver) {
+                                        sourceUrl = this.config.sourceUrlResolver(sourceResource.getSystemPath());
                                     }
                                     
-                                    if (!bundle) {
-                                        bundle = bundleSet.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
-                                        bundle.sourceResource = sourceResource;
-                                        bundle.includeLocationInUrl = false;
-                                        if (!sourceResource) {
-                                            bundle.requireChecksum = true;
+                                    if (!this.config.sourceUrlResolver || sourceUrl) {
+                                        bundle = bundleSet.addIncludeToBundle(include, sourceResource.getSystemPath());
+                                        if (sourceUrl) {
+                                            bundle.url = sourceUrl;    
                                         }
+                                        bundle.sourceResource = sourceResource;
+                                        bundle.inPlaceDeployment = true;
                                     }
                                 }
                                 
                                 if (!bundle) {
-                                    //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                    bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName);
+                                    bundle = bundleSet.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
+                                    bundle.sourceResource = sourceResource;
+                                    bundle.includeLocationInUrl = false;
+                                    if (!sourceResource) {
+                                        bundle.requireChecksum = true;
+                                    }
                                 }
-                                
                             }
                             
-                            if (context.async === true) {
-                                return; //Don't add bundles associated with async includes to the page bundles (those bundles will be added to the async metadata)
+                            if (!bundle) {
+                                //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
+                                bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName);
                             }
-                            /*
-                             * Add the bundle to a page slot if it has not already been added
-                             */
-                            var bundleLookupKey = bundle.getKey();
                             
-                            if (!this.pageBundleLookup[bundleLookupKey]) {
-                                this.pageBundleLookup[bundleLookupKey] = bundle;
-                                
-                                this.bundleCount++;
-                                
-                                var bundlesForLocation = this.bundlesByLocation[bundle.getLocation()];
-                                if (!bundlesForLocation) {
-                                    bundlesForLocation = this.bundlesByLocation[bundle.getLocation()] = {
-                                       css: [],
-                                       js: []
-                                    };
-                                }
-                                
-                                if (bundle.isJavaScript()) {
-                                    bundlesForLocation.js.push(bundle);
-                                }
-                                else if (bundle.isStyleSheet()){
-                                    bundlesForLocation.css.push(bundle);
-                                }
-                                else {
-                                    raptor.throwError(new Error("Invalid content for bundle: " + bundle.getContentType()));
-                                }
+                        }
+                        
+                        if (context.async === true) {
+                            return; //Don't add bundles associated with async includes to the page bundles (those bundles will be added to the async metadata)
+                        }
+                        /*
+                         * Add the bundle to a page slot if it has not already been added
+                         */
+                        var bundleLookupKey = bundle.getKey();
+                        
+                        if (!this.pageBundleLookup[bundleLookupKey]) {
+                            this.pageBundleLookup[bundleLookupKey] = bundle;
+                            
+                            this.bundleCount++;
+                            
+                            var bundlesForLocation = this.bundlesByLocation[bundle.getLocation()];
+                            if (!bundlesForLocation) {
+                                bundlesForLocation = this.bundlesByLocation[bundle.getLocation()] = {
+                                   css: [],
+                                   js: []
+                                };
                             }
-                        },
-                        thisObj: this
-                    
-                    });
+                            
+                            if (bundle.isJavaScript()) {
+                                bundlesForLocation.js.push(bundle);
+                            }
+                            else if (bundle.isStyleSheet()){
+                                bundlesForLocation.css.push(bundle);
+                            }
+                            else {
+                                raptor.throwError(new Error("Invalid content for bundle: " + bundle.getContentType()));
+                            }
+                        }
+                    },
+                    thisObj: this
+                
+                });
                 
                 var asyncRequires = this.asyncRequiresByName,
                     getAsyncRequire = function(name) {
@@ -218,18 +207,17 @@ raptor.defineClass(
                     
                 
                 optimizer.forEachInclude({
-                    includes: asyncIncludes,
+                    packages: asyncPackages,
                     recursive: true, //We want to make sure we pull in all recursive dependencies for async bundles
                     enabledExtensions: this.enabledExtensions,
-                    handlePackageInclude: function(include, context) {
+                    handlePackage: function(manifest, context) {
                         if (!context.parentPackage) {
                             return;
                         }
                     
-                        var packageManifest = include.getManifest();
                         
                         var asyncRequire = getAsyncRequire(context.parentPackage.getName());
-                        asyncRequire.addRequire(packageManifest.getName());
+                        asyncRequire.addRequire(manifest.getName());
                         
                     },
                     handleInclude: function(include, context) {

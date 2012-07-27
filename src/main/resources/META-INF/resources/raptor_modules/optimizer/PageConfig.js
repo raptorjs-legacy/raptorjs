@@ -1,31 +1,21 @@
 raptor.defineClass(
-    'optimizer.PageDef',
+    'optimizer.PageConfig',
     function(raptor) {
-        var PageDef = function() {
+        var PageConfig = function() {
             this.includes = [];
             this.name = null;
             this.bundleSetDef = null;
-            this.config = null;
             this.enabledExtensions = null;
             this.htmlPath = null;
-            this.packagePath = null;
         };
 
-        PageDef.prototype = {
+        PageConfig.prototype = {
             enableExtension: function(name) {
                 if (!this.enabledExtensions) {
                     this.enabledExtensions = {};
                 }
                 this.enabledExtensions[name] = true;
                 
-            },
-            
-            getName: function() {
-                return this.name;
-            },
-            
-            getPackagePath: function() {
-                return this.packagePath;
             },
             
             getHtmlPath: function() {
@@ -51,9 +41,9 @@ raptor.defineClass(
                 this.bundleSetDef = bundleSetDef;
             },
             toString: function() {
-                return "[PageDef name=" + this.name + "]";
+                return "[PageConfig name=" + this.name + "]";
             }
         };
         
-        return PageDef;
+        return PageConfig;
     });

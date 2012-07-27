@@ -31,7 +31,8 @@ raptor.define(
                 },
                 allowSelfClosing: {
                     'script': false,
-                    'div': false
+                    'div': false,
+                    'textarea': false
                 },
                 startTagOnly: {
                     'img': true,

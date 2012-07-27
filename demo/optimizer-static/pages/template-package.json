@@ -1,0 +1,11 @@
+{
+    "includes": [
+        { "module": "core" },
+        { "type": "init-raptor" },
+        { "module": "templating" },
+        { "module": "greeting" },
+        { "module": "loader.requires" },
+        { "module": "greeting-async", "async": true },
+        { "type": "loader-metadata" }
+     ]
+}

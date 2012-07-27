@@ -2,9 +2,16 @@ var fs = require('fs');
 
 exports.watch = function(req, name, callback, thisObj) {
 	
-	var filename = req.resolve(name);
-	var oldModule = req(name);
+	if (typeof req === 'string') {
+	    req = require;
+	    name = arguments[0];
+	    callback = arguments[1];
+	    thisObj = arguments[2];
+	}
 	
+	var filename = req.resolve(name);
+    var oldModule = req(filename);
+    
 	var watcher = fs.watch(filename, function() {
 		delete req.cache[filename];
 		var newModule = req(filename);

@@ -1,9 +1,7 @@
 raptor.defineClass(
     'optimizer.PageFileFinder',
     function(raptor) {
-        var PageDef = raptor.require('optimizer.PageDef'),
-            packager = raptor.require('packager'),
-            strings = raptor.require('strings'),
+        var strings = raptor.require('strings'),
             files = raptor.require('files'),
             File = files.File;
         
@@ -19,7 +17,7 @@ raptor.defineClass(
                         if (file.isFile()) {
                             
                             var pageName,
-                                pageFile,
+                            viewFile,
                                 filename = file.getName(),
                                 pageFileDir;
                             
@@ -35,25 +33,24 @@ raptor.defineClass(
                             }
 
                             if (pageName) {
-                                raptor.forEach(config.pageFileExtensions, function(ext) {
-                                    var possiblePageFile = new File(pageFileDir, pageName + "." + ext);
-                                    if (possiblePageFile.exists()) {
-                                        pageFile = possiblePageFile;
+                                raptor.forEach(config.getPageViewFileExtensions(), function(ext) {
+                                    var possiblePageViewFile = new File(pageFileDir, pageName + "." + ext);
+                                    if (possiblePageViewFile.exists()) {
+                                        viewFile = possiblePageViewFile;
                                         return false;
                                     }
                                     return true;
                                 });
                                 
-                                var pageDef = new PageDef();
-                                pageDef.basePath = rootDir;
-                                pageDef.name = pageFileDir.getAbsolutePath().substring(pageDef.basePath.length) + '/' + pageName;
+                                pageName = pageFileDir.getAbsolutePath().substring(rootDir.length) + '/' + pageName;
                                 
-                                if (pageFile) {
-                                    pageDef.htmlPath = pageFile.getAbsolutePath();
-                                }
-                                
-                                pageDef.packagePath = file.getAbsolutePath();
-                                config.addPage(pageDef);
+                                config.addPage({
+                                    basePath: rootDir,
+                                    dir: file.getParentFile(),
+                                    name: pageName,
+                                    packagePath: file.getAbsolutePath(),
+                                    viewFile: viewFile
+                                });
                             }
                             
                             

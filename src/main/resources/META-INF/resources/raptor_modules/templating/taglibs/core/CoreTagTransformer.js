@@ -46,7 +46,7 @@ raptor.defineClass(
                     renderedIfAttr,
                     attrsAttr,
                     whenAttr,
-                    allowBodyExpressionsAttr,
+                    parseBodyTextAttr,
                     stripAttr,
                     contentAttr,
                     replaceAttr,
@@ -92,9 +92,9 @@ raptor.defineClass(
                     };
                 
                 
-                if ((allowBodyExpressionsAttr = node.getAttributeNS(coreNS, "allowBodyExpressions")) != null) {
-                    node.removeAttributeNS(coreNS, "allowBodyExpressions");
-                    node.allowBodyExpressions = allowBodyExpressionsAttr !== "false";
+                if ((parseBodyTextAttr = node.getAttributeNS(coreNS, "parseBodyText")) != null) {
+                    node.removeAttributeNS(coreNS, "parseBodyText");
+                    node.parseBodyText = parseBodyTextAttr !== "false";
                 }
                 if ((whenAttr = node.getAttributeNS(coreNS, "when")) != null) {
                     node.removeAttributeNS(coreNS, "when");

@@ -24,7 +24,6 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             errors = raptor.require("errors"),
             minifier = raptor.find("js-minifier"),
-            TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
             TypeConverter = raptor.require('templating.compiler.TypeConverter');
         
         /**
@@ -231,6 +230,7 @@ raptor.defineClass(
              * @returns {TagHandlerNode}
              */
             createTagHandlerNode: function(uri, localName) {
+                var TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode");
                 var tagDef = this.taglibs.getTagDef(uri, localName);
                 var tagHandlerNode = new TagHandlerNode(tagDef);
                 return tagHandlerNode;

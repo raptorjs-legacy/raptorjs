@@ -17,6 +17,10 @@ raptor.defineClass(
         
         OptimizerEngine.prototype = {
                 
+            getPage: function(name) {
+                return this.config.getPage(name);
+            },
+            
             getConfig: function() {
                 return this.config;
             },
@@ -41,11 +45,16 @@ raptor.defineClass(
                 var watchers = this.watchers;
                 
                 if (!watchers[path]) {
-                    var watcher = fileWatcher.watch(path, callback, this);
-                    watchers.push(watcher);
                     watchers[path] = true;
-                    watchers['has' + category] = true;
+                    var watcher = fileWatcher.watch(path, callback, this);
+                    this._addWatcher(watcher, category);
                 }
+            },
+            
+            _addWatcher: function(watcher, category) {
+                var watchers = this.watchers;
+                watchers.push(watcher);
+                watchers['has' + category] = true;
             },
             
             clearCaches: function() {
@@ -54,8 +63,18 @@ raptor.defineClass(
 
             closeWatchers: function() {
                 
+                this.forEachPage(function(page) {
+                    page.stopWatching();
+                });
+                
                 this.watchers.forEach(function(w) {
-                    w.close();
+                    if (w.close) {
+                        w.close();    
+                    }
+                    else if (w.stopWatching) {
+                        w.stopWatching();
+                    }
+                    
                 });
                 this.watchers.splice(0, this.watchers.length);
             },
@@ -115,16 +134,16 @@ raptor.defineClass(
                 return writer;
             },
             
-            getPageIncludes: function(pageName, options) {
+            getPageIncludes: function(page, options) {
                 options = options || {};
                 //TODO Use the enabled extensions and the page name as the cache key
-                //var pageDef = 
+                //var page = 
                 //var lookupKey
+                var pageName = page.getName();
                 
                 var htmlIncludesByLocation = this.pageIncludeCache[pageName];
                 if (!htmlIncludesByLocation) {
-                    var pageDef = this.config.getPageDef(pageName);
-                    htmlIncludesByLocation = this.pageIncludeCache[pageName] = this.buildPageIncludes(pageDef, options);    
+                    htmlIncludesByLocation = this.pageIncludeCache[pageName] = this.buildPageIncludes(page, options);    
                 }
                 
                 return htmlIncludesByLocation;
@@ -143,7 +162,7 @@ raptor.defineClass(
                 }, this);
             },
             
-            buildPageIncludes: function(pageDef, options) {
+            buildPageIncludes: function(page, options) {
                 var config = this.config,
                     optimizer = raptor.require('optimizer');
                 
@@ -151,15 +170,15 @@ raptor.defineClass(
                         return config.getUrlForSourceFile(path);
                     } : null;
 
-                var bundleSetDef = pageDef.getBundleSetDef(),
-                    enabledExtensions = options.enabledExtensions || pageDef.getEnabledExtensions(),
+                var bundleSetDef = page.getBundleSetDef(),
+                    enabledExtensions = options.enabledExtensions || page.getEnabledExtensions(),
                     bundleSet = config.createBundleSet(bundleSetDef, enabledExtensions);
                 
                 var pageDependencies = optimizer.buildPageDependencies({
                     inPlaceDeploymentEnabled: config.isInPlaceDeploymentEnabled(),
                     bundlingEnabled: config.isBundlingEnabled(),
-                    pageName: pageDef.getName(),
-                    packagePath: pageDef.getPackagePath(),
+                    pageName: page.getName(),
+                    packagePath: page.getPackagePath(),
                     bundleSet: bundleSet,
                     sourceUrlResolver: sourceUrlResolver,
                     enabledExtensions: enabledExtensions
@@ -169,9 +188,9 @@ raptor.defineClass(
                     pageDependencies.getPackageManifests().forEach(this.watchPackage, this);
                 }
                 
-                this.logger().info('Writing bundles for page "' + pageDef.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getStyleSheetsOutputDir());
+                this.logger().info('Writing bundles for page "' + page.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getStyleSheetsOutputDir());
                 
-                var pageOutputFile = this.getPageOutputFile(pageDef);
+                var pageOutputFile = this.getPageOutputFile(page);
                 if (pageOutputFile) {
                     this.writer.getUrlBuilder().setBaseDir(pageOutputFile.getParent());    
                 }
@@ -180,7 +199,7 @@ raptor.defineClass(
                 }
                 
                 var htmlIncludesByLocation = this.writer.writePageDependencies(pageDependencies);
-                this.logger().info('Bundles for page "' + pageDef.getName() + '" written to disk\n');
+                this.logger().info('Bundles for page "' + page.getName() + '" written to disk\n');
                 return htmlIncludesByLocation;
             },
             
@@ -188,13 +207,13 @@ raptor.defineClass(
                 this.config.forEachPage(callback, thisObj);
             },
             
-            getPageOutputFile: function(pageDef) {
+            getPageOutputFile: function(page) {
                 if (!this.config.isInjectHtmlIncludesEnabled()) {
                     return null;
                 }
-                var pagePath = pageDef.getHtmlPath();
+                var viewFile = page.getViewFile();
                 if (this.config.isModifyPagesEnabled()) {
-                    outputFile = new File(pageDef.getHtmlPath());
+                    outputFile = viewFile;
                 }
                 else {
                     var outputPageDir = this.config.getPageOutputDir();
@@ -202,65 +221,57 @@ raptor.defineClass(
                         return null;
                     }
                     
-                    if (pageDef.basePath) {
-                        outputFile = new File(outputPageDir, pagePath.substring(pageDef.basePath.length));
+                    if (page.getBasePath()) {
+                        outputFile = new File(outputPageDir, page.getDir().getAbsolutePath().substring(page.getBasePath().length) + "/" + page.getOutputFilename());
                     }
                     else {
-                        outputFile = new File(outputPageDir, new File(pageDef.getHtmlPath()).getName());    
+                        outputFile = new File(outputPageDir, page.getOutputFilename());    
                     }
                 }
                 return outputFile;
             },
             
             writeAllPages: function() {
-                var HtmlInjector = raptor.require('optimizer.HtmlInjector'),
-                    config = this.config,
-                    logger = this.logger();
+                var config = this.config,
+                    logger = this.logger(),
+                    _this = this;
                 
-                this.forEachPage(function(pageDef) {
-                    var pagePath = pageDef.getHtmlPath();
-                    if (pagePath) {
-                        var includes = this.getPageIncludes(pageDef.name);
-                        if (config.isInjectHtmlIncludesEnabled()) {
+                this.forEachPage(function(page) {
+                    
+                    if (page.hasViewFile()) {
+                        
+                        
+                        var outputFile = this.getPageOutputFile(page);
+                        if (outputFile == null) {
+                            raptor.throwError(new Error("Unable to write out page with dependencies. Output page directory (<output-page-dir>) is not set for configuration."));
+                        }
+                        
+                        var writePage = function() {
+                            var html = page.render({
+                                optimizer: _this
+                            });
                             
+                            logger.info('Writing page "' + page.getName() + '" with injected dependencies to "' + outputFile + '"...');
+                            outputFile.writeFully(html);
+                        };
+                        
+                        if (config.isWatchPagesEnabled()) {
+                            page.watch();
+                            this._addWatcher(page, 'pages');
                             
-                            var outputFile = this.getPageOutputFile(pageDef);
-                            if (outputFile == null) {
-                                raptor.throwError(new Error("Unable to write out page with dependencies. Output page directory (<output-page-dir>) is not set for configuration."));
-                            }
-                            
-                            var injectPageDependencies = function() {
-                                var pageHtml = files.readFully(pagePath);
-                                var injector = new HtmlInjector(pageHtml, config.isKeepHtmlMarkersEnabled());
-                                objects.forEachEntry(includes, function(location, includeHtml) {
-                                    injector.inject(location, includeHtml);
-                                });
-                                
-                                var outputPageHtml = injector.getHtml();
-                                
-                                logger.info('Writing page "' + pageDef.getName() + '" with injected dependencies to "' + outputFile + '"...');
-                                outputFile.writeFully(outputPageHtml);    
-                            };
-                            
-                            injectPageDependencies();
-                            
-                            if (config.isWatchPagesEnabled() && config.getPageOutputDir()) {
-                                this._watchFile(pageDef.getHtmlPath(), 'pages', function(eventArgs) {
-                                    logger.info('Page modified: ' + eventArgs.filename);
-                                    if (files.exists(eventArgs.filename)) {
-                                        injectPageDependencies();
-                                    }
-                                    else {
-                                        logger.info('Modified page no longer exists: ' + pagePath);
-                                        //rerun(); //The page might have been moved...
-                                    }
-                                    
-                                }, this);
-                            }
-                            
+                            page.subscribe("modified", function(eventArgs) {
+                                var file = eventArgs ? eventArgs.file : null;
+                                if (!file || file.exists()) {
+                                    writePage();
+                                }
+                                else {
+                                    logger.info('Modified page no longer exists: ' + pagePath);
+                                }    
+                            });
                             
                         }
                         
+                        writePage();
                     }
                 }, this);
             },

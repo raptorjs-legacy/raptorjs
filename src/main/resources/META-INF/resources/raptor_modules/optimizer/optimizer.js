@@ -73,20 +73,51 @@ raptor.define(
             forEachInclude: function(options) {
     
                
-                var includes = options.includes, 
-                    enabledExtensions = options.enabledExtensions, 
+                var enabledExtensions = options.enabledExtensions, 
                     includeCallback = options.handleInclude,
-                    packgeIncludeCallback = options.handlePackageInclude,
+                    packageCallback = options.handlePackage,
                     thisObj = options.thisObj;
     
     
                 var foundIncludes = {};
                 
-                var handleInclude = function(include, recursive, depth, parentPackage, async) {
+                var handleManifest = function(manifest, parentPackage, recursive, depth, async) {
+                    var foundKey = manifest.getSystemPath() + "|" + async;
+                    
+                    var context = {
+                            recursive: recursive === true, 
+                            depth: depth, 
+                            async: async === true,
+                            parentPackage: parentPackage
+                        };
+                    
+                    var recurseIntoPackage = packageCallback.call(thisObj, manifest, context);
+                    if (recurseIntoPackage === false || foundIncludes[foundKey]) { //Avoid infinite loop by keeping track of which packages we have recursed into
+                        return;
+                    }    
+                    
+                    if (recursive === true || depth <= 0) {
 
+                        manifest.forEachInclude(
+                            function(type, packageInclude) {
+                                
+                                handleInclude.call(this, packageInclude, manifest, recursive, depth+1, async || packageInclude.isAsync());
+                            },
+                            this,
+                            {
+                                enabledExtensions: enabledExtensions
+                            });
+                    }
+
+                };
+                
+                var handleInclude = function(include, parentPackage, recursive, depth, async) {
+                    var foundKey = include.getKey() + "|" + async;
+                    if (foundIncludes[foundKey]) {
+                        return; //Include already handled
+                    }
                     
-                    
-                    foundIncludes[include.getKey()] = true;
+                    foundIncludes[foundKey] = true;
                     
                     var context = {
                         recursive: recursive === true, 
@@ -96,53 +127,37 @@ raptor.define(
                     };
                     
                     if (include.isPackageInclude()) {
-                        
-                        
-                        var foundKey = include.getKey() + "|" + async;
-                    
-                        var recurseIntoPackage = packgeIncludeCallback.call(thisObj, include, context);
-                        if (recurseIntoPackage === false || foundIncludes[foundKey]) { //Avoid infinit loop by keeping track of which packages we have recursed into
-                            return;
-                        }    
-                        
                         var dependencyManifest = include.getManifest();
                         
                         if (!dependencyManifest) {
                             raptor.throwError(new Error("Dependency manifest not found for package include: " + include.toString()));
                         }
                         
-                        if (recursive === true || depth === 0) {
-                            
-                            foundIncludes[foundKey] = true;
-                            
-                            dependencyManifest.forEachInclude(
-                                function(type, packageInclude) {
-                                    
-                                    handleInclude.call(this, packageInclude, recursive, depth+1, dependencyManifest, async || packageInclude.isAsync());
-                                },
-                                this,
-                                {
-                                    enabledExtensions: enabledExtensions
-                                });
-                        }
+                        handleManifest.call(this, dependencyManifest, parentPackage, recursive, depth, async);
                     }
                     else {
                         includeCallback.call(thisObj, include, context);
                     }
                 };
                 
-                forEach(includes, function(include) {
+                forEach(options.includes, function(include) {
                     include = packager.createInclude(include);
                     
                     handleInclude.call(
                         this, 
                         include, 
-                        options.recursive === true || include.recursive === true, 
-                        0, 
                         null,
+                        options.recursive === true || include.recursive === true, 
+                        0,
                         include.isAsync());
                     
                 }, this);
+
+                if (options.packages) {
+                    forEach(options.packages, function(packageManifest) {
+                        handleManifest.call(this, packageManifest, null, options.recursive === true, -1, false);
+                    }, this);
+                }
             }
         }; //end return
     });

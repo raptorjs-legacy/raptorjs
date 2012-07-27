@@ -4,7 +4,7 @@ raptor.defineClass(
         
         var BundleDef = raptor.require('optimizer.BundleDef'),
             BundleSetDef = raptor.require('optimizer.BundleSetDef'),
-            PageDef = raptor.require('optimizer.PageDef'),
+            PageConfig = raptor.require('optimizer.PageConfig'),
             strings = raptor.require('strings'),
             files = raptor.require('files'),
             File = files.File,
@@ -48,6 +48,10 @@ raptor.defineClass(
                 var configDir = new File(configFilePath).getParent();
                 
                 var resolvePath = function(path) {
+                    if (!path) {
+                        return path;
+                    }
+                    
                     return files.resolvePath(configDir, path);
                 };
                 
@@ -131,14 +135,7 @@ raptor.defineClass(
                                 }
                             }
                         },
-                        "page-file-extensions": {
-                            _type: "string",
-                            _set: function(config, name, value) {
-                                var parts = value.split(/\s*,\s*/);
-                                config.setPageFileExtensions(parts);
-                            }
-                        },
-                        
+
                         "page-search-path": {
                             "<dir>": {
                                 _type: "object",
@@ -331,12 +328,24 @@ raptor.defineClass(
                             "<page>": {
                                 _type: "object",
                                 _begin: function() {
-                                    var page = new PageDef();
-                                    config.addPage(page);
-                                    return page;
+                                    var pageConfig = new PageConfig();
+                                    return pageConfig;
                                 },
                                 
-                                "path": {
+                                _end: function(pageConfig) {
+                                    var htmlPath = pageConfig.htmlPath;
+                                    if (!htmlPath) {
+                                        raptor.throwError('The "htmlPath" property is required for a page config');
+                                    }
+                                    pageConfig.htmlPath = htmlPath = resolvePath(htmlPath);
+                                    pageConfig.packagePath = resolvePath(pageConfig.packagePath);
+                                    config.addPage({
+                                        
+                                    })
+                                    
+                                },
+                                
+                                "htmlPath": {
                                     _type: "string"
                                 },
                                 

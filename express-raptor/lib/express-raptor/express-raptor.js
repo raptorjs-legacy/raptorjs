@@ -2,8 +2,10 @@ var templating = raptor.require('templating'),
     logger = raptor.require('logging').logger('express-raptor'),
     path = require('path');
 
-var proto = {
-    page: require('./middleware/page.js')
+exports.page = require('./middleware/page.js');
+
+exports.getOptimizer = function(req) {
+    return req.app.raptor.optimizer;
 };
 
 exports.createServer = function(options) {
@@ -63,10 +65,7 @@ exports.createServer = function(options) {
         }
     };
     
-    raptor.forEachEntry(proto, function(k, v) {
-        app.raptor[k] = v;
-    });
-    
+
     require(routes)(app);
     
     if (options.watch === true) {

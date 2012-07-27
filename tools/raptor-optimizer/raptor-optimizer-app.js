@@ -55,34 +55,40 @@ exports.run = function() {
             optimizer.closeWatchers();
         }
         
-        optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
-        
-        optimizer.cleanDirs();
-        optimizer.writeAllPages();
-        
-        optimizer.subscribe({
-            "configReloaded": function() {
-                run();
-            },
-            "packageModified": function(eventArgs) {
-                run();
+        try
+        {
+            optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
+            
+            optimizer.cleanDirs();
+            optimizer.writeAllPages();
+            
+            optimizer.subscribe({
+                "configReloaded": function() {
+                    run();
+                },
+                "packageModified": function(eventArgs) {
+                    run();
+                }
+            }, this);
+            
+            if (optimizer.hasWatchers() || optimizer.getConfig().isWatchConfigEnabled()) {
+                console.log();
+                if (optimizer.hasWatchers('pages')) {
+                    logger.info("Watching pages for changes");    
+                }
+                if (optimizer.hasWatchers('includes')) {
+                    logger.info("Watching includes for changes");    
+                }
+                if (optimizer.getConfig().isWatchConfigEnabled()) {
+                    logger.info("Watching configuration file for changes");    
+                }
+                if (optimizer.hasWatchers('packages')) {
+                    logger.info("Watching packages for changes");    
+                }
             }
-        }, this);
-        
-        if (optimizer.hasWatchers() || optimizer.getConfig().isWatchConfigEnabled()) {
-            console.log();
-            if (optimizer.hasWatchers('pages')) {
-                logger.info("Watching page HTML files for changes");    
-            }
-            if (optimizer.hasWatchers('includes')) {
-                logger.info("Watching includes for changes");    
-            }
-            if (optimizer.getConfig().isWatchConfigEnabled()) {
-                logger.info("Watching configuration file for changes");    
-            }
-            if (optimizer.hasWatchers('packages')) {
-                logger.info("Watching packages for changes");    
-            }
+        }
+        catch(e) {
+            logger.error("An error occurred while optimizing application. Exception: " + e, e);
         }
     };
     run();

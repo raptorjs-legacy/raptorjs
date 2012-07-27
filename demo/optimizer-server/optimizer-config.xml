@@ -49,8 +49,6 @@
         <dir path="raptor_modules"/>
     </resource-search-path>
     
-    <page-file-extensions>rhtml,html</page-file-extensions>
-    
     <page-search-path>
         <dir path="pages"/>
     </page-search-path>

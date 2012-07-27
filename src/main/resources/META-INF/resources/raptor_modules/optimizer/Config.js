@@ -30,11 +30,15 @@ raptor.defineClass(
             this.watchIncludesEnabled = false;
             this.watchConfigEnabled = false;
             this.watchPackagesEnabled = false;
-            this.pageFileExtensions = ["html"];
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
             this.injectHtmlIncludesEnabled = false;
             this.pagesByName = {};
+            this.pageClassNamesByExt = {
+                "html": "optimizer.PageHtml",
+                "xhtml": "optimizer.PageHtml",
+                "rhtml": "optimizer.PageRhtml"
+            };
             
             if (params) {
                 raptor.extend(this.params, params);
@@ -44,6 +48,10 @@ raptor.defineClass(
         Config.prototype = {
             forEachCleanDir: function(callback, thisObj) {
                 this.cleanDirs.forEach(callback, thisObj);
+            },
+            
+            getPage: function(name) {
+                return this.pagesByName[name];
             },
             
             findPages: function() {
@@ -96,10 +104,6 @@ raptor.defineClass(
                 });
                 
                 return url;
-            },
-            
-            setPageFileExtensions: function(extensions) {
-                this.pageFileExtensions = extensions || []; 
             },
             
             isWatchPagesEnabled: function() {
@@ -201,11 +205,29 @@ raptor.defineClass(
                 return this.pageOutputDir;
             },
             
-            getPageDef: function(pageName) {
-                return this.pagesByName[pageName];
+            getPageViewFileExtensions: function() {
+                return Object.keys(this.pageClassNamesByExt);
             },
             
-            addPage: function(page) {
+            hasPages: function() {
+                return this.pages.length != 0;
+            },
+            
+            addPage: function(pageConfig) {
+                var pageClassName,
+                    viewFile = pageConfig.viewFile;
+                
+                if (viewFile) {
+                    pageClassName = this.pageClassNamesByExt[viewFile.getExtension()]; 
+                }
+                
+                if (!pageClassName) {
+                    pageClassName = "optimizer.PageHtml";
+                }
+                
+                var PageClass = raptor.require(pageClassName);
+                var page = new PageClass(pageConfig);
+                
                 page.config = this;
                 this.pages.push(page);
                 this.pagesByName[page.getName()] = page;

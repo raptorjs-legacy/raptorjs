@@ -2,6 +2,7 @@ raptor.defineClass(
     'xml.sax.SaxParser',
     'xml.sax.BaseSaxParser',
     function(raptor) {
+
         var SaxParser = function(xmlDoc) {
             SaxParser.superclass.constructor.call(this);
         };
