@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.ebayopensource.raptor.raptorjs.resources.includer;
+package org.ebayopensource.raptor.raptorjs.resources.packaging;
 
 import java.util.Iterator;
 import java.util.List;
-
-import org.ebayopensource.raptor.raptorjs.resources.includer.commands.IncludeAsyncPackageCommand.AsyncPackageDependencies;
 
 public class AsyncPackageJSONBuilder {
 
@@ -32,7 +30,7 @@ public class AsyncPackageJSONBuilder {
     }
 
     public String buildJSON(
-            AsyncPackageDependencies dependencies
+            AsyncDependencies dependencies
         ) {
         
         List<String> requires = dependencies.getRequires();

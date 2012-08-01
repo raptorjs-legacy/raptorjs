@@ -19,30 +19,37 @@ package org.ebayopensource.raptor.raptorjs.resources.packaging;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ebayopensource.raptor.raptorjs.resources.Resource;
 import org.ebayopensource.raptor.raptorjs.resources.ResourceManager;
-import org.ebayopensource.raptor.raptorjs.rhino.RaptorJSEnv;
 
 
 public class PackageManager {
     
     private Map<String, PackageManifest> cachedManifests = new ConcurrentHashMap<String, PackageManifest>();
-
-    private ObjectMapper mapper = new ObjectMapper();
-    private RaptorJSEnv raptorJSEnv = null;
+    private PackageManifestJSONLoader loader = null;
+    private ResourceManager resourceManager = null;
+    private IncludeFactory includeFactory = null;
     
-    public PackageManager(RaptorJSEnv raptorJSEnv) {
-        this.raptorJSEnv = raptorJSEnv;
-        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    public PackageManager(ResourceManager resourceManager, IncludeFactory includeFactory) {
+        this.resourceManager = resourceManager;
+        this.includeFactory = includeFactory;
+        this.loader = new PackageManifestJSONLoader(includeFactory);
     }
     
-    public PackageManifest getCachedPackageManifest(String packagePath) {
+    public PackageManifest getPackageManifestCached(String packagePath) {
         PackageManifest manifest = this.cachedManifests.get(packagePath);
         if (manifest == null) {
-            manifest = this.loadPackageManifest(packagePath);
-            this.cachedManifests.put(packagePath, manifest);
+            Resource resource = this.resourceManager.findResource(packagePath);
+            manifest = this.getPackageManifestCached(resource);
+        }
+        return manifest;
+    }
+    
+    public PackageManifest getPackageManifestCached(Resource resource) {
+        PackageManifest manifest = this.cachedManifests.get(resource.getPath());
+        if (manifest == null) {            
+            manifest = this.loadPackageManifest(resource);
+            this.cachedManifests.put(resource.getPath(), manifest);
         }
         return manifest;
     }
@@ -51,28 +58,39 @@ public class PackageManager {
         this.cachedManifests.clear();
     }
     
-    protected PackageManifest loadPackageManifest(String packagePath) {
+    public Include createInclude(String type, Map<String, Object> properties) {
+        Include include = this.includeFactory.createInclude(type, properties);
+        return include;
+    }
+    
+    public IncludeResource createResourceInclude(ContentType type, String path) {
         
-        Resource resource = ResourceManager.getInstance().findResource(packagePath);
-        if (resource == null) {
-            throw new RuntimeException("Package manifest not found with path '" + packagePath + "'.");
+        IncludeResource include = this.includeFactory.createResourceInclude(type, path);
+        return include;
+    }
+    
+    public PackageManifest getModulePackageManifestCached(String moduleName) {
+        PackageManifest manifest = this.cachedManifests.get(moduleName);
+        if (manifest == null) {
+            Resource resource = this.resourceManager.findResource("/" + moduleName.replace('.', '/') + "/package.json");
+            if (resource == null) {
+                resource = this.resourceManager.findResource("/" + moduleName.replace('.', '/') + "-package.json");
+            }
+            if (resource == null) {
+                throw new RuntimeException("Package manifest not found for module \"" + moduleName + "\"");
+            }
+            
+            manifest = this.getPackageManifestCached(resource);
+            this.cachedManifests.put(moduleName, manifest);
         }
-        
-        PackageManifest manifest = this.loadPackageManifest(resource);
         return manifest;
     }
     
     protected PackageManifest loadPackageManifest(Resource resource) {
         
-        String packageJsonPath = resource.getPath();
-        String moduleDirPath = resource.getPath().substring(0, resource.getPath().lastIndexOf('/'));
-        
         try {
-            PackageManifest manifest = mapper.readValue(resource.getResourceAsStream(), PackageManifest.class);
-            manifest.setPackagePath(packageJsonPath);
-            manifest.setSystemPath(resource.getSystemPath());
-            manifest.init(this.raptorJSEnv);
-            manifest.setModuleDirPath(moduleDirPath);
+            PackageManifest manifest = this.loader.load(resource);
+            
             return manifest;
         } catch (Exception e) {
             throw new RuntimeException("Unable to parse JSON file at path '" + resource.getSystemPath() + "'. Exception: " + e, e);

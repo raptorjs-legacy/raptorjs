@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ebayopensource.raptor.raptorjs.resources.includer;
+package org.ebayopensource.raptor.raptorjs.resources.packaging;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -22,21 +22,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class AsyncRequiresMetadataCollection {
-    private Map<String, String> moduleJSONByName = new HashMap<String, String>();
+public class AsyncMetadata {
+    private Map<String, String> requiresJSONByName = new HashMap<String, String>();
     
-    public void setModuleJSON(String moduleName, String metadataJSON) {
-        moduleJSONByName.put(moduleName, metadataJSON);
+    public void setRequiresJSON(String moduleName, String metadataJSON) {
+        requiresJSONByName.put(moduleName, metadataJSON);
     }
     
     public boolean isEmpty() {
-        return moduleJSONByName == null || moduleJSONByName.isEmpty();
+        return requiresJSONByName == null || requiresJSONByName.isEmpty();
+    }
+    
+    public boolean hasRequires(String requiresName) {
+        return this.requiresJSONByName.containsKey(requiresName);
     }
     
     public void writeJSON(Writer out) throws IOException {
-        if (moduleJSONByName == null || moduleJSONByName.isEmpty()) return;
+        if (requiresJSONByName == null || requiresJSONByName.isEmpty()) return;
         
-        Iterator<Map.Entry<String, String>> i = moduleJSONByName.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> i = requiresJSONByName.entrySet().iterator();
         out.write("$rloaderMeta={");
         while (i.hasNext()) {
             Map.Entry<String, String> entry = i.next();

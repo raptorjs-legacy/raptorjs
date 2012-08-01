@@ -43,6 +43,16 @@ public abstract class Resource {
     public abstract String getSystemPath();
     public abstract InputStream getResourceAsStream();
     
+    public String getParentPath() {
+        int lastSlash = this.path.lastIndexOf('/');
+        if (lastSlash == -1) {
+            return "/";
+        }
+        else {
+            return this.path.substring(0, lastSlash);
+        }
+    }
+    
     public String readAsString() {
         return this.readAsString("UTF-8");
     }

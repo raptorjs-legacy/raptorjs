@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ebayopensource.raptor.raptorjs.resources.includer;
+package org.ebayopensource.raptor.raptorjs.resources.packaging;
 
 public interface ResourceIncluderProvider {
     ResourceIncluder getResourceIncluder();

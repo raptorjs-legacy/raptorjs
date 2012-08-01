@@ -58,4 +58,5 @@ public class FileResource extends Resource {
         return this.file.isFile();
     }
 
+
 }
