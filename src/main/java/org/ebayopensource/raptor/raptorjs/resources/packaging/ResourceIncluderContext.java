@@ -251,8 +251,8 @@ public abstract class ResourceIncluderContext {
         }
         
         AsyncDependencies asyncDependencies = this.createAsyncDependencies(requires, jsIncludes, cssIncludes);
-        String json = AsyncPackageJSONBuilder.getInstance().buildJSON(asyncDependencies);
-        metadata.setRequiresJSON(requireName, json);
+        
+        metadata.setAsyncDependencies(requireName, asyncDependencies);
     }
 
     protected abstract AsyncDependencies createAsyncDependencies(List<String> requires, List<Include> jsIncludes, List<Include> cssIncludes);

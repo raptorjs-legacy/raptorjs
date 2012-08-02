@@ -23,32 +23,39 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AsyncMetadata {
-    private Map<String, String> requiresJSONByName = new HashMap<String, String>();
+    private Map<String, AsyncDependencies> asyncDependenciesByName = new HashMap<String, AsyncDependencies>();
     
-    public void setRequiresJSON(String moduleName, String metadataJSON) {
-        requiresJSONByName.put(moduleName, metadataJSON);
+    public void setAsyncDependencies(String requireName, AsyncDependencies asyncDependencies) {
+        asyncDependenciesByName.put(requireName, asyncDependencies);
+    }
+    
+    public AsyncDependencies getAsyncDependencies(String requireName) {
+        return this.asyncDependenciesByName.get(requireName);
     }
     
     public boolean isEmpty() {
-        return requiresJSONByName == null || requiresJSONByName.isEmpty();
+        return asyncDependenciesByName == null || asyncDependenciesByName.isEmpty();
     }
     
     public boolean hasRequires(String requiresName) {
-        return this.requiresJSONByName.containsKey(requiresName);
+        return this.asyncDependenciesByName.containsKey(requiresName);
     }
     
     public void writeJSON(Writer out) throws IOException {
-        if (requiresJSONByName == null || requiresJSONByName.isEmpty()) return;
         
-        Iterator<Map.Entry<String, String>> i = requiresJSONByName.entrySet().iterator();
+        
+        if (asyncDependenciesByName == null || asyncDependenciesByName.isEmpty()) return;
+        
+        Iterator<Map.Entry<String, AsyncDependencies>> i = asyncDependenciesByName.entrySet().iterator();
         out.write("$rloaderMeta={");
         while (i.hasNext()) {
-            Map.Entry<String, String> entry = i.next();
-            String moduleName = entry.getKey();
-            String json = entry.getValue();
+            Map.Entry<String, AsyncDependencies> entry = i.next();
+            String requireName = entry.getKey();
+            AsyncDependencies asyncDependencies = entry.getValue();
+            String json = AsyncPackageJSONBuilder.getInstance().buildJSON(asyncDependencies);
             
             out.write("\"");
-            out.write(moduleName);
+            out.write(requireName);
             out.write("\": ");
             out.write(json);
             
