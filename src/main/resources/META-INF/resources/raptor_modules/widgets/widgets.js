@@ -21,10 +21,10 @@
 raptor.define('widgets', function(raptor) {
     "use strict";
 
-    var WidgetDef = function(id, type, childId, config, parent) {
+    var WidgetDef = function(id, type, nestedWidgetId, config, parent) {
         this.type = type;
         this.id = id;
-        this.childId = childId;
+        this.nestedWidgetId = nestedWidgetId;
         this.config = config;
 //        this.nestedDocId = null;
 //        this.docId = null;
@@ -47,22 +47,19 @@ raptor.define('widgets', function(raptor) {
     };
     
     return {
-        addWidget: function(type, widgetId, childId, config, parent, context) {
+        addWidget: function(type, widgetId, nestedWidgetId, config, parent, context) {
             
             if (!widgetId) {
                 widgetId = this._nextWidgetId(context);
             }
             
-            var widgetDef = new WidgetDef(widgetId, type, childId, config, parent);
+            var widgetDef = new WidgetDef(widgetId, type, nestedWidgetId, config, parent);
             
-            if (childId) {
+            if (nestedWidgetId) {
                 if (!parent) {
                     raptor.throwError(new Error("Widget with an assigned ID is not scoped within another widget."));
                 }
-                if (!parent.nestedDocId) {
-                    parent.nestedDocId = this._nextDocId(context);
-                }
-                widgetDef.docId = parent.nestedDocId;
+                widgetDef.docId = parent.id;
             }
             
             

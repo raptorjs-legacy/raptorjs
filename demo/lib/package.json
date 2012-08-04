@@ -1,0 +1,21 @@
+{
+    "type": "raptor-library",
+    "name": "demo",
+    "version": "1.0",
+    "description": "Library for demo applications",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor-taglibs": {
+        "http://raptor.ebayopensource.org/demo": "demo.rtld"
+    },
+    
+    "raptor-search-path": [
+        {"dir": "modules"}
+    ]
+}

@@ -1,16 +1,23 @@
 raptor.defineClass(
-    'xml.sax.SaxParser',
+    'xml.sax.SaxParserDom',
     'xml.sax.BaseSaxParser',
     function(raptor) {
 
-        var SaxParser = function(xmlDoc) {
-            SaxParser.superclass.constructor.call(this);
+        var SaxParserDom = function(xmlDoc) {
+            SaxParserDom.superclass.constructor.call(this);
         };
         
-        SaxParser.prototype = {
+        SaxParserDom.prototype = {
             parse: function(xmlSrc, filePath) {
-                var parser = raptor.require('xml.dom').createParser();
-                var xmlDoc = parser.parse(xmlSrc, filePath);
+                var xmlDoc;
+                if (xmlSrc.documentElement) {
+                    xmlDoc = xmlSrc;
+                }
+                else {
+                    var parser = raptor.require('xml.dom').createParser();
+                    xmlDoc = parser.parse(xmlSrc, filePath);    
+                }
+                
                 raptor.require('xml.dom-to-sax').domToSax(xmlDoc.documentElement, {
                     
                     startElement: this._startElement,
@@ -24,5 +31,5 @@ raptor.defineClass(
             }
         };
         
-        return SaxParser;
+        return SaxParserDom;
     });

@@ -1,0 +1,14 @@
+.CodeMirror {
+    border: 1px solid #EEEEEE;
+}
+
+body {
+    font-family: "Helvetica neue",Helvetica,Arial,Verdana,Sans-serif;
+    font-size: 14px;
+}
+
+
+TD {
+    vertical-align: top;
+}
+

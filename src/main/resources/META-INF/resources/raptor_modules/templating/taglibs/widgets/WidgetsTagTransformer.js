@@ -35,13 +35,7 @@ raptor.defineClass(
                 if ((widgetAttr = node.getAttributeNS(widgetsNS, "widget"))) {
                     node.removeAttributeNS(widgetsNS, "widget");
                     
-                    
-                    
-                    
                     var widgetNode = compiler.createTagHandlerNode(widgetsNS, "widget");
-                    
-                    //Surround the existing node with an "if" node by replacing the current
-                    //node with the new "if" node and then adding the current node as a child
                     node.parentNode.replaceChild(widgetNode, node);
                     widgetNode.appendChild(node);
                     widgetNode.setProperty("jsClass", widgetAttr);

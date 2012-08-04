@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Raptor Templates</title>
+        <link rel="stylesheet" href="bootstrap.min.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="page.css" type="text/css" media="screen, projection" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    </head>
+    <body>
+    	<div class="container-fluid">
+    		<h1 class="title">Raptor Templates</h1>
+    		<div class="tmpl-inst">Edit the template and data model below and click <button class="btn btn-primary" id="runCode">Run</button></div>
+    		<div class="clearfix"></div>
+    		<div class="row-fluid">
+    			<aside class="left-nav span2">
+    				<div class="sec-hdg">Features</div>
+    				<ul>
+    					<li class="active"><a href="javascript:;">Replacement</a></li>
+    					<li><a href="javascript:;">Looping</a></li>
+    					<li><a href="javascript:;">If condition</a></li>
+    					<li><a href="javascript:;">Child Template</a></li>
+    					
+    				</ul>
+    			</aside>
+    			<section class="span10">
+    				<div class="row-fluid">
+    					<div class="span6">
+    						<div class="sec-hdg">Sample Template</div>
+    						<textarea class="edit-box" id="tmplBox">//template here</textarea>
+    						<div class="sec-hdg">Sample Data Model</div>
+    						<textarea class="edit-box" id="dataBox">//data model here</textarea>
+    					</div>
+    					<div class="span6">
+    						<div class="sec-hdg">Compiled Template</div>
+    						<div class="edit-box" id="compiledTmpl">//compiled template here</div>
+    						<div class="sec-hdg">Output HTML</div>
+    						<div class="edit-box" id="renderedHtml">//Rendered here</div>
+    					</div>
+    					
+    				</div>
+    				
+    			</section>
+    			
+    		</div>
+    		
+    	</div>
+	</body>
+</html>

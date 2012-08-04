@@ -8,8 +8,14 @@ raptor.defineClass(
         DomParser.prototype = {
                 
             parse: function(xmlSrc) {
-                var xmlDoc = $.parseXML(xmlSrc);
-                return xmlDoc;
+                try
+                {
+                    var xmlDoc = $.parseXML(xmlSrc);
+                    return xmlDoc;
+                }
+                catch(e) {
+                    throw new Error("Invalid XML");
+                }
             }
         };
         

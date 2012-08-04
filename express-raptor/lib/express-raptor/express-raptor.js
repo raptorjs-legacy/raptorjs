@@ -13,10 +13,6 @@ exports.createServer = function(options) {
     
     options = options || {};
     
-    if (options.watch === true) {
-        raptor.require('templating.compiler').enableWatching();    
-    }
-    
     var rootDir = options.root;
     if (!rootDir) {
         throw new Error('The "root" property is required. This should be the file path of the root of the web application');

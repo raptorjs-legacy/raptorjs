@@ -23,6 +23,7 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             XML_URI = 'http://www.w3.org/XML/1998/namespace',
+            XML_URI_ALT = 'http://www.w3.org/XML/1998/namespace',
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser');
         
         var ElementNode = function() {
@@ -126,7 +127,8 @@ raptor.defineClass(
                     value: value,
                     prefix: prefix,
                     uri: uri,
-                    name: prefix ? (uri + ":" + localName) : localName,
+                    qName: prefix ? (prefix + ":" + localName) : localName,
+                    name: uri ? (uri + ":" + localName) : localName,
                     toString: function() {
                         return this.name;
                     }
@@ -163,11 +165,12 @@ raptor.defineClass(
              * @returns {Boolean}
              */
             isPreserveSpace: function() {
-                return this.preserveSpace === true || this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
+                return this.preserveSpace === true || this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttributeNS(XML_URI_ALT, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
             },
             
             removePreserveSpaceAttr: function() {
                 this.removeAttributeNS(XML_URI, "space");
+                this.removeAttributeNS(XML_URI_ALT, "space");
                 this.removeAttribute("space");
             },
             
@@ -199,7 +202,6 @@ raptor.defineClass(
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
                 if (preserveSpace) {
-                    template.beginPreserveWhitespace();
                     this.removePreserveSpaceAttr();
                 }
                 
@@ -264,8 +266,6 @@ raptor.defineClass(
             },
             
             generateAfterCode: function(template) {
-                var preserveSpace = this.isPreserveSpace();
-                
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
                 if (this.childNodes.length) {
@@ -275,10 +275,6 @@ raptor.defineClass(
                     if (!this.startTagOnly && !this.allowSelfClosing) {
                         template.addText("></" + name + ">");
                     }
-                }
-                
-                if (preserveSpace) {
-                    template.endPreserveWhitespace();
                 }
             },
             

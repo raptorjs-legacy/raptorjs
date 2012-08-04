@@ -1,0 +1,18 @@
+{
+    "includes": [
+        {"module": "widgets"},
+        {"module": "json.stringify"},
+        { "module": "components/editors/CodeEditor" },
+        { "module": "components/editors/CodeEditor-mode-javascript" },
+        { "module": "components/editors/CodeEditor-mode-xml" },
+        { "module": "components/buttons/Button" },
+        { "module": "components/buttons/ButtonGroup" },
+        { "module": "components/nav/Nav" },
+        { "module": "components/nav/NavBar" },
+        { "module": "components/nav/TabContent" },
+        { "module": "components/nav/TabPane" },
+        { "module": "components/Errors" },
+        "TemplateTestbedWidget.js",
+        "TemplateTestbed.css"
+    ]
+}

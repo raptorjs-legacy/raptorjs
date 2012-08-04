@@ -51,11 +51,9 @@ raptor.extend('widgets', function(raptor) {
                     write('","');
                     write(widget.id);
                     write('",');
-                    write(widget.docId != null ? widget.docId : "0");
+                    write(widget.docId != null ? stringify(widget.docId) : "0");
                     write(',');
-                    write(widget.nestedDocId != null ? widget.nestedDocId : "0");
-                    write(',');
-                    write(widget.childId ? ('"' + widget.childId + '"') : "0");
+                    write(widget.nestedWidgetId ? ('"' + widget.nestedWidgetId + '"') : "0");
                     write(',');
                     write(widget.config ? stringify(widget.config) : "0");
                     if (widget.children.length) {

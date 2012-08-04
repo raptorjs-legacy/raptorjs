@@ -75,6 +75,7 @@ raptor.defineClass(
                 TagHandlerNode.superclass.constructor.call(this);
             }
             this.tagDef = tagDef;
+            this.dynamicAttributes = null;
         };
         
         TagHandlerNode.convertNode = function(node, tagDef) {
@@ -83,6 +84,14 @@ raptor.defineClass(
         };
         
         TagHandlerNode.prototype = {
+            
+            addDynamicAttribute: function(name, value) {
+                if (!this.dynamicAttributes) {
+                    this.dynamicAttributes = {};
+                }
+                
+                this.dynamicAttributes[name] = value;
+            },
             
             doGenerateCode: function(template) {
                 
@@ -127,11 +136,18 @@ raptor.defineClass(
                     }
                 }, this);
                 
+                if (this.dynamicAttributes) {
+                    namespacedProps.push('"*":' + getPropsStr(this.dynamicAttributes));    
+                }
+                
+                
                 if (namespacedProps.length) {
                     template.addJavaScriptCode(",{");
                     template.addJavaScriptCode(namespacedProps.join(","));
                     template.addJavaScriptCode("}");
                 }
+                
+                
                 
                 template.addJavaScriptCode(");");
             }

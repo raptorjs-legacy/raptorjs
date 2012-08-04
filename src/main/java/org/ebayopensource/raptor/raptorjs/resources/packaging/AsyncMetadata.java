@@ -45,6 +45,7 @@ public class AsyncMetadata {
         
         
         if (asyncDependenciesByName == null || asyncDependenciesByName.isEmpty()) return;
+        AsyncPackageJSONBuilder jsonBuilder = AsyncPackageJSONBuilder.getInstance();
         
         Iterator<Map.Entry<String, AsyncDependencies>> i = asyncDependenciesByName.entrySet().iterator();
         out.write("$rloaderMeta={");
@@ -52,7 +53,7 @@ public class AsyncMetadata {
             Map.Entry<String, AsyncDependencies> entry = i.next();
             String requireName = entry.getKey();
             AsyncDependencies asyncDependencies = entry.getValue();
-            String json = AsyncPackageJSONBuilder.getInstance().buildJSON(asyncDependencies);
+            String json = jsonBuilder.buildJSON(asyncDependencies);
             
             out.write("\"");
             out.write(requireName);

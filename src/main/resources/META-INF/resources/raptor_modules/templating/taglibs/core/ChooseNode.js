@@ -69,7 +69,7 @@ raptor.defineClass(
                 }, this);
                 
                 if (!foundWhenNode) {
-                    this.addError('' + otherwiseNode + ' tag is required to have at least one <c:when> child.');
+                    this.addError('' + otherwiseNode + ' tag is required to have at least one sibling <c:when> tag.');
                 }
             }
             

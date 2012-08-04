@@ -29,13 +29,50 @@ $rload(function(raptor) {
         };
         
         SearchPath.prototype = {
+            clone: function() {
+                var clone = new SearchPath();
+                clone.entries = this.entries.concat([]);
+                return clone;
+            },
+            
             addEntry: function(entry) {
                 this.entries.push(entry);
+                
+                var packageJsonResource = entry.findResource("/package.json");
+                if (packageJsonResource != null && packageJsonResource.exists()) {
+                    var packager = raptor.packager;
+                    var packageManifest = packager.getPackageManifest(packageJsonResource);
+                    var packageSearchPath = packageManifest['raptor-search-path'];
+                    if (packageSearchPath != null) {
+                        raptor.forEach(packageSearchPath, function(searchPathConfig) {
+                            if (searchPathConfig.dir) {
+                                if (entry instanceof DirSearchPathEntry) {
+                                    var dir = raptor.files.joinPaths(entry.dir, searchPathConfig.dir);
+                                    this.entries.push(new DirSearchPathEntry(dir));    
+                                }
+                                else {
+                                    raptor.throwError(new Error("Unsupported search path entry for library: " + JSON.stringify(searchPathConfig)));
+                                }
+                            }
+                        }, this);
+                    }
+                }
+                
                 this.publish('modified');
             },
 
             addDir: function(path) {
                 this.addEntry(new DirSearchPathEntry(path));
+            },
+            
+            hasDir: function(path) {
+                for (var i=0, len=this.entries.length, entry; i<len; i++) {
+                    entry = this.entries[i];
+                    if (entry instanceof DirSearchPathEntry && entry.getDir() == path) {
+                        return true;
+                    }
+                }
+                return false;
             },
             
             forEachEntry: function(callback, thisObj) {

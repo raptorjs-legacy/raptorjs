@@ -1,0 +1,7 @@
+{
+    "includes": [
+        {"module": "widgets"},
+        {"module": "Bootstrap"},
+        "NavBar.css"
+    ]
+}

@@ -161,34 +161,42 @@ raptor.defineMixin(
     
             /**
              * 
-             * Returns a single child widget instance with the specified ID. 
+             * Returns a single nested widget instance with the specified ID. 
              * 
-             * An ID is assigned to a child widget using the "id" attribute. For example:
-             * <html>
-             *  <r:widget ...>
-             *     <rui:button id="myButton" .../>
-             * </r:widget>
-             * </html>
-             * 
-             * NOTE: If multiple child widgets exist with the specified ID then
+             * NOTE: If multiple nested widgets exist with the specified ID then
              *       an exception will be thrown.
              *       
-             * @param childWidgetId
+             * @param nestedWidgetId
              * @returns {object} The child instance widget or null if one is not found.
              */
-            getChild: function(childWidgetId) {
+            getWidget: function(nestedWidgetId) {
                 var doc = this._doc;
-                return doc ? doc.getWidget(childWidgetId) : null;
+                return doc ? doc.getWidget(nestedWidgetId) : null;
             },
             
             /**
-             * Returns an array of child widgets with the specified widget ID.
-             * @param childWidgetsId
-             * @returns {array} An array of child widgets (or an empty array if none are found)
+             * Returns an array of nested widgets with the specified widget ID.
+             * @param nestedWidgetId
+             * @returns {array} An array of nested widgets (or an empty array if none are found)
              */
-            getChildren: function(childWidgetsId) {
+            getWidgets: function(nestedWidgetId) {
                 var doc = this._doc;
-                return doc ? doc.getWidgets(childWidgetsId) : null;
+                return doc ? doc.getWidgets(nestedWidgetId) : null;
+            },
+            
+            /**
+             * 
+             * @deprecated Use {@Link widgets$Widget#getWidget} instead
+             */
+            getChild: function(nestedWidgetId) {
+                return this.getWidget(nestedWidgetId);
+            },
+            
+            /**
+             * @deprecated Use {@Link widgets$Widget#getWidgets} instead
+             */
+            getChildren: function(nestedWidgetId) {
+                return this.getWidget(nestedWidgetId);
             },
             
             /**
@@ -214,11 +222,11 @@ raptor.defineMixin(
             /**
              * @deprecated Use getChild instead
              * 
-             * @param childWidgetId
+             * @param nestedWidgetId
              * @returns
              */
-            getChildWidget: function(childWidgetId) {
-                return this.getChild(childWidgetId);
+            getChildWidget: function(nestedWidgetId) {
+                return this.getChild(nestedWidgetId);
             },
             
             /**

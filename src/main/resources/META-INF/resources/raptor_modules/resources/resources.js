@@ -150,6 +150,10 @@ $rload(function(raptor) {
             return searchPath;
         },
         
+        setSearchPath: function(newSearchPath) {
+            searchPath = newSearchPath;
+        },
+        
         getSearchPathString: function() {
             var parts = [];
             searchPath.forEachEntry(function(entry) {

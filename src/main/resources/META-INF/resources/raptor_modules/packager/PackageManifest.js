@@ -31,15 +31,36 @@ $rload(function(raptor) {
         ExtensionCollection = raptor.packager.ExtensionCollection;
 
     var createInclude = function(includeConfig, manifest) {
-                
+            
             if (includeConfig.__include) {
                 return includeConfig;
             }
             
+            var lastDot,
+                path;
+                
+            if (typeof includeConfig === 'string') {
+                path = includeConfig;
+                lastDot = path.lastIndexOf('.');
+                if (lastDot !== -1) {
+                    includeConfig = {
+                            path: includeConfig
+                        };    
+                }
+                else {
+                    includeConfig = {
+                            type: "module",
+                            name: path
+                        };
+                }
+                
+            }
+            
+            
             if (!includeConfig.type) {
-                var path = includeConfig.path;
+                path = includeConfig.path;
                 if (path) {
-                    var lastDot = path.lastIndexOf('.');
+                    lastDot = path.lastIndexOf('.');
                     if (lastDot !== -1) {
                         includeConfig.type = path.substring(lastDot+1);
                     }

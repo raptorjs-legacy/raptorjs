@@ -1,0 +1,17 @@
+{
+    "type": "raptor-library",
+    "name": "demo/templating",
+    "version": "1.0",
+    "description": "Library for demo applications",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor-taglibs": {
+        "http://raptor.ebayopensource.org/demo/templating": "templating-demo.rtld"
+    }
+}

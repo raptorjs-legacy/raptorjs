@@ -118,7 +118,6 @@ raptor.defineClass(
                         }
                         
                         var error = new Error(message);
-                        
                         error.errors = _this.getErrors();
                         throw error;
                     };

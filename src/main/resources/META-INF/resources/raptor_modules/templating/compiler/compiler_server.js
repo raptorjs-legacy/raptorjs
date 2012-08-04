@@ -75,7 +75,13 @@ raptor.extend(
                         resource.getSystemPath(), 
                         function() {
                             this.logger().info('Template modified at path "' + resource.getSystemPath() + '". Reloading template...');
-                            this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);
+                            try
+                            {
+                                this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);    
+                            }
+                            catch(e) {
+                                this.logger().warn('Unable to re-compile modified template at path "' + resource.getSystemPath() + '". Exception: ' + e, e);
+                            }
                         },
                         this);
                 }

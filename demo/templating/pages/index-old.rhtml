@@ -1,0 +1,73 @@
+<c:template
+    xmlns:c="core"
+    params="includes">
+    <html>
+        <head>
+            <title>Raptor Templating Demo</title>
+            <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+            ${includes.head}
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        </head>
+        <body> 
+            <table width="100%">
+                <tr>
+                    <td width="50%">
+                        <b>Template</b>
+                        <textarea id="template" style="width: 100%;" rows="12" c:parseBodyText="false"><![CDATA[<c:template 
+    xmlns:c="core" 
+    params="name">
+    
+    Hello $name!
+        
+</c:template>]]></textarea>
+                    </td>
+                    <td width="50%">
+                        <b>Data</b>
+                        <textarea id="data" style="width: 100%;" rows="12">{
+    name: "World"
+}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <b>Compiled</b>
+                        <textarea id="compiled" style="width: 100%;" rows="12"></textarea>
+                    </td>
+                    <td width="50%">
+                        <b>Output</b>
+                        <textarea id="output" style="width: 100%;" rows="12">Test</textarea>
+                    </td>
+                </tr>
+                
+            </table>
+            <button id="renderButton" type="button">Render</button>
+            ${includes.body}
+            <script>
+            $("#renderButton").click(function() {
+                var templateSrc = $("#template").val();
+                var compiler = raptor.require('templating.compiler');
+                var templateName;
+                
+                var compiledSrc = compiler.compile(templateSrc, "test", {
+                    defaultTemplateName: "test",
+                    nameCallback: function(name) {
+                        templateName = name;
+                    }
+                });
+                
+                $("#compiled").val(compiledSrc);
+                eval(compiledSrc);
+                
+                var jsonData = $("#data").val();
+                var data = eval("(" + jsonData + ")");
+                
+                raptor.require('templating').unload(templateName);
+                
+                var output = raptor.require('templating').renderToString(templateName, data);
+                $("#output").val(output);
+            });
+            </script>
+        </body>
+    </html>
+</c:template>
+

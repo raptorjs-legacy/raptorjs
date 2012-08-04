@@ -21,7 +21,6 @@ raptor.defineClass(
         
         var stringify = raptor.require('json.stringify').stringify,
             strings = raptor.require('strings'),
-            errors = raptor.errors,
             Expression = raptor.require('templating.compiler.Expression'),
             forEach = raptor.forEach;
         
@@ -64,7 +63,11 @@ raptor.defineClass(
             },
             
             isPreserveWhitespace: function() {
-                return this.preserveWhitespace > 0;
+                var preserveWhitespace = this.options.preserveWhitespace;
+                
+                return this.preserveWhitespace > 0 || 
+                    (preserveWhitespace === true) || 
+                    (preserveWhitespace && preserveWhitespace["*"]);
             },
 
             _getHelperFunction: function(varName, propName, isStatic) {

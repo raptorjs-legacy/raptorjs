@@ -33,7 +33,7 @@
             "includes": [
                 {"module": "xml.dom"},
                 {"module": "xml.dom-to-sax"},
-                {"path": "SaxParser_dom.js"}
+                {"path": "SaxParserDOM.js"}
             ]
         }
     }

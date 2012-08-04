@@ -1,0 +1,5 @@
+.code-editor-auto-resize .CodeMirror-scroll {
+    height: auto;
+    overflow-y: hidden;
+    overflow-x: auto;
+}

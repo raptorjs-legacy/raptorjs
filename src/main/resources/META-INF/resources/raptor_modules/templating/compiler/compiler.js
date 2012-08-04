@@ -36,7 +36,8 @@ raptor.define(
                 },
                 startTagOnly: {
                     'img': true,
-                    'br': true
+                    'br': true,
+                    'input': true
                 }
             };
         
@@ -199,6 +200,8 @@ startTagOnly: {
             registerCustomExpressionHandler: function(name, func) {
                 ExpressionParser.custom[name] = func;
             },
+            
+            defaultOptions: defaultOptions,
             
             taglibs: taglibs
         };

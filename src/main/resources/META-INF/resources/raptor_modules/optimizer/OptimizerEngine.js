@@ -4,7 +4,6 @@ raptor.defineClass(
         var files = raptor.require('files'),
             File = files.File,
             fileWatcher = raptor.require('file-watcher'),
-            objects = raptor.require('objects'),
             listeners = raptor.require('listeners');
         
         var OptimizerEngine = function(config) {
@@ -13,10 +12,37 @@ raptor.defineClass(
             this.writer = this.createWriter();
             this.watchers = [];
             listeners.makeObservable(this, OptimizerEngine.prototype, ['configReloaded', 'packageModified']);
+            
+            if (config.isWatchTemplatesEnabled()) {
+                raptor.require('templating.compiler').enableWatching();
+            }
+            
+            
+            
+            
+            this._startWatching();
         };
         
         OptimizerEngine.prototype = {
-                
+            _startWatching: function() {
+                var watchConfigs = this.config.getWatchConfigs();
+                raptor.forEach(watchConfigs, function(watchConfig) {
+                    if (watchConfig.type === 'dir') {
+                        var watcher = raptor.require('file-watcher').watchDir(
+                            watchConfig.path, 
+                            function(eventArgs) {
+                                var file = eventArgs.file;
+                            }, 
+                            this,
+                            {
+                                recursive: watchConfig.recursive === true
+                            });
+                        
+                        this._addWatcher(watcher, 'dir');
+                    }
+                }, this);
+            },
+            
             getPage: function(name) {
                 return this.config.getPage(name);
             },
@@ -106,6 +132,10 @@ raptor.defineClass(
                 
                 writer.setUrlBuilder(urlBuilder);
                 writer.context.raptorConfig = config.raptorConfigJSON;
+                
+                if (config.isMinifyJsEnabled()) {
+                    writer.addFilter(raptor.require("optimizer.MinifyJSFilter"));
+                }
                 
                 if (config.isWatchIncludesEnabled()) {
                     writer.subscribe('bundleWritten', function(eventArgs) {
@@ -262,7 +292,13 @@ raptor.defineClass(
                             page.subscribe("modified", function(eventArgs) {
                                 var file = eventArgs ? eventArgs.file : null;
                                 if (!file || file.exists()) {
-                                    writePage();
+                                    try
+                                    {
+                                        writePage();    
+                                    }
+                                    catch(e) {
+                                        logger.warn("Unable to write modified page to disk. Exception: " + e, e);
+                                    }
                                 }
                                 else {
                                     logger.info('Modified page no longer exists: ' + pagePath);

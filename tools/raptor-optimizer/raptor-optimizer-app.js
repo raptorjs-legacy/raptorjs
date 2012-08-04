@@ -46,11 +46,18 @@ exports.run = function() {
     }
 
     logger.info('Using optimizer configuration file at location "' + configFile + '"');
+    
     console.log();
 
     var optimizer;
     
+    //raptor.require('resources').getSearchPath().addDir(files.resolvePath(cwd, '.'));
+    
+    var originalSearchPath = raptor.require('resources').getSearchPath().clone();
+    
     var run = function() {
+        raptor.require('resources').setSearchPath(originalSearchPath);
+        
         if (optimizer) {
             optimizer.closeWatchers();
         }
@@ -58,6 +65,10 @@ exports.run = function() {
         try
         {
             optimizer = raptor.require('optimizer').createOptimizer(configFile, params);
+            console.log("Resource search path:");
+            raptor.require('resources').getSearchPath().forEachEntry(function(entry) {
+                console.log(entry.toString());
+            });
             
             optimizer.cleanDirs();
             optimizer.writeAllPages();
@@ -84,6 +95,9 @@ exports.run = function() {
                 }
                 if (optimizer.hasWatchers('packages')) {
                     logger.info("Watching packages for changes");    
+                }
+                if (optimizer.hasWatchers('dir')) {
+                    logger.info("Watching directories for changes");    
                 }
             }
         }

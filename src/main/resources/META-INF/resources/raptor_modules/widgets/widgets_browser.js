@@ -38,7 +38,8 @@ raptor.extend('widgets', function(raptor) {
      * @name widgets-Document
      *  
      */
-    var Document = function() {
+    var Document = function(widget) {
+        this.widget = widget;
         this.widgetsById = {};
     };
     
@@ -52,12 +53,27 @@ raptor.extend('widgets', function(raptor) {
          * @param id
          */
         addWidget: function(widget, id) {
-            var existing = this.widgetsById[id];
+            var existing = this.widgetsById[id],
+                docWidget = this.widget,
+                isArray;
+            
+            if (id.length > 2 && id.substring(id.length-2) === '[]') {
+                id = id.slice(0, -2);
+                isArray = true;
+            }
+            
             if (!existing) {
                 this.widgetsById[id] = [widget];
             }
             else {
                 existing.push(widget);
+            }
+            
+            if (isArray) {
+                (docWidget[id] || (docWidget[id] = [])).push(widget);
+            }
+            else {
+                docWidget[id] = widget;
             }
         },
         
@@ -102,17 +118,6 @@ raptor.extend('widgets', function(raptor) {
                         logger.error('Unable to initialize widget of type "' + type + "'. Exception: " + e, e);
                     }
                 },
-                _getDoc = function(docId) {
-                    if (!docId) {
-                        return null;
-                    }
-                    
-                    var doc = docs[docId];
-                    if (!doc) {
-                        doc = docs[docId] = new Document();
-                    }
-                    return doc;
-                },
                 _initWidgetOnReady = function(widget, config, type) {
                     widget.onReady(function() {
                         _initWidget(widget, config, type);
@@ -126,8 +131,7 @@ raptor.extend('widgets', function(raptor) {
                     if (!widgetDefs) return;
                     
                     var i=0,
-                        len = widgetDefs.length,
-                        doc;
+                        len = widgetDefs.length;
                     
                     for (; i<len; i++) {
                         
@@ -135,17 +139,12 @@ raptor.extend('widgets', function(raptor) {
                             type = widgetDef[0],
                             id = widgetDef[1],
                             docId = widgetDef[2],
-                            nestedDocId = widgetDef[3],
-                            childId = widgetDef[4],
-                            config = widgetDef[5] || {},
-                            children = widgetDef.slice(6);
+                            childId = widgetDef[3],
+                            config = widgetDef[4] || {},
+                            children = widgetDef.slice(5);
                         
                         if (docId === 0) {
                             docId = undefined;
-                        }
-                        
-                        if (nestedDocId === 0) {
-                            nestedDocId = undefined;
                         }
                             
                         if (childId === 0) {
@@ -188,24 +187,21 @@ raptor.extend('widgets', function(raptor) {
                         
                         widget.registerMessages(['beforeDestroy', 'destroy'], false);
                         
-                        if (proto.hasOwnProperty(EVENTS)) {
-                            widget.registerMessages(proto[EVENTS], false);
+                        var events = proto[EVENTS] || originalWidgetClass[EVENTS];
+
+                        if (events) {
+                            widget.registerMessages(events, false);
                         }
-                        
-                        
                         
                         widget._id = id;
                         widget._childId = childId;
                         widgetsById[id] = widget;
+                        
                         if (childId && docId) {
-                            doc = _getDoc(docId);
-                            doc.addWidget(widget, childId);                         
+                            widgetsById[docId]._doc.addWidget(widget, childId);
                         }
                         
-                        
-                        if (nestedDocId) {
-                            widget._doc = _getDoc(nestedDocId);
-                        }
+                        widget._doc = new Document(widget);
                         
                         if (children && children.length) {
                             _initWidgets(children, widget);

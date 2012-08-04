@@ -54,9 +54,11 @@ raptor.defineClass(
                     forEachProp = function(callback, thisObj) {
                         forEach(node.getAttributes(), function(attr) {
 
-                            if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.prefix == 'xmlns') {
+                            if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.uri === 'http://www.w3.org/XML/1998/namespace' || attr.prefix == 'xmlns') {
                                 return; //Skip xmlns attributes
                             }
+                            var prefix = attr.prefix;
+                            
                             var attrUri = attr.prefix && (attr.uri != tagDef.taglib.uri) ? attr.uri : null;
                             
                             var attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
@@ -80,6 +82,7 @@ raptor.defineClass(
                                 
                             if (uri === tagDef.taglib.uri) {
                                 uri = '';
+                                prefix = '';
                             }
                             
                             if (!attrDef && !tagDef.dynamicAttributes) {
@@ -87,7 +90,7 @@ raptor.defineClass(
                                 node.addError('The tag "' + tagDef.name + '" in taglib "' + uri + '" does not support attribute "' + attr + '"');
                             }
                             
-                            callback.call(thisObj, uri, attr.localName, value);
+                            callback.call(thisObj, uri, attr.localName, value, prefix, attrDef);
                         }, this);
                     };
                 
@@ -202,8 +205,14 @@ raptor.defineClass(
                             node, 
                             tagDef);
                         
-                        forEachProp(function(uri, name, value) {
-                            node.setPropertyNS(uri, name, value);
+                        forEachProp(function(uri, name, value, prefix, attrDef) {
+                            if (attrDef) {
+                                node.setPropertyNS(uri, name, value);    
+                            }
+                            else {
+                                node.addDynamicAttribute(prefix ? prefix + ':' + name : name, value);
+                            }
+                            
                         });
                     }
                     else if (tagDef.compilerClass){

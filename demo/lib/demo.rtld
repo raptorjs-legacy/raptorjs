@@ -1,0 +1,15 @@
+<raptor-taglib>
+    <uri>http://raptor.ebayopensource.org/demo</uri>
+    <short-name>demo</short-name>
+    <prefix>demo</prefix>
+    
+    <import-taglib path="/components/editors/CodeEditor.rtld"/>
+    <import-taglib path="/components/buttons/Button.rtld"/>
+    <import-taglib path="/components/buttons/ButtonGroup.rtld"/>
+    <import-taglib path="/components/nav/NavBar.rtld"/>
+    <import-taglib path="/components/nav/Nav.rtld"/>
+    <import-taglib path="/components/nav/NavItem.rtld"/>
+    <import-taglib path="/components/nav/TabContent.rtld"/>
+    <import-taglib path="/components/nav/TabPane.rtld"/>
+    
+</raptor-taglib>

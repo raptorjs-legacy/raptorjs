@@ -30,6 +30,8 @@ raptor.defineClass(
             this.watchIncludesEnabled = false;
             this.watchConfigEnabled = false;
             this.watchPackagesEnabled = false;
+            this.watchTemplatesEnabled = false;
+            this.watchConfigs = [];
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
             this.injectHtmlIncludesEnabled = false;
@@ -122,6 +124,22 @@ raptor.defineClass(
                 return this.watchPackagesEnabled || this.watchFilesEnabled;
             },
             
+            isWatchTemplatesEnabled: function() {
+                return this.watchTemplatesEnabled || this.watchFilesEnabled;
+            },
+            
+            addWatchConfigs: function(watchConfigs) {
+                if (!watchConfigs || !watchConfigs.length) {
+                    return;
+                }
+                
+                this.watchConfigs = this.watchConfigs.concat(watchConfigs);
+            },
+            
+            getWatchConfigs: function() {
+                return this.watchConfigs;
+            },
+            
             addCleanDir: function(path) {
                 this.cleanDirs.push(path);
             },
@@ -211,6 +229,10 @@ raptor.defineClass(
             
             hasPages: function() {
                 return this.pages.length != 0;
+            },
+            
+            isMinifyJsEnabled: function() {
+                return this.minifyJs === true;
             },
             
             addPage: function(pageConfig) {

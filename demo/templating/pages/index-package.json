@@ -6,6 +6,8 @@
         { "module": "templating.compiler" },
         { "module": "taglib/core/compile-time" },
         { "module": "taglib/html/compile-time" },
-        { "module": "taglib/widgets/compile-time" }
+        { "module": "taglib/widgets/compile-time" },
+        { "module": "components/TemplateTestbed" },
+        "index.css"
      ]
 }

@@ -1,5 +1,5 @@
 {
-    "type": "library",
+    "type": "raptor-library",
     "name": "raptor",
     "version": "1.0",
     "description": "RaptorJS",

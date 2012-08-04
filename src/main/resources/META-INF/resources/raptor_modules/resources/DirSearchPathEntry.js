@@ -37,6 +37,10 @@ $rload(function(raptor) {
                 init: function(dir) {
                     this.dir = dir;
                 },
+                
+                getDir: function() {
+                    return this.dir;
+                },
             
                 /**
                  * 
@@ -44,6 +48,10 @@ $rload(function(raptor) {
                  * @returns
                  */
                 findResource: function(path) {
+                    if (files.exists(path)) {
+                        return new FileResource(this, path, path);
+                    }
+                    
                     var fullPath = files.joinPaths(this.dir, path),
                         fileResource;
                     

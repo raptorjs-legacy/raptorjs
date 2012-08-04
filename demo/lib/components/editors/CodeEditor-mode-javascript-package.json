@@ -1,0 +1,5 @@
+{
+    "includes": [
+        {"module": "CodeMirror/mode-javascript"}
+    ]
+}

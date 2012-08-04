@@ -1,0 +1,9 @@
+{
+    "type": "raptor-module",
+    "name": "CodeMirror",
+    "includes": [
+        {"path": "CodeMirror-2.32/lib/codemirror.js"},
+        {"path": "CodeMirror-2.32/lib/codemirror.css"},
+        {"path": "CodeMirror-2.32/lib/util/formatting.js"}
+    ]
+}

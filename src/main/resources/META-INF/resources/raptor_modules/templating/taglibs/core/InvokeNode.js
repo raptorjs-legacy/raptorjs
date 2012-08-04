@@ -42,25 +42,29 @@ raptor.defineClass(
                 
                 if (func.indexOf('(') === -1) {
                     var definedFunctions = template.getAttribute("core:definedFunctions");
-                    if (!definedFunctions) {
-                        this.addError('Function with name "' + func + '" not defined using <c:define>.');
-                    }
-                    var funcDef = definedFunctions[func];
-                    if (!funcDef) {
-                        this.addError('Function with name "' + func + '" not defined using <c:define>.');
-                    }
-                    var params = funcDef.params || [];
+                    
+                    var funcDef = definedFunctions ? definedFunctions[func] : null;
+//                    if (!funcDef) {
+//                        this.addError('Function with name "' + func + '" not defined using <c:define>.');
+//                    }
                     
                     var argParts = [];
-                    
                     var validParamsLookup = {};
-                    /*
-                     * Loop over the defined parameters to figure out the names of allowed parameters and add them to a lookup
-                     */
-                    forEach(params, function(param) {
-                        validParamsLookup[param] = true;
-                    }, this);
+                    var params = [];
                     
+                    if (funcDef) {
+                        params = funcDef.params || [];
+
+                        /*
+                         * Loop over the defined parameters to figure out the names of allowed parameters and add them to a lookup
+                         */
+                        forEach(params, function(param) {
+                            validParamsLookup[param] = true;
+                        }, this);
+                        
+                    }
+                    
+
                     /*
                      * VALIDATION:
                      * Loop over all of the provided attributes and make sure they are allowed 

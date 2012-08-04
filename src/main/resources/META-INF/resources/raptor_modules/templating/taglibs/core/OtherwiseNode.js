@@ -35,6 +35,10 @@ raptor.defineClass(
                 template.addJavaScriptCode(' else {');
                 this.generateCodeForChildren(template);
                 template.addJavaScriptCode('}');
+            },
+            
+            toString: function() {
+                return "<c:otherwise>";
             }
             
         };

@@ -129,6 +129,7 @@ raptor.defineClass(
             getResource: function(context) {
                 if (this._resource === undefined) {
                     var resourcePath = this.getResourcePath(context);
+                    
                     this._resource = resourcePath ? this.resolveResource(resourcePath, context) : null;
                     if (!this._resource) {
                         this._resource = null;

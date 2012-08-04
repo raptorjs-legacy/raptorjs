@@ -12,14 +12,14 @@ raptor.defineClass(
                     widgetContext = input.widgetContext,
                     id = input.id,
                     parent,
-                    childId;
+                    nestedWidgetId;
                 
                 if (widgetContext) {
                     parent = widgetContext[0];
-                    childId = widgetContext[1];
+                    nestedWidgetId = widgetContext[1];
                 }
 
-                var widget = widgets.addWidget(type, id, childId, config, parent, context);
+                var widget = widgets.addWidget(type, id, nestedWidgetId, config, parent, context);
                 
                 input.invokeBody(widget);
             }

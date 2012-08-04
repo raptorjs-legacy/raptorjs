@@ -1,0 +1,6 @@
+{
+    "includes": [
+        {"module": "widgets"},
+        {"module": "Bootstrap"}
+    ]
+}

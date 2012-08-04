@@ -168,11 +168,16 @@ public class PackageManifestJSONLoader {
         }
         else if (node.isTextual()) {
             String path = node.getValueAsText();
-            type = path.substring(path.lastIndexOf('.')+1);
-            props.put("type", type);
-            props.put("path", path);
-            
-            
+            int lastDot = path.lastIndexOf('.');
+            if (lastDot != -1) {
+                type = path.substring(lastDot+1);
+                props.put("type", type);
+                props.put("path", path);    
+            }
+            else {
+                props.put("type", "module");
+                props.put("name", path);
+            }
         }
         
         if (props.isEmpty()) {

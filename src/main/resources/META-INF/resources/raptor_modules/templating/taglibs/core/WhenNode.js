@@ -35,6 +35,7 @@ raptor.defineClass(
                 var test = this.getProperty("test");
                 
                 if (!test) {
+                    console.error('WHEN NODE: ', this.properties);
                     this.addError('"test" attribute is required for ' + this.toString() + " tag.");
                 }
                 if (!this.firstWhen) {

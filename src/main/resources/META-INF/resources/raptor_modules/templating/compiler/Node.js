@@ -286,6 +286,11 @@ raptor.defineClass(
             generateCode: function(template) {
                 this.compiler = template.compiler;
                 
+                var preserveSpace = this.preserveSpace || (this.isPreserveSpace && this.isPreserveSpace());
+                
+                if (preserveSpace) {
+                    template.beginPreserveWhitespace();
+                }
                 try
                 {
                     if (!this.stripExpression || this.stripExpression.toString() === 'false') {
@@ -320,7 +325,11 @@ raptor.defineClass(
                     }
                 }
                 catch(e) {
-                    raptor.throwError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e));
+                    raptor.throwError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e), e);
+                }
+                
+                if (preserveSpace) {
+                    template.endPreserveWhitespace();
                 }
             },
             

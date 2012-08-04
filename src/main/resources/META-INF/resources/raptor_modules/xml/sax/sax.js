@@ -27,14 +27,19 @@ raptor.define(
              * @returns
              */
             createParser: function(options) {
-                var SaxParser = raptor.require("xml.sax.SaxParser");
+                options = options || {};
+                
+                if (options.dom) {
+                    return this.createParserForDom(options);
+                }
+                
+                var SaxParser = raptor.find("xml.sax.SaxParser") || raptor.find("xml.sax.SaxParserDom");
                 return new SaxParser(options);
             },
             
-            domToSax: function(elNode, handlers) {
-                var DomToSax = raptor.require('xml.sax.DomToSax');
-                var domToSax = new DomToSax();
-                domToSax.generateEventsForNode(elNode, handlers);
+            createParserForDom: function(options) {
+                var SaxParser = raptor.require("xml.sax.SaxParserDom");
+                return new SaxParser(options);
             }
         };
         

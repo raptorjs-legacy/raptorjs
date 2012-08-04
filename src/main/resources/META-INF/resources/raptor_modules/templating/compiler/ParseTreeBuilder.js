@@ -48,7 +48,8 @@ raptor.defineClass(
                 
                 var parser = sax.createParser({
                         trim: false,
-                        normalize: false
+                        normalize: false,
+                        dom: src.documentElement != null
                     });
                 
                 
@@ -111,12 +112,13 @@ raptor.defineClass(
                                 attrLocalName = attr.getLocalName(),
                                 attrPrefix = attr.getPrefix();
                             
-                           
+                            
                             if (!attrURI && imports && (importedAttr = imports.getImportedAttribute(attrLocalName))) {     
                                 attrURI = importedAttr.uri;
                                 attrLocalName = importedAttr.name;
                                 attrPrefix = importedAttr.prefix;
                             }
+                            
                             elementNode.setAttributeNS(
                                     attrURI, 
                                     attrLocalName, 

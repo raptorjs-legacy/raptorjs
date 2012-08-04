@@ -128,7 +128,9 @@ raptor.defineClass(
                                         raptor.throwError(new Error('"path" is required for directory resource search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
-                                    raptor.require('resources').getSearchPath().addDir(dirPath);
+                                    if (!raptor.require('resources').getSearchPath().hasDir(dirPath)) {
+                                        raptor.require('resources').getSearchPath().addDir(dirPath);    
+                                    }
                                 },
                                 "@path": {
                                     _type: "string"
@@ -177,6 +179,36 @@ raptor.defineClass(
                             _type: "boolean",
                             _targetProp: "watchPackagesEnabled"
                         }, 
+                        
+                        "watch": {
+                            _type: "object",
+                            _begin: function() {
+                                return [];
+                            },
+                            _end: function(watchConfigs) {
+                                config.addWatchConfigs(watchConfigs);
+                            },
+                            "<dir>": {
+                                _type: "object",
+                                _begin: function() {
+                                    return {
+                                        type: "dir"
+                                    };
+                                },
+                                _end: function(watchConfig, watchConfigs) {
+                                    watchConfigs.push(watchConfig);
+                                },
+                                "path": {
+                                    _type: "string"
+                                },
+                                "recursive": {
+                                    _type: "boolean"
+                                },
+                                "filenamePatterns": {
+                                    _type: "string"
+                                }
+                            }
+                        },
                         
                         "checksums-enabled": {
                             _type: "boolean",
@@ -268,6 +300,11 @@ raptor.defineClass(
                             _targetProp: "htmlOutputDir"
                         },
                         
+                        "page-output-dir": {
+                            _type: "string",
+                            _targetProp: "pageOutputDir"
+                        },
+                        
                         "inject-html-includes": {
                             _type: "object",
                             _begin: function() {
@@ -281,13 +318,15 @@ raptor.defineClass(
                                 _type: "boolean",
                                 _targetProp: "keepHtmlMarkers"
                             },
-                            "page-output-dir": {
-                                _type: "string",
-                                _targetProp: "pageOutputDir"
-                            },
+
                             "modify-pages": {
                                 _type: "boolean",
                                 _targetProp: "modifyPages"
+                            },
+                            
+                            "page-output-dir": {
+                                _type: "string",
+                                _targetProp: "pageOutputDir"
                             }
                         },
                         

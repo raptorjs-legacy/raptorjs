@@ -1,0 +1,9 @@
+<raptor-taglib>
+    <uri>http://raptor.ebayopensource.org/demo/templating</uri>
+    <short-name>app</short-name>
+    <prefix>app</prefix>
+    
+    <import-taglib path="/components/TemplateTestbed.rtld"/>
+    <import-taglib path="/components/Errors.rtld"/>
+    
+</raptor-taglib>
