@@ -21,7 +21,8 @@
 raptor.extend('widgets', function(raptor) {
     "use strict";
     
-    var stringify = raptor.require('json.stringify').stringify;
+    var stringify = raptor.require('json.stringify').stringify,
+        specialRegExp = /([^ -~]|(["'\\<]))/g;
     
     return {
         
@@ -55,7 +56,7 @@ raptor.extend('widgets', function(raptor) {
                     write(',');
                     write(widget.nestedWidgetId ? ('"' + widget.nestedWidgetId + '"') : "0");
                     write(',');
-                    write(widget.config ? stringify(widget.config, {special: /([^ -~]|(["'\\<]))/g}) : "0");
+                    write(widget.config ? stringify(widget.config, {special: specialRegExp}) : "0");
                     if (widget.children.length) {
                         write(',');
                         writeWidgets(widget.children);
