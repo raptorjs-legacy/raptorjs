@@ -1,0 +1,7 @@
+{
+    "type": "raptor-module",
+    "name": "jQuery",
+    "includes": [
+        {"path": "jquery-1.7.1.js"}
+    ]
+}

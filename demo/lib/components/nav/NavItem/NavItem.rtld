@@ -1,0 +1,13 @@
+<raptor-taglib>
+
+    <tag name="nav-item" handler-class="components.nav.NavItem.NavItemTag" dynamic-attributes="true">
+        <attribute name="type" type="string"/>
+        <attribute name="label" type="string"/>
+        <attribute name="active" type="boolean"/>
+        <attribute name="toggle" type="string"/>
+        <attribute name="href" type="string"/>
+        
+        <imported-variable property-name="nav" expression="nav"/>
+    </tag>
+    
+</raptor-taglib>

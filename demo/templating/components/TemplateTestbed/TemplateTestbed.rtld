@@ -1,0 +1,7 @@
+<raptor-taglib>
+
+    <tag name="template-testbed" handler-class="components.TemplateTestbed.TemplateTestbedTag">
+        <attribute name="samples" type="expression"/>
+    </tag>
+    
+</raptor-taglib>

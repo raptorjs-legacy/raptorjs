@@ -1,5 +1,6 @@
 {
     "includes": [
+        { "module": "jQuery" },
         { "module": "core" },
         { "type": "init-raptor" },
         { "module": "templating" },

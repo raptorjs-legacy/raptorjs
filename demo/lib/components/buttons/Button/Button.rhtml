@@ -1,0 +1,21 @@
+<c:template
+    xmlns:c="core"
+    xmlns:w="widgets"
+    name="components/buttons/Button"
+    params="tag,rootAttrs,label">
+    
+    <button w:widget="components.buttons.Button.ButtonWidget" c:attrs="rootAttrs">
+        <c:choose>
+            <c:when c:test="label">
+                ${label}
+            </c:when>
+            <c:when c:test="tag.invokeBody">
+                <c:invoke function="tag.invokeBody"/>
+            </c:when>
+        </c:choose>
+        <c:if test="data.isDropdown">
+            ${entity:nbsp}
+            <span class="caret"></span>
+        </c:if>
+    </button>
+</c:template>

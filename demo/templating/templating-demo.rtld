@@ -3,7 +3,7 @@
     <short-name>app</short-name>
     <prefix>app</prefix>
     
-    <import-taglib path="/components/TemplateTestbed.rtld"/>
-    <import-taglib path="/components/Errors.rtld"/>
+    <import-taglib path="/components/TemplateTestbed/TemplateTestbed.rtld"/>
+    <import-taglib path="/components/Errors/Errors.rtld"/>
     
 </raptor-taglib>

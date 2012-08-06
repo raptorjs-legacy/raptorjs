@@ -1,0 +1,8 @@
+<c:template
+    xmlns:c="core"
+    xmlns:w="widgets"
+    name="components/editors/CodeEditor"
+    params="tag,rootAttrs">
+    
+    <textarea w:widget="components.editors.CodeEditor.CodeEditorWidget" c:attrs="rootAttrs"><c:invoke c:if="tag.invokeBody" function="tag.invokeBody"/></textarea>
+</c:template>

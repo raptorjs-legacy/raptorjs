@@ -1,0 +1,7 @@
+<raptor-taglib>
+
+    <tag name="button-group" handler-class="components.buttons.ButtonGroup.ButtonGroupTag">
+        <attribute name="toggle" type="string"/>
+    </tag>
+    
+</raptor-taglib>

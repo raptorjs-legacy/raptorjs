@@ -23,32 +23,48 @@ raptor.extend('templating', function(raptor) {
     
     var strings = raptor.require('strings'),
         resources = raptor.require('resources'),
-        files = raptor.require('files');
+        files = raptor.require('files'),
+        File = files.File;
 
     return {
         findTemplate: function(name) {
             var path = name,
-                resource;
+                resource,
+                templatePath,
+                templateFile = new File(name);
             
-            if (files.exists(name)) {
-                resource = resources.createFileResource(name);
+            
+            if (templateFile.exists() && templateFile.isFile()) {
+                resource = resources.createFileResource(templateFile.getAbsolutePath());
             }
             else {
-                if (!strings.startsWith(path, '/')) {
-                    path = '/' + path;
+                templatePath = path;
+                if (!strings.startsWith(templatePath, '/')) {
+                    templatePath = '/' + templatePath;
                 }
                 
-                if (!strings.endsWith(path, '.rhtml')) {
-                    path += '.rhtml';
+                if (!strings.endsWith(templatePath, '.rhtml')) {
+                    templatePath += '.rhtml';
                 }
                 
-                resource = resources.findResource(path);
-                if (!resource.exists()) {
-                    resource = null;
+                resource = resources.findResource(templatePath);
+            }
+            
+            
+            if (!resource || !resource.exists()) {
+                templatePath = path;
+                
+                if (!strings.startsWith(templatePath, '/')) {
+                    templatePath = '/' + templatePath;
+                }
+                
+                var lastSlash = templatePath.lastIndexOf('/');
+                if (lastSlash != -1) {
+                    resource = resources.findResource(templatePath + templatePath.substring(lastSlash) + ".rhtml");
                 }
             }
             
-            if (resource) {
+            if (resource && resource.exists()) {
                 raptor.require('templating.compiler').compileAndLoadResource(resource, {templateName: name})
             }
         }

@@ -1,0 +1,8 @@
+<raptor-taglib>
+
+    <tag name="nav-bar" handler-class="components.nav.NavBar.NavBarTag">
+        <attribute name="type" type="string"/>
+        <attribute name="brand" type="string"/>
+    </tag>
+    
+</raptor-taglib>

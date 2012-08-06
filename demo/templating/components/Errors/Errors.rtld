@@ -1,0 +1,9 @@
+<raptor-taglib>
+
+    <tag name="errors" handler-class="components.Errors.ErrorsTag">
+    
+        <!-- Support widget attributes -->
+        <attribute name="id" uri="widgets"/>
+    </tag>
+    
+</raptor-taglib>
