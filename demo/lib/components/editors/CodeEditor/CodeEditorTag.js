@@ -32,6 +32,10 @@ raptor.define(
                 if (input.name) {
                     rootAttrs.name = input.name;
                 }
+                
+                if (input.lineNumbers === false) {
+                    widgetConfig.lineNumbers = false;
+                }
                     
                 raptor.require('templating').render('components/editors/CodeEditor', {
                     tag: input, 

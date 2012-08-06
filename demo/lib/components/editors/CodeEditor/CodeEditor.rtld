@@ -6,6 +6,8 @@
         <attribute name="mode" type="string"/>
         <attribute name="readOnly" type="boolean"/>
         <attribute name="autoFormat" type="boolean"/>
+        <attribute name="lineNumbers" type="boolean"/>
+        
         <!-- Support widget attributes -->
         <attribute name="id" uri="widgets"/>
     </tag>
