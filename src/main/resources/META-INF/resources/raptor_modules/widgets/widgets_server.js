@@ -55,7 +55,7 @@ raptor.extend('widgets', function(raptor) {
                     write(',');
                     write(widget.nestedWidgetId ? ('"' + widget.nestedWidgetId + '"') : "0");
                     write(',');
-                    write(widget.config ? stringify(widget.config) : "0");
+                    write(widget.config ? stringify(widget.config, {special: /([^ -~]|(["'\\<]))/g}) : "0");
                     if (widget.children.length) {
                         write(',');
                         writeWidgets(widget.children);

@@ -58,6 +58,8 @@ raptor.define(
                     options = {};
                 }
                 
+                var specialRegExp = options.special || SPECIAL;
+                
                 var buffer = strings.createStringBuilder(),
                     append = function(str) {
                         buffer.append(str);           
@@ -66,7 +68,7 @@ raptor.define(
                     strChar = useSingleQuote === true ? "'" : '"',
                     encodeString = function(s) {
                         return strChar + 
-                            s.replace(SPECIAL, function(c) {
+                            s.replace(specialRegExp, function(c) {
                                 if (c === '"') {
                                     return useSingleQuote ? '"' : '\\"';
                                 }

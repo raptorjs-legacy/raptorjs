@@ -352,6 +352,9 @@ raptor.defineClass(
             },
             "endTag": function(expression, helper) {
                 helper.addText("</" + expression + ">");
+            },
+            "newline": function(expression, helper) {
+                helper.addText("\n");
             }
         };
         

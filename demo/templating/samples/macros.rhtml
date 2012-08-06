@@ -1,0 +1,30 @@
+<c:template 
+    xmlns:c="core" 
+    params="">
+
+    <style>
+    .message {
+        padding: 4px;
+        margin: 4px;
+        background-color: #FFFFCC;
+        border: 1px solid #C0C0C0;
+    }
+    
+    .message-error {
+        color: #C00000;
+    }
+    
+    .message-info {
+        color: #0000FF;
+    }
+    </style>
+    
+    <c:def function="message(type,message)">
+        <div class="message message-$type">
+            <b>${type.toUpperCase()}:</b> $message
+        </div>
+    </c:def>
+    
+    ${message('error', 'Test error')}
+    ${message('info', 'Test info')}
+</c:template>

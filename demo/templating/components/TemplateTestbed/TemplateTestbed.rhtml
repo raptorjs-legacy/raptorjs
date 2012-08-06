@@ -28,11 +28,13 @@
                     <div class="input-col">
                         <div class="content">
                             <h3 class="first">Template</h3>
-                            <demo:code-editor 
-                                w:id="templateEditor"
-                                autoResize="true"
-                                mode="xml"
-                                name="template"/>
+                            <div class="template-editor-container">
+                                <demo:code-editor 
+                                    w:id="templateEditor"
+                                    autoResize="true"
+                                    mode="xml"
+                                    name="template"/>
+                            </div>
                                 
                             <app:errors w:id="templateErrors"/>
                             
@@ -44,7 +46,7 @@
                                 name="json"/>
                             <app:errors w:id="dataErrors"/>
                             
-                            <div id="${widget.elId('compilerOptionsSection')}" style="visibility: hidden">
+                            <div id="${widget.elId('compilerOptionsSection')}" class="compiler-options-hidden">
                                 <h3 class="options">Compiler Options</h3>
                                 <demo:code-editor 
                                     w:id="optionsEditor"

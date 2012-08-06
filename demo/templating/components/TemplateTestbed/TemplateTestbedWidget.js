@@ -11,6 +11,7 @@ raptor.define(
             this.dataModified = true;
             this.optionsModified = true;
             this.renderRequired = true;
+            this.optionsVisible = false;
             
             this.defaultOptionsJson = stringify(raptor.require('templating.compiler').defaultOptions);
             
@@ -67,9 +68,6 @@ raptor.define(
                 this.loadSample(sampleIndex);
             }, this);
 
-            
-            
-            this.$("#compilerOptionsSection").hide().css("visibility", "visible");
         };
         
         TemplateTestbedWidget.prototype = {
@@ -221,7 +219,15 @@ raptor.define(
             },
             
             toggleCompilerOptions: function() {
-                this.$("#compilerOptionsSection").toggle();
+                this.optionsVisible = !this.optionsVisible;
+                
+                if (this.optionsVisible) {
+                    this.$("#compilerOptionsSection").removeClass("compiler-options-hidden");    
+                }
+                else {
+                    this.$("#compilerOptionsSection").addClass("compiler-options-hidden");
+                }
+                
             }
         };
         

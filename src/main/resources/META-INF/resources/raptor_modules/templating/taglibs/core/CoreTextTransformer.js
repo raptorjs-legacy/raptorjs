@@ -22,8 +22,7 @@ raptor.defineClass(
         var ExpressionParser = raptor.require('templating.compiler.ExpressionParser'),
             TextNode = raptor.require('templating.compiler.TextNode'),
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),
-            ScriptletNode = raptor.require('templating.taglibs.core.ScriptletNode'),
-            strings = raptor.require('strings');
+            ScriptletNode = raptor.require('templating.taglibs.core.ScriptletNode');
         
         return {
             

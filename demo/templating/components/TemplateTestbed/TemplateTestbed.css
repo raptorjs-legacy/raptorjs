@@ -95,3 +95,15 @@
     width: 100%;
     overflow-y: auto;
 }
+
+.template-editor-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.compiler-options-hidden {
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    visibility: hidden;
+}
