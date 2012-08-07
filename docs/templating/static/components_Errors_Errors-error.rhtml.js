@@ -1,0 +1,2 @@
+$rset("rhtml","components/Errors-error",function(helpers){var empty=helpers.e,notEmpty=helpers.ne,escapeXml=helpers.x;return function(data, context, contextHelpers){
+var write=contextHelpers.w,message=data.message;write('<span class="x">\u2718</span><pre class="message">')(escapeXml(message))('</pre>');}});

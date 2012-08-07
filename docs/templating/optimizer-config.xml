@@ -11,24 +11,21 @@
         {
             logging: {
                 loggers: {
-                    'ROOT': {level: 'DEBUG'}
+                    'ROOT': {level: 'WARN'}
                 }
             }
         }
         </raptor-config>
         <enabled-extensions>jquery,browser,logging.console</enabled-extensions>
         <bundling-enabled>false</bundling-enabled>
-        
-        <in-place-deployment>
-            <enabled>true</enabled>
-            <source-mapping base-dir="." base-url="/src"/>
-            <source-mapping base-dir="../../src/main/resources/META-INF/resources/raptor_modules" base-url="/src-core"/>
-        </in-place-deployment>
-
-        <resource-url-prefix>/bundles/</resource-url-prefix>
+        <in-place-deployment-enabled>true</in-place-deployment-enabled>
         <minify-js>false</minify-js>
         <checksums-enabled>false</checksums-enabled>
-        <watch-files-enabled>true</watch-files-enabled>
+<!--         <watch-files-enabled>true</watch-files-enabled> -->
+<!--         <watch> -->
+<!--             <dir path="../lib/components" recursive="true" filenamePatterns="*.js,*.rhtml,*.rtld"/> -->
+<!--             <dir path="components" recursive="true" filenamePatterns="*.js,*.rhtml,*.rtld"/> -->
+<!--         </watch> -->
     </profile>
     
     <profile name="production">
@@ -37,7 +34,8 @@
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>
-        <resource-url-prefix>/bundles/</resource-url-prefix>
+<!--         <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
+<!--         <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
         <raptor-config>
         {
         }
@@ -46,19 +44,31 @@
     </profile>
    
     <resource-search-path>
-        <dir path="raptor_modules"/>
+        <dir path="."/>
+        <dir path="../lib"/>
+        <dir path="modules"/>
     </resource-search-path>
+    
+    
     
     <page-search-path>
         <dir path="pages"/>
     </page-search-path>
 
     <clean-dirs>
-        <dir path="build"/>
+        <dir path="static"/>
     </clean-dirs>
-
-    <bundles-output-dir>build/static/bundles</bundles-output-dir>
-    <html-output-dir>build/inc</html-output-dir>
+    
+<!--     <js-output-dir>dist/bundles</js-output-dir> -->
+<!--     <css-output-dir>dist/bundles</css-output-dir> -->
+    <bundles-output-dir>static</bundles-output-dir>
+    <page-output-dir>.</page-output-dir>
+    
+    <inject-html-includes>
+        <enabled>true</enabled>
+        <keep-html-markers>false</keep-html-markers>
+        <modify-pages>false</modify-pages> <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
+    </inject-html-includes>
 
     <bundles name="default">
         <bundle name="core">

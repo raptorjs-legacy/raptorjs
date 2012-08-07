@@ -11,14 +11,21 @@
         {
             logging: {
                 loggers: {
-                    'ROOT': {level: 'WARN'}
+                    'ROOT': {level: 'DEBUG'}
                 }
             }
         }
         </raptor-config>
         <enabled-extensions>jquery,browser,logging.console</enabled-extensions>
         <bundling-enabled>false</bundling-enabled>
-        <in-place-deployment-enabled>true</in-place-deployment-enabled>
+        
+        <in-place-deployment>
+            <enabled>true</enabled>
+            <source-mapping base-dir="." base-url="/src"/>
+            <source-mapping base-dir="../../src/main/resources/META-INF/resources/raptor_modules" base-url="/src-core"/>
+        </in-place-deployment>
+
+        <resource-url-prefix>/bundles/</resource-url-prefix>
         <minify-js>false</minify-js>
         <checksums-enabled>false</checksums-enabled>
         <watch-files-enabled>true</watch-files-enabled>
@@ -30,8 +37,7 @@
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>
-<!--         <js-url-prefix>//cdn-ebay.com/static/bundles/js/</js-url-prefix> -->
-<!--         <css-url-prefix>//cdn-ebay.com/static/bundles/css/</css-url-prefix> -->
+        <resource-url-prefix>/bundles/</resource-url-prefix>
         <raptor-config>
         {
         }
@@ -40,7 +46,7 @@
     </profile>
    
     <resource-search-path>
-        <dir path="modules"/>
+        <dir path="raptor_modules"/>
     </resource-search-path>
     
     <page-search-path>
@@ -48,21 +54,10 @@
     </page-search-path>
 
     <clean-dirs>
-        <dir path="dist"/>
+        <dir path="build"/>
     </clean-dirs>
-    
-<!--     <js-output-dir>dist/bundles</js-output-dir> -->
-<!--     <css-output-dir>dist/bundles</css-output-dir> -->
-    <bundles-output-dir>dist/static</bundles-output-dir>
-        
-    <html-output-dir>dist/inc/page-dependencies</html-output-dir>
-    
-    <inject-html-includes>
-        <enabled>true</enabled>
-        <keep-html-markers>false</keep-html-markers>
-        <modify-pages>false</modify-pages> <!-- Don't modify the original HTML pages and instead copy them to page output directory -->
-        <page-output-dir>dist</page-output-dir>
-    </inject-html-includes>
+
+    <bundles-output-dir>build/static/bundles</bundles-output-dir>
 
     <bundles name="default">
         <bundle name="core">

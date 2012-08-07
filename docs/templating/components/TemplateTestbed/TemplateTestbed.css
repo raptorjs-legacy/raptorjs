@@ -81,6 +81,7 @@
 
 .template-testbed .footer-bar > TABLE {
     height: 40px;
+    float: left;
 }
 
 .template-testbed .footer-bar TD.render-button, .template-testbed .footer-bar TD.option-buttons {
@@ -106,4 +107,16 @@
     left: 0px;
     position: absolute;
     visibility: hidden;
+}
+
+.template-testbed .powered-by {
+    float: right;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-right: 15px;
+    font-size: 16px;
+}
+
+.template-testbed .powered-by > .raptorjs {
+    font-weight: bold;
 }
