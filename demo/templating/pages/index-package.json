@@ -1,8 +1,8 @@
 {
     "includes": [
-        { "module": "jQuery" },
         { "module": "core" },
         { "type": "init-raptor" },
+        { "module": "jQuery" },
         { "module": "templating" },
         { "module": "templating.compiler" },
         { "module": "taglib/core/compile-time" },
