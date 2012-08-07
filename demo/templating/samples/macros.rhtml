@@ -3,28 +3,18 @@
     params="">
 
     <style>
-    .message {
-        padding: 4px;
-        margin: 4px;
-        background-color: #FFFFCC;
-        border: 1px solid #C0C0C0;
-    }
-    
-    .message-error {
-        color: #C00000;
-    }
-    
-    .message-info {
-        color: #0000FF;
+    .greeting {
+        font-size: 120%
     }
     </style>
     
-    <c:def function="message(type,message)">
-        <div class="message message-$type">
-            <b>${type.toUpperCase()}:</b> $message
+    <c:def function="greeting(name)">
+        <div class="greeting">
+            Hello $name!
         </div>
     </c:def>
     
-    ${message('error', 'Test error')}
-    ${message('info', 'Test info')}
+    <c:invoke function="greeting" name="World"/>
+    ${greeting('Frank')}
+    
 </c:template>

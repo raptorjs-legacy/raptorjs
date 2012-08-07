@@ -13,7 +13,7 @@
     </ul>
     
     <ul>
-        <li c:for="color in colors;varStatus=loop">
+        <li c:for="color in colors; varStatus=loop">
             ${loop.getIndex()+1}) $color
             <c:if test="loop.isFirst()"> - FIRST</c:if>
             <c:if test="loop.isLast()"> - LAST</c:if>
