@@ -36,6 +36,10 @@ raptor.define(
                 if (input.lineNumbers === false) {
                     widgetConfig.lineNumbers = false;
                 }
+                
+                if (input.indentUnit) {
+                    widgetConfig.indentUnit = input.indentUnit;
+                }
                     
                 raptor.require('templating').render('components/editors/CodeEditor', {
                     tag: input, 

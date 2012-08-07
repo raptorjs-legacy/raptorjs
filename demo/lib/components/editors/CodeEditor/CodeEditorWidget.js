@@ -10,6 +10,7 @@ raptor.define(
                     this.getEl(),
                     {
                         mode: config.mode,
+                        indentUnit: config.indentUnit,
                         lineNumbers: config.lineNumbers !== false,
                         readOnly: config.readOnly === true,
                         onChange: function(editor) {
