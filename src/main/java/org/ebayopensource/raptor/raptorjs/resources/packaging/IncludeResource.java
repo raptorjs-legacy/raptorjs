@@ -30,7 +30,10 @@ public abstract class IncludeResource extends Include {
     
     public Resource getResource(ResourceManager resourceManager) {
         if (this.resource == null) {
-            this.resource = this.getParentPackageManifest().resolveResource(path, resourceManager);
+            PackageManifest mf = getParentPackageManifest();
+            if (mf != null) {
+                this.resource = mf.resolveResource(path, resourceManager);
+            }
         }
         return this.resource;
     }
