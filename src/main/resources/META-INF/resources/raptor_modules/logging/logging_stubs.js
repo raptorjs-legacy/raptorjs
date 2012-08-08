@@ -97,6 +97,10 @@ $rload(function(raptor) {
             trace: EMPTY_FUNC
         };
 
+    /**
+     * @namespace
+     * @name logging
+     */
     raptor.logging = {
         /**
          * 

@@ -18,13 +18,12 @@ $rload(function (raptor) {
     "use strict";
     
     /**
-     * 
+     * Utility module for working with JavaScript arrays.
+     *  
      * @namespace
      * @raptor
      * @name arrays
      *
-     * Utility module for working with JavaScript arrays.
-     * 
      * @borrows raptor.forEach as forEach
      * @borrows raptor.isArray as isArray
      * @borrows raptor.arrayFromArguments as fromArguments

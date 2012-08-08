@@ -733,7 +733,7 @@ publish.getClassInfo = function(symbol) {
     if (!symbol.shortName) {
         symbol.shortName = symbol.displayName || symbol.alias;
         
-        var parts = symbol.shortName.split(/[$.]/);
+        var parts = symbol.shortName.split(/[$.\-]/);
         if (parts.length > 1) {
             symbol.shortName = parts[parts.length-1];
         }

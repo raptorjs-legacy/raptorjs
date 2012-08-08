@@ -129,13 +129,8 @@ JSDOC.PluginManager.registerPlugin(
     	        }
 	        }
 	        
-	        if (childSeparator != -1) {
-	            symbol.parentAlias = symbol.alias.substring(0, childSeparator);
-	            symbol.shortName = symbol.alias.substring(childSeparator+1);
-	            if (symbol.isAnonymous) {
-	                symbol.displayName = symbol.shortName;
-	            }
-	        }
+	        
+	        
 	        
 	        if (symbol.comment.getTag('mixin').length) {
 	            symbol.isMixin = true;
@@ -168,6 +163,20 @@ JSDOC.PluginManager.registerPlugin(
                 
             }
 	        
+	        if (childSeparator != -1) {
+	            if (!symbol.parentAlias) {
+	                symbol.parentAlias = symbol.alias.substring(0, childSeparator);    
+	            }
+                
+//	            if (!symbol.shortName) {
+//	                symbol.shortName = symbol.alias.substring(childSeparator+1);    
+//	            }
+//                
+//	            
+                if (!symbol.displayName && symbol.isAnonymous) {
+                    symbol.displayName = symbol.shortName;
+                }
+            }
 	    },
 	    
 		onFunctionCall: function(functionCall) {
@@ -215,6 +224,7 @@ JSDOC.PluginManager.registerPlugin(
 		                    parentScopeAlias = parentScopeAlias.substring(0, parentScopeAlias.length-1);
 		                }
 		                
+		                
 		                var parentSymbol = JSDOC.Parser.symbols.getSymbol(parentScopeAlias);
 		                if (parentSymbol) {
 		                    if (parentSymbol.isExtension) {
@@ -223,8 +233,11 @@ JSDOC.PluginManager.registerPlugin(
 		                }
 		                
 		                if (nameToken.is("NAME") && varToken.is("VAR")) {
+		                    
 		                    alias = parentScopeAlias + '-' + nameToken.data;
 		                    name = (parentSymbol ? parentSymbol.displayName : parentScopeAlias) + "." + nameToken.data;
+		                    parentAlias = parentSymbol ? parentSymbol.alias : null;
+		                    
 		                    isAnonymous = true;
 		                }
 		            }
@@ -349,9 +362,11 @@ JSDOC.PluginManager.registerPlugin(
                     tags.push("@augments " + superclass);
                 }
                 
-                var classInfo = getClassInfo(name, isAnonymous);
-                alias = classInfo.alias;
-                parentAlias = classInfo.parent;
+                if (!isAnonymous) {
+                    var classInfo = getClassInfo(name, isAnonymous);
+                    alias = classInfo.alias;
+                    parentAlias = classInfo.parent;    
+                }
                 
                 lendsProto = true;
             } 
