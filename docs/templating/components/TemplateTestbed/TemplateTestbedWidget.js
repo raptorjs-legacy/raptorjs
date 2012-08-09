@@ -73,6 +73,14 @@ raptor.define(
         TemplateTestbedWidget.prototype = {
             loadSample: function(index) {
                 var sample = this.samples[index];
+                
+                if (!sample.templatesLoaded) {
+                    raptor.forEach(sample.templates, function(template) {
+                        raptor.require('templating.compiler').compileAndLoad(template.source, template.path);
+                    }, this);
+                    sample.templatesLoaded = true;
+                }
+                
                 this.templateEditor.setValue(sample.template);
                 this.dataEditor.setValue(sample.data);
                 this.optionsEditor.setValue(sample.options || this.defaultOptionsJson);

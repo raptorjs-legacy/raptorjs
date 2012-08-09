@@ -1,5 +1,14 @@
 <c:template 
     xmlns:c="core" 
-    params="">
+    params="name">
 
+    <!-- Parameters can be imported as local variables -->
+    Hello $name!
+    
+    <!-- 
+    Or, parameters can be accessed as properties of the 
+    template "data" object
+    -->
+    Hello ${data.name}!
+    
 </c:template>

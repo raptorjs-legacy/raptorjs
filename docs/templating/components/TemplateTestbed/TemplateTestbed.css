@@ -22,7 +22,7 @@
 }
 
 #samples-nav {
-    width: 180px;
+    width: 160px;
     float: left;
 }
 
@@ -32,7 +32,7 @@
 }
 
 #editors {
-    margin-left: 190px;
+    margin-left: 170px;
 }
 
 
@@ -109,7 +109,7 @@
     visibility: hidden;
 }
 
-.template-testbed .powered-by {
+.powered-by {
     float: right;
     line-height: 40px;
     vertical-align: middle;
@@ -117,6 +117,6 @@
     font-size: 16px;
 }
 
-.template-testbed .powered-by > .raptorjs {
+.powered-by > .raptorjs {
     font-weight: bold;
 }

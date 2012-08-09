@@ -1,5 +1,10 @@
 <c:template 
     xmlns:c="core" 
-    params="">
+    params="name">
+
+    <!-- Scoped variables -->
+    <c:with vars="nameUpper=name.toUpperCase(); count=20">
+        Hello $nameUpper! You have $count new messages.
+    </c:with>
 
 </c:template>

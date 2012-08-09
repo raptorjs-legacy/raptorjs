@@ -2,19 +2,16 @@
     xmlns:c="core" 
     params="">
 
-    <style>
-    .greeting {
-        font-size: 120%
-    }
-    </style>
+    <style>.greeting { font-size: 120% }</style>
     
-    <c:def function="greeting(name)">
-        <div class="greeting">
-            Hello $name!
-        </div>
+    <c:def function="greeting(name,color)">
+        <div class="greeting" style="background-color: $color">Hello $name!</div>
     </c:def>
     
-    <c:invoke function="greeting" name="World"/>
-    ${greeting('Frank')}
+    <!-- Macros can be invoked using the <c:invoke> tag -->
+    <c:invoke function="greeting" name="World" color="green"/>
+    
+    <!-- Or, macros can be invoked as a function call in an expression -->
+    ${greeting('Frank', 'yellow')}
     
 </c:template>

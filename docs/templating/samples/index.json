@@ -21,7 +21,8 @@
     },
     {
         "label": "Includes",
-        "path": "includes"
+        "path": "includes",
+        "templates": ["include-target.rhtml"]
     },
     {
         "label": "Escaping",

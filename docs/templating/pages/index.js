@@ -13,11 +13,21 @@ exports.controller = function() {
     var defaultOptionsJson = readResource('default-options.json');
     
     raptor.forEach(index, function(sample) {
+        var templates = [];
+        
+        raptor.forEach(sample.templates, function(template) {
+            templates.push({
+                source: readResource(template),
+                path: template
+            });
+        }, this);
+        
         samples.push({
             label: sample.label,
             template: readResource(sample.path + ".rhtml", ''),
             data: readResource(sample.path + "-data.json", '{}'),
-            options: readResource(sample.path + "-options.json") || defaultOptionsJson
+            options: readResource(sample.path + "-options.json") || defaultOptionsJson,
+            templates: templates
          });
     });
     
