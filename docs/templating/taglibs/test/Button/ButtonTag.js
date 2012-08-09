@@ -5,6 +5,15 @@ raptor.defineClass(
         return {
             process: function(input, context) {
                 var disabled = input.disabled === true;
+                var buttonAttrs = {
+                        disabled: disabled ? null : undefined,
+                        type: input.type || "button"
+                    };
+                
+                if (input.color) {
+                    buttonAttrs.style = "background-color: " + input.color;
+                }
+                
                 context.renderTemplate(
                     "taglibs/test/Button",
                     {
@@ -13,10 +22,7 @@ raptor.defineClass(
                         widgetConfig: {
                             disabled: disabled
                         },
-                        buttonAttrs: {
-                            disabled: disabled ? null : undefined,
-                            type: input.type || "button"
-                        }
+                        buttonAttrs: buttonAttrs
                     });
             }
         };
