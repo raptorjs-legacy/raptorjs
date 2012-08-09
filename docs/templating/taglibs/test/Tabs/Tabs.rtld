@@ -1,0 +1,9 @@
+<raptor-taglib>
+
+    <tag>
+        <name>tabs</name>
+        <handler-class>taglibs.test.Tabs.TabsTag</handler-class>
+        <nested-variable name="tabs"/>
+    </tag>
+    
+</raptor-taglib>

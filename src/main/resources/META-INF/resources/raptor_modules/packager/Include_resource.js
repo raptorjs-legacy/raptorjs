@@ -15,16 +15,12 @@
  */
 
 raptor.defineClass(
-    "packager.Include_rtld",
     "packager.Include_resource",
+    "packager.Include",
     function(raptor) {
         "use strict";
 
-        var Include_rtld = function() {
-            
-        };
-        
-        Include_rtld.prototype = {
+        return {
             
             invalidInclude: function() {
                 raptor.throwError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
@@ -32,7 +28,7 @@ raptor.defineClass(
             
             getKey: function() {
                 if (this.path) {
-                    return "rtld:" + this.resolvePathKey(this.path);
+                    return "resource:" + this.resolvePathKey(this.path);
                 }
                 else {
                     this.invalidInclude();
@@ -49,15 +45,21 @@ raptor.defineClass(
             
             getCode: function(context) {
                 
-                var resourceCode = Include_rtld.superclass.getCode.apply(this, arguments);
-                var taglibResource = this.getResource(context);
-                return resourceCode + '$radd("rtld","' + taglibResource.getPath() + '");';
+                if (this.path) {
+                    
+                    var taglibResource = this.getResource(context);
+                    if (!taglibResource.exists()) {
+                        raptor.throwError(new Error('Resource with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
+                    }
+                    return '$rset("resource","' + taglibResource.getPath() + '",' + JSON.stringify(taglibResource.readFully()) + ');';
+                }
+                else {
+                    this.invalidInclude();
+                }
             },
             
             isCompiled: function() {
                 return true;
             }
         };
-        
-        return Include_rtld;
     });

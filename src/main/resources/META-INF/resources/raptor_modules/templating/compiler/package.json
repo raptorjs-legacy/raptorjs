@@ -12,6 +12,7 @@
     ],
     
     "includes": [
+        {"module": "resources"},
         {"module": "regexp"},
         {"module": "strings"},
         {"module": "objects"},

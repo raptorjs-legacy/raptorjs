@@ -36,10 +36,14 @@ raptor.extend(
                 }
                 discoveryComplete = true;
                 
-                var taglibs = $rget("rtld");
+                var taglibPaths = $rget("rtld");
                 
-                raptor.forEachEntry(taglibs, function(path, taglibXml) {
-                    this.loadTaglibXml(taglibXml, path);
+                raptor.forEach(taglibPaths, function(path) {
+                    var resource = raptor.require('resources').findResource(path);
+                    if (resource && resource.exists()) {
+                        this.loadTaglibXml(resource.readFully(), resource.getPath());    
+                    }
+                    
                 }, this);
             }
            

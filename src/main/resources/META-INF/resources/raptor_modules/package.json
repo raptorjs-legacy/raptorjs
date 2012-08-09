@@ -31,6 +31,7 @@
 	    "package": {"class": "packager.Include_package", "path": "/packager/Include_package.js"},
 	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
 	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
+	    "resource": {"class": "packager.Include_resource", "path": "/packager/Include_resource.js"},
 	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},
 	    "loader-metadata": {"class": "packager.Include_loader-metadata", "path": "/packager/Include_loader-metadata.js"} 
 	}

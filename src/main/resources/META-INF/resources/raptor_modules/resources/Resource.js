@@ -76,7 +76,7 @@ $rload(function(raptor) {
              * @returns
              */
             getSystemPath: function() {
-                raptor.errors.throwError(new Error('Not Implemented'));
+                raptor.errors.throwError(new Error('getSystemPath() Not Implemented'));
             },
             
             /**

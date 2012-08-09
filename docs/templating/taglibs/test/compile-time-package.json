@@ -1,5 +1,6 @@
 {
     "includes": [
+        "taglibs/test/Tabs/compile-time",
         "test.rtld"
     ]
 }

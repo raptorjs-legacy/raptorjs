@@ -5,6 +5,7 @@
     <short-name>test</short-name>
     <uri>http://docs.ebayopensource.org/test</uri>
     
+    <import-taglib path="/taglibs/test/Tabs/Tabs.rtld"/>
     
     <tag>
         <name>simpleHello</name>
@@ -16,12 +17,6 @@
             <name>adult</name>
             <type>boolean</type>
         </attribute>
-    </tag>
-    
-    <tag>
-        <name>tabs</name>
-        <handler-class>taglibs.test.TabsTag</handler-class>
-        <nested-variable name="tabs"/>
     </tag>
     
     <tag>

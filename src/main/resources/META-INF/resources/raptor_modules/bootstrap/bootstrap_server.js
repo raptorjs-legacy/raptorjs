@@ -97,6 +97,7 @@ raptorBootstrap = {
         this._require('resources/SearchPathEntry.js');
         this._require('resources/SearchPath.js');
         this._require('resources/resources.js');
+        this._require('resources/resources_server.js');
         
                 
         //AMD adapter
