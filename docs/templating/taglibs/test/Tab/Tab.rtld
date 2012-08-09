@@ -1,0 +1,12 @@
+<raptor-taglib>
+
+    <tag>
+        <name>tab</name>
+        <handler-class>taglibs.test.Tab.TabTag</handler-class>
+        
+        <attribute name="title"/>
+        
+        <imported-variable property-name="tabs" expression="tabs"/>
+    </tag>
+    
+</raptor-taglib>

@@ -1,0 +1,6 @@
+{
+    "includes": [
+        "Container.rhtml",
+        "ContainerTag.js"
+    ]
+}

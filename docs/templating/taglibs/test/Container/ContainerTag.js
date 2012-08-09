@@ -1,5 +1,5 @@
 raptor.defineClass(
-    'taglibs.test.ContainerTag',
+    'taglibs.test.Container.ContainerTag',
     function(raptor) {
         
         return {

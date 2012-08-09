@@ -4,6 +4,7 @@
         {"module": "json.stringify"},
         { "module": "components/editors/CodeEditor" },
         { "module": "components/editors/CodeEditor/mode-javascript" },
+        { "module": "components/editors/CodeEditor/mode-htmlmixed" },
         { "module": "components/editors/CodeEditor/mode-xml" },
         { "module": "components/buttons/Button" },
         { "module": "components/buttons/ButtonGroup" },

@@ -49,6 +49,10 @@
         "path": "helper-functions"
     },
     {
+        "label": "Taglibs",
+        "path": "taglibs"
+    },
+    {
         "label": "Nesting",
         "path": "nesting"
     }

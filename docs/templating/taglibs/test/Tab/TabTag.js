@@ -1,5 +1,5 @@
 raptor.defineClass(
-    'taglibs.test.TabTag',
+    'taglibs.test.Tab.TabTag',
     function(raptor) {
         
         

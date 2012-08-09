@@ -1,6 +1,10 @@
 {
     "includes": [
-        "taglibs/test/Tabs/compile-time",
-        "test.rtld"
+        "test.rtld",
+        "taglibs/test/Button/compile-time",
+        "taglibs/test/Container/compile-time",
+        "taglibs/test/Greeting/compile-time",
+        "taglibs/test/Tab/compile-time",
+        "taglibs/test/Tabs/compile-time"
     ]
 }

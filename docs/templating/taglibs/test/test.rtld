@@ -1,49 +1,14 @@
 <raptor-taglib>
     
-    
     <tlib-version>1.0</tlib-version>
     <short-name>test</short-name>
     <uri>http://docs.ebayopensource.org/test</uri>
     
+    <import-taglib path="/taglibs/test/Button/Button.rtld"/>
+    <import-taglib path="/taglibs/test/Container/Container.rtld"/>
+    <import-taglib path="/taglibs/test/Greeting/Greeting.rtld"/>
+    <import-taglib path="/taglibs/test/Tab/Tab.rtld"/>
     <import-taglib path="/taglibs/test/Tabs/Tabs.rtld"/>
-    
-    <tag>
-        <name>simpleHello</name>
-        <handler-class>taglibs.test.SimpleHelloTag</handler-class>
-        <attribute>
-            <name>name</name>
-        </attribute>
-        <attribute>
-            <name>adult</name>
-            <type>boolean</type>
-        </attribute>
-    </tag>
-    
-    <tag>
-        <name>tab</name>
-        <handler-class>taglibs.test.TabTag</handler-class>
-        
-        <attribute name="title"/>
-        
-        <imported-variable property-name="tabs" expression="tabs"/>
-    </tag>
-    
-    <tag>
-        <name>button</name>
-        <handler-class>taglibs.test.ButtonTag</handler-class>
-        
-        <attribute name="label"/>
-        <attribute name="type"/>
-        <attribute name="disabled" type="boolean"/>
-        <attribute name="id" uri="widgets" type="string"/>
-    </tag>
-    
-    <tag>
-        <name>container</name>
-        <handler-class>taglibs.test.ContainerTag</handler-class>
-        
-        <attribute name="title"/>
-    </tag>
     
     <function>
         <name>upperCase</name>

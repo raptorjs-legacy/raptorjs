@@ -1,0 +1,7 @@
+{
+    "type": "raptor-module",
+    "name": "CodeMirror/mode-htmlmixed",
+    "includes": [
+        {"path": "CodeMirror-2.32/mode/htmlmixed/htmlmixed.js"}
+    ]
+}

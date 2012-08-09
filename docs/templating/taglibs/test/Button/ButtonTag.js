@@ -1,5 +1,5 @@
 raptor.defineClass(
-    'taglibs.test.ButtonTag',
+    'taglibs.test.Button.ButtonTag',
     function(raptor) {
         
         return {

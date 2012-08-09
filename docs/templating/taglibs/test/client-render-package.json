@@ -1,12 +1,9 @@
 {
     "includes": [
-        "taglibs/test/Tabs/client-render",
-        "Button.rhtml",
-        "ButtonTag.js",
-        "Container.rhtml",
-        "ContainerTag.js",
-        "SimpleHelloTag.js",
-        "TabTag.js",
-        "helper-functions.js"
+        "taglibs/test/Button/client-render",
+        "taglibs/test/Container/client-render",
+        "taglibs/test/Greeting/client-render",
+        "taglibs/test/Tab/client-render",
+        "taglibs/test/Tabs/client-render"
     ]
 }

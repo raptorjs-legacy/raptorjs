@@ -1,0 +1,13 @@
+<raptor-taglib>
+
+    <tag>
+        <name>button</name>
+        <handler-class>taglibs.test.Button.ButtonTag</handler-class>
+        
+        <attribute name="label"/>
+        <attribute name="type"/>
+        <attribute name="disabled" type="boolean"/>
+        <attribute name="id" uri="widgets" type="string"/>
+    </tag>
+    
+</raptor-taglib>
