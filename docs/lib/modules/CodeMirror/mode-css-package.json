@@ -1,0 +1,7 @@
+{
+    "type": "raptor-module",
+    "name": "CodeMirror/mode-css",
+    "includes": [
+        {"path": "CodeMirror-2.32/mode/css/css.js"}
+    ]
+}
