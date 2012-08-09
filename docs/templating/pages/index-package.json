@@ -5,9 +5,11 @@
         { "module": "jQuery" },
         { "module": "templating" },
         { "module": "templating.compiler" },
-        { "module": "taglib/core/compile-time" },
-        { "module": "taglib/html/compile-time" },
-        { "module": "taglib/widgets/compile-time" },
+        { "module": "taglibs/core/compile-time" },
+        { "module": "taglibs/html/compile-time" },
+        { "module": "taglibs/widgets/compile-time" },
+        { "module": "taglibs/test/client-render" },
+        { "module": "taglibs/test/compile-time" },
         { "module": "components/TemplateTestbed" },
         "index.css"
      ]

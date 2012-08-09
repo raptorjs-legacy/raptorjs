@@ -1,0 +1,13 @@
+{
+    "includes": [
+        "Button.rhtml",
+        "ButtonTag.js",
+        "Container.rhtml",
+        "ContainerTag.js",
+        "SimpleHelloTag.js",
+        "Tabs.rhtml",
+        "TabsTag.js",
+        "TabTag.js",
+        "helper-functions.js"
+    ]
+}

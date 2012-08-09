@@ -12,6 +12,7 @@
     ],
     
     "raptor-taglibs": [
-        "app.rtld"
+        "app.rtld",
+        "/taglibs/test/test.rtld"
     ]
 }

@@ -18,9 +18,9 @@
     ],
     
     "raptor-module-mappings": {
-        "taglib/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
-        "taglib/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
-        "taglib/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
+        "taglibs/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
+        "taglibs/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
+        "taglibs/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
     },
 	
 	"raptor-include-types": {

@@ -1,0 +1,15 @@
+<c:template 
+    name="taglibs/test/Container" 
+    xmlns:c="http://raptor.ebayopensource.org/core"
+    xmlns:test="http://raptor.ebayopensource.org/test"
+    params="widget,title">
+    
+    
+    
+    <div>
+        <h1>$title</h1>
+        <div class="bd">
+            <c:invoke function="data.invokeBody()"/>
+        </div>
+    </div>
+</c:template>

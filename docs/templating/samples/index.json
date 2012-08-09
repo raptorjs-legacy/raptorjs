@@ -47,5 +47,9 @@
     {
         "label": "Helper Functions",
         "path": "helper-functions"
+    },
+    {
+        "label": "Nesting",
+        "path": "nesting"
     }
 ]

@@ -1,0 +1,2 @@
+$rset("rhtml","taglibs/test/Container",function(helpers){var empty=helpers.e,notEmpty=helpers.ne,escapeXml=helpers.x;return function(data, context, contextHelpers){
+var write=contextHelpers.w,widget=data.widget,title=data.title;write('<div><h1>')(escapeXml(title))('</h1><div class="bd">');data.invokeBody();write('</div></div>');}});
