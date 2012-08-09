@@ -19,17 +19,17 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g,
-            Expression = raptor.require('templating.compiler.Expression'),
+        var Expression = raptor.require('templating.compiler.Expression'),
             strings = raptor.require('strings'),
             regexp = raptor.require('regexp'),
             endingTokens = {
 //                "{": "}",
                 "${": "}",
                 "{%": "%}",
+//                "{?": "}", //TODO Finish implementing short-hand conditionals
                 "$": null
             },
-            createStartRegExp = function(starts) {
+            createStartRegExpStr = function(starts) {
                 var parts = [];
                 
                 raptor.forEach(starts, function(start) {
@@ -38,9 +38,12 @@ raptor.defineClass(
                     parts.push(regexp.escape(start));
                 });
                 
-                return new RegExp(parts.join("|"), "g");
+                return parts.join("|");
             },
-            startRegExp = createStartRegExp(["{%", "${", "$"]),
+            startRegExpStr = createStartRegExpStr(["{%", "${", "$"/*, "{?"*/]),
+            createStartRegExp = function() {
+                return new RegExp(startRegExpStr, "g");
+            },
             variableRegExp = /^([_a-zA-Z]\w*)/g,
             getLine = function(str, pos) {
                 var lines = str.split("\n");
@@ -167,6 +170,10 @@ raptor.defineClass(
             
         };
         
+        ExpressionParser.getConditionalExpression = function() {
+            
+        },
+        
         /**
          * @memberOf templating.compiler$ExpressionParser
          * 
@@ -183,7 +190,8 @@ raptor.defineClass(
                 endMatches, //The matches found when searching through special expression tokens
                 expressionStart, //The index of the start of the current expression
                 expression, //The current expression string
-                isScriptlet, //If true, then the expression is a scriptlet
+                isScriptlet, //If true, then the expression is a scriptlet,
+                isConditional, //If true, then the expression is a conditional (i.e. {?<expression>;<true-template>[;<false-template>]}
                 startToken, //The start token for the current expression
                 handleError = function(message) {
                     if (callback.error) {
@@ -195,6 +203,7 @@ raptor.defineClass(
                     }
                 };
                 
+            var startRegExp = createStartRegExp();
             
             var helper = new ExpressionParserHelper(callback, thisObj);
             
@@ -266,7 +275,9 @@ raptor.defineClass(
                 
                 
                 isScriptlet = startToken === "{%";
+                isConditional = startToken === '{?';
                 
+                var endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g;
                 //Now we need to find the ending curly
                 endRegExp.lastIndex = expressionStart; //Start searching from where the expression begins
                 
@@ -300,18 +311,25 @@ raptor.defineClass(
                     expression = str.substring(expressionStart, endMatches.index);
                     
                     
-                    var firstColon = !isScriptlet ? expression.indexOf(":") : -1,
-                        handler;
-                    if (firstColon != -1) {
-                        handler = ExpressionParser.custom[expression.substring(0, firstColon)];
-                        if (handler) {
-                            handler.call(ExpressionParser, expression.substring(firstColon+1), helper);
+                    var handler;
+                    
+                    if (startToken === "${") {
+                        var firstColon = expression.indexOf(":");
+                        if (firstColon != -1) {
+                            handler = ExpressionParser.custom[expression.substring(0, firstColon)];
+                            if (handler) {
+                                handler.call(ExpressionParser, expression.substring(firstColon+1), helper);
+                            }
                         }
                     }
+                    
                     
                     if (!handler) {
                         if (isScriptlet) {
                             helper.addScriptlet(strings.trim(expression));
+                        }
+                        else if (isConditional) {
+                            helper.addExpression(this.getConditionalExpression(expression));
                         }
                         else {
                             helper.addExpression(expression);
