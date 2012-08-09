@@ -11,11 +11,11 @@
         }
     ],
     
-    "raptor-taglibs": {
-        "http://raptor.ebayopensource.org/core": "/templating/taglibs/core/core.rtld",
-        "http://raptor.ebayopensource.org/html": "/templating/taglibs/html/html.rtld",
-        "http://raptor.ebayopensource.org/widgets": "/templating/taglibs/widgets/widgets.rtld"
-    },
+    "raptor-taglibs": [
+        "/templating/taglibs/core/core.rtld",
+        "/templating/taglibs/html/html.rtld",
+        "/templating/taglibs/widgets/widgets.rtld"
+    ],
     
     "raptor-module-mappings": {
         "taglib/core/compile-time": "/templating/taglibs/core/compile-time-package.json",

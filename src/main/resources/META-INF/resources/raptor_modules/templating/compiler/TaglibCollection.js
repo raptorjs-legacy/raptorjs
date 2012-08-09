@@ -155,8 +155,7 @@ raptor.defineClass(
         var TaglibCollection = function() {
             this.tagTransformersLookup = {}; //Tag transformers lookup
             this.tagDefs = {}; //Tag definitions lookup
-            this.textTransformers = [];
-            this.taglibs = [];
+            this.textTransformers = {};
             this.taglibsByURI = {}; //Lookup to track the URIs of taglibs that have been added to this collection
             this.shortNameToUriMapping = {};
             this.uriToShortNameMapping = {};
@@ -177,7 +176,7 @@ raptor.defineClass(
                     return;
                 }
                 
-                forEach(taglib.tags, function(tag) {
+                raptor.forEachEntry(taglib.tags, function(key, tag) {
                     
                     callback.call(thisObj, tag, taglib);
                 });
@@ -200,15 +199,9 @@ raptor.defineClass(
              */
             add: function(taglib) {
                 taglib = extend(new Taglib(), taglib); //Convert the tag to an actual Tag class
-                if (taglib.tags) {
-                    taglib.tags = [].concat(taglib.tags);
-                }
+                var targetTaglib = this.taglibsByURI[taglib.uri] || taglib;
                 
-                if (this.taglibsByURI[taglib.uri]) { //Check if a taglib with the same URI has already been added
-                    return; //Taglib already added... nothing to do
-                }
-                this.taglibs.push(taglib);
-                this.taglibsByURI[taglib.uri] = taglib; //Mark the taglib as added
+                this.taglibsByURI[taglib.uri] = targetTaglib; //Mark the taglib as added
                 
                 if (taglib.shortName) {
                     /*
@@ -218,20 +211,29 @@ raptor.defineClass(
                     this.taglibsByURI[taglib.shortName] = taglib; //Mark the short name as being a taglib
                     
                     if (taglib.shortName) {
+                        targetTaglib.shortName = taglib.shortName;
+                        
                         this.shortNameToUriMapping[taglib.shortName] = taglib.uri; //Add the mapping
                         this.uriToShortNameMapping[taglib.uri] = taglib.shortName; //Add the reverse-mapping
                     }
                     
                     if (taglib.prefix) {
+                        targetTaglib.prefix = taglib.prefix;
+                        
                         this.uriToPrefixMapping[taglib.uri] = taglib.prefix;
                     }
                 }
+                
+                var tags = taglib.tags;
+                delete taglib.tags;
+                
+                taglib.tags = {};
                 
                 /*
                  * Index all of the tags in the taglib by registering them
                  * based on the tag URI and the tag name
                  */
-                forEach(taglib.tags, function(tag, i) {
+                forEach(tags, function(tag, i) {
                     
                     var uri = tag.uri == null ? taglib.uri : tag.uri, //If not specified, the tag URI should be the same as the taglib URI
                         name = tag.name,
@@ -241,9 +243,11 @@ raptor.defineClass(
                      *       that it matches any URI and similar for the tag name. 
                      */
                     
-                    tag = taglib.tags[i] = extend(new Tag(), tag); //Convert the tag to an actual Tag class
-                    tag.taglib = taglib; //Store a reference to the taglib that the tag belongs to
+                    tag = extend(new Tag(), tag); //Convert the tag to an actual Tag class
+                    tag.taglib = targetTaglib; //Store a reference to the taglib that the tag belongs to
                     tag.uri = uri;
+                    
+                    targetTaglib.tags[key] = tag;
                     
                     this.tagDefs[key] = tag; //Register the tag using the combination of URI and tag name so that it can easily be looked up
                     
@@ -291,7 +295,7 @@ raptor.defineClass(
                  * Now register all of the text transformers that are part of the provided taglibs
                  */
                 forEach(taglib.textTransformers, function(textTransformer) {
-                    this.textTransformers.push(extend(new Transformer(), textTransformer));
+                    this.textTransformers[textTransformer.className] = extend(new Transformer(), textTransformer);
                 }, this);
                 
                 
@@ -301,7 +305,7 @@ raptor.defineClass(
                         return;
                     }
                     this.functionsLookup[taglib.uri + ":" + func.name] = func;
-                    if (taglib.shortName) {
+                    if (targetTaglib.shortName) {
                         this.functionsLookup[taglib.shortName + ":" + func.name] = func;
                     }
                 }, this);
@@ -448,7 +452,7 @@ raptor.defineClass(
              * @param thisObj {Object} The "this" object to use when invoking the callback function
              */
             forEachTextTransformer: function(callback, thisObj) {
-                forEach(this.textTransformers, function(textTransformer) {
+                raptor.forEachEntry(this.textTransformers, function(className, textTransformer) {
                     var keepGoing = callback.call(thisObj, textTransformer);
                     if (keepGoing === false) {
                         return false;

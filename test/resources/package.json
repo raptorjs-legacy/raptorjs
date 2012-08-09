@@ -14,10 +14,10 @@
     "raptor-module-mappings": {
     },
     
-    "raptor-taglibs": {
-	    "http://ebay.com/raptor/test": "/taglibs/test/test.rtld",
-	    "http://raptor.ebayopensource.org/widgets/test": "widgets-test.rtld"
-	},
+    "raptor-taglibs": [
+	    "/taglibs/test/test.rtld",
+	    "widgets-test.rtld"
+	],
 	
 	"raptor-templates": {
 	   "test/Tabs": "/taglibs/test/Tabs.rhtml"

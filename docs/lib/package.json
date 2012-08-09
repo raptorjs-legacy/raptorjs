@@ -11,9 +11,9 @@
         }
     ],
     
-    "raptor-taglibs": {
-        "http://raptor.ebayopensource.org/demo": "demo.rtld"
-    },
+    "raptor-taglibs": [
+        "demo.rtld"
+    ],
     
     "raptor-search-path": [
         {"dir": "modules"}

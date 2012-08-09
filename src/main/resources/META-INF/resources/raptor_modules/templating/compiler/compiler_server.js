@@ -30,7 +30,7 @@ raptor.extend(
             discoveryComplete = false,
             searchPathListenerHandler = null,
             watchingEnabled = false,
-            watchers = [];
+            loadedTaglibPaths = {};
         
         return {
             /**
@@ -100,8 +100,11 @@ raptor.extend(
                 packager.forEachTopLevelPackageManifest(function(manifest) {
                     var taglibs = manifest['raptor-taglibs'];
                     if (taglibs) {
-                        forEachEntry(taglibs, function(uri, rtldPath) {
-                            if (!compiler.hasTaglib(uri)) {
+                        raptor.forEach(taglibs, function(rtldPath) {
+                            var key = manifest.getSystemPath() + ':' + rtldPath;
+                            if (!loadedTaglibPaths[key]) {
+                                loadedTaglibPaths[key] = true;
+                                
                                 var rtldResource = manifest.resolveResource(rtldPath),
                                     taglibXml = rtldResource.readFully();
                             
