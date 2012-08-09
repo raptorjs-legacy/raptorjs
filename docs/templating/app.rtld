@@ -1,5 +1,5 @@
 <raptor-taglib>
-    <uri>http://raptor.ebayopensource.org/demo/templating</uri>
+    <uri>http://docs.raptorjs.org/templating</uri>
     <short-name>app</short-name>
     <prefix>app</prefix>
     

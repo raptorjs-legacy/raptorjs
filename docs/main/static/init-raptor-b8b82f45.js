@@ -1,0 +1,1 @@
+$rcreate({"logging":{"loggers":{"ROOT":{"level":"WARN"}}}});

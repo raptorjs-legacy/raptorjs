@@ -19,3 +19,4 @@ MANIFEST.MF
 !/node_modules/express-raptor
 !/node_modules/hot-reloader
 !/node_modules/raptor
+/npm-debug.log

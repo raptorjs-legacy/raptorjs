@@ -12,6 +12,6 @@
     ],
     
     "raptor-taglibs": {
-        "http://docs.raptorjs.org/templating": "app.rtld"
+        "http://docs.raptorjs.org/main": "app.rtld"
     }
 }

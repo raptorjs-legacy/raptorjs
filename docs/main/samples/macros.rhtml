@@ -1,0 +1,20 @@
+<c:template 
+    xmlns:c="core" 
+    params="">
+
+    <style>
+    .greeting {
+        font-size: 120%
+    }
+    </style>
+    
+    <c:def function="greeting(name)">
+        <div class="greeting">
+            Hello $name!
+        </div>
+    </c:def>
+    
+    <c:invoke function="greeting" name="World"/>
+    ${greeting('Frank')}
+    
+</c:template>
