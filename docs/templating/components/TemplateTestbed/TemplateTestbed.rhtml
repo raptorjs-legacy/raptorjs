@@ -5,31 +5,26 @@
     xmlns:c="core"
     params="template,json,samples">
     
-    
-    
-    <demo:nav-bar brand="Raptor Templates" type="fixed-top">
-        <demo:nav type="pills">
-            <demo:nav-item href="index.html" label="Try it Out!" active="true"/>
-            <demo:nav-item href="docs.html" label="Documentation"/>
-            <div class="powered-by">
-                Powered by <a href="../index.html" class="raptorjs">RaptorJS</a>
-            </div>
-        </demo:nav>
-        
-        
-    </demo:nav-bar>
         
     <div class="template-testbed" w:widget="components.TemplateTestbed.TemplateTestbedWidget">
         <demo:tab-content>
             <demo:tab-pane fade="true" active="true" class="editor-view" id="editorView">
                 <div id="samples-nav">
                     <div class="content">
+                    
                         <demo:nav type="pills" stacked="true" w:id="samplesNav">
-                            <demo:nav-item toggle="true" active="${sample.active}" label="${sample.label}" c:for="sample in samples; varStatus=loop" data-sample="${loop.getIndex()}"/>
+                            <demo:nav-item 
+                                toggle="true" 
+                                active="${sample.active}" 
+                                label="${sample.label}" 
+                                c:for="sample in samples; varStatus=loop" 
+                                data-sample="${loop.getIndex()}"/>
                         </demo:nav>
+                        
                     </div>
                 </div>
                 <div id="editors">
+                
                     <div class="input-col">
                         <div class="content">
                             <h3 class="first">Template</h3>
@@ -60,13 +55,12 @@
                                     autoResize="true"
                                     indentUnit="4"
                                     mode="javascript"
-                                    name="json">
-                                    
-                                </demo:code-editor>
+                                    name="json"/>
                                 <app:errors w:id="optionsErrors"/>
                             </div>
                         </div>
                     </div>
+                    <!-- Output column -->
                     <div class="output-col">
                         <div class="content">
                             <h3 class="first">Output</h3>

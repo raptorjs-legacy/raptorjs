@@ -353,8 +353,6 @@
 							org.ebayopensource.raptor.raptorjs.templating.rhino,
 							org.ebayopensource.raptor.raptorjs.templating.rhino.servlet,
 							org.ebayopensource.raptor.raptorjs.resources,
-							org.ebayopensource.raptor.raptorjs.resources.includer,
-							org.ebayopensource.raptor.raptorjs.resources.includer.commands,
 							org.ebayopensource.raptor.raptorjs.resources.osgi,
 							org.ebayopensource.raptor.raptorjs.resources.packaging
                         </Export-Package>

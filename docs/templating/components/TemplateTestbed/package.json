@@ -2,6 +2,7 @@
     "includes": [
         {"module": "widgets"},
         {"module": "json.stringify"},
+        { "module": "components/TemplatingTopNav" },
         { "module": "components/editors/CodeEditor" },
         { "module": "components/editors/CodeEditor/mode-javascript" },
         { "module": "components/editors/CodeEditor/mode-htmlmixed" },

@@ -19,6 +19,14 @@ public class IncludeOptions {
     private AsyncType asyncType = null;
     private int delay = 0;
     
+    public void setAsyncOnDemand() {
+        this.setAsyncType(AsyncType.ONDEMAND);
+    }
+    
+    public void setAsyncOnLoad() {
+        this.setAsyncType(AsyncType.ONLOAD);
+    }
+    
     public String getCssSlot() {
         return cssSlot;
     }

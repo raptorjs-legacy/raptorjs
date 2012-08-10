@@ -5,5 +5,6 @@
     
     <import-taglib path="/components/TemplateTestbed/TemplateTestbed.rtld"/>
     <import-taglib path="/components/Errors/Errors.rtld"/>
+    <import-taglib path="/components/TemplatingTopNav/TemplatingTopNav.rtld"/>
     
 </raptor-taglib>
