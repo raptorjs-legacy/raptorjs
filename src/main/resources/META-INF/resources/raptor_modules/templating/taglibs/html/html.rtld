@@ -3,7 +3,7 @@
     
     <tlib-version>1.0</tlib-version>
     <short-name>html</short-name>
-    <uri>http://raptor.ebayopensource.org/html</uri>
+    <uri>http://raptorjs.org/templates/html</uri>
 
     <tag>
         

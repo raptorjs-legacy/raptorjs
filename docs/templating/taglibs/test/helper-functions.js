@@ -1,6 +1,6 @@
 raptor.extend('templating', function(raptor, target) {
     target.registerFunctions(
-        "http://docs.ebayopensource.org/test",
+        "http://raptorjs.org/templates/test",
         "test",
         {
             upperCase: function(o) {

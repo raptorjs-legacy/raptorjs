@@ -3,7 +3,7 @@
     
     <tlib-version>1.0</tlib-version>
     
-    <uri>http://raptor.ebayopensource.org/core</uri>
+    <uri>http://raptorjs.org/templates/core</uri>
     <short-name>core</short-name>
     <prefix>c</prefix>
     

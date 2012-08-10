@@ -34,7 +34,7 @@ raptor.defineClass(
              * Probably one of the more amazing regular expressions you will ever see...
              * 
              * Valid imports:
-             * x, y, z from http://raptor.ebayopensource.org/core
+             * x, y, z from http://raptorjs.org/templates/core
              * x, y, z from core
              * x, y, z from core as my-core
              * * from core as c 

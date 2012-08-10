@@ -370,7 +370,7 @@ describe('templating module', function() {
             actualHelperThisObj;
         
         raptor.require('templating').registerFunctions(
-            "http://raptor.ebayopensource.org/test",
+            "http://raptorjs.org/templates/test",
             "test",
             {
                 "trim": function(str) {
@@ -394,7 +394,7 @@ describe('templating module', function() {
     it("should allow for context helper functions", function() {
 
         raptor.require('templating').registerFunctions(
-            "http://raptor.ebayopensource.org/test",
+            "http://raptorjs.org/templates/test",
             "test",
             {
                 "user": function(str) {
@@ -432,7 +432,7 @@ describe('templating module', function() {
     it("should allow for context helper functions", function() {
 
         raptor.require('templating').registerFunctions(
-            "http://raptor.ebayopensource.org/test",
+            "http://raptorjs.org/templates/test",
             "test",
             {
                 "user": function(str) {

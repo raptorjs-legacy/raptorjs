@@ -1,7 +1,7 @@
 <optimizer-config>
     
     <params>
-        <profile>production</profile>
+        <profile>development</profile>
     </params>
     
     <set-profile>${profile}</set-profile>
@@ -22,7 +22,7 @@
         <in-place-deployment>
             <enabled>true</enabled>
             <source-mapping base-dir="." base-url="/src"/>
-            <source-mapping base-dir="../../src/main/resources/META-INF/resources/raptor_modules" base-url="/src-core"/>
+            <source-mapping base-dir="../../../../src/main/resources/META-INF/resources/raptor_modules" base-url="/src-core"/>
         </in-place-deployment>
 
         <resource-url-prefix>/bundles/</resource-url-prefix>

@@ -3,7 +3,7 @@
     
     <tlib-version>1.0</tlib-version>
     <short-name>test</short-name>
-    <uri>http://raptor.ebayopensource.org/test</uri>
+    <uri>http://raptorjs.org/templates/test</uri>
     
     
     <tag>
@@ -40,7 +40,7 @@
         <attribute name="label"/>
         <attribute name="type"/>
         <attribute name="disabled" type="boolean"/>
-        <attribute name="id" uri="http://raptor.ebayopensource.org/widgets" type="string"/>
+        <attribute name="id" uri="http://raptorjs.org/templates/widgets" type="string"/>
     </tag>
     
     <tag>

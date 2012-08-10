@@ -1,0 +1,20 @@
+<c:template
+    xmlns:c="core"
+    xmlns:w="widgets"
+    name="components/nav/Nav"
+    params="rootAttrs,navItem">
+    
+    <li c:attrs="navItem.attrs">
+        <a c:attrs="navItem.anchorAttrs">
+            <c:choose>
+                <c:when test="navItem.label">
+                    ${navItem.label}
+                </c:when>
+                <c:when test="navItem.invokeBody">
+                    <c:invoke function="navItem.invokeBody()"/>
+                </c:when>
+            </c:choose>
+        </a>
+    </li>
+    
+</c:template>

@@ -40,7 +40,7 @@ exports.createServer = function(options) {
 
     var express = require('express');
 
-    var app = express.createServer();
+    var app = express();
     app.use(app.router); //This is the default router... have to add it now so that it will be part of the original stack
     var originalRoutes = raptor.extend({}, app.routes);
     var originalStack = [].concat(app.stack);

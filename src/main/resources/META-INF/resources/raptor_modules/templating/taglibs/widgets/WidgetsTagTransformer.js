@@ -19,7 +19,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var widgetsNS = "http://raptor.ebayopensource.org/widgets";
+        var widgetsNS = "http://raptorjs.org/templates/widgets";
         
         return {
             process: function(node, compiler, template) {

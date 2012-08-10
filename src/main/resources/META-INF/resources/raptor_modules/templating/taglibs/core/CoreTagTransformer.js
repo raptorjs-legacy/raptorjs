@@ -21,7 +21,7 @@ raptor.defineClass(
         
         var extend = raptor.extend,
             forEach = raptor.forEach,
-            coreNS = "http://raptor.ebayopensource.org/core",
+            coreNS = "http://raptorjs.org/templates/core",
             errors = raptor.errors,
             Node = raptor.require('templating.compiler.Node'),
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),

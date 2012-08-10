@@ -2,8 +2,8 @@
 
 	<!-- POM Information about the Project -->
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.ebayopensource.raptor</groupId>
-	<artifactId>raptorjs</artifactId>
+	<groupId>org.raptorjs</groupId>
+	<artifactId>raptorjs-core</artifactId>
 	<version>1.3.0-SNAPSHOT</version>
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
 	<packaging>bundle</packaging>
@@ -347,14 +347,14 @@
 					<manifestLocation>src/main/resources/META-INF</manifestLocation>
 					<!-- Manifest Headers which need to customized during manifest generation -->
 					<instructions>
-                        <Bundle-SymbolicName>org.ebayopensource.raptor.raptorjs</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>org.raptorjs.raptorjs-core</Bundle-SymbolicName>
 						<Export-Package>
-							org.ebayopensource.raptor.raptorjs.rhino,
-							org.ebayopensource.raptor.raptorjs.templating.rhino,
-							org.ebayopensource.raptor.raptorjs.templating.rhino.servlet,
-							org.ebayopensource.raptor.raptorjs.resources,
-							org.ebayopensource.raptor.raptorjs.resources.osgi,
-							org.ebayopensource.raptor.raptorjs.resources.packaging
+							org.raptorjs.rhino,
+							org.raptorjs.templating.rhino,
+							org.raptorjs.templating.rhino.servlet,
+							org.raptorjs.resources,
+							org.raptorjs.resources.osgi,
+							org.raptorjs.resources.packaging
                         </Export-Package>
                         <_nouses>true</_nouses>
 						<Import-Package>

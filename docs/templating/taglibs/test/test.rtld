@@ -2,7 +2,7 @@
     
     <tlib-version>1.0</tlib-version>
     <short-name>test</short-name>
-    <uri>http://docs.ebayopensource.org/test</uri>
+    <uri>http://raptorjs.org/templates/test</uri>
     
     <import-taglib path="/taglibs/test/Button/Button.rtld"/>
     <import-taglib path="/taglibs/test/Container/Container.rtld"/>
