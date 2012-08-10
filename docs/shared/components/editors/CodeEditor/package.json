@@ -1,8 +1,0 @@
-{
-    "includes": [
-        {"module": "widgets"},
-        {"module": "CodeMirror"},
-        "CodeEditorWidget.js",
-        "CodeEditor.css"
-    ]
-}

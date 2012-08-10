@@ -1,8 +1,0 @@
-{
-    "includes": [
-        {"module": "widgets"},
-        "ErrorsWidget.js",
-        "Errors.css",
-        "Errors-error.rhtml"
-    ]
-}

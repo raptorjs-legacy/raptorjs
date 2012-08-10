@@ -1,6 +1,0 @@
-{
-    "includes": [
-        "Tabs.rhtml",
-        "TabsTag.js"
-    ]
-}

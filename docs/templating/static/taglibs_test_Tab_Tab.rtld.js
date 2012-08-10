@@ -1,1 +1,0 @@
-$rset("resource","/taglibs/test/Tab/Tab.rtld","<raptor-taglib>\n\n    <tag>\n        <name>tab</name>\n        <handler-class>taglibs.test.Tab.TabTag</handler-class>\n        \n        <attribute name=\"title\"/>\n        \n        <imported-variable property-name=\"tabs\" expression=\"tabs\"/>\n    </tag>\n    \n</raptor-taglib>");

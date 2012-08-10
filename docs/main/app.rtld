@@ -1,7 +1,0 @@
-<raptor-taglib>
-    <uri>http://docs.raptorjs.org/main</uri>
-    <short-name>app</short-name>
-    <prefix>app</prefix>
-    
-    
-</raptor-taglib>

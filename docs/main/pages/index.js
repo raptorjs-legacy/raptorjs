@@ -1,4 +1,0 @@
-exports.controller = function() {
-    return {
-    };
-};

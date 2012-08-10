@@ -1,2 +1,0 @@
-$rset("rhtml",null,function(helpers){var empty=helpers.e,notEmpty=helpers.ne,escapeXml=helpers.x;return function(data, context, contextHelpers){
-var write=contextHelpers.w;write('<c:template name="taglibs/test/Container" xmlns:c="http://raptorjs.org/templates/core" params="widget,title"><div><h1>')(escapeXml(title));}});

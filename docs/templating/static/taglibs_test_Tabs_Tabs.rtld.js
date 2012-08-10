@@ -1,1 +1,0 @@
-$rset("resource","/taglibs/test/Tabs/Tabs.rtld","<raptor-taglib>\n\n    <tag>\n        <name>tabs</name>\n        <handler-class>taglibs.test.Tabs.TabsTag</handler-class>\n        <nested-variable name=\"tabs\"/>\n    </tag>\n    \n</raptor-taglib>");

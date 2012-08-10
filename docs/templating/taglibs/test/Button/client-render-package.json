@@ -1,6 +1,0 @@
-{
-    "includes": [
-        "Button.rhtml",
-        "ButtonTag.js"
-    ]
-}

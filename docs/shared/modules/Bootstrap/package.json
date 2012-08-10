@@ -1,8 +1,0 @@
-{
-    "type": "raptor-module",
-    "name": "Bootstrap",
-    "includes": [
-        {"path": "bootstrap-2.0.4/css/bootstrap.min.css"},
-        {"path": "bootstrap-2.0.4/js/bootstrap.min.js"}
-    ]
-}

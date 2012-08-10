@@ -1,7 +1,0 @@
-<raptor-taglib>
-
-    <tag name="tab-content" handler-class="components.nav.TabContent.TabContentTag">
-        
-    </tag>
-    
-</raptor-taglib>

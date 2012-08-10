@@ -1,7 +1,0 @@
-<raptor-taglib>
-
-    <tag name="top-nav" handler-class="components.TemplatingTopNav.TemplatingTopNavTag">
-        <attribute name="activeItem" type="string"/>
-    </tag>
-    
-</raptor-taglib>

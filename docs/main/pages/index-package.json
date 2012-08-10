@@ -1,8 +1,0 @@
-{
-    "includes": [
-        { "module": "core" },
-        { "type": "init-raptor" },
-        { "module": "jQuery" },
-        "index.css"
-     ]
-}

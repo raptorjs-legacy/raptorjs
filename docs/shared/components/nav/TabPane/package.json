@@ -1,7 +1,0 @@
-{
-    "includes": [
-        {"module": "widgets"},
-        {"module": "Bootstrap"},
-        "TabPane.css"
-    ]
-}

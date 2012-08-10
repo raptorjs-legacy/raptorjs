@@ -1,5 +1,0 @@
-{
-    "includes": [
-        {"type": "resource", "path": "Container.rtld"}
-    ]
-}

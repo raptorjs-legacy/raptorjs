@@ -1,5 +1,0 @@
-{
-    "includes": [
-        {"module": "CodeMirror/mode-htmlmixed"}
-    ]
-}
