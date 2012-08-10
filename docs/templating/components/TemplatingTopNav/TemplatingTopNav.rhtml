@@ -1,16 +1,19 @@
 <c:template name="components/TemplatingTopNav"
-    xmlns:demo="demo"
+    xmlns:shared="shared"
     xmlns:c="core"
     params="activeItem">
     
-    <demo:nav-bar brand="Raptor Templates" type="fixed-top">
-        <demo:nav type="pills">
-            <demo:nav-item href="index.html" label="Try it Out!" active="${activeItem == 'try-it'}"/>
-            <demo:nav-item href="docs.html" label="Documentation" active="${activeItem == 'docs'}"/>
+    <shared:nav-bar brand="Raptor Templates" type="fixed-top">
+        <shared:nav>
+            <shared:nav-divider/>
+            <shared:nav-item href="index.html" label="Try it Out!" active="${activeItem == 'try-it'}"/>
+            <shared:nav-divider/>
+            <shared:nav-item href="docs.html" label="Documentation" active="${activeItem == 'docs'}"/>
+            <shared:nav-divider/>
             <div class="powered-by">
                 Powered by <a href="../index.html" class="raptorjs">RaptorJS</a>
             </div>
-        </demo:nav>
-    </demo:nav-bar>
+        </shared:nav>
+    </shared:nav-bar>
     
 </c:template>

@@ -6,6 +6,6 @@
         { "module": "greeting" },
         { "module": "loader.requires" },
         { "module": "greeting-async", "async": true },
-        { "type": "loader-metadata" }
+        { "type": "loader-metadata", "location": "my-slot" }
      ]
 }

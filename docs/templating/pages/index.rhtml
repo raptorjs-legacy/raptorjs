@@ -1,8 +1,8 @@
 <c:template
     xmlns:c="core"
     xmlns:w="widgets"
-    xmlns:app="app"
-    xmlns:demo="demo"
+    xmlns:templating="templating"
+    xmlns:shared="shared"
     params="includes,samples">
     
     <![CDATA[<!doctype html>]]>
@@ -14,9 +14,9 @@
             ${includes.head}
         </head>
         <body> 
-            <app:top-nav activeItem="try-it"/>
+            <templating:top-nav activeItem="try-it"/>
             
-            <app:template-testbed samples="samples" />
+            <templating:template-testbed samples="samples" />
             
             ${includes.body}
             

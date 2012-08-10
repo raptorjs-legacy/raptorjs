@@ -45,7 +45,7 @@
    
     <resource-search-path>
         <dir path="."/>
-        <dir path="../lib"/>
+        <dir path="../shared"/>
         <dir path="modules"/>
     </resource-search-path>
     

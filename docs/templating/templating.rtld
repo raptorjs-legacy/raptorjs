@@ -1,7 +1,7 @@
 <raptor-taglib>
-    <uri>http://docs.raptorjs.org/templating</uri>
-    <short-name>app</short-name>
-    <prefix>app</prefix>
+    <uri>http://raptorjs.org/templating</uri>
+    <short-name>templating</short-name>
+    <prefix>templating</prefix>
     
     <import-taglib path="/components/TemplateTestbed/TemplateTestbed.rtld"/>
     <import-taglib path="/components/Errors/Errors.rtld"/>
