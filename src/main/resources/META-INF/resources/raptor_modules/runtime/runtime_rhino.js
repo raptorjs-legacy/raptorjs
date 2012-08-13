@@ -20,8 +20,8 @@ $rload(function(raptor) {
     var logger = raptor.logging.logger('runtime');
     
     raptor.extendCore('runtime', {
-        evaluateFile: function(filePath) {    
-            __rhinoHelpers.getRuntime().evaluateFile(filePath);
+        require: function(filePath) {    
+            __rhinoHelpers.getRuntime().require(filePath);
         },
     
         evaluateString: function(source, filePath) {    

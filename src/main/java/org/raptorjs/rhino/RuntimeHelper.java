@@ -17,12 +17,22 @@
 package org.raptorjs.rhino;
 
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RuntimeHelper {
     private RaptorJSEnv raptorJS;
+    private Map<String, Boolean> evaluatedFiles = new ConcurrentHashMap<String, Boolean>();
     
     public RuntimeHelper(RaptorJSEnv raptorJS) {
         this.raptorJS = raptorJS;
+    }
+    
+    public void require(String path) {
+        if (!this.isRequired(path)) {
+            this.evaluateFile(path);
+            this.setRequired(path);
+        }
     }
     
     public void evaluateFile(String path) {
@@ -33,5 +43,13 @@ public class RuntimeHelper {
     
     public void evaluateString(String source, String path) {
         this.raptorJS.getJavaScriptEngine().eval(source, path);
+    }
+    
+    public boolean isRequired(String path) {
+        return this.evaluatedFiles.containsKey(path);
+    }
+    
+    public void setRequired(String path) {
+        this.evaluatedFiles.put(path, Boolean.TRUE);
     }
 }

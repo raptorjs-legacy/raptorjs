@@ -11,26 +11,13 @@
         }
     ],
 
-    "includes": [
-        {"path": "resources.js"},
-        {"path": "Resource.js"},
-        {"path": "MissingResource.js"}
-    ],
-    
     "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "SearchPathEntry.js"},
-                {"path": "DirSearchPathEntry.js"},
-                {"path": "FileResource.js"},
-                {"path": "SearchPath.js"},
-                {"path": "resources_server.js"}
-            ]
-        },
         {
             "name": "browser",
             "includes": [
+                {"path": "resources.js"},
+                {"path": "Resource.js"},
+                {"path": "MissingResource.js"},
                 {"path": "BrowserResource.js"},
                 {"path": "resources_browser.js"}
             ]

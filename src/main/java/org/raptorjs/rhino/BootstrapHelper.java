@@ -29,6 +29,8 @@ public class BootstrapHelper {
     }
     
     public void require(String path) {
+        
+                
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
@@ -40,7 +42,8 @@ public class BootstrapHelper {
         }
         try
         {
-            this.raptorJS.getJavaScriptEngine().eval(in, this.basePath + path);
+            
+            this.raptorJS.getJavaScriptEngine().eval(in, fullPath);
         }
         catch(Exception e) {
             throw new RuntimeException("Unable to require \"" + path + "\". Exception: " + e, e);

@@ -31,7 +31,7 @@ $rload(function(raptor) {
             {
                 var filePath = resource.getFilePath();
                 if (loadedFiles[filePath] !== true) {
-                    this.evaluateFile(filePath);
+                    this.require(filePath);
                     loadedFiles[filePath] = true;
                 }
             }
