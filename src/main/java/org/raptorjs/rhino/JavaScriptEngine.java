@@ -26,12 +26,17 @@ import java.net.URL;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 public class JavaScriptEngine {
     
     private ScriptableObject globalScope = null;
     
+    public ScriptableObject getGlobalScope() {
+		return globalScope;
+	}
+
     public JavaScriptEngine()
     {
 
@@ -109,34 +114,37 @@ public class JavaScriptEngine {
         
     }
     
-    public Object eval(String source, String path) {
+    public Object eval(String source,String path) {
+        return this.eval(globalScope,source,path);
+    }
+    
+    public Object eval(Scriptable scope,String source,String path) {
         StringReader reader = new StringReader(source);
-        return this.eval(reader, path);
+        return this.eval(scope,reader,path);
     }
     
-    public Object eval(InputStream source, String path) {
+	public Object eval(InputStream source, String path) {
+		return eval(globalScope,source,path);
+    }
+    
+	public Object eval(Scriptable scope,InputStream source, String path) {
         InputStreamReader reader = new InputStreamReader(source);
-        return this.eval(reader, path);
+        return this.eval(scope,reader,path);
     }
     
-    public Object eval(Reader source, String path) {
+    public Object eval(Reader source,String path) {
+    	return eval(globalScope,source,path);
+    }
+    
+    public Object eval(Scriptable scope,Reader source, String path) {
         
-        Context context = Context.enter();
-        try
-        {
-            
-            return context.evaluateReader(this.globalScope, source, path, 1, null);
-        }
-        catch(Exception e) {
-
+        try {
+            Context context = Context.enter();
+            return context.evaluateReader(scope, source, path, 1, null);
+        } catch(Exception e) {
             throw new RuntimeException("An error occurred when evaluating \"" + path + "\". Exception: "  + e, e);
-        }
-        finally
-        {
-            if (context != null)
-            {
-                Context.exit();
-            }
+        } finally {
+             Context.exit();
         }
     }
     
@@ -155,7 +163,7 @@ public class JavaScriptEngine {
         
         try
         {
-            return this.eval(in, url.toString());
+            return this.eval(globalScope,in,url.toString());
         }
         finally
         {
