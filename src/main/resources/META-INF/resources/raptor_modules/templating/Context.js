@@ -114,11 +114,19 @@ raptor.defineClass(
                 handler.process(props, this);
             },
 
-            getFunction: function(uri, name) {
-                var key = uri + ":" + name;
-                var helper = this._helpers[key];
+            getFunction: function(className, name) {
+                var key = className + ":" + name,
+                    helper = this._helpers[key],
+                    unboundHelper;
+                
                 if (!helper) {
-                    var unboundHelper = raptor.require("templating").getFunction(uri, name);
+                    if (arguments.length === 1) {
+                        unboundHelper = helpers[className];
+                    }
+                    else {
+                        unboundHelper = raptor.require("templating").getFunction(className, name);
+                    }
+                    
                     helper = this._helpers[key] = bind(unboundHelper, this);
                 }
                 

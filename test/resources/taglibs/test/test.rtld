@@ -50,21 +50,21 @@
         <attribute name="title"/>
     </tag>
     
-    <function>
+    <function class="taglibs.test.TestFunctions">
         <name>user</name>
         <bind-to-context>true</bind-to-context>            
     </function>
     
-    <function>
+    <function class="taglibs.test.TestFunctions">
         <name>isLoggedIn</name>
         <bind-to-context>true</bind-to-context>            
     </function>  
     
-    <function>
+    <function class="taglibs.test.TestFunctions">
         <name>trim</name>
     </function>
     
-    <function>
+    <function class="taglibs.test.TestFunctions">
         <name>upperCase</name>
     </function>
 

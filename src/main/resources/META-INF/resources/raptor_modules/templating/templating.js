@@ -29,11 +29,12 @@ raptor.define('templating', function(raptor) {
         Context = raptor.require("templating.Context"),
         templating,
         helpers,
-        _getFunction = function(uri, name) {
-            var helper = uri ? helpers[uri + ":" + name] : helpers[name];
+        _getFunction = function(className, name, helpers) {
+            var Clazz = raptor.require(className),
+                helper = Clazz[name] || (Clazz.prototype && Clazz.prototype[name]);
+            
             if (!helper) {
-                
-                raptor.throwError(new Error('Helper function not found with name "' + name + '" and uri "' + uri + '"'));
+                raptor.throwError(new Error('Helper function not found with name "' + name + '" in class "' + className + '"'));
             }
             
             return helper;
@@ -181,7 +182,14 @@ raptor.define('templating', function(raptor) {
          * @param name
          * @returns {Function} The corresponding helper function. An exception is thrown if the helper function is not found
          */
-        getFunction: _getFunction,
+        getFunction: function(className, name) {
+            if (arguments.length === 1) {
+                return helpers[className];
+            }
+            else {
+                return _getFunction(className, name);
+            }
+        },
         
         /**
          * Creates a new context object that can be used as the context for

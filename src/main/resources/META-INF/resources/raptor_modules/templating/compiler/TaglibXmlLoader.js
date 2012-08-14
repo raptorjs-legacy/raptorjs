@@ -388,6 +388,11 @@ raptor.defineClass(
                                     _type: STRING
                                 },
                                 
+                                "class": {
+                                    _type: STRING,
+                                    _targetProp: "functionClass"
+                                },
+                                
                                 "bind-to-context": {
                                     _type: BOOLEAN,
                                     _targetProp: "bindToContext"
