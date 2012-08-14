@@ -144,6 +144,10 @@ raptor.defineClass(
                 this.cleanDirs.push(path);
             },
             
+            getParam: function(name) {
+                return this.params[name];
+            },
+            
             addParam: function(name, value) {
                 if (this.params.hasOwnProperty(name)) {
                     return; //Params are only write-once
