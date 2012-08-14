@@ -20,8 +20,7 @@ raptor.defineClass(
     function() {
         "use strict";
         
-        var errors = raptor.errors,
-            forEach = raptor.forEach;
+        var forEach = raptor.forEach;
         
         var InvokeNode = function(props) {
             InvokeNode.superclass.constructor.call(this);
@@ -34,16 +33,17 @@ raptor.defineClass(
 
             doGenerateCode: function(template) {
                 
-                var func = this.getProperty("function");
+                var func = this.getProperty("function"),
+                    funcDef,
+                    definedFunctions = template.getAttribute("core:definedFunctions");
                 
                 if (!func) {
                     this.addError('"function" attribute is required');
                 }
                 
                 if (func.indexOf('(') === -1) {
-                    var definedFunctions = template.getAttribute("core:definedFunctions");
                     
-                    var funcDef = definedFunctions ? definedFunctions[func] : null;
+                    funcDef = definedFunctions ? definedFunctions[func] : null;
 //                    if (!funcDef) {
 //                        this.addError('Function with name "' + func + '" not defined using <c:define>.');
 //                    }
@@ -96,7 +96,14 @@ raptor.defineClass(
                     template.addWrite(func + "(" + argParts.join(",") + ")");
                 }
                 else {
-                    template.addJavaScriptCode(func + ";");
+                    var funcName = func.substring(0, func.indexOf('('));
+                    funcDef = definedFunctions ? definedFunctions[funcName] : null;
+                    if (funcDef) {
+                        template.addWrite(func);
+                    }
+                    else {
+                        template.addJavaScriptCode(func + ";");    
+                    }
                 }
             }
             

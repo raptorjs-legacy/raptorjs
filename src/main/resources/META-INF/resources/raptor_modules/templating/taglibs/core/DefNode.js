@@ -48,7 +48,7 @@ raptor.defineClass(
                 var matches = funcDefRegExp.exec(func);
                 if (matches) {
                     var name = matches[1];
-                    var params = matches[2].split(/\s*,\s*/);
+                    var params = matches[2] ? matches[2].split(/\s*,\s*/) : [];
 
                     var definedFunctions = template.getAttribute("core:definedFunctions");
                     if (!definedFunctions) {
