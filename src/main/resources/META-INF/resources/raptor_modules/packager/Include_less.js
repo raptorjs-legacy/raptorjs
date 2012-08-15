@@ -99,7 +99,13 @@ raptor.defineClass(
                         filename: resource.getSystemPath()
                     });
                     
-                    
+                    if (this.imports) {
+                        var importsSource = this.imports.map(function(importPath) {
+                            return '@import "' + importPath + '";\n';
+                        }).join("");
+                        lessSource = importsSource + lessSource;
+                    }
+
                     parser.parse(lessSource, function (e, root) {
                         if (e) {
                             raptor.throwError(new Error('Unable to parse Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));

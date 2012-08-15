@@ -200,7 +200,10 @@ $rload(function(raptor) {
             
             var resource = raptor.resources.findResource(path, this.getSearchPathEntry() /* Search within the same search path entry */);
             if (resource.exists() === false) {
-                errors.throwError(new Error('Resource "' + path + '" not found for package "' + this.getPackageResource().getSystemPath()));
+                resource = raptor.resources.findResource(path);
+                if (resource.exists() === false) {
+                    errors.throwError(new Error('Resource "' + path + '" not found for package "' + this.getPackageResource().getSystemPath()));
+                }
             }
             
             return resource;
