@@ -18,4 +18,5 @@ $rload(function(raptor) {
     "use strict";
     
     raptor.global.rhinoRaptorRequire = raptor.require;
+    raptor.global.rhinoRaptorLoad = raptor.load;
 });

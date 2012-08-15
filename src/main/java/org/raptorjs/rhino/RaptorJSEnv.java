@@ -102,4 +102,8 @@ public abstract class RaptorJSEnv {
         return (ScriptableObject)this.getJavaScriptEngine().invokeFunction("rhinoRaptorRequire", name);
     }
     
+    public void load(String name) {
+        this.getJavaScriptEngine().invokeFunction("rhinoRaptorLoad", name);
+    }
+    
 }
