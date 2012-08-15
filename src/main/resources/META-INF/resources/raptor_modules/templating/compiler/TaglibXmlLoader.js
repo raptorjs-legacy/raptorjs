@@ -239,6 +239,11 @@ raptor.defineClass(
                                         };
                                     },
                                     _end: function(nestedVariable, tag) {
+                                        
+                                        if (!nestedVariable.name) {
+                                            raptor.throwError(new Error('The "name" attribute is required for an imported variable'));
+                                        }
+                                        
                                         if (!tag.nestedVariables) {
                                             tag.nestedVariables = [];
                                         }
@@ -261,6 +266,13 @@ raptor.defineClass(
                                         };
                                     },
                                     _end: function(importedVariable, tag) {
+                                        if (!importedVariable.propertyName) {
+                                            raptor.throwError(new Error('The "property-name" attribute is required for an imported variable'));
+                                        }
+                                        if (!importedVariable.expression) {
+                                            raptor.throwError(new Error('The "expression" attribute is required for an imported variable'));
+                                        }
+                                        
                                         if (!tag.importedVariables) {
                                             tag.importedVariables = [];
                                         }

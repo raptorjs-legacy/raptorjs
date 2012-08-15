@@ -34,7 +34,8 @@ raptor.define(
                     'div': false,
                     'textarea': false,
                     'li': false,
-                    'b': false
+                    'b': false,
+                    'a': false
                 },
                 startTagOnly: {
                     'img': true,
