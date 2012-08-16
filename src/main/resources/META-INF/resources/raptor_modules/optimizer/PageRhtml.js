@@ -95,7 +95,12 @@ raptor.defineClass(
                 var viewModel = this.getViewModel() || {};
                 viewModel.includes = includes;
                 
-                var html = raptor.require('templating').renderToString(templatePath, viewModel);
+                var renderContext = raptor.require('templating').createContext();
+                renderContext.getOptimizer = function() {
+                    return optimizer;
+                };
+                
+                var html = raptor.require('templating').renderToString(templatePath, viewModel, renderContext);
                 return html;
             }
         };

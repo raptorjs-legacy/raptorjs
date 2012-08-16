@@ -24,6 +24,10 @@ raptor.defineClass(
         };
         
         OptimizerEngine.prototype = {
+            getParam: function(name) {
+                return this.config.getParam(name);
+            },
+            
             _startWatching: function() {
                 var watchConfigs = this.config.getWatchConfigs();
                 raptor.forEach(watchConfigs, function(watchConfig) {
@@ -238,9 +242,6 @@ raptor.defineClass(
             },
             
             getPageOutputFile: function(page) {
-                if (!this.config.isInjectHtmlIncludesEnabled()) {
-                    return null;
-                }
                 var viewFile = page.getViewFile();
                 if (this.config.isModifyPagesEnabled()) {
                     outputFile = viewFile;
@@ -273,7 +274,7 @@ raptor.defineClass(
                         
                         var outputFile = this.getPageOutputFile(page);
                         if (outputFile == null) {
-                            raptor.throwError(new Error("Unable to write out page with dependencies. Output page directory (<output-page-dir>) is not set for configuration."));
+                            raptor.throwError(new Error("Unable to write out page with dependencies. Output page directory (<page-output-dir>) is not set for configuration."));
                         }
                         
                         var writePage = function() {

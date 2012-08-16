@@ -16,7 +16,4 @@ MANIFEST.MF
 */src/main/resources/buildinfo.properties
 /.idea/
 /node_modules/**
-!/node_modules/express-raptor
-!/node_modules/hot-reloader
-!/node_modules/raptor
 /npm-debug.log

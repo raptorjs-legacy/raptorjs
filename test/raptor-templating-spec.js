@@ -365,46 +365,15 @@ describe('templating module', function() {
     });
     
     it("should allow for helper functions", function() {
-        
-        var helperThisObj = {},
-            actualHelperThisObj;
-        
-        raptor.require('templating').registerFunctions(
-            "http://raptorjs.org/templates/test",
-            "test",
-            {
-                "trim": function(str) {
-                    actualHelperThisObj = this;
-                    return str ? raptor.require("strings").trim(str) : str;
-                },
-                "upperCase": function(str) {
-                    return str ? str.toUpperCase(str) : str;
-                }
-            }, helperThisObj);
-        
         var output = compileAndRender("/test-templates/helper-functions-shortname.rhtml", {});
         expect(output).toEqual('Hello WORLD! Hello World!');
-        expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
         
         output = compileAndRender("/test-templates/helper-functions-uri.rhtml", {});
         expect(output).toEqual('Hello WORLD! Hello World!');
-        expect(actualHelperThisObj).toStrictlyEqual(helperThisObj);
     });
     
     it("should allow for context helper functions", function() {
 
-        raptor.require('templating').registerFunctions(
-            "http://raptorjs.org/templates/test",
-            "test",
-            {
-                "user": function(str) {
-                    return this.attributes["loggedInUser"];
-                },
-                "isLoggedIn": function() {
-                    return this.attributes["loggedInUser"] != null; 
-                }
-            });
-        
         var context = raptor.require('templating').createContext();
         context.attributes["loggedInUser"] = {
                 firstName: "John",

@@ -32,7 +32,11 @@ raptor.define(
                 allowSelfClosing: {
                     'script': false,
                     'div': false,
-                    'textarea': false
+                    'textarea': false,
+                    'li': false,
+                    'b': false,
+                    'a': false,
+                    'i': false
                 },
                 startTagOnly: {
                     'img': true,

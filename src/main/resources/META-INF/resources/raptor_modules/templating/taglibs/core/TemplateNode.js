@@ -34,14 +34,14 @@ raptor.defineClass(
             doGenerateCode: function(template) {
                 var name = this.getProperty("name"),
                     params = this.getProperty("params"),
-                    addUriVar = function(uri) {
-                        var uriVarName = uri.replace(/[^a-zA-Z0-9]+/g, '_');
-                        if (!template.hasStaticVar(uriVarName)) {
-                            template.addStaticVar(uriVarName, JSON.stringify(uri));
+                    addClassNameVar = function(className) {
+                        var classVarName = className.replace(/[^a-zA-Z0-9]+/g, '_');
+                        if (!template.hasStaticVar(classVarName)) {
+                            template.addStaticVar(classVarName, JSON.stringify(className));
                         }
-                        return uriVarName;
+                        return classVarName;
                     },
-                    uriVarName;
+                    classVarName;
                 
                 if (params) {
                     params = params.split(/\s*,\s*/g);
@@ -60,19 +60,19 @@ raptor.defineClass(
                     }
                     
                     if (name === 'functions') {
-                        uriVarName = addUriVar(uri);
-                        
-                        forEach(value.split(/\s*,\s*/g), function(helper) {
-                            var func = template.compiler.taglibs.getFunction(uri, helper);
+                        forEach(value.split(/\s*[,;]\s*/g), function(funcName) {
+                            var func = template.compiler.taglibs.getFunction(uri, funcName);
                             if (!func) {
-                                this.addError('Function with name "' + helper + '" not found in taglib "' + uri + '"');
+                                this.addError('Function with name "' + funcName + '" not found in taglib "' + uri + '"');
                             }
                             else {
+                                classVarName = addClassNameVar(func.functionClass);
+                                
                                 if (func.bindToContext === true) {
-                                    template.addVar(helper, template.getContextHelperFunction("getContextHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");    
+                                    template.addVar(funcName, template.getContextHelperFunction("getContextHelper", "h")  + "(" + classVarName + "," + JSON.stringify(funcName) + ")");    
                                 }
                                 else {
-                                    template.addStaticVar(helper, template.getStaticHelperFunction("getHelper", "h")  + "(" + uriVarName + "," + JSON.stringify(helper) + ")");
+                                    template.addStaticVar(funcName, template.getStaticHelperFunction("getHelper", "h")  + "(" + classVarName + "," + JSON.stringify(funcName) + ")");
                                 }    
                             }
                         }, this);
