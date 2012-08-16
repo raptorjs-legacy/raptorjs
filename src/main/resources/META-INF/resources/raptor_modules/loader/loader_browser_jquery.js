@@ -63,7 +63,9 @@ raptor.extend('loader', function(raptor) {
          */
         includeCSSImpl: function(href, callback, attributes) {
 
-            var complete = false,
+        	var retries = 3;
+        	
+        	var complete = false,
                 _this = this;
             
             var el = document.createElement('link');
@@ -74,14 +76,28 @@ raptor.extend('loader', function(raptor) {
                 el.onerror = null;
             };
             
-            var success = function() {
+    		var loaded  = function() {
+    			var sheets = document.styleSheets;
+    			for (var idx = 0,len = sheets.length;(idx < len);idx++) {
+    				var href = sheets[idx].href;
+    				if (href && el.href.indexOf(href) >= 0) return true;
+    			}
+    			return false;
+    		};
+
+    		var success = function() {
                 if (complete === false)
                 {                    
-                    complete = true;
+
+                	var ready = loaded();
+                	if (!ready && (retries--)) return window.setTimeout(success,10);
+
+                	complete = true;
                     cleanup();
                     _this.logger().debug('Downloaded: "' + href + '"');
                     //Let the loader module know that the resource has included successfully
                     callback.success();
+
                 }
             };
             
