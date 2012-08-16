@@ -40,6 +40,7 @@
         {
             "name": "jquery",
             "includes": [
+                {"path": "widgets_jquery.js"},
                 {"path": "Widget_jquery.js"}
             ]
         }

@@ -18,7 +18,7 @@
 * @extension Browser
 * 
 */
-raptor.extend('widgets', function(raptor) {
+raptor.extend('widgets', function(raptor, widgets) {
     "use strict";
     
     var PROTOTYPE = 'prototype',
@@ -105,14 +105,21 @@ raptor.extend('widgets', function(raptor) {
          * @param {...widgets} widgets An array of widget definitions
          * @returns {void}
          */
-        _initAll: function(widgets) {
+        _initAll: function(widgetDefs) {
             var logger = this.logger(),
                 docs = {};
             
             var _initWidget = function(widget, config, type) {
                     try
                     {
-                        widget.init(config);
+                        
+                        if (widget.initWidget) {
+                            widget.initWidget(config);
+                        }
+                        else {
+                            widget.init(config);
+                        }
+                        
                     }
                     catch(e) {
                         logger.error('Unable to initialize widget of type "' + type + "'. Exception: " + e, e);
@@ -131,7 +138,8 @@ raptor.extend('widgets', function(raptor) {
                     if (!widgetDefs) return;
                     
                     var i=0,
-                        len = widgetDefs.length;
+                        len = widgetDefs.length,
+                        widget;
                     
                     for (; i<len; i++) {
                         
@@ -163,45 +171,52 @@ raptor.extend('widgets', function(raptor) {
                             errors.throwError(new Error('Unable to initialize widget of type "' + type + '". The class for the widget was not found.'));
                         }
                         
-                        var WidgetClass = Widget._init,
-                            proto;
-                        
-                        
-                        WidgetClass[PROTOTYPE] = proto = originalWidgetClass[PROTOTYPE];
-                        
-                        proto.init = originalWidgetClass;
-                        
-                        if (!proto._isWidget)
-                        {
-                            raptor.extend(proto, Widget, false /* don't override */);
+                        if (originalWidgetClass.initWidget) {
+                            config.elId = id;
+                            widget = originalWidgetClass;
+                            widget.onReady = widgets.onReady;
                         }
-                        
-                        var widget = new WidgetClass();
-                        
-                        listeners.makeObservable(widget, proto);
-                        
-                        if (!proto.notify) {
-                            proto.notify = _notify;
-                            proto.on = proto.subscribe;
-                        }
-                        
-                        widget.registerMessages(['beforeDestroy', 'destroy'], false);
-                        
-                        var events = proto[EVENTS] || originalWidgetClass[EVENTS];
+                        else {
+                            var WidgetClass = Widget._init,
+                                proto;
 
-                        if (events) {
-                            widget.registerMessages(events, false);
+                            WidgetClass[PROTOTYPE] = proto = originalWidgetClass[PROTOTYPE];
+                            
+                            proto.init = originalWidgetClass;
+                            
+                            if (!proto._isWidget)
+                            {
+                                raptor.extend(proto, Widget, false /* don't override */);
+                            }
+                            
+                            widget = new WidgetClass();
+                            
+                            listeners.makeObservable(widget, proto);
+                            
+                            if (!proto.notify) {
+                                proto.notify = _notify;
+                                proto.on = proto.subscribe;
+                            }
+                            
+                            widget.registerMessages(['beforeDestroy', 'destroy'], false);
+                            
+                            var events = proto[EVENTS] || originalWidgetClass[EVENTS];
+    
+                            if (events) {
+                                widget.registerMessages(events, false);
+                            }
+                            
+                            widget._id = id;
+                            widget._childId = childId;
+                            widgetsById[id] = widget;
+                            
+                            if (childId && docId) {
+                                widgetsById[docId]._doc.addWidget(widget, childId);
+                            }
+                            
+                            widget._doc = new Document(widget);
                         }
                         
-                        widget._id = id;
-                        widget._childId = childId;
-                        widgetsById[id] = widget;
-                        
-                        if (childId && docId) {
-                            widgetsById[docId]._doc.addWidget(widget, childId);
-                        }
-                        
-                        widget._doc = new Document(widget);
                         
                         if (children && children.length) {
                             _initWidgets(children, widget);
@@ -217,7 +232,7 @@ raptor.extend('widgets', function(raptor) {
 
                 };
                 
-            _initWidgets(widgets);
+            _initWidgets(widgetDefs);
         },
         
         /**
