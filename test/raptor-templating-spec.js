@@ -265,7 +265,7 @@ describe('templating module', function() {
 
     it("should allow entity expressions", function() {
         var output = compileAndRender("/test-templates/entities.rhtml", {});
-        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div><div data-entities="&amp;lt;"></div>');
+        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div><div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
     });
     
     it("should allow escaped expressions", function() {
@@ -281,6 +281,21 @@ describe('templating module', function() {
     it("should allow whitespace to be removed", function() {
         var output = compileAndRender("/test-templates/whitespace.rhtml", {});
         expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines.<ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div>begin end");
+    });
+    
+    it("should handle whitespace when using expressions", function() {
+        var output = compileAndRender("/test-templates/whitespace2.rhtml", {});
+        expect(output).toEqual("A B C");
+    });
+    
+    it("should handle whitespace when using expressions", function() {
+        var output = compileAndRender("/test-templates/whitespace2.rhtml", {});
+        expect(output).toEqual("A B C");
+    });
+    
+    it("should normalize whitespace", function() {
+        var output = compileAndRender("/test-templates/whitespace3.rhtml", {});
+        expect(output).toEqual(" A B C ");
     });
     
     it("should allow HTML output that is not well-formed XML", function() {
@@ -468,6 +483,11 @@ describe('templating module', function() {
 
         var output = compileAndRender("/test-templates/cdata.rhtml", {name: "World"});
         expect(output).toEqual('<hello>');        
+    });
+    
+    it("should allow type conversion", function() {
+        var TypeConverter = raptor.require('templating.compiler.TypeConverter');
+        expect(TypeConverter.convert('${entity:special}', "string", true).toString()).toEqual('"&special;"');
     });
     
     xit("should allow for widgets", function() {

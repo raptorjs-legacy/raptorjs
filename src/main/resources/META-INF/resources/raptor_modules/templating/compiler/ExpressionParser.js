@@ -129,6 +129,16 @@ raptor.defineClass(
                     }
                 },
                 
+                add: function(type, value) {
+                    if (type === 'text') {
+                        this.addText(value);
+                    }
+                    else {
+                        this._endText();
+                        this._invokeCallback(type, value);    
+                    }
+                },
+                
                 /**
                  * 
                  * @param newText
@@ -181,8 +191,10 @@ raptor.defineClass(
          * @param callback
          * @param thisObj
          */
-        ExpressionParser.parse = function(str, callback, thisObj) {
-            
+        ExpressionParser.parse = function(str, callback, thisObj, options) {
+            if (!options) {
+                options = {};
+            }
             
             var textStart = 0, //The index of the start of the next text block
                 textEnd, //The index of the current text block
@@ -193,6 +205,7 @@ raptor.defineClass(
                 isScriptlet, //If true, then the expression is a scriptlet,
                 isConditional, //If true, then the expression is a conditional (i.e. {?<expression>;<true-template>[;<false-template>]}
                 startToken, //The start token for the current expression
+                custom = options.custom || {},
                 handleError = function(message) {
                     if (callback.error) {
                         callback.error.call(thisObj, message);
@@ -314,9 +327,12 @@ raptor.defineClass(
                     var handler;
                     
                     if (startToken === "${") {
-                        var firstColon = expression.indexOf(":");
+                        var firstColon = expression.indexOf(":"),
+                            customType;
                         if (firstColon != -1) {
-                            handler = ExpressionParser.custom[expression.substring(0, firstColon)];
+                            customType = expression.substring(0, firstColon);
+                            
+                            handler = custom[customType] || ExpressionParser.custom[customType];
                             if (handler) {
                                 handler.call(ExpressionParser, expression.substring(firstColon+1), helper);
                             }

@@ -45,9 +45,12 @@ raptor.defineClass(
                 return new Expression(value);
             }
             
+            var processedText = '';
+            
             if (allowExpressions) {
                 ExpressionParser.parse(value, {
                     text: function(text) {
+                        processedText += text;
                         expressionParts.push(stringify(text));
                     },
                     
@@ -60,6 +63,7 @@ raptor.defineClass(
                 if (hasExpression) {
                     return new Expression(expressionParts.join("+"));
                 }
+                value = processedText;
             }
             
             if (targetType === 'string') {

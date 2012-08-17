@@ -234,6 +234,9 @@ raptor.defineClass(
                                     text: function(text) {
                                         template.addText(escapeXmlAttr(text));
                                     },
+                                    xml: function(text) {
+                                        template.addText(text);
+                                    },
                                     expression: function(expression) {
                                         template.addWrite(expression, {escapeXmlAttr: true});
                                     },
@@ -241,7 +244,14 @@ raptor.defineClass(
                                         this.addError('Invalid expression found in attribute "' + name + '". ' + message);
                                     }
                                 },
-                                this);
+                                this,
+                                {
+                                    custom: {
+                                        "entity": function(expression, helper) {
+                                            helper.add('xml', "&" + expression + ";"); 
+                                        }
+                                    }
+                                });
                             
                             template.addText('"');
                         }

@@ -20,13 +20,14 @@ raptor.define(
         "use strict";
         
         var extend = raptor.extend,
-            specialRegExp = /(\n|\"|[&<>]|[^\u0020-\}])/g,
+            specialRegExp = /(\n|[\"\'&<>]|[^\u0020-\}])/g,
             attrReplacements = {
                 '<': "&lt;",
                 '>': "&gt;",
                 '&': "&amp;",
                 '"': "&quot;",
-                '\n': "&#" + "\n".charCodeAt(0) + ";"
+                "'": "&apos;",
+                '\n': "&#10;" //Preserve new lines so that they don't get normalized as space
             },
             elReplacements = extend(extend({}, attrReplacements), {
                 "\n": "\n" 
