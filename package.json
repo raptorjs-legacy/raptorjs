@@ -1,43 +1,44 @@
 {
-    "name": "raptor",
-    "version": "1.3.0-SNAPSHOT",
-    "description": "RaptorJS",
-    "keywords": [
-        "modules",
-        "loader",
-        "packager"
-    ],
-    "scripts": {
-        "test": "node_modules/.bin/jasmine-node --verbose test/ && node_modules/.bin/jshint lib/raptor/raptor_modules"
-    },
-    "author": "Patrick Steele-Idem <psteeleidem@ebay.com>",
-    "contributors": [
-        "Patrick Steele-Idem <psteeleidem@ebay.com>",
-        "Richard Heisterberg <rheisterberg@ebay.com>",
-        "Neeraj Khanna <nkhanna@ebay.com>"
-    ],
-    "maintainers": "Patrick Steele-Idem <psteeleidem@ebay.com>",
-    "directories": {
-        "bin": "./bin",
-        "lib": "./lib",
-        "test": "./test",
-        "tools": "./tools"
-    },
-    "dependencies": {
-        "uglify-js" : ">= 1.2.6",
-        "sax" : ">= 0.3.5",
-        "hot-reloader" : ">= 1.0.0",
-        "less": ">= 1.3.0",
-        "xmldom": ">= 0.1"
-    },
-    "devDependencies": {
-        "jasmine-node" : ">= 0.1.0",
-        "jsdom" : ">= 0.2.14",
-        "xmlhttprequest" : ">= 0.3.0",
-        "jshint" : ">= 0.7.0"
-    },
-    "bin": {
-        "raptor-optimizer": "bin/raptor-optimizer"  
-    },
-    "main": "lib/raptor/raptor-node-main"
+  "name": "raptor",
+  "version": "1.3.0-SNAPSHOT",
+  "description": "RaptorJS",
+  "keywords": [
+    "modules",
+    "loader",
+    "packager"
+  ],
+  "scripts": {
+    "test": "node_modules/.bin/jasmine-node --verbose test/ && node_modules/.bin/jshint lib/raptor/raptor_modules"
+  },
+  "author": "Patrick Steele-Idem <psteeleidem@ebay.com>",
+  "contributors": [
+    "Patrick Steele-Idem <psteeleidem@ebay.com>",
+    "Richard Heisterberg <rheisterberg@ebay.com>",
+    "Neeraj Khanna <nkhanna@ebay.com>"
+  ],
+  "maintainers": "Patrick Steele-Idem <psteeleidem@ebay.com>",
+  "directories": {
+    "bin": "./bin",
+    "lib": "./lib",
+    "test": "./test",
+    "tools": "./tools"
+  },
+  "dependencies": {
+    "uglify-js": ">= 1.2.6",
+    "sax": ">= 0.3.5",
+    "hot-reloader": ">= 1.0.0",
+    "less": ">= 1.3.0",
+    "xmldom": ">= 0.1",
+    "dustjs-linkedin": "~1.0.0"
+  },
+  "devDependencies": {
+    "jasmine-node": ">= 0.1.0",
+    "jsdom": ">= 0.2.14",
+    "xmlhttprequest": ">= 0.3.0",
+    "jshint": ">= 0.7.0"
+  },
+  "bin": {
+    "raptor-optimizer": "bin/raptor-optimizer"
+  },
+  "main": "lib/raptor/raptor-node-main"
 }
