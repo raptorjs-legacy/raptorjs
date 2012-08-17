@@ -213,6 +213,13 @@ raptor.defineClass(
                  */
                 i: function(name, data) {
                     this.renderTemplate(name, data);
+                },
+                
+                c: function(func) {
+                    var output = this.captureString(func);
+                    return {
+                        toString: function() { return output; }
+                    };
                 }
             };
         

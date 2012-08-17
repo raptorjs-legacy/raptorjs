@@ -65,9 +65,9 @@ raptor.defineClass(
                     return;
                 }
                
-                template.addJavaScriptCode('function ' + func + '{return ' + template.getStaticHelperFunction("noEscapeXml", "nx") + '(context.captureString(function(){');
+                template.addJavaScriptCode('function ' + func + '{return ' + template.getContextHelperFunction("captureXml", "c") + '(function(){');
                 this.generateCodeForChildren(template);
-                template.addJavaScriptCode('}));}');
+                template.addJavaScriptCode('});}');
             }
             
         };
