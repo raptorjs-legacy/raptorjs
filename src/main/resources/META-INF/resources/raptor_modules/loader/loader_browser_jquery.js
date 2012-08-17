@@ -63,9 +63,9 @@ raptor.extend('loader', function(raptor) {
          */
         includeCSSImpl: function(href, callback, attributes) {
 
-        	var retries = 3;
-        	
-        	var complete = false,
+            var retries = 20;
+            
+            var complete = false,
                 _this = this;
             
             var el = document.createElement('link');
@@ -76,28 +76,32 @@ raptor.extend('loader', function(raptor) {
                 el.onerror = null;
             };
             
-    		var loaded  = function() {
-    			var sheets = document.styleSheets;
-    			for (var idx = 0,len = sheets.length;(idx < len);idx++) {
-    				var href = sheets[idx].href;
-    				if (href && el.href.indexOf(href) >= 0) return true;
-    			}
-    			return false;
-    		};
+            var isLoaded  = function() {
+                var sheets = document.styleSheets;
+                for (var idx = 0, len = sheets.length; idx < len; idx++) {
+                    if (sheets[idx].href === href) {
+                        return true;
+                    }
+                }
+                return false;
+            };
 
-    		var success = function() {
-                if (complete === false)
-                {                    
-
-                	var ready = loaded();
-                	if (!ready && (retries--)) return window.setTimeout(success,10);
-
-                	complete = true;
+            var success = function() {
+                if (complete === false) {                    
+                    complete = true;
                     cleanup();
                     _this.logger().debug('Downloaded: "' + href + '"');
                     //Let the loader module know that the resource has included successfully
                     callback.success();
-
+                }
+            };
+            
+            var pollSuccess = function() {
+                if (complete === false) {
+                    if (!isLoaded() && (retries--)) {
+                        return window.setTimeout(pollSuccess,10);
+                    }
+                    success();
                 }
             };
             
@@ -111,7 +115,6 @@ raptor.extend('loader', function(raptor) {
                     callback.error();
                 }
             };
-            
             
             extend(el, {
                 type: 'text/css',
@@ -135,9 +138,7 @@ raptor.extend('loader', function(raptor) {
             else
             {
                 //For non-IE browsers we don't get the "onload" and "onreadystatechange" events...
-                
-                //TODO Update this code to check document.styleSheets
-                success();
+                pollSuccess();
             }
             
             el.onerror = error;      
