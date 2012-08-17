@@ -67,6 +67,9 @@ public abstract class Include {
     }
     
     public String getProperty(String name) {
+        if (this.properties == null) {
+            return null;
+        }
         Object value = this.properties.get(name);
         return value == null ? null : value.toString();
     }
