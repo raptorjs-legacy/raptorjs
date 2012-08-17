@@ -196,6 +196,10 @@ raptor.defineClass(
                 
                 var tagDef = compiler.taglibs.getTagDef(uri, node.localName);
                 if (tagDef) {
+                    if (tagDef.preserveSpace) {
+                        node.preserveSpace = true;
+                    }
+                    
                     if (tagDef.handlerClass)
                     {
                         //Instead of compiling as a static XML element, we'll

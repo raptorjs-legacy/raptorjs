@@ -173,6 +173,9 @@ raptor.defineClass(
                                 "id": {
                                     _type: STRING
                                 },
+                                "preserveSpace": {
+                                    _type: BOOLEAN
+                                },
                                 "extends": {
                                     _type: STRING,
                                     _targetProp: "extends"
