@@ -305,6 +305,11 @@ raptor.defineClass(
                             _targetProp: "pageOutputDir"
                         },
                         
+                        "write-html-includes": {
+                            _type: "string",
+                            _targetProp: "writeHtmlIncludes"
+                        },
+                        
                         "inject-html-includes": {
                             _type: "object",
                             _begin: function() {

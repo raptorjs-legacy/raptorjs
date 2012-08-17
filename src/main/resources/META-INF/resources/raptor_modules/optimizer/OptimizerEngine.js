@@ -4,7 +4,8 @@ raptor.defineClass(
         var files = raptor.require('files'),
             File = files.File,
             fileWatcher = raptor.require('file-watcher'),
-            listeners = raptor.require('listeners');
+            listeners = raptor.require('listeners'),
+            strings = raptor.require('strings');
         
         var OptimizerEngine = function(config) {
             this.config = config;
@@ -241,6 +242,16 @@ raptor.defineClass(
                 this.config.forEachPage(callback, thisObj);
             },
             
+            getPageRelativePath: function(page) {
+                if (page.getBasePath()) {
+                    if (strings.startsWith(page.getDir().getAbsolutePath(), page.getBasePath())) {
+                        return page.getDir().getAbsolutePath().substring(page.getBasePath().length);    
+                    }
+                }
+                
+                return null;
+            },
+            
             getPageOutputFile: function(page) {
                 var viewFile = page.getViewFile();
                 if (this.config.isModifyPagesEnabled()) {
@@ -251,15 +262,50 @@ raptor.defineClass(
                     if (!outputPageDir) {
                         return null;
                     }
+                    var relPath = this.getPageRelativePath(page);
                     
-                    if (page.getBasePath()) {
-                        outputFile = new File(outputPageDir, page.getDir().getAbsolutePath().substring(page.getBasePath().length) + "/" + page.getOutputFilename());
+                    if (relPath) {
+                        outputFile = new File(outputPageDir, relPath + "/" + page.getOutputFilename());
                     }
                     else {
                         outputFile = new File(outputPageDir, page.getOutputFilename());    
                     }
                 }
                 return outputFile;
+            },
+            
+            writePageIncludesHtml: function(page) {
+                var config = this.config;
+                var baseDir = config.getHtmlOutputDir(); 
+                if (!baseDir) {
+                    return;
+                }
+                
+                var relPath = this.getPageRelativePath(page),
+                    outputDir;
+                
+                if (relPath) {
+                    outputDir = files.joinPaths(baseDir, relPath);
+                }
+                else {
+                    outputDir = baseDir;
+                }
+                
+                var includes = this.getPageIncludes(page);
+                
+                raptor.forEachEntry(includes, function(location, code) {
+                    var outputFile;
+                    
+                    if (relPath) {
+                        outputFile = new File(outputDir, "includes-" + location + ".html");
+                    }
+                    else {
+                        outputFile = new File(outputDir, page.getSimpleName() + "-includes-" + location + ".html");
+                    }
+                    
+                    this.logger().info('Writing page HTML includes for page "' + page.getName() + '" to "' + outputFile + '"...');
+                    outputFile.writeFully(code);
+                }, this);
             },
             
             writeAllPages: function() {
@@ -278,6 +324,10 @@ raptor.defineClass(
                         }
                         
                         var writePage = function() {
+                            if (config.isWriteHtmlIncludesEnabled()) {
+                                _this.writePageIncludesHtml(page);    
+                            }
+                            
                             var html = page.render({
                                 optimizer: _this
                             });

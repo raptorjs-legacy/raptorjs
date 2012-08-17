@@ -5,13 +5,14 @@ raptor.defineClass(
         var strings = raptor.require('strings');
         
         var Config = function(params) {
+            this.outputDir = "dist";
             this.bundlingEnabled = true;
-            this.bundlesOutputDir = "dist/static/bundles";
+            this.bundlesOutputDir = null;
             this.scriptsOutputDir = null;
             this.styleSheetsOutputDir = null;
             this.checksumsEnabled = true;
-            this.htmlOutputDir = "dist/inc/page-dependencies";
-            this.pageOutputDir = "dist/pages";
+            this.htmlOutputDir = null;
+            this.pageOutputDir = null;
             this.scriptsUrlPrefix = null;
             this.styleSheetsUrlPrefix = null;
             this.resourceUrlPrefix = null;
@@ -213,6 +214,10 @@ raptor.defineClass(
             
             isInjectHtmlIncludesEnabled: function() {
                 return this.injectHtmlIncludesEnabled === true;
+            },
+            
+            isWriteHtmlIncludesEnabled: function() {
+                return this.writeHtmlIncludes = true;
             },
             
             isModifyPagesEnabled: function() {
