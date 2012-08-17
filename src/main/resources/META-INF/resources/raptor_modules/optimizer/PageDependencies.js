@@ -155,7 +155,7 @@ raptor.defineClass(
                             
                             if (!bundle) {
                                 //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName);
+                                bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName.replace(/^[^A-Za-z0-9_\-\.]*/g, ''));
                             }
                             
                         }

@@ -32,7 +32,7 @@ raptor.defineClass(
             
             
             getBundleFilename: function(bundle, checksum) {
-                var filename = bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '_') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "");
+                var filename = bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '-') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "");
                 var ext = "." + this.getFileExtension(bundle.getContentType());
                 if (!strings.endsWith(filename, ext)) {
                     filename += ext;
