@@ -17,9 +17,14 @@
 $rload(function(raptor) {
     "use strict";
     
-    raptor.defineCore('stacktraces', {
+    /**
+     * @namespace
+     * @raptor
+     * @name stacktraces
+     */
+    raptor.stacktraces = /** @lends stacktraces */{
         trace : function(e) {
             return "[trace not implemented]";
         }
-    });    
+    };    
 });

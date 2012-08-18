@@ -145,15 +145,6 @@
                     /**
                      * 
                      * @param moduleName
-                     * @param module
-                     */
-                    defineCore: function(moduleName, module) {
-                        this[moduleName] = module;                       
-                    },
-                    
-                    /**
-                     * 
-                     * @param moduleName
                      * @param mixins
                      */
                     extendCore: function(moduleName, mixins) {
@@ -220,6 +211,15 @@
                     
                     /**
                      * 
+                     * @param object
+                     * @returns {Boolean}
+                     */
+                    isNumber : function(object) {
+                        return (typeof(object) === 'number');
+                    },
+                    
+                    /**
+                     * 
                      * @param s
                      * @returns {Boolean}
                      */
@@ -227,8 +227,22 @@
                         return typeof f == 'function';
                     },
                     
+                    /**
+                     * 
+                     * @param o
+                     * @returns {Boolean}
+                     */
                     isObject: function(o) {
                         return typeof o == 'object';
+                    },
+                    
+                    /**
+                     * 
+                     * @param object
+                     * @returns {Boolean}
+                     */
+                    isBoolean : function(object) {
+                        return (typeof(object) === 'boolean');
                     },
                     
                     /**
@@ -243,13 +257,6 @@
                         if (a == null) return;
 
                         (isArray(a) ? a : [a]).forEach(func, thisp);
-//                        for (var i = 0, len=a.length, result; i < len; i++)
-//                        {
-//                            if (func.call(thisp, a[i], i, a) === false) {
-//                                throw new Error(new Error().stack);
-//                                return;
-//                            }
-//                        }
                     },
 
                     /**

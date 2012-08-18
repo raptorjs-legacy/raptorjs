@@ -24,7 +24,12 @@ $rload(function(raptor) {
         varRegExp = /\$\{([A-Za-z0-9_\.]+)\}/g;
     
     
-    raptor.defineCore('strings', {
+    /**
+     * @namespace
+     * @raptor
+     * @name strings
+     */
+    raptor.strings = /** @lends strings */{
 
         compare: function(s1, s2)
         {
@@ -143,5 +148,5 @@ $rload(function(raptor) {
             return parts.join('');
         }
         
-    });
+    };
 });

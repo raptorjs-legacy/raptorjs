@@ -21,7 +21,12 @@ $rload(function(raptor) {
         
     };
     
-    raptor.defineCore('stacktraces', {
+    /**
+     * @namespace
+     * @raptor
+     * @name stacktraces
+     */
+    raptor.stacktraces = /** @lends stacktraces */{
         trace: function(e) {
             if (arguments.length === 1) {
                 var rhinoException = e.rhinoException;
@@ -64,5 +69,5 @@ $rload(function(raptor) {
             return trace;
             
         }
-    });    
+    };    
 });

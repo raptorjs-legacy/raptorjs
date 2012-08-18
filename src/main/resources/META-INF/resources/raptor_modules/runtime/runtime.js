@@ -19,7 +19,12 @@ $rload(function(raptor) {
     
     var loadedFiles = {};
     
-    raptor.defineCore('runtime', {
+    /**
+     * @namespace
+     * @raptor
+     * @name runtime
+     */
+    raptor.runtime = /** @lends runtime */ {
         evaluateResource : function(resource) {
             resource = raptor.resources.findResource(resource);
             if (resource.exists() === false)
@@ -41,5 +46,5 @@ $rload(function(raptor) {
                 this.evaluateString(source, resource.getSystemPath());
             }
         }
-    });    
+    };    
 });

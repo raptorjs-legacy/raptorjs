@@ -17,7 +17,12 @@
 $rload(function(raptor) {
     "use strict";
     
-    raptor.defineCore('stacktraces', {
+    /**
+     * @namespace
+     * @raptor
+     * @name stacktraces
+     */
+    raptor.stacktraces = /** @lends stacktraces */{
         trace : function(e) {
             var out = [];
             while (e) {
@@ -31,5 +36,5 @@ $rload(function(raptor) {
             }
             return 'Stack trace:\n' +  out.join('');
         }
-    });    
+    };    
 });
