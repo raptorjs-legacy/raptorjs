@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.OptimizerEngine',
     function(raptor) {
+        "use strict";
+        
         var files = raptor.require('files'),
             File = files.File,
             fileWatcher = raptor.require('file-watcher'),
@@ -253,7 +255,9 @@ raptor.defineClass(
             },
             
             getPageOutputFile: function(page) {
-                var viewFile = page.getViewFile();
+                var viewFile = page.getViewFile(),
+                    outputFile;
+                
                 if (this.config.isModifyPagesEnabled()) {
                     outputFile = viewFile;
                 }
@@ -352,7 +356,7 @@ raptor.defineClass(
                                     }
                                 }
                                 else {
-                                    logger.info('Modified page no longer exists: ' + pagePath);
+                                    logger.info('Modified page no longer exists: ' + file.getAbsolutePath());
                                 }    
                             });
                             

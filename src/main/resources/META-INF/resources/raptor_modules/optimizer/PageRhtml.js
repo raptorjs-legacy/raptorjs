@@ -2,6 +2,7 @@ raptor.defineClass(
     'optimizer.PageRhtml',
     'optimizer.Page',
     function(raptor) {
+        "use strict";
         
         var fileWatcher = raptor.require('file-watcher'),
             files = raptor.require('files'),

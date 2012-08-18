@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.PageConfig',
     function(raptor) {
+        "use strict";
+        
         var PageConfig = function() {
             this.includes = [];
             this.name = null;

@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.PageFileFinder',
     function(raptor) {
+        "use strict";
+        
         var strings = raptor.require('strings'),
             files = raptor.require('files'),
             File = files.File;
@@ -24,7 +26,7 @@ raptor.defineClass(
                             if (filename === 'package.json') {
                                 
                                 pageFileDir = file.getParentFile();
-                                pageName = dir.getName();
+                                pageName = pageFileDir.getName();
                                 
                             }
                             else if (strings.endsWith(filename, "-package.json")) {

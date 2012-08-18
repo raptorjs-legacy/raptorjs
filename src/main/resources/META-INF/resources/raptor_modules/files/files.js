@@ -72,7 +72,7 @@ $rload(function(raptor) {
         
         resolveRelativeFile: function(dir, relPath) {
             var paths = raptor.require('paths');
-            var absPath = paths.resolve(dirPath, relativePath);
+            var absPath = paths.resolve(dir, relPath);
             return new raptor.files.File(absPath);
         }
     };

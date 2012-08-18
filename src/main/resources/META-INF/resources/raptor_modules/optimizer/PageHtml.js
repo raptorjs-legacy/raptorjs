@@ -2,6 +2,8 @@ raptor.defineClass(
     'optimizer.PageHtml',
     'optimizer.Page',
     function(raptor) {
+        "use strict";
+        
         var fileWatcher = raptor.require('file-watcher');
         
         var PageHtml = function() {
@@ -10,6 +12,7 @@ raptor.defineClass(
         
         PageHtml.prototype = {
             doWatch: function() {
+                var logger = this.logger();
                 
                 if (this.getViewFile() && this.getViewFile().exists()) {
                     this.addWatcher(fileWatcher.watch(this.getViewFile().getAbsolutePath(), function(eventArgs) {

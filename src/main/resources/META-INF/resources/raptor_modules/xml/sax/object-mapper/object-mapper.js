@@ -48,7 +48,7 @@ raptor.define(
                 
                 if (uri) {
                     schema = lookupSchema(uri + ":" + el.getLocalName());
-                    if (!type) {
+                    if (!schema) {
                         schema = lookupSchema(uri + ":*");                                        
                     }
                 }
@@ -209,9 +209,12 @@ raptor.define(
                         }
                         
                         if (!_this.skipping) {
-                            forEach(el.getAttributes(), function(attr) {
+                            var attrs = el.getAttributes();
+                            
+                            for (var i=0, len=attrs.length, attr; i<len; i++) {
+                                attr = attrs[i];
                                 if (_this.skipping) {
-                                    return false;
+                                    break;
                                 }
                                 
                                 var attrSchema = getSchema(attr, "attribute", curSchema);
@@ -228,9 +231,7 @@ raptor.define(
                                         attr.getValue(),  //The value of the property
                                         attrContext); //The context for the attribute
                                 
-                                return true;
-                                
-                            });
+                            };
                         }
                     },
     

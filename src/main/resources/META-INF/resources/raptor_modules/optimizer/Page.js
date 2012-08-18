@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.Page',
     function(raptor) {
+        "use strict";
+        
         var files = raptor.require('files'),
             File = files.File;
         

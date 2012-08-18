@@ -1,6 +1,8 @@
 raptor.defineClass(
     "optimizer.HtmlInjector",
     function(raptor) {
+        "use strict";
+        
         var startRegExp = /<!--\s*\[\s*raptor-include\:?\s+(\w+)\s*\]\s*-->/g,
             endRegExp = /<!--\s*\[\/\s*raptor-include\s*\]\s*-->/g;
         
@@ -35,7 +37,7 @@ raptor.defineClass(
                     
                     endMatch = endRegExp.exec(pageHtml);
                     if (endMatch) {
-                        if (keepMarkers) {
+                        if (this.keepMarkers) {
                             begin = endMatch.index;
                         }
                         else {
@@ -58,7 +60,7 @@ raptor.defineClass(
             inject: function(location, injectHtml) {
                 var injectIndex = this.injectIndexes[location];
                 if (injectIndex === undefined) {
-                    raptor.throwError(new Error('Starting marker not found for location "' + location + '" in page "' + pagePath + '"'));
+                    raptor.throwError(new Error('Starting marker not found for location "' + location + '"'));
                 }
                 this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-include: ' + location + '] -->' + injectHtml + '<!-- [/raptor-include] -->') : injectHtml;
             },

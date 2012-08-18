@@ -16,8 +16,8 @@
 
 
 var $rdefs = {}; //Class definitionsLookup are global for a reason. It allows the
-                          //the class definitions to remain even if a new Raptor environment
-                          //which is needed for testing.
+                 //the class definitions to remain even if a new Raptor environment
+                 //which is needed for testing.
 
 
 $rload(function(raptor) {

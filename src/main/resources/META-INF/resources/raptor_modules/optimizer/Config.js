@@ -1,6 +1,7 @@
 raptor.defineClass(
     "optimizer.Config",
     function(raptor) {
+        "use strict";
         
         var strings = raptor.require('strings');
         
@@ -90,7 +91,7 @@ raptor.defineClass(
             },
             
             hasServerSourceMappings: function() {
-                return this.serverSourceMappings.length != 0;
+                return this.serverSourceMappings.length !== 0;
             },
             
             getUrlForSourceFile: function(path) {
@@ -237,7 +238,7 @@ raptor.defineClass(
             },
             
             hasPages: function() {
-                return this.pages.length != 0;
+                return this.pages.length !== 0;
             },
             
             isMinifyJsEnabled: function() {
@@ -313,7 +314,7 @@ raptor.defineClass(
                     
                 if (this.bundlingEnabled !== false) {
                     addBundles(bundleSetDef);    
-                };
+                }
                 
                 var bundleSet = raptor.require('optimizer').createBundleSet(
                         bundles,

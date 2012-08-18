@@ -76,7 +76,13 @@ $rload(function(raptor) {
             },
             
             forEachEntry: function(callback, thisObj) {
-                forEach(this.entries, callback, thisObj);
+                var a = this.entries;
+                
+                for (var i=0, len=a.length; i<len; i++) {
+                    if (callback.call(thisObj, a[i], i, a) === false) {
+                        return;
+                    }
+                }
             }
         };
         

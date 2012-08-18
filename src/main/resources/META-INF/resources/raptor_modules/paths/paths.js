@@ -1,6 +1,8 @@
 raptor.define(
     "paths",
     function(raptor) {
+        "use strict";
+        
         return {
             /**
              * Resolves a possibly path relative to a directory to an absolute path.

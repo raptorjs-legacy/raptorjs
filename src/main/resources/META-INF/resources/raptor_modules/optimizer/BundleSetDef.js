@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.BundleSetDef',
     function(raptor) {
+        "use strict";
+        
         var BundleSetDef = function() {
             this.name = "default";
             this.ref = null;

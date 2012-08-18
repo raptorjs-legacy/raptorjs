@@ -12,6 +12,7 @@
     ],
     
     "includes": [
+        {"module": "ecma.es5"},
         {"module": "raptorBuilder"},
         {"module": "logging"},
         {"module": "errors"},

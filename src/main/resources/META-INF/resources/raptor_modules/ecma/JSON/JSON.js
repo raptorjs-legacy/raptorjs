@@ -146,7 +146,7 @@
     redistribute.
 */
 
-/*jslint evil: true, strict: false, regexp: false */
+/*jshint evil: true, strict: false, regexp: false */
 
 
 // Create a JSON object only if one does not already exist. We create the

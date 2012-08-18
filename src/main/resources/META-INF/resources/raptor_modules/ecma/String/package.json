@@ -1,9 +1,0 @@
-{
-    "type": "raptor-module",
-    "name": "ecma.string",
-    "version": "1.0",
-    "description": "ECMA-compatible String object",
-    "includes": [
-        {"path": "String.js"}        
-    ]
-}

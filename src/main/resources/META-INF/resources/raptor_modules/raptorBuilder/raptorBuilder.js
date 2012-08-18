@@ -18,13 +18,11 @@
     /*jshint strict:false */
     
     var global = this,
+        _Array = Array,
         lookup = {},
         loaders = [],
-        slice = Array.prototype.slice,
-        isArray = function(o)
-        {
-            return o && o.constructor === Array;
-        },
+        slice = _Array.prototype.slice,
+        isArray = _Array.isArray,
         extend = function(dest, source) {
             if (dest == null) dest = {};
             if (source != null)
@@ -241,20 +239,17 @@
                      * @param {function} fun The callback function to use for each iteration of the array. The following parameters are passed to the callback function: 1) element 2) index 3) the array itself
                      * @param thisp The "this" object to use for the callback function
                      */
-                    forEach: function(a, fun, thisp) {
+                    forEach: function(a, func, thisp) {
                         if (a == null) return;
 
-                        if (!isArray(a))
-                        {
-                            a = [a];
-                        }
-
-                        for (var i = 0, len=a.length, result; i < len; i++)
-                        {
-                            if (fun.call(thisp, a[i], i, a) === false) {
-                                return;
-                            }
-                        }
+                        (isArray(a) ? a : [a]).forEach(func, thisp);
+//                        for (var i = 0, len=a.length, result; i < len; i++)
+//                        {
+//                            if (func.call(thisp, a[i], i, a) === false) {
+//                                throw new Error(new Error().stack);
+//                                return;
+//                            }
+//                        }
                     },
 
                     /**
@@ -270,16 +265,7 @@
                      */
                     keys: function(o)
                     {
-                        var k;
-                        var keys = [];
-                        for (k in o)
-                        {
-                            if (o.hasOwnProperty(k))
-                            {
-                                keys.push(k);
-                            }
-                        }
-                        return keys;
+                        return Object.keys(o);
                     }
                     
                 };

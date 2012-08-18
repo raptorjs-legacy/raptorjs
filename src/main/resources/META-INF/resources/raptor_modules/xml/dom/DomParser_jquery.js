@@ -1,6 +1,8 @@
 raptor.defineClass(
     'xml.dom.DomParser',
     function(raptor) {
+        "use strict";
+        
         var DomParser = function(options) {
             
         };

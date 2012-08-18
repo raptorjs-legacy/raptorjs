@@ -1,6 +1,8 @@
 raptor.defineClass(
     'optimizer.BundleDef',
     function(raptor) {
+        "use strict";
+        
         var BundleDef = function() {
             this.name = null;
             this.includes = [];

@@ -1,6 +1,8 @@
 raptor.extend(
     'file-watcher',
     function(raptor) {
+        "use strict";
+        
         var fs = require('fs');
         
         return {

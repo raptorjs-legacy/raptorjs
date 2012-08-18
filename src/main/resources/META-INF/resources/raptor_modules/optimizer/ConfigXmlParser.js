@@ -1,6 +1,7 @@
 raptor.defineClass(
     "optimizer.ConfigXmlParser",
     function(raptor) {
+        "use strict";
         
         var BundleDef = raptor.require('optimizer.BundleDef'),
             BundleSetDef = raptor.require('optimizer.BundleSetDef'),
@@ -75,7 +76,7 @@ raptor.defineClass(
                                 return {};
                                 
                             },
-                            _end: function(child) {
+                            _end: function(child, bundleSetDef) {
                                 if (!child.ref) {
                                     raptor.throwError(new Error('The "ref" attribute is required for nested <bundles> element'));
                                 }
@@ -383,9 +384,10 @@ raptor.defineClass(
                                     }
                                     pageConfig.htmlPath = htmlPath = resolvePath(htmlPath);
                                     pageConfig.packagePath = resolvePath(pageConfig.packagePath);
+                                    raptor.throwError(new Error("<page> elements not yet supported"));
                                     config.addPage({
                                         
-                                    })
+                                    });
                                     
                                 },
                                 

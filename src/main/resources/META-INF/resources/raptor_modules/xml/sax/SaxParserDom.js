@@ -2,7 +2,8 @@ raptor.defineClass(
     'xml.sax.SaxParserDom',
     'xml.sax.BaseSaxParser',
     function(raptor) {
-
+        "use strict";
+        
         var SaxParserDom = function(xmlDoc) {
             SaxParserDom.superclass.constructor.call(this);
         };

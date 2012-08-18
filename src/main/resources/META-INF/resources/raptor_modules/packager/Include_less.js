@@ -53,9 +53,9 @@ raptor.defineClass(
                         }
                     } else {
                         if (typeof(env.errback) === "function") {
-                            env.errback(filename, paths, callback);
+                            env.errback(path, paths, callback);
                         } else {
-                            callback({ type: 'File', message: "'" + filename + "' wasn't found.\n" });
+                            callback({ type: 'File', message: "'" + path + "' wasn't found.\n" });
                         }
                     }
                 };

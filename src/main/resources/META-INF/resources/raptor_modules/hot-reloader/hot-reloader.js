@@ -1,6 +1,8 @@
 raptor.define(
     'hot-reloader',
     function(raptor) {
+        "use strict";
+        
         var fileWatcher = raptor.require('file-watcher'),
             nodeHotReloader = require('hot-reloader');
 
@@ -71,7 +73,7 @@ raptor.define(
                 
                 
                 
-                raptor.forEach(moduleNames, _watchModule);
+                raptor.forEach(moduleName, _watchModule);
                 
                 return watcher;
             }

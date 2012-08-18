@@ -19,7 +19,7 @@ $rload(function(raptor) {
     
     var EMPTY_STRING = '',
         trim = function(s){
-            return s ? s.replace(/^\s*|\s*$/g,'') : EMPTY_STRING;
+            return s ? s.trim() : EMPTY_STRING;
         },
         varRegExp = /\$\{([A-Za-z0-9_\.]+)\}/g;
     
@@ -59,10 +59,7 @@ $rload(function(raptor) {
          * 
          * @static
          */
-        isString: function(o)
-        {
-            return o != null && o.constructor === String;
-        },
+        isString: raptor.isString,
 
         /**
          * Tests if two strings are equal
@@ -103,11 +100,11 @@ $rload(function(raptor) {
         trim: trim,
 
         ltrim: function(s){
-            return s ? s.replace(/^\s*/g,'') : EMPTY_STRING;
+            return s ? s.replace(/^\s\s*/,'') : EMPTY_STRING;
         },
 
         rtrim: function(s){
-            return s ? s.replace(/\s*$/g,'') : EMPTY_STRING;
+            return s ? s.replace(/\s\s*$/,'') : EMPTY_STRING;
         },
 
         startsWith: function(s, prefix) {

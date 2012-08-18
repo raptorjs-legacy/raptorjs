@@ -1,6 +1,8 @@
 raptor.define(
     'file-watcher',
     function(raptor) {
+        "use strict";
+        
         var createFilenameMatcherFromPatterns = function(patterns) {
                 var regExpArray = [],
                     regexp = raptor.require('regexp');
@@ -37,7 +39,7 @@ raptor.define(
                 var filenameMatchers = [];
                 
                 if (options.filenamePatterns && options.filenamePatterns.length) {
-                    var filenamePatterns = options.filenamePatterns.split('\s*,\s*');
+                    var filenamePatterns = options.filenamePatterns.split(/\s*,\s*/);
                     filenameMatchers.push(createFilenameMatcherFromPatterns(filenamePatterns));
                 }
                 

@@ -1,6 +1,8 @@
 raptor.define(
     'optimizer.MinifyJSFilter',
     function() {
+        "use strict";
+        
         var strings = raptor.require('strings');
         
         return {
