@@ -155,7 +155,9 @@ $rload(function(raptor) {
                 
                 resourcePath = packageResource.getPath();
 
-                packageDirPath = resourcePath.substring(0, resourcePath.lastIndexOf("/"));
+                var packageDirPathMatches = resourcePath.match(/[\\\/][^\\\/]+$/);
+                
+                packageDirPath = resourcePath.substring(0, packageDirPathMatches.index);
                 
                 logger.debug('Found package manifest: ' + packageResource.getSystemPath());
                 
@@ -168,6 +170,7 @@ $rload(function(raptor) {
                     errors.throwError(new Error('Unable to parse module manifest at path "' + packageResource.getSystemPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
                 }
                 
+                console.error('getPackagemanifest: ', resourcePath, packageDirPath);
                 raptor.extend(manifest, this.PackageManifest);
                 manifest.init(packageDirPath, packageResource);
                 

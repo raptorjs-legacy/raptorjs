@@ -194,9 +194,12 @@ $rload(function(raptor) {
         },
         
         resolveResource: function(path) {
+        	console.error("resolveResource: " + path);
             if (!strings.startsWith(path, '/')) {
                 path = this.getDirPath() + '/' + path;
             }
+            
+            console.error("resolveResource b: " + path);
             
             var resource = raptor.resources.findResource(path, this.getSearchPathEntry() /* Search within the same search path entry */);
             if (resource.exists() === false) {
@@ -205,6 +208,8 @@ $rload(function(raptor) {
                     errors.throwError(new Error('Resource "' + path + '" not found for package "' + this.getPackageResource().getSystemPath()));
                 }
             }
+            
+            //console.error("resolveResource: " + resource.get);
             
             return resource;
         },
