@@ -28,6 +28,8 @@
 	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
 	    "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
 	    "less": {"class": "packager.Include_less", "path": "/packager/Include_less.js"},
+	    "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
+	    "4cc": {"class": "packager.Include_4cc", "path": "/packager/Include_4cc.js"},
 	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
 	    "package": {"class": "packager.Include_package", "path": "/packager/Include_package.js"},
 	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
