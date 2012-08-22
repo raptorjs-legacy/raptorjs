@@ -176,6 +176,7 @@ raptor.define(
                         
                         var context = {
                            el: el, 
+                           name: el.getQName(),
                            tagName: el.getLocalName(),
                            uri: el.getNamespaceURI(),
                            parentContext: parentContext
@@ -224,6 +225,7 @@ raptor.define(
                                 
                                 var attrContext = raptor.extend({}, context);
                                 attrContext.attr = attr;
+                                attrContext.name = attr.getQName();
                                 _this._setProperty(
                                         attr, //Current attribute
                                         attrSchema,  //Schema associated with the attribute
