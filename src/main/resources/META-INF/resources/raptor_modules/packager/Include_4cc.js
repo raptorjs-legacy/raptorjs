@@ -15,14 +15,14 @@
  */
 
 raptor.defineClass(
-    "packager.Include_dust",
+    "packager.Include_4cc",
     "packager.Include",
     function(raptor) {
         "use strict";
         
         return {
             getKey: function() {
-                return "dust:" + this.resolvePathKey(this.path);
+                return "4cc:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
@@ -38,7 +38,7 @@ raptor.defineClass(
             },
             
             getContentType: function() {
-                return "application/javascript";
+                return "application/content";
             },
             
             isInPlaceDeploymentAllowed: function() {
@@ -46,11 +46,6 @@ raptor.defineClass(
             },
             
             load: function(context) {
-            	var resource = this.getResource(context);
-            	var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
-                var compiled = dust.compile(resource.readFully(),dirs.join('.'));
-                __rhinoHelpers.console.log(compiled);
-                dust.loadSource(compiled);
             }
             
         };
