@@ -87,7 +87,7 @@ raptor.defineClass(
                             
                             if (!attrDef && !tagDef.dynamicAttributes) {
                                 //Tag doesn't allow dynamic attributes
-                                node.addError('The tag "' + tagDef.name + '" in taglib "' + uri + '" does not support attribute "' + attr + '"');
+                                node.addError('The tag "' + tagDef.name + '" in taglib "' + tagDef.taglib.uri + '" does not support attribute "' + attr + '"');
                             }
                             
                             callback.call(thisObj, uri, attr.localName, value, prefix, attrDef);
