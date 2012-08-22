@@ -21,6 +21,7 @@ raptor.define('files.walker', function() {
     
     return {
         walk: function(dir, callback, thisObj, options) {
+            
             var walker = new Walker(callback, thisObj, options);
             walker.walkDir(dir);
         }

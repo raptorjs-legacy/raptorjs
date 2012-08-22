@@ -24,8 +24,10 @@ raptor.defineClass(
         var DirWalker = function(callbackFunc, thisObj, options) {
             this.callbackThisObj = thisObj;
             this.callbackFunc = callbackFunc;
+            this.recursive = true;
             
             if (options) {
+                this.recursive = options.recursive !== false;
                 this.dirsOnly = options.dirsOnly;
                 this.fileFilter = options.fileFilter;
                 this.dirTraverseFilter = options.dirTraverseFilter;
@@ -58,8 +60,16 @@ raptor.defineClass(
                 }
                 
                 if (isDir) {
+                    
                     if (!dirTraverseFilter || dirTraverseFilter.call(callbackThisObj, file) !== false) {
-                        file.forEachFile(this._handleFile, this);
+                        file.forEachFile(function(child) {
+                            if (child.isDirectory() &&! this.recursive) {
+                                return;
+                            }
+                            
+                            this._handleFile(child);
+                            
+                        }, this);
                     }
                 }
             }
