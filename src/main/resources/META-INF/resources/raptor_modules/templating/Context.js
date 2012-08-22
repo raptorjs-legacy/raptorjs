@@ -74,6 +74,10 @@ raptor.defineClass(
                 
             },
             
+            getOutput: function() {
+                return this.writer.toString();
+            },
+            
             /**
              * 
              * @param func
