@@ -4,11 +4,17 @@
         context.write("Hello " + name + "!");
     }
     %}
+    {%
+    function test2(name) {
+        return "Hello " + name + "!";
+    }
+    %}
     
     A
     
     <p>
         <c:invoke function="test('World')"/>
+        <c:write value="test2('World')"/>
     </p>
     
     B
@@ -18,6 +24,7 @@
             Hello ${name}! You have ${count} new messages.
         </c:def>
         <c:invoke function="greeting" name="Frank" count="${10}"/>
+        <c:invoke function="greeting('John', 20)"/>
     </p>
 
 </c:template>

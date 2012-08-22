@@ -376,7 +376,7 @@ describe('templating module', function() {
         compileAndLoad("/test-templates/invoke.rhtml");
         
         var output = compileAndRender("/test-templates/invoke.rhtml", {});
-        expect(output).toEqual('A<p>Hello World!</p>B<p>Hello Frank! You have 10 new messages.</p>');
+        expect(output).toEqual('A<p>Hello World!Hello World!</p>B<p>Hello Frank! You have 10 new messages.Hello John! You have 20 new messages.</p>');
     });
     
     it("should allow for helper functions", function() {

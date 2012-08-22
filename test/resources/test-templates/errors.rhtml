@@ -12,7 +12,7 @@
     <div class="${invalid">
     </div>
     
-    <c:write value="${Test"/>
+    
     
     <c:for>
         Missing each attribute
@@ -23,6 +23,10 @@
     
     <c:for each="item in items" invalid="true">
         Invalid attribute
+    </c:for>
+    
+    <c:for each="item in items" separator="${;">
+        Invalid separator
     </c:for>
     
     <c:invalidTag>
