@@ -135,7 +135,7 @@
         <attribute>
             <name>value</name>
             <required>true</required>
-            <type>string</type>
+            <type>expression</type>
         </attribute>
         
         <attribute>
