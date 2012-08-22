@@ -169,7 +169,7 @@ raptor.defineClass(
                                         raptor.throwError(new Error('"path" is required for directory page search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
-                                    config.addPageSearchDir(dirPath, entry.basePath, entry.recursive === true);
+                                    config.addPageSearchDir(dirPath, entry.basePath, entry.recursive !== false);
                                 },
                                 "@path": {
                                     _type: "string"
@@ -436,6 +436,32 @@ raptor.defineClass(
                        
                     }; //End "optimizer-config" 
                 
+                var nestedProfileConfigHandler = raptor.extend(optimizerConfigHandler, {
+                    _type: "object",
+                    _begin: function() {
+                        return config;
+                    },
+                    "@name": {
+                        _type: "string",
+                        _set: function(parent, name, value) {
+                            if (!config.isProfileEnabled(value)) {
+                                reader.skipCurrentElement();    
+                            }
+                        }
+                    },
+                    "@enabled": {
+                        _type: "string",
+                        _set: function(parent, name, value) {
+                            
+                            if (!value || value === 'false') {
+                                reader.skipCurrentElement();    
+                            }
+                        }
+                    }
+                });
+                
+                nestedProfileConfigHandler["<profile>"] = nestedProfileConfigHandler;
+                
                 reader = objectMapper.createReader(
                     {
                         "<optimizer-config>": raptor.extend(optimizerConfigHandler, {
@@ -460,29 +486,7 @@ raptor.defineClass(
                                 }
                             },
                             
-                            "<profile>": raptor.extend(optimizerConfigHandler, {
-                                _type: "object",
-                                _begin: function() {
-                                    return config;
-                                },
-                                "@name": {
-                                    _type: "string",
-                                    _set: function(parent, name, value) {
-                                        if (!config.isProfileEnabled(value)) {
-                                            reader.skipCurrentElement();    
-                                        }
-                                    }
-                                },
-                                "@enabled": {
-                                    _type: "string",
-                                    _set: function(parent, name, value) {
-                                        
-                                        if (!value || value === 'false') {
-                                            reader.skipCurrentElement();    
-                                        }
-                                    }
-                                }
-                            })
+                            "<profile>": nestedProfileConfigHandler
                         })
                     },
                     { //objectMapper options

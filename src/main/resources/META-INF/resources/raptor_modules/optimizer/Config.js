@@ -63,6 +63,8 @@ raptor.defineClass(
                 var PageFileFinder = raptor.require('optimizer.PageFileFinder');
                 var pageFileFinder = new PageFileFinder();
                 
+                console.error("Search path: ", this.pageSearchPath);
+                
                 if (this.hasPageSearchPath()) {
                     this.forEachPageSearchPathEntry(function(searchPathEntry) {
                         if (searchPathEntry.type === 'dir') {
@@ -70,7 +72,7 @@ raptor.defineClass(
                                 raptor.throwError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
                             }
 
-                            pageFileFinder.findPages(searchPathEntry.path, searchPathEntry.basePath, searchPathEntry.recursive, this);
+                            pageFileFinder.findPages(searchPathEntry.path, searchPathEntry.basePath, searchPathEntry.recursive !== false, this);
                         }
                     }, this);
                 }
@@ -160,7 +162,7 @@ raptor.defineClass(
             },
             
             addPageSearchDir: function(path, basePath, recursive) {
-                this.pageSearchPath.push({type: "dir", path: path, basePath: basePath, recursive: recursive});
+                this.pageSearchPath.push({type: "dir", path: path, basePath: basePath, recursive: recursive !== false});
             },
             
             clearPageSearchPath: function() {
