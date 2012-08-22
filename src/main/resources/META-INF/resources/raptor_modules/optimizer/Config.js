@@ -16,6 +16,7 @@ raptor.defineClass(
             this.pageOutputDir = null;
             this.scriptsUrlPrefix = null;
             this.styleSheetsUrlPrefix = null;
+            this.enabledProfiles = {};
             this.resourceUrlPrefix = null;
             this.modifyPages = false;
             this.enabledExtensions = {};
@@ -68,7 +69,8 @@ raptor.defineClass(
                             if (!searchPathEntry.path) {
                                 raptor.throwError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
                             }
-                            pageFileFinder.findPages(searchPathEntry.path, this);
+
+                            pageFileFinder.findPages(searchPathEntry.path, searchPathEntry.basePath, searchPathEntry.recursive, this);
                         }
                     }, this);
                 }
@@ -157,8 +159,12 @@ raptor.defineClass(
                 this.params[name] = value;
             },
             
-            addPageSearchDir: function(path) {
-                this.pageSearchPath.push({type: "dir", path: path});
+            addPageSearchDir: function(path, basePath, recursive) {
+                this.pageSearchPath.push({type: "dir", path: path, basePath: basePath, recursive: recursive});
+            },
+            
+            clearPageSearchPath: function() {
+                this.pageSearchPath = [];
             },
             
             hasPageSearchPath: function() {
@@ -243,6 +249,28 @@ raptor.defineClass(
             
             isMinifyJsEnabled: function() {
                 return this.minifyJs === true;
+            },
+            
+            enableProfile: function(profileName) {
+                this.enabledProfiles[profileName] = true;
+            },
+            
+            enableProfiles: function(profileNames) {
+                if (typeof profileNames === 'string') {
+                    profileNames = profileNames.split(/\s*[,;]\s*/);
+                }
+                raptor.forEach(profileNames, function(profileName) {
+                    this.enableProfile(profileName);
+                }, this);
+            },
+            
+            setProfile: function(profileName) {
+                this.enabledProfiles = {};
+                this.enableProfile(profileName);
+            },
+            
+            isProfileEnabled: function(profileName) {
+                return this.enabledProfiles[profileName] === true;
             },
             
             addPage: function(pageConfig) {

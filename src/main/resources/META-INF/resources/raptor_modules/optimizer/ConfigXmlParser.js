@@ -109,6 +109,18 @@ raptor.defineClass(
                             return config;
                         },
                         "<params>": {
+                            "@file": {
+                                _set: function(parent, name, value) {
+                                    var path = resolvePath(value);
+                                    
+                                    if (raptor.require('files').exists(path)) {
+                                        var json = raptor.require('files').readFully(path);
+                                        raptor.forEachEntry(JSON.parse(json), function(paramName, paramValue) {
+                                            config.addParam(paramName, paramValue);
+                                        });    
+                                    }
+                                }
+                            },
                             "<*>": {
                                 _type: "string",
                                 _set: function(params, name, value) {
@@ -140,6 +152,12 @@ raptor.defineClass(
                         },
 
                         "page-search-path": {
+                            "@reset": {
+                                _type: "boolean",
+                                _set: function(parent, name, value) {
+                                    config.clearPageSearchPath();
+                                }
+                            },
                             "<dir>": {
                                 _type: "object",
                                 _begin: function() {
@@ -151,10 +169,20 @@ raptor.defineClass(
                                         raptor.throwError(new Error('"path" is required for directory page search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
-                                    config.addPageSearchDir(dirPath);
+                                    config.addPageSearchDir(dirPath, entry.basePath, entry.recursive === true);
                                 },
                                 "@path": {
                                     _type: "string"
+                                },
+                                "@base-path": {
+                                    _type: "string",
+                                    _set: function(parent, name, value) {
+                                        
+                                        parent.basePath = resolvePath(value);
+                                    }
+                                },
+                                "@recursive": {
+                                    _type: "boolean"
                                 }
                             }
                         },
@@ -413,7 +441,23 @@ raptor.defineClass(
                         "<optimizer-config>": raptor.extend(optimizerConfigHandler, {
                             "set-profile": {
                                 _type: "string",
-                                _targetProp: "profileName"
+                                _set: function(parent, name, value) {
+                                    parent.setProfile(value);
+                                }
+                            },
+                            
+                            "enable-profile": {
+                                _type: "string",
+                                _set: function(parent, name, value) {
+                                    parent.enableProfile(value);
+                                }
+                            },
+                            
+                            "enable-profiles": {
+                                _type: "string",
+                                _set: function(parent, name, value) {
+                                    parent.enableProfiles(value);
+                                }
                             },
                             
                             "<profile>": raptor.extend(optimizerConfigHandler, {
@@ -424,15 +468,16 @@ raptor.defineClass(
                                 "@name": {
                                     _type: "string",
                                     _set: function(parent, name, value) {
-                                        if (value !== config.profileName) {
+                                        if (!config.isProfileEnabled(value)) {
                                             reader.skipCurrentElement();    
                                         }
                                     }
                                 },
                                 "@enabled": {
-                                    _type: "boolean",
+                                    _type: "string",
                                     _set: function(parent, name, value) {
-                                        if (value !== true) {
+                                        
+                                        if (!value || value === 'false') {
                                             reader.skipCurrentElement();    
                                         }
                                     }
@@ -441,7 +486,7 @@ raptor.defineClass(
                         })
                     },
                     { //objectMapper options
-                        parseProp: function(value, name) {
+                        parseProp: function(value, context) {
                             var result = strings.merge(value, config.params);
                             return result;
                         }

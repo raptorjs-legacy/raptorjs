@@ -12,7 +12,9 @@ raptor.defineClass(
         };
         
         PageFileFinder.prototype = {
-            findPages: function(rootDir, config) {
+            findPages: function(rootDir, basePath, recursive, config) {
+                
+                
                 raptor.require('files.walker').walk(
                     rootDir, 
                     function(file) {
@@ -47,7 +49,7 @@ raptor.defineClass(
                                 pageName = pageFileDir.getAbsolutePath().substring(rootDir.length) + '/' + pageName;
                                 
                                 config.addPage({
-                                    basePath: rootDir,
+                                    basePath: basePath || rootDir,
                                     dir: file.getParentFile(),
                                     name: pageName,
                                     packagePath: file.getAbsolutePath(),
@@ -59,7 +61,10 @@ raptor.defineClass(
                             
                         }
                     },
-                    this);
+                    this,
+                    {
+                        recursive: recursive !== false
+                    });
             }
         };
         
