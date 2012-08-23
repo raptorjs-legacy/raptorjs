@@ -45,15 +45,32 @@ raptor.defineClass(
                             return;
                         }
                         
-                        var checksum = bundleChecksums[bundle.getKey()];
-                            
-                        if (!checksum) {
-                            var bundleData = _this.readBundle(bundle, context);
-                            bundleChecksums[bundle.getKey()] = checksum = bundleData.checksum;
-                            _this.writeBundle(bundle, bundleData.code, checksum);    
+                        if (bundle.isWrittenToDisk()) {
+                            _this.logger().info("Bundle (" + bundle.getKey() + ") already written to disk. Skipping...");
+                            return bundle.checksum;
                         }
                         
-                        return checksum;
+                        var bundleData;
+                        
+                        bundle.getBundleData = function() {
+                            if (!bundleData) {
+                                bundleData = _this.readBundle(bundle, context);
+                                bundle.checksum = bundleData.checksum; 
+                            }
+                            return bundleData;
+                        };
+                        
+                        bundle.getChecksum = function() {
+                            return this.getBundleData().checksum;
+                        };
+                        
+                        bundle.getCode = function() {
+                            return this.getBundleData().code;
+                        };
+                        
+                        _this.writeBundle(bundle);
+                        bundle.setWrittenToDisk(true);
+                        return bundle.getChecksum();
                     },
                     htmlByLocation = {},
                     addHtml = function(location, html) {

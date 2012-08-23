@@ -14,10 +14,9 @@ raptor.defineClass(
         PageConfig.prototype = {
             enableExtension: function(name) {
                 if (!this.enabledExtensions) {
-                    this.enabledExtensions = {};
+                    this.enabledExtensions = raptor.require('packager').createExtensionCollection();
                 }
-                this.enabledExtensions[name] = true;
-                
+                this.enabledExtensions.add(name);
             },
             
             getHtmlPath: function() {
@@ -33,7 +32,7 @@ raptor.defineClass(
             },
             
             getEnabledExtensions: function() {
-                return this.enabledExtensions ? Object.keys(this.enabledExtensions) : this.config.getEnabledExtensions();
+                return this.enabledExtensions || this.config.getEnabledExtensions();
             },
             
             addBundleSetDef: function(bundleSetDef) {

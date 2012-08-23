@@ -5,6 +5,7 @@ raptor.defineClass(
         "use strict";
         
         var files = raptor.require('files'),
+            File = files.File,
             listeners = raptor.require('listeners');
         
         var PageDependenciesFileWriter = function(config) {
@@ -35,11 +36,12 @@ raptor.defineClass(
                 }
                 else {
                     raptor.throwError(new Error("Unsupported content type: " + contentType));
+                    return null;
                 }
             },
             
-            getBundleFilename: function(bundle, checksum) {
-                return this.getUrlBuilder().getBundleFilename(bundle, checksum);
+            getBundleFilename: function(bundle) {
+                return this.getUrlBuilder().getBundleFilename(bundle);
             },
             
             getBundleOutputDir: function(bundle) {
@@ -56,16 +58,23 @@ raptor.defineClass(
                 }
             },
             
-            writeBundle: function(bundle, code, checksum) {
-                var outputDir = this.getBundleOutputDir(bundle);
-                var outputPath = files.joinPaths(outputDir, this.getBundleFilename(bundle, checksum));
+            writeBundle: function(bundle) {
+                var outputDir = this.getBundleOutputDir(bundle),
+                    outputPath = files.joinPaths(outputDir, this.getBundleFilename(bundle)),
+                    _this = this;
                 
-                this.writeBundleFile(outputPath, code, checksum, bundle);
+                var outputFile = new File(outputPath);
+                
+                if (bundle.sourceResource && outputFile.exists() && outputFile.lastModified() > bundle.sourceResource.getFile().lastModified()) {
+                    _this.logger().info('Bundle "' + outputFile.getAbsolutePath() + '" written to disk is up-to-date. Skipping...');
+                    return;
+                }
+                
+                this.writeBundleFile(outputFile, bundle.getCode(), bundle.getChecksum(), bundle);
             },
             
-            writeBundleFile: function(path, code, checksum, bundle) {
-                this.logger().info('Writing bundle file to "' + path + '"...');
-                var outputFile = new files.File(path);
+            writeBundleFile: function(outputFile, code, checksum, bundle) {
+                this.logger().info('Writing bundle file to "' + outputFile.getAbsolutePath() + '"...');
                 outputFile.writeFully(code, "UTF-8");
                 this.publish('bundleWritten', {
                     bundle: bundle,

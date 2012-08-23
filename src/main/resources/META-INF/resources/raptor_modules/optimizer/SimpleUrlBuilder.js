@@ -15,7 +15,7 @@ raptor.defineClass(
         };
         
         SimpleUrlBuilder.prototype = {
-            buildBundleUrl: function(bundle, checksum) {
+            buildBundleUrl: function(bundle) {
                 if (bundle.url) {
                     return bundle.url;
                 }
@@ -23,7 +23,7 @@ raptor.defineClass(
                     return require('path').relative(this.baseDir, bundle.sourceResource.getSystemPath());
                 }
                 
-                return this.getPrefix(bundle) + this.getBundleFilename(bundle, checksum);
+                return this.getPrefix(bundle) + this.getBundleFilename(bundle);
             },
             
             setBaseDir: function(baseDir) {
@@ -31,7 +31,9 @@ raptor.defineClass(
             },
             
             
-            getBundleFilename: function(bundle, checksum) {
+            getBundleFilename: function(bundle) {
+                var checksum = bundle.getChecksum();
+                
                 var filename = bundle.getName().replace(/^\//, '').replace(/[^A-Za-z0-9_\-\.]/g, '-') + (bundle.getLocation() && bundle.includeLocationInUrl !== false ? "-" + bundle.getLocation() : "") + (checksum ? "-" + checksum : "");
                 var ext = "." + this.getFileExtension(bundle.getContentType());
                 if (!strings.endsWith(filename, ext)) {

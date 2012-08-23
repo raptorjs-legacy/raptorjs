@@ -45,7 +45,7 @@ raptor.defineClass(
             }
             
             
-            this.enabledExtensions = options.enabledExtensions || [];
+            this.enabledExtensions = options.enabledExtensions;
             this.includeToBundleMapping = {};
             this.bundlesByKey = {};
             

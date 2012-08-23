@@ -19,7 +19,7 @@ raptor.defineClass(
             this.enabledProfiles = {};
             this.resourceUrlPrefix = null;
             this.modifyPages = false;
-            this.enabledExtensions = {};
+            this.enabledExtensions = raptor.require('packager').createExtensionCollection();
             this.params = {};
             this.pages = [];
             this.bundleSetDefsByName = {};
@@ -62,8 +62,6 @@ raptor.defineClass(
             findPages: function() {
                 var PageFileFinder = raptor.require('optimizer.PageFileFinder');
                 var pageFileFinder = new PageFileFinder();
-                
-                console.error("Search path: ", this.pageSearchPath);
                 
                 if (this.hasPageSearchPath()) {
                     this.forEachPageSearchPathEntry(function(searchPathEntry) {
@@ -214,11 +212,12 @@ raptor.defineClass(
             },
 
             enableExtension: function(name) {
-                this.enabledExtensions[name] = true;
+                
+                this.enabledExtensions.add(name);
             },
             
             getEnabledExtensions: function() {
-                return Object.keys(this.enabledExtensions);
+                return this.enabledExtensions;
             },
             
             isInjectHtmlIncludesEnabled: function() {

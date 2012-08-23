@@ -42,6 +42,11 @@ $rload(function(raptor) {
     raptor.packager = /** @lends packager */ {
         ExtensionCollection: raptor.ExtensionCollection,
         
+        createExtensionCollection: function(enabledExtensions) {
+            var ExtensionCollection = this.ExtensionCollection;
+            return new ExtensionCollection(enabledExtensions);
+        },
+        
         config: raptor.config.create({
             "enabledExtensions": {
                 value: raptor.getModuleConfig('packager').enabledExtensions,

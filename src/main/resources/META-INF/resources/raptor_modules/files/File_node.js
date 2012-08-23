@@ -49,11 +49,15 @@ $rload(function(raptor) {
         _getStat: function() {
             try
             {
-                return nodeFS.statSync(this._path);
+                return nodeFS.lstatSync(this._path);
             }
             catch(e) {
                 return null;
             }
+        },
+        
+        lastModified: function() {
+            return this._getStat().mtime.getTime();
         },
         
         exists: function() {

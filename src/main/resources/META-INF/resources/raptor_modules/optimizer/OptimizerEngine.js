@@ -199,6 +199,27 @@ raptor.defineClass(
                 }, this);
             },
             
+            getExtensionsKey: function(extensions) {
+                if (!extensions || extensions.length === 0) {
+                    return "";
+                }
+                return extensions.join("|");
+            },
+            
+            getPageBundleSet: function(page, enabledExtensions) {
+                
+                var bundleSetDef = page.getBundleSetDef();
+                enabledExtensions = enabledExtensions || page.getEnabledExtensions();
+                
+                var lookupKey = 'bundleSet-' + enabledExtensions.getKey();
+                var bundleSet = bundleSetDef[lookupKey];
+                if (!bundleSet) {
+                    bundleSet = this.config.createBundleSet(bundleSetDef, enabledExtensions);
+                    bundleSetDef[lookupKey] = bundleSet;
+                }
+                return bundleSet;
+            },
+            
             buildPageIncludes: function(page, options) {
                 var config = this.config,
                     optimizer = raptor.require('optimizer');
@@ -207,9 +228,9 @@ raptor.defineClass(
                         return config.getUrlForSourceFile(path);
                     } : null;
 
-                var bundleSetDef = page.getBundleSetDef(),
-                    enabledExtensions = options.enabledExtensions || page.getEnabledExtensions(),
-                    bundleSet = config.createBundleSet(bundleSetDef, enabledExtensions);
+                var enabledExtensions = options.enabledExtensions || page.getEnabledExtensions(),
+                    bundleSet = this.getPageBundleSet(page, enabledExtensions);
+                    
                 
                 var pageDependencies = optimizer.buildPageDependencies({
                     inPlaceDeploymentEnabled: config.isInPlaceDeploymentEnabled(),

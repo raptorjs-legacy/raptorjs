@@ -13,6 +13,7 @@ raptor.defineClass(
             this.includes = [];
             this.location = "body";
             this.contentType = null;
+            this.writtenToDisk = false;
             
             this._code = undefined;
             this._checksum = undefined;
@@ -72,6 +73,14 @@ raptor.defineClass(
                 forEach(this.includes, callback, thisObj);
             },
             
+            getChecksum: function() {
+                throw new Error("getChecksum() not implemented");
+            },
+            
+            getCode: function() {
+                throw new Error("getCode() not implemented");
+            },
+            
             calculateChecksum: function(code) {
                 
                 var shasum = crypto.createHash('sha1');
@@ -89,7 +98,16 @@ raptor.defineClass(
                 }, this);
                 
                 return output.join("\n");  
+            },
+            
+            isWrittenToDisk: function() {
+                return this.writtenToDisk;
+            },
+            
+            setWrittenToDisk: function(writtenToDisk) {
+                this.writtenToDisk = writtenToDisk !== false;
             }
+            
         };
         
         return Bundle;

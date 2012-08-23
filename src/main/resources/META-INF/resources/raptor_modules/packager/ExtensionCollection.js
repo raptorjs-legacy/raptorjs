@@ -31,6 +31,7 @@ $rload(function(raptor) {
     var ExtensionCollection = function(extensions) {
         this.extensionsLookup = {};
         this.extensionsArray = [];
+        this.key = null;
         
         if (raptor.isArray(extensions)) {
             forEach(extensions, function(ext) {
@@ -52,6 +53,17 @@ $rload(function(raptor) {
         add: function(ext) {
             this.extensionsLookup[ext] = true;
             this.extensionsArray.push(ext);
+            this.key = null;
+        },
+        
+        getKey: function() {
+            
+            if (this.key == null) {
+                this.extensionsArray.sort();
+                this.key = this.extensionsArray.join("|");
+            }
+            
+            return this.key;
         },
         
         /**
