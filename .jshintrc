@@ -20,6 +20,7 @@
         "$rget",
         "$renv",
         "$",
+        "dust",
         "__rhinoHelpers",
         "Packages",
         "JavaAdapter"

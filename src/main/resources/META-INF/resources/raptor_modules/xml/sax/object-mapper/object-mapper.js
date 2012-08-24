@@ -233,7 +233,7 @@ raptor.define(
                                         attr.getValue(),  //The value of the property
                                         attrContext); //The context for the attribute
                                 
-                            };
+                            }
                         }
                     },
     

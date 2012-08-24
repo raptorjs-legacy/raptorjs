@@ -125,7 +125,7 @@ raptor.defineClass(
                 out.append(indent + "var ");
                 var declarations = [];
                 forEach(vars, function(v, i) {
-                    declarations.push((i != 0 ? indent + "    " : "" ) + v.name + "=" + v.expression + (i === vars.length-1 ? ";\n" : ",\n")); 
+                    declarations.push((i !== 0 ? indent + "    " : "" ) + v.name + "=" + v.expression + (i === vars.length-1 ? ";\n" : ",\n")); 
                 });
                 out.append(declarations.join(""));
             },

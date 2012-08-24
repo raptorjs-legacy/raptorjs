@@ -46,8 +46,8 @@ raptor.defineClass(
             },
             
             load: function(context) {
-            	var resource = this.getResource(context);
-            	var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
+                var resource = this.getResource(context);
+                var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
                 var compiled = dust.compile(resource.readFully(),dirs.join('.'));
                 __rhinoHelpers.console.log(compiled);
                 dust.loadSource(compiled);

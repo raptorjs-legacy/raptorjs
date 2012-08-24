@@ -195,7 +195,7 @@ $rload(function(raptor) {
         
         resolveResource: function(path) {
 
-        	if (!strings.startsWith(path, '/')) {
+            if (!strings.startsWith(path, '/')) {
                 path = this.getDirPath() + '/' + path;
             }
             
