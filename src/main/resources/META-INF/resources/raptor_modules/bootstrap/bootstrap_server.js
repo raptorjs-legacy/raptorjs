@@ -15,6 +15,8 @@
  */
 
 /*jshint strict:false */
+$renv='server';
+
 raptorBootstrap = {
     env: null,
     

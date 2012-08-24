@@ -18,6 +18,7 @@
     /*jshint strict:false */
     
     var global = this,
+        isClient = $renv === 'client',
         _Array = Array,
         lookup = {},
         loaders = [],
@@ -283,6 +284,14 @@
                     keys: function(o)
                     {
                         return Object.keys(o);
+                    },
+                    
+                    isServer: function() {
+                        return !isClient;
+                    },
+                    
+                    isClient: function() {
+                        return isClient;
                     }
                     
                 };

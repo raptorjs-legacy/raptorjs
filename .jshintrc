@@ -18,6 +18,7 @@
         "$rset",
         "$radd",
         "$rget",
+        "$renv",
         "$",
         "__rhinoHelpers",
         "Packages",

@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "core",
+    "name": "bootstrap",
     "version": "1.0",
     "description": "Raptor Core JavaScript Framework",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -11,12 +11,13 @@
         }
     ],
     
-    "includes": [
-        {"module": "bootstrap"},
-        {"module": "ecma.es5"},
-        {"module": "raptorBuilder"},
-        {"module": "logging"},
-        {"module": "errors"},
-        {"module": "oop"}
+    "extensions": [
+        {
+            "name": "browser",
+            "includes": [
+                "bootstrap_browser.js"
+            ]
+        }    
     ]
+    
 }
