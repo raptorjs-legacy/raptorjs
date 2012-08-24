@@ -2,7 +2,6 @@ require('./_helper.js');
 
 var compileAndLoad = helpers.templating.compileAndLoad,
     compileAndRender = helpers.templating.compileAndRender,
-    jsdomScripts = helpers.jsdom.jsdomScripts,
     jsdomWrapper = helpers.jsdom.jsdomWrapper;
 
 describe('widgets module in the browser', function() {
