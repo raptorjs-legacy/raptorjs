@@ -319,10 +319,10 @@ raptor.defineClass(
                     params = ["context"];
                 }
                 
-                out.append('$rset("rhtml",');
+                out.append('$rset("rhtml", ');
                 out.append(stringify(templateName));
-                out.append(',');
-                out.append(INDENT + 'function(helpers){\n');
+                out.append(', ');
+                out.append('function(helpers){\n');
                 //Write out the static variables
                 this._writeVars(this.staticVars, out, INDENT);
                 out.append('\n' + INDENT + 'return function(data, context){\n');
