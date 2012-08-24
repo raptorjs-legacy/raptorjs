@@ -254,9 +254,19 @@
                      * @param thisp The "this" object to use for the callback function
                      */
                     forEach: function(a, func, thisp) {
-                        if (a == null) return;
-
-                        (isArray(a) ? a : [a]).forEach(func, thisp);
+                        if (a != null) {
+                            (isArray(a) === true ? a : [a]).forEach(func, thisp);    
+                        }
+                        
+//                        if (Array.isArray(a) === false) {
+//                            if (a == null) {
+//                                return;
+//                            }
+//                            a = [a];
+//                        }
+//                        for (var i=0, len=a.length; i<len; i++) {
+//                            func.call(thisp, a[i], i);
+//                        }
                     },
 
                     /**
