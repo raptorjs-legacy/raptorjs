@@ -38,6 +38,7 @@ raptor.defineClass(
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
             this.injectHtmlIncludesEnabled = false;
+            this.writeHtmlIncludes = false;
             this.pagesByName = {};
             this.pageClassNamesByExt = {
                 "html": "optimizer.PageHtml",
@@ -225,7 +226,7 @@ raptor.defineClass(
             },
             
             isWriteHtmlIncludesEnabled: function() {
-                return this.writeHtmlIncludes = true;
+                return this.writeHtmlIncludes === true;
             },
             
             isModifyPagesEnabled: function() {
