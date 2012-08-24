@@ -64,7 +64,7 @@ raptor.define('widgets', function(raptor) {
             
             
             if (!parent) {
-                var attributes = context.attributes;
+                var attributes = context.getAttributes();
                 if (!attributes.widgets) {
                     attributes.widgets = [];
                 }
@@ -76,12 +76,12 @@ raptor.define('widgets', function(raptor) {
         },
         
         hasWidgets: function(context) {
-            var attributes = context.attributes;
+            var attributes = context.getAttributes();
             return attributes.widgets && attributes.widgets.length !== 0;
         },
         
         _nextDocId: function(context) {
-            var attributes = context.attributes;
+            var attributes = context.getAttributes();
             if (!attributes.nextDocId) {
                 attributes.nextDocId = 1;
             }

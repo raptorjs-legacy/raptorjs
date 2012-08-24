@@ -41,8 +41,8 @@ raptor.defineClass(
                 if (!this.firstWhen) {
                     template.addJavaScriptCode(' else ');                    
                 }
-                template.addJavaScriptCode('if (' + test + '){');
-                this.generateCodeForChildren(template);
+                template.addJavaScriptCode('if (' + test + ') {\n');
+                this.generateCodeForChildren(template, true /* indent */);
                 template.addJavaScriptCode('}');
             }
             

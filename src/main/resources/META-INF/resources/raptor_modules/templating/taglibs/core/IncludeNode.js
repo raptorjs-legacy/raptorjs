@@ -46,7 +46,7 @@ raptor.defineClass(
                         propParts.push(stringify(name) + ": " + value);
                     }, this);
                     
-                    var propsStr = template.getContextHelperFunction("include", "i") + "(" + templateName + ",{" + propParts.join(",") + "});";
+                    var propsStr = "context.i(" + templateName + ",{" + propParts.join(",") + "});\n";
                     template.addJavaScriptCode(propsStr);
                 }
                 else if ((resourcePath = this.getAttribute("resource"))) {

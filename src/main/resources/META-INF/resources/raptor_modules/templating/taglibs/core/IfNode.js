@@ -37,9 +37,9 @@ raptor.defineClass(
                     this.addError('"test" attribute is required');
                 }
                 
-                template.addJavaScriptCode('if (' + test + '){');
-                this.generateCodeForChildren(template);
-                template.addJavaScriptCode('}');
+                template.addJavaScriptCode('if (' + test + ') {\n');
+                this.generateCodeForChildren(template, true /* indent */);
+                template.addJavaScriptCode('}\n\n');
             }
             
         };

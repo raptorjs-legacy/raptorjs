@@ -31,14 +31,12 @@ $rload(function(raptor) {
          * @type Array
          */
         this.array = [];
-        
         /**
          * The length of the string
          * @type Number
          */
         this.length = 0;
-        
-        this.memberProp = true;
+
     };
 
     StringBuilder.prototype = {
@@ -50,21 +48,13 @@ $rload(function(raptor) {
              */
             append: function(obj)
             {
-                var str = obj == null ? 'null' : obj.toString();
-                this.length += str.length;
-                this.array.push(str);
+                if (typeof obj !== 'string') {
+                    obj = obj.toString();
+                }
+                this.array.push(obj);
+                this.length += obj.length;
+                
                 return this;
-            },
-            
-            /**
-             * Appends a string to the string being constructed.
-             * 
-             * @param {Object} obj The string or object to append
-             * @returns {strings_StringBuilder-StringBuilder} Returns itself
-             */
-            write: function(obj)
-            {
-                return this.append(obj);
             },
             
             /**
@@ -89,6 +79,8 @@ $rload(function(raptor) {
                 return this;
             }
     };
+    
+    StringBuilder.prototype.write = StringBuilder.prototype.append;
     
     /**
      * @extension StringBuilder

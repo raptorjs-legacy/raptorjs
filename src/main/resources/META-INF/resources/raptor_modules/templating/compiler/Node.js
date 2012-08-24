@@ -303,6 +303,8 @@ raptor.defineClass(
                         //There is a strip expression
                         if (!this.generateBeforeCode || !this.generateAfterCode) {
                             this.addError("The c:strip directive is not supported for node " + this);
+                            this.generateCodeForChildren(template);
+                            return;
                         }
                         
                         var nextStripVarId = template.getAttribute("nextStripVarId");
@@ -311,17 +313,21 @@ raptor.defineClass(
                         }
                         var varName = '__strip' + (nextStripVarId++);
                         
-                        template.addJavaScriptCode('var ' + varName + '=!(' + this.stripExpression + ');');
+                        template.addJavaScriptCode('var ' + varName + ' = !(' + this.stripExpression + ');\n');
                         
-                        template.addJavaScriptCode('if (' + varName + '){');
+                        template.addJavaScriptCode('if (' + varName + ') {\n');
+                        template.incIndent();
                         this.generateBeforeCode(template);
-                        template.addJavaScriptCode('}');
+                        template.decIndent();
+                        template.addJavaScriptCode('}\n');
                         
                         this.generateCodeForChildren(template);
                         
-                        template.addJavaScriptCode('if (' + varName + '){');
-                        this.generateAfterCode(template);
-                        template.addJavaScriptCode('}');
+                        template.addJavaScriptCode('if (' + varName + ') {\n');
+                        template.incIndent();
+                        this.generateAfterCode(template, true /* indent */);
+                        template.decIndent();
+                        template.addJavaScriptCode('}\n');
                     }
                 }
                 catch(e) {
@@ -338,14 +344,21 @@ raptor.defineClass(
                 this.generateCodeForChildren(template);
             },
             
-            generateCodeForChildren: function(template) {
+            generateCodeForChildren: function(template, indent) {
                 if (!template) {
                     errors.throwError(new Error('The "template" argument is required'));
+                }
+                if (indent === true) {
+                    template.incIndent();
                 }
                 
                 forEach(this.childNodes, function(childNode) {
                     childNode.generateCode(template);
                 }, this);
+                
+                if (indent === true) {
+                    template.decIndent();
+                }
             },
             
             addNamespaceMappings: function(namespaceMappings) {

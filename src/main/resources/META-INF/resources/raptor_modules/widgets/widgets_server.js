@@ -27,7 +27,7 @@ raptor.extend('widgets', function(raptor) {
     return {
         
         writeInitWidgetsCode: function(context, clearWidgets) {
-            var attributes = context.attributes,
+            var attributes = context.getAttributes(),
                 widgets = attributes.widgets;
             
             if (!widgets) {
@@ -74,7 +74,7 @@ raptor.extend('widgets', function(raptor) {
         },
         
         _nextWidgetId: function(context) {
-            var attributes = context.attributes;
+            var attributes = context.getAttributes();
             if (!attributes.nextWidgetId) {
                 attributes.nextWidgetId = 0;
             }

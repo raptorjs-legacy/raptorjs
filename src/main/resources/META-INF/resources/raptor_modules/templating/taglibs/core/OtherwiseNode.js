@@ -32,9 +32,9 @@ raptor.defineClass(
         ChooseNode.prototype = {
             
             doGenerateCode: function(template) {
-                template.addJavaScriptCode(' else {');
-                this.generateCodeForChildren(template);
-                template.addJavaScriptCode('}');
+                template.addJavaScriptCode(' else {\n', false /* no indent */);
+                this.generateCodeForChildren(template, true /* indent */);
+                template.addJavaScriptCode('}\n\n');
             },
             
             toString: function() {

@@ -244,7 +244,10 @@ describe('templating module', function() {
     
     it("should allow for escaping XML", function() {
         var escapeXml = raptor.require("xml.utils").escapeXml;
-        expect(escapeXml('"-&')).toEqual('&quot;-&amp;');
+        expect(escapeXml('"-&')).toEqual('"-&amp;');
+        
+        var escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr;
+        expect(escapeXmlAttr('"-&')).toEqual('&quot;-&amp;');
     });
     
     it("should allow a simple template to be compiled", function() {
@@ -390,7 +393,7 @@ describe('templating module', function() {
     it("should allow for context helper functions", function() {
 
         var context = raptor.require('templating').createContext();
-        context.attributes["loggedInUser"] = {
+        context.getAttributes()["loggedInUser"] = {
                 firstName: "John",
                 lastName: "Doe"
         };
@@ -428,7 +431,7 @@ describe('templating module', function() {
             });
         
         var context = raptor.require('templating').createContext();
-        context.attributes["loggedInUser"] = {
+        context.getAttributes()["loggedInUser"] = {
                 firstName: "John",
                 lastName: "Doe"
         };

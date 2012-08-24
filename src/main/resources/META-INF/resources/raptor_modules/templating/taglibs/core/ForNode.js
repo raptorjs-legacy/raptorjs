@@ -70,19 +70,45 @@ raptor.defineClass(
                     varStatus = "__loop";
                 }
                 
-                var forEachParams = [varName];
+                var forEachParams;
                 if (varStatus) {
-                    forEachParams.push(varStatus);
+                    forEachParams = [varName, varStatus];
+                    
+                    template.addJavaScriptCode(template.getStaticHelperFunction("forEachVarStatus", "fv") + '(' + items + ', function(' + forEachParams.join(",") + '){\n');
+                    this.generateCodeForChildren(template, true /* indent */);
+                    if (separator) {
+                        template.incIndent();
+                        template.addJavaScriptCode("if (!" + varStatus + ".isLast()) {\n");
+                        template.incIndent();
+                        template.addWrite(template.isExpression(separator) ? separator.getExpression() : stringify(separator));
+                        template.decIndent();
+                        template.addJavaScriptCode("}\n");
+                        template.decIndent();
+                    }
+                    template.addJavaScriptCode('});\n\n');
+                }
+                else {
+                    if (this.getProperty('forLoop') === true) {
+                        forEachParams = ["__array", "__index", "__length", varName];
+                        template.addJavaScriptCode(template.getStaticHelperFunction("forLoop", "fl") + '(' + items + ', function(' + forEachParams.join(",") + '){\n');
+                        template.incIndent();
+                            template.addJavaScriptCode('for (;__index<__length;__index++) {\n');
+                            template.incIndent();
+                            template.addJavaScriptCode(varName + '=__array[__index];\n');
+                            this.generateCodeForChildren(template);
+                            template.decIndent();
+                        template.decIndent();
+                        template.addJavaScriptCode('}});\n');
+                    }
+                    else {
+                        forEachParams = [varName];
+                        template.addJavaScriptCode(template.getStaticHelperFunction("forEach", "f") + '(' + items + ', function(' + forEachParams.join(",") + ') {\n');                    
+                        this.generateCodeForChildren(template, true /* indent */);
+                        template.addJavaScriptCode('});\n\n');
+                    }
                 }
                 
-                template.addJavaScriptCode(template.getStaticHelperFunction("forEach", "f") + '(' + items + ',function(' + forEachParams.join(",") + '){');
-                this.generateCodeForChildren(template);
-                if (separator) {
-                    template.addJavaScriptCode("if (!" + varStatus + ".isLast()){");
-                    template.addWrite(template.isExpression(separator) ? separator.getExpression() : stringify(separator));
-                    template.addJavaScriptCode("}");
-                }
-                template.addJavaScriptCode('});');
+                
             }
         
         };

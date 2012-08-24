@@ -69,7 +69,7 @@ raptor.defineClass(
                                 classVarName = addClassNameVar(func.functionClass);
                                 
                                 if (func.bindToContext === true) {
-                                    template.addVar(funcName, template.getContextHelperFunction("getContextHelper", "h")  + "(" + classVarName + "," + JSON.stringify(funcName) + ")");    
+                                    template.addVar(funcName, "context.h(" + classVarName + "," + JSON.stringify(funcName) + ")");    
                                 }
                                 else {
                                     template.addStaticVar(funcName, template.getStaticHelperFunction("getHelper", "h")  + "(" + classVarName + "," + JSON.stringify(funcName) + ")");

@@ -133,6 +133,10 @@ raptor.defineClass(
                                 },
                                 varStatus: {
                                     type: "identifier"
+                                },
+                                forLoop: {
+                                    type: "boolean",
+                                    allowExpressions: false
                                 }
                             },
                             {

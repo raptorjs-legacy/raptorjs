@@ -259,7 +259,7 @@ raptor.defineClass(
                 }
                 
                 if (this.dynamicAttributesExpression) {
-                    template.addJavaScriptCode(template.getContextHelperFunction("attrs", "a") + "(" + this.dynamicAttributesExpression + ");");
+                    template.addJavaScriptCode("context.a(" + this.dynamicAttributesExpression + ");\n");
                 }
                 
                 if (this.childNodes.length) {

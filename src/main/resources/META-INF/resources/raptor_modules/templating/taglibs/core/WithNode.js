@@ -57,18 +57,22 @@ raptor.defineClass(
                 
                 var varDefs = [];
                 
-                raptor.forEach(withVars, function(withVar) {
+                raptor.forEach(withVars, function(withVar, i) {
                     if (!varNameRegExp.test(withVar.name)) {
                         this.addError('Invalid variable name of "' + withVar.name + '" in "' + vars + '"');
                     }
-                    varDefs.push(withVar.name + (withVar.value ? ("=" + withVar.value) : ""));
+                    varDefs.push((i > 0 ? template.indent(1) + "    " : "") + withVar.name + (withVar.value ? ("=" + withVar.value) : "") + (i < withVars.length - 1 ? ",\n" : ";\n\n"));
                 }, this);
                 
                 
-                template.addJavaScriptCode('(function() {');
-                template.addJavaScriptCode('var ' + varDefs.join(",") + ";");
+                template.addJavaScriptCode('(function() {\n');
+                
+                template.incIndent();
+                template.addJavaScriptCode('var ' + varDefs.join(""));
                 this.generateCodeForChildren(template);
-                template.addJavaScriptCode('}());');
+                template.decIndent();
+                
+                template.addJavaScriptCode('}());\n');
             }
             
         };

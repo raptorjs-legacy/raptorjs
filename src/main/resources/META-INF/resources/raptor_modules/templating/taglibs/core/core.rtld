@@ -124,6 +124,12 @@
             <type>identifier</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
+        
+        <attribute>
+            <name>forLoop</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
     </tag>
     
     <tag>

@@ -65,9 +65,13 @@ raptor.defineClass(
                     return;
                 }
                
-                template.addJavaScriptCode('function ' + func + '{return ' + template.getContextHelperFunction("captureXml", "c") + '(function(){');
-                this.generateCodeForChildren(template);
-                template.addJavaScriptCode('});}');
+                template.addJavaScriptCode('function ' + func + '{\n');
+                template.incIndent();
+                template.addJavaScriptCode('return context.c(function() {\n');
+                this.generateCodeForChildren(template, true /* true */);
+                template.addJavaScriptCode('});\n');
+                template.decIndent();
+                template.addJavaScriptCode('}\n');
             }
             
         };

@@ -342,7 +342,7 @@ raptor.defineClass(
                     
                     if (!handler) {
                         if (isScriptlet) {
-                            helper.addScriptlet(strings.trim(expression));
+                            helper.addScriptlet(expression);
                         }
                         else if (isConditional) {
                             helper.addExpression(this.getConditionalExpression(expression));

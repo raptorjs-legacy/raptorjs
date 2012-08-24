@@ -41,25 +41,25 @@ raptor.defineClass(
                 return handlerVar;
                 
             },
-            getPropsStr = function(props) {
+            getPropsStr = function(props, template) {
                 var propsStr,
                 propsArray = [];
             
                 if (props) {
                     forEachEntry(props, function(name, value) {
                         if (value instanceof Expression) {
-                            propsArray.push(stringify(name) + ":" + value.expression);
+                            propsArray.push(template.indent(1) + stringify(name) + ":" + value.expression);
                         }
                         else if (typeof value === 'string') {
-                            propsArray.push(stringify(name) + ":" + stringify(value));
+                            propsArray.push(template.indent(1) + stringify(name) + ":" + stringify(value));
                         }
                         else {
-                            propsArray.push(stringify(name) + ":" + value);
+                            propsArray.push(template.indent(1) + stringify(name) + ":" + value);
                         }
                     });
                     
                     if (propsArray.length) {
-                        return "{" + propsArray.join(',') + "}";
+                        return "{\n" + propsArray.join(',\n') + "\n" + template.indent() + "}";
                     }
                     else {
                         return "{}";
@@ -98,16 +98,15 @@ raptor.defineClass(
                 
                 var handlerVar = addHandlerVar(template, this.tagDef.handlerClass);
 
-                template.addJavaScriptCode(template.getContextHelperFunction("invokeHandler", "t") + '(' +
-                        handlerVar + ',');
-                
-                
                 forEach(this.tagDef.importedVariables, function(importedVariable) {
                     this.setProperty(importedVariable.propertyName, new Expression(importedVariable.expression));
                 }, this);
-                 
                 
-                template.addJavaScriptCode(getPropsStr(this.getProperties()) + ",");
+                
+                template.addJavaScriptCode('context.t(\n');
+                template.incIndent();
+                template.addJavaScriptCode(handlerVar + ',\n');
+                template.addJavaScriptCode(getPropsStr(this.getProperties(), template) + ",\n");
                 
                 if (this.hasChildren()) {
                     var bodyParams = [];
@@ -115,15 +114,16 @@ raptor.defineClass(
                         bodyParams.push(v.name);
                     });
                     
-                    template.addJavaScriptCode("function(" + bodyParams.join(",") + "){");
+                    template.addJavaScriptCode("function(" + bodyParams.join(",") + ") {\n");
                     
-                    this.generateCodeForChildren(template);
+                    this.generateCodeForChildren(template, true /* indent */);
                     
                     template.addJavaScriptCode("}");
                 }
                 else {
                     template.addJavaScriptCode("null");
                 }
+                
                 
 
                 var propertyNamespaces = this.getPropertyNamespaces();
@@ -132,24 +132,28 @@ raptor.defineClass(
                 forEach(propertyNamespaces, function(uri) {
                     if (uri !== "") {
                         var props = this.getPropertiesNS(uri);
-                        namespacedProps.push('"' + uri + '":' + getPropsStr(props));
+                        namespacedProps.push('"' + uri + '":' + getPropsStr(props, template));
                     }
                 }, this);
                 
                 if (this.dynamicAttributes) {
-                    namespacedProps.push('"*":' + getPropsStr(this.dynamicAttributes));    
+                    namespacedProps.push('"*":' + getPropsStr(this.dynamicAttributes, template));    
                 }
+                
                 
                 
                 if (namespacedProps.length) {
-                    template.addJavaScriptCode(",{");
-                    template.addJavaScriptCode(namespacedProps.join(","));
+                    template.addJavaScriptCode(",\n", false /* no indent */);
+                    template.addJavaScriptCode("{");
+                    template.incIndent();
+                    template.addJavaScriptCode(namespacedProps.join("\n,"));
+                    template.decIndent();
                     template.addJavaScriptCode("}");
                 }
                 
+                template.decIndent();
                 
-                
-                template.addJavaScriptCode(");");
+                template.addJavaScriptCode(");\n\n", false /* no indent */);
             }
         };
         

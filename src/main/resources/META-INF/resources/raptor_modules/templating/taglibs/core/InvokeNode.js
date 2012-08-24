@@ -102,7 +102,7 @@ raptor.defineClass(
                         template.addWrite(func);
                     }
                     else {
-                        template.addJavaScriptCode(func + ";");    
+                        template.addJavaScriptCode(func + ";\n");    
                     }
                 }
             }

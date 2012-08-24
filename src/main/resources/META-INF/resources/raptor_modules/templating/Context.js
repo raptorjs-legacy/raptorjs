@@ -23,6 +23,7 @@ raptor.defineClass(
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             strings = raptor.require('strings'),
             listeners = raptor.require('listeners'),
+            StringBuilder = strings.StringBuilder,
             nextUniqueId = 0,
             helpers,
             bind = function(func, context) {
@@ -36,24 +37,20 @@ raptor.defineClass(
          */
         var Context = function(writer) {
             this.writer = writer;
-            var _this = this;
-            this.attributes = {};
-            listeners.makeObservable(this, Context.prototype);
-            
-            var contextHelpers = {};
-            
-            /*
-             * Now bind all of the Context helper functions to the correct "this" so that they
-             * can be executed directly (i.e. "func()" instead of "context.func()")
-             */
-            forEachEntry(helpers, function(name, func) {
-                contextHelpers[name] = bind(func, _this);
-            });
-            
-            this._helpers = contextHelpers; //Associate the bound helpers with the context
+            this.w = this.write;
         };
 
         Context.prototype = {
+            getAttributes: function() {
+                return this.attributes || (this.attributes = {});
+            },
+            
+            events: function() {
+                if (!this.events) {
+                    this.events = listeners.createObservable();
+                }
+                return this.events;
+            },
             /**
              * 
              * @returns {Number}
@@ -67,11 +64,13 @@ raptor.defineClass(
              * @param str
              */
             write: function(str) {
-                if (str == null) {
-                    return;
+                if (str !== null && str !== undefined) {
+                    if (typeof str !== 'string') {
+                        str = str.toString();
+                    }
+                    this.writer.write(str);
                 }
-                this.writer.write(str);
-                
+                return this;
             },
             
             getOutput: function() {
@@ -85,7 +84,7 @@ raptor.defineClass(
              * @returns
              */
             captureString: function(func, thisObj) {
-                var sb = strings.createStringBuilder();
+                var sb = new StringBuilder();
                 this.swapWriter(sb, func, thisObj);
                 return sb.toString();
             },
@@ -119,6 +118,10 @@ raptor.defineClass(
             },
 
             getFunction: function(className, name) {
+                if (!this._helpers) {
+                    this._helpers = {};
+                }
+                
                 var key = className + ":" + name,
                     helper = this._helpers[key],
                     unboundHelper;
@@ -143,89 +146,56 @@ raptor.defineClass(
             
             renderTemplate: function(name, data) {
                 raptor.require("templating").render(name, data, this);
-            }
-        };
-        
-        Context.namespacedHelpers = helpers = {
-                /**
-                 * Helper function to write out a string to the context
-                 * @param str
-                 * @returns
-                 */
-                w: function(str) {
-                    this.write(str);
-                    return this._helpers.w;
-                },
+            },
+            
+            /**
+             * 
+             * @param attrs
+             */
+            attrs: function(attrs) {
+                if (!attrs) {
+                    return;
+                }
                 
-//                w: function() {
-//                    for (var args = arguments, i=0, len=args.length; i<len; i++) {
-//                        this.write(args[i]);
-//                    }
-//                    return _helpers.w;
-//                },
-                /**
-                 * Helper function to return a namespaced helper function
-                 * @param uri
-                 * @param name
-                 * @returns
-                 */
-                h: function(uri, name) {
-                    return this.getFunction(uri, name);
-                },
-                
-                /**
-                 * Helper function invoke a tag handler
-                 */
-                t: function(handler, props, body, namespacedProps) {
-                    if (!props) {
-                        props = {};
-                    }
-                    
-                    props._tag = true;
-                    
-                    props.invokeBody = body;
-                    if (namespacedProps) {
-                        raptor.extend(props, namespacedProps);
-                    }
-                    
-                    this.invokeHandler(handler, props);
-                },
-                
-                /**
-                 * Helper function to render dynamic attributes
-                 * @param attrs
-                 */
-                a: function(attrs) {
-                    if (!attrs) {
+                forEachEntry(attrs, function(name, value) {
+                    if (value === undefined) {
                         return;
                     }
                     
-                    forEachEntry(attrs, function(name, value) {
-                        if (value === undefined) {
-                            return;
-                        }
-                        
-                        this.write(' ' + name + (value === null ? '' : ('="' + escapeXmlAttr(value) + '"')));
-                    }, this);
-                },
-                
-                /**
-                 * Helper function to include another template
-                 * 
-                 * @param name
-                 * @param data
-                 */
-                i: function(name, data) {
-                    this.renderTemplate(name, data);
-                },
-                
-                c: function(func) {
-                    var output = this.captureString(func);
-                    return {
-                        toString: function() { return output; }
-                    };
+                    this.write(' ' + name + (value === null ? '' : ('="' + escapeXmlAttr(value) + '"')));
+                }, this);
+            },
+            
+            /**
+             * Helper function invoke a tag handler
+             */
+            t: function(handler, props, body, namespacedProps) {
+                if (!props) {
+                    props = {};
                 }
-            };
+                
+                props._tag = true;
+                
+                props.invokeBody = body;
+                if (namespacedProps) {
+                    raptor.extend(props, namespacedProps);
+                }
+                
+                this.invokeHandler(handler, props);
+            },
+            
+            c: function(func) {
+                var output = this.captureString(func);
+                return {
+                    toString: function() { return output; }
+                };
+            }
+        };
+        
+        var proto = Context.prototype;
+        proto.a = proto.attrs;
+        proto.h = proto.getFunction;
+        proto.i = proto.renderTemplate;
         
         return Context;
         

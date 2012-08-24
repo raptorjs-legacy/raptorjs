@@ -19,41 +19,36 @@ raptor.define(
     function(raptor) {
         "use strict";
         
-        var extend = raptor.extend,
-            specialRegExp = /(\n|[\"\'&<>]|[^\u0020-\}])/g,
-            attrReplacements = {
+        var elTest = /[&<]/,
+            elTestReplace = /[&<]/g,
+            attrTest = /[&<>\"\'\n]/,
+            attrReplace = /[&<>\"\'\n]/g,
+            replacements = {
                 '<': "&lt;",
                 '>': "&gt;",
                 '&': "&amp;",
                 '"': "&quot;",
                 "'": "&apos;",
                 '\n': "&#10;" //Preserve new lines so that they don't get normalized as space
-            },
-            elReplacements = extend(extend({}, attrReplacements), {
-                "\n": "\n" 
-            }),
-            escapeXml = function(str, replacements) {
-                if (str == null) return null;
-                if (typeof str !== "string") {
-                    return str;
-                }
-                
-                return str.replace(specialRegExp, function(match) {
-                    var replacement = replacements[match];
-                    return replacement || ("&#" + match.charCodeAt(0) + ";");
-                });
             };
         
         return {
             escapeXml: function(str) {
-                return escapeXml(str, elReplacements);
+                if (typeof str === 'string' && elTest.test(str)) {
+                    return str.replace(elTestReplace, function(match) {
+                        return replacements[match];
+                    });
+                }
+                return str;
             },
             
             escapeXmlAttr: function(str) {
-                if (!str) {
-                    return str;
+                if (typeof str === 'string' && attrTest.test(str)) {
+                    return str.replace(attrReplace, function(match) {
+                        return replacements[match];
+                    });
                 }
-                return escapeXml('' + str, attrReplacements);
+                return str;
             }
         };
     });

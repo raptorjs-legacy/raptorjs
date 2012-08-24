@@ -24,6 +24,7 @@ raptor.define('templating', function(raptor) {
         forEachEntry = raptor.forEachEntry,
         isArray = raptor.isArray,
         strings = raptor.require('strings'),
+        StringBuilder = strings.StringBuilder,
         escapeXml = raptor.require('xml.utils').escapeXml,
         escapeXmlAttr = raptor.require('xml.utils').escapeXmlAttr,
         Context = raptor.require("templating.Context"),
@@ -46,20 +47,12 @@ raptor.define('templating', function(raptor) {
          * 3) Array: If the length of the array is 0 then the array is considred empty
          * 
          */
-        empty = function(o) {
-            if (!o) {
-                return true;
+        notEmpty = function(o) {
+            if (Array.isArray(o) === true) {
+                return o.length !== 0;
             }
             
-            if (typeof o === 'string') {
-                return !strings.trim(o).length;
-            }
-            
-            if (isArray(o)) {
-                return !o.length;
-            }
-            
-            return true;
+            return o;
         };
     
     templating = {
@@ -123,7 +116,7 @@ raptor.define('templating', function(raptor) {
             
             try
             {
-                templateFunc(data || {}, context, context._helpers); //Invoke the template rendering function with the required arguments
+                templateFunc(data || {}, context); //Invoke the template rendering function with the required arguments
             }
             catch(e) {
                 raptor.throwError(new Error('Unable to render template with name "' + templateName + '". Exception: ' + e), e);
@@ -141,25 +134,23 @@ raptor.define('templating', function(raptor) {
          * @returns {String} The string output of the template
          */
         renderToString: function(templateName, data, context) {
-            var sb = strings.createStringBuilder(), //Create a StringBuilder object to serve as a buffer for the output
-                _this = this;
+            var sb = new StringBuilder(); //Create a StringBuilder object to serve as a buffer for the output
+
             
-            var _render = function() { //Helper function to simplify code
-                _this.render(templateName, data, context);
-            };
-            
-            if (context) {
-                /*
-                 * If a context is provided then we need to temporarily swap out the writer for the StringBuilder
-                 */
-                context.swapWriter(sb, _render); //Swap in the writer, render the template and then restore the original writer
-            }
-            else {
+            if (context === undefined) {
                 /*
                  * If a context object is not provided then we need to create a new context object and use the StringBuilder as the writer
                  */
-                context = this.createContext(sb);
-                _render();
+                this.render(templateName, data, new Context(sb));
+            }
+            else {
+                var _this = this;
+                /*
+                 * If a context is provided then we need to temporarily swap out the writer for the StringBuilder
+                 */
+                context.swapWriter(sb, function() {
+                    _this.render(templateName, data, context);
+                }); //Swap in the writer, render the template and then restore the original writer
             }
             
             return sb.toString(); //Return the final string associated with the StringBuilder
@@ -199,8 +190,7 @@ raptor.define('templating', function(raptor) {
          * @returns {templating$Context} The newly created context object
          */
         createContext: function(writer) {
-            var context = new Context(writer); //Create a new context using the writer provided
-            return context; //Return the newly created context
+            return new Context(writer); //Create a new context using the writer provided
         },
         
         /**
@@ -264,7 +254,7 @@ raptor.define('templating', function(raptor) {
              * @param callback {Function} The callback function to invoke for each iteration 
              * @returns {void}
              */
-            f: function(list, callback) {
+            fv: function(list, callback) {
                 if (!list) return;
                 if (!isArray(list)) {
                     list = [list];
@@ -302,11 +292,22 @@ raptor.define('templating', function(raptor) {
                 }
             },
             
-            e: empty,
+            f: raptor.forEach,
             
-            ne: function(o) {
-                return !empty(o);
+            fl: function(array, func) {
+                if (array != null) {
+                    if (!isArray(array)) {
+                        array = [array];
+                    }
+                    func(array, 0, array.length);
+                }
             },
+            
+            e: function(o) {
+                return !notEmpty(o);
+            },
+            
+            ne: notEmpty,
             
             /**
              * escapeXml helper function

@@ -19,6 +19,8 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
+        var INDENT = "  ";
+        
         var stringify = raptor.require('json.stringify').stringify,
             strings = raptor.require('strings'),
             Expression = raptor.require('templating.compiler.Expression'),
@@ -43,9 +45,10 @@ raptor.defineClass(
             
             this.getStaticHelperFunction("empty", "e");
             this.getStaticHelperFunction("notEmpty", "ne");
-            this.getContextHelperFunction("write", "w");
             
             this.preserveWhitespace = 0;
+            
+            this._indent = INDENT + INDENT;
         };
         
         TemplateBuilder.prototype = {            
@@ -115,16 +118,16 @@ raptor.defineClass(
                 this.vars.push({name: name, expression: expression});
             },
             
-            _writeVars: function(vars, out) {
+            _writeVars: function(vars, out, indent) {
                 if (!vars.length) {
                     return;
                 } 
-                out.append("var ");
+                out.append(indent + "var ");
                 var declarations = [];
-                forEach(vars, function(v) {
-                    declarations.push(v.name + "=" + v.expression); 
+                forEach(vars, function(v, i) {
+                    declarations.push((i != 0 ? indent + "    " : "" ) + v.name + "=" + v.expression + (i === vars.length-1 ? ";\n" : ",\n")); 
                 });
-                out.append(declarations.join(",")  +";");
+                out.append(declarations.join(""));
             },
             
             _endText: function() {
@@ -155,26 +158,70 @@ raptor.defineClass(
             _endWrites: function() {
                 var curWrites = this.curWrites; 
                 if (curWrites) {
-                    this.curWrites = null;
+//                    this.curWrites = null;
 //                    this.javaScriptCode.append('write(');
 //                    this.javaScriptCode.append(curWrites.join(','));
 //                    this.javaScriptCode.append(');\n');
                     
+//                    this.curWrites = null;
+//                    forEach(curWrites, function(curWrite, i) {
+//                        if (i === 0)
+//                        {
+//                            this.javaScriptCode.append('write(');
+//                        }
+//                        else {
+//                            this.javaScriptCode.append('(');
+//                        }
+//                        
+//                        this.javaScriptCode.append(curWrite);
+//                        this.javaScriptCode.append(')');
+//                    }, this);
+//                    
+//                    this.javaScriptCode.append(";");
+      
                     this.curWrites = null;
                     forEach(curWrites, function(curWrite, i) {
                         if (i === 0)
                         {
-                            this.javaScriptCode.append('write(');
+                            this.javaScriptCode.append(this.indent() + 'context.w(');
                         }
                         else {
-                            this.javaScriptCode.append('(');
+                            this.javaScriptCode.append(this.indent() + INDENT + '.w(');
                         }
                         
                         this.javaScriptCode.append(curWrite);
                         this.javaScriptCode.append(')');
+                        
+                        if (i < curWrites.length -1) {
+                            this.javaScriptCode.append("\n");      
+                        }
+                        else {
+                            this.javaScriptCode.append(";\n");
+                        }
                     }, this);
                     
-                    this.javaScriptCode.append(";");
+//                    this.curWrites = null;
+//                    forEach(curWrites, function(curWrite, i) {
+//                        if (i === 0)
+//                        {
+//                            this.javaScriptCode.append('context.w(');
+//                        }
+//                        else {
+//                            this.javaScriptCode.append('(');
+//                        }
+//                        
+//                        this.javaScriptCode.append(curWrite);
+//                        this.javaScriptCode.append(')');
+//                    }, this);
+//                    
+//                    this.javaScriptCode.append(";\n");
+                    
+//                    this.curWrites = null;
+//                    forEach(curWrites, function(curWrite, i) {
+//                        this.javaScriptCode.append(this.indent() + 'context.w(');                        
+//                        this.javaScriptCode.append(curWrite);
+//                        this.javaScriptCode.append(');\n');
+//                    }, this);
                 }
             },
             
@@ -201,7 +248,46 @@ raptor.defineClass(
                 this.curWrites.push(expression);
             },
             
-            addJavaScriptCode: function(code) {
+            incIndent: function() {
+                this._endText();
+                this._endWrites();
+                
+                this._indent += INDENT;
+            },
+            
+            decIndent: function() {
+                this._endText();
+                this._endWrites();
+                
+                this._indent = this._indent.substring(INDENT.length); 
+            },
+            
+            indent: function(delta) {
+                if (arguments.length === 1) {
+                    var indent = this._indent;
+                    for (var i=0; i<delta; i++) {
+                        indent += INDENT;
+                    }
+                    return indent;
+                }
+                else {
+                    return this._indent;
+                }
+            },
+            
+            addJavaScriptCodeNoIndent: function(code) {
+                this.addJavaScriptCode(code, false);
+            },
+            
+            addJavaScriptCode: function(code, options) {
+                
+                if (typeof options === 'boolean') {
+                    options = {indent: options};
+                }
+                else if (!options) {
+                    options = {};
+                }
+                
                 //console.log('addJavaScriptCode: ' + code);
                 if (this.hasErrors()) {
                     return;
@@ -209,7 +295,7 @@ raptor.defineClass(
                 
                 this._endText();
                 this._endWrites();
-                this.javaScriptCode.append(code);
+                this.javaScriptCode.append((options.indent !== false ? this.indent() : "") + code);
             },
             
             getOutput: function() {
@@ -236,18 +322,20 @@ raptor.defineClass(
                 out.append('$rset("rhtml",');
                 out.append(stringify(templateName));
                 out.append(',');
-                out.append('function(helpers){');
+                out.append(INDENT + 'function(helpers){\n');
                 //Write out the static variables
-                this._writeVars(this.staticVars, out);
-                out.append('return function(data, context, contextHelpers){\n');
+                this._writeVars(this.staticVars, out, INDENT);
+                out.append('\n' + INDENT + 'return function(data, context){\n');
+                
                 
                 //Write out the render variables
-                this._writeVars(this.vars, out);
+                this._writeVars(this.vars, out, INDENT + INDENT);
+                out.append("\n");
                 
                 this._endText();
                 this._endWrites();
                 out.append(this.javaScriptCode.toString());
-                out.append('}});');
+                out.append(INDENT + '}\n});');
                 return out.toString();
             },
             
