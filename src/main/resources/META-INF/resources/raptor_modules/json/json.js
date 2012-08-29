@@ -64,7 +64,7 @@ raptor.define('json', function(raptor) {
                 json[PARSE] = impl[PARSE] || json[PARSE];
             }
             else {
-                raptor.errors.throwError(new Error('JSON implementation not found: ' + name));
+                throw raptor.createError(new Error('JSON implementation not found: ' + name));
             }
             
         };

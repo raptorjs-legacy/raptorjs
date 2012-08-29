@@ -35,7 +35,7 @@ raptor.defineClass(
                     return 'css';
                 }
                 else {
-                    raptor.throwError(new Error("Unsupported content type: " + contentType));
+                    throw raptor.createError(new Error("Unsupported content type: " + contentType));
                     return null;
                 }
             },
@@ -54,7 +54,7 @@ raptor.defineClass(
                     return this.getStyleSheetsOutputDir();
                 }
                 else {
-                    raptor.throwError(new Error("Unsupported content type: " + contentType));
+                    throw raptor.createError(new Error("Unsupported content type: " + contentType));
                 }
             },
             

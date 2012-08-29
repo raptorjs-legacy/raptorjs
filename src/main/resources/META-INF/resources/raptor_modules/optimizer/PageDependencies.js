@@ -62,7 +62,7 @@ raptor.defineClass(
         
         var PageDependencies = function(config) {
 
-            this.pageName = config.pageName;
+            this.pageName = config.pageName.replace(/^[^A-Za-z0-9_\-\.]*/g, '');
             this.includes = config.includes || [];
             this.bundlingEnabled = config.bundlingEnabled !== false;
             this.config = config;
@@ -71,7 +71,7 @@ raptor.defineClass(
              * We must create a new bundle set that has as its parent the provided bundle set so that 
              * we don't modify the provided bundle set.
              */
-            this.bundleSet = raptor.require('optimizer').createBundleSet(config.bundleSet);
+            this.bundleSet = raptor.require('optimizer').createBundleSet(config.bundleSet /*parent bundle set*/);
             this.enabledExtensions = config.enabledExtensions;
 
             this.pageBundleLookup = {};
@@ -82,11 +82,7 @@ raptor.defineClass(
             this.packageManifests = [];
             this.foundPackagePaths = {};
             
-            
-            if (config.packagePath) {
-                var packageResource = raptor.require("resources").createFileResource(config.packagePath);
-                this.packageManifest = raptor.require('packager').getPackageManifest(packageResource);
-            }
+            this.packageManifest = config.packageManifest;
             
             this._build();
         };
@@ -106,8 +102,8 @@ raptor.defineClass(
                     enabledExtensions: this.enabledExtensions,
                     handlePackage: function(manifest, context) {
                         
-                        if (!this.foundPackagePaths[manifest.getSystemPath()]) {
-                            this.foundPackagePaths[manifest.getSystemPath()] = true;
+                        if (!this.foundPackagePaths[manifest.getKey()]) {
+                            this.foundPackagePaths[manifest.getKey()] = true;
                             this.packageManifests.push(manifest);
                         }
                         
@@ -155,7 +151,7 @@ raptor.defineClass(
                             
                             if (!bundle) {
                                 //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                bundle = bundleSet.addIncludeToBundle(include, (context.async ? "page-async-" : "page-") + this.pageName.replace(/^[^A-Za-z0-9_\-\.]*/g, ''));
+                                bundle = bundleSet.addIncludeToBundle(include, this.pageName + (context.async ? "-async" : ""));
                             }
                             
                         }
@@ -188,7 +184,7 @@ raptor.defineClass(
                                 bundlesForLocation.css.push(bundle);
                             }
                             else {
-                                raptor.throwError(new Error("Invalid content for bundle: " + bundle.getContentType()));
+                                throw raptor.createError(new Error("Invalid content for bundle: " + bundle.getContentType()));
                             }
                         }
                     },
@@ -228,7 +224,7 @@ raptor.defineClass(
                             //This bundle is an asynchronous only bundle
                         
                             if (!context.parentPackage) {
-                                raptor.throwError(new Error("Illegal state. Asynchronous include is not part of a package"));
+                                throw raptor.createError(new Error("Illegal state. Asynchronous include is not part of a package"));
                             }
                             
                             var asyncRequire = getAsyncRequire(context.parentPackage.getName());

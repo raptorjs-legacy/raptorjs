@@ -25,8 +25,6 @@ raptor.extend(
         var resources = raptor.require('resources'),
             json = raptor.require('json'),
             packager = raptor.require("packager"),
-            forEachEntry = raptor.forEachEntry,
-            errors = raptor.errors,
             discoveryComplete = false,
             searchPathListenerHandler = null,
             watchingEnabled = false,
@@ -41,7 +39,7 @@ raptor.extend(
             compileResource: function(path, options) {
                 var resource = resources.findResource(path);
                 if (!resource.exists()) {
-                    errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
+                    throw raptor.createError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
                 var src = resource.readFully(src);
                 return this.compile(src, resource.getSystemPath(), options);
@@ -63,7 +61,7 @@ raptor.extend(
             compileAndLoadResource: function(path, options) {
                 var resource = resources.findResource(path);
                 if (!resource.exists()) {
-                    errors.throwError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
+                    throw raptor.createError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
                 
                 

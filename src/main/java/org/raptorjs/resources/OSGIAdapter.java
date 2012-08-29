@@ -31,7 +31,7 @@ public class OSGIAdapter {
         return instance;
     }
     
-    public void addSearchPathEntriesFromOSGIManifests() throws IOException {
+    public void addSearchPathEntriesFromOSGIManifests(ResourceManager resourceManager) throws IOException {
         Enumeration<URL> manifestUrls = null;
         
         ClassLoader cl = OSGIAdapter.class.getClassLoader();
@@ -43,7 +43,6 @@ public class OSGIAdapter {
         }
         
         if (manifestUrls != null) {
-            ResourceManager resourceManager = ResourceManager.getInstance();
             
             while(manifestUrls.hasMoreElements()) {
                 URL manifestUrl = manifestUrls.nextElement();
@@ -75,14 +74,6 @@ public class OSGIAdapter {
                     }
                 }
             }
-        }
-    }
-    
-    public static void main(String[] args) {
-        try {
-            OSGIAdapter.getInstance().addSearchPathEntriesFromOSGIManifests();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

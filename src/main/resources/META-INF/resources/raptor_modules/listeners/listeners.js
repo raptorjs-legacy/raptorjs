@@ -72,7 +72,7 @@ $rload(function(raptor) {
                 {
                     var handle = handles[name];
                     if (!handle) {
-                        raptor.errors.throwError(new Error('Invalid message name: ' + name));
+                        throw raptor.createError(new Error('Invalid message name: ' + name));
                     }
                     handle.unsubscribe();
                 }

@@ -51,7 +51,7 @@ $rload(function(raptor) {
                                     this.entries.push(new DirSearchPathEntry(dir));    
                                 }
                                 else {
-                                    raptor.throwError(new Error("Unsupported search path entry for library: " + JSON.stringify(searchPathConfig)));
+                                    throw raptor.createError(new Error("Unsupported search path entry for library: " + JSON.stringify(searchPathConfig)));
                                 }
                             }
                         }, this);

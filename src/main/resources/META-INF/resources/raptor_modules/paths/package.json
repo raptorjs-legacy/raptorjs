@@ -11,6 +11,6 @@
         }
     ],
     "includes": [
-        {"path": "paths.js"}
+        "paths.js"
     ]
 }

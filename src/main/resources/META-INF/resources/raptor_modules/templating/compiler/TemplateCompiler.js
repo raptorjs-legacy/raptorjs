@@ -22,7 +22,6 @@ raptor.defineClass(
         var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder'),
             ParseTreeBuilder = raptor.require('templating.compiler.ParseTreeBuilder'),
             Expression = raptor.require('templating.compiler.Expression'),
-            errors = raptor.require("errors"),
             minifier = raptor.find("js-minifier"),
             TypeConverter = raptor.require('templating.compiler.TypeConverter');
         
@@ -70,7 +69,7 @@ raptor.defineClass(
                         this);
                 }
                 catch(e) {
-                    errors.throwError(new Error('Unable to compile template at path "' + templateBuilder.filePath + ". Error: " + e.message), e);
+                    throw raptor.createError(new Error('Unable to compile template at path "' + templateBuilder.filePath + ". Error: " + e.message), e);
                 }
                 
                 
@@ -86,7 +85,7 @@ raptor.defineClass(
                     var childNode = node.childNodes[i];
                     if (!childNode.parentNode) {
                         //Validate that the parentNode property is set correctly for this child node
-                        raptor.throwError(new Error("Invalid node found in tree. parentNode property of child node is not set. Node: " + node));
+                        throw raptor.createError(new Error("Invalid node found in tree. parentNode property of child node is not set. Node: " + node));
                     }
                     this.transformTree(childNode, templateBuilder);
                 }
@@ -144,7 +143,7 @@ raptor.defineClass(
                 
                 }
                 catch(e) {
-                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
+                    throw raptor.createError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
                 }
                 
                 
@@ -163,7 +162,7 @@ raptor.defineClass(
 //                    console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                 }
                 catch(e) {
-                    errors.throwError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
+                    throw raptor.createError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
                 }
                 
                 if (this.hasErrors()) {
@@ -209,7 +208,7 @@ raptor.defineClass(
                 }
                 catch(e) {
                     this.logger().error("Unable to load compiled template: " + compiledSrc, e);
-                    errors.throwError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);
+                    throw raptor.createError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);
                 }
             },
             

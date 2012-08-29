@@ -84,7 +84,7 @@ raptor.defineClass(
                         return;
                     }
                     else {
-                        raptor.throwError(new Error(message));
+                        throw raptor.createError(new Error(message));
                     }
                 },
                 finishPart = function(endIndex) {

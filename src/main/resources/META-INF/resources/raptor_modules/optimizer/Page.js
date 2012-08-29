@@ -8,34 +8,40 @@ raptor.defineClass(
         
         var Page = function(pageConfig, config) {
             pageConfig = pageConfig || {};
-            
-            this.includes = [];
+
+            this.packageManifest = null;
             this.name = null;
             this.bundleSetDef = null;
             this.config = config;
             this.enabledExtensions = null;
             this.viewFile = null;
-            this.packagePath = null;
             this.basePath = null;
             this.dir = null;
             this.watching = false;
             this.watchers = [];
-            
-            
+            this.includeCache = {};
             
             raptor.require('listeners').makeObservable(this, Page.prototype, ["modified"]);
             
                 
             raptor.extend(this, pageConfig);
             
-            if (this.packagePath) {
-                this.packageFile = new File(this.packagePath);
+            if (this.packageManifest) {
+                var packageResource = this.packageManifest.getPackageResource();
+                if (packageResource.isFileResource()) {
+                    this.packageFile = packageResource.getFile();    
+                }
             }
             
             this.name = this.name.replace(/\\/g, '/');
         };
 
         Page.prototype = {
+                
+            getIncludeCache: function() {
+                return this.includeCache;
+            },
+            
             enableExtension: function(name) {
                 if (!this.enabledExtensions) {
                     this.enabledExtensions = raptor.require('packager').createExtensionCollection();
@@ -97,30 +103,26 @@ raptor.defineClass(
             getName: function() {
                 return this.name;
             },
-            
-            getPackagePath: function() {
-                return this.packagePath;
+
+            getPackageManifest: function() {                
+                return this.packageManifest;
             },
             
             getViewFile: function() {
                 return this.viewFile;
             },
             
-            addInclude: function(include) {
-                this.includes.push(include);
-            },
-            
             getBundleSetDef: function() {
-                return this.bundleSetDef || this.config.getBundleSetDef("default");
+                return this.bundleSetDef;
             },
             
             getEnabledExtensions: function() {
-                return this.enabledExtensions || this.config.getEnabledExtensions();
+                return this.enabledExtensions;
             },
             
             addBundleSetDef: function(bundleSetDef) {
                 if (this.bundleSetDef) {
-                    raptor.throwError(new Error('Page "' + this.name + '" already has bundles defined"'));
+                    throw raptor.createError(new Error('Page "' + this.name + '" already has bundles defined"'));
                 }
                 this.bundleSetDef = bundleSetDef;
             },

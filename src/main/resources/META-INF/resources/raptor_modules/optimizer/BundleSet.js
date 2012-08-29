@@ -95,7 +95,7 @@ raptor.defineClass(
                     },
                     handleInclude: function(include, context) {
                         if (context.async === true) {
-                            raptor.throwError(new Error("Illegal state. async should not be true"));
+                            throw raptor.createError(new Error("Illegal state. async should not be true"));
                         }
                         
                         if (this.getBundleForInclude(include)) {
@@ -114,7 +114,7 @@ raptor.defineClass(
                 include = packager.createInclude(include);
                 
                 if (include.isPackageInclude()) {
-                    raptor.throwError(new Error("Illegal argument. Include cannot be a package include. Include: " + include.toString()));
+                    throw raptor.createError(new Error("Illegal argument. Include cannot be a package include. Include: " + include.toString()));
                 }
                 var includeLocation = include.getLocation();
                 if (!includeLocation) {

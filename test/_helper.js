@@ -246,7 +246,7 @@ jsdomScripts = function(dependencies) {
         
         var manifest = raptor.oop.getModuleManifest(name);
         if (!manifest) {
-            raptor.throwError(new Error('Module not found for name "' + name + '"'));
+            throw raptor.createError(new Error('Module not found for name "' + name + '"'));
         }
         manifest.forEachInclude({
             callback: function(type, include) {

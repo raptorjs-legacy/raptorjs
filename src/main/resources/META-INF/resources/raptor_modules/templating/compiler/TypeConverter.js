@@ -84,7 +84,7 @@ raptor.defineClass(
                 return allowExpressions ? new Expression(value) : value;
             }
             else {
-                raptor.throwError(new Error("Unsupported attribute targetType: " + targetType));
+                throw raptor.createError(new Error("Unsupported attribute targetType: " + targetType));
             }
         };
         

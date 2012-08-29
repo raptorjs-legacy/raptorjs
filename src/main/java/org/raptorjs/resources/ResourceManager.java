@@ -22,14 +22,10 @@ import java.util.List;
 
 
 public class ResourceManager {
-    private static final ResourceManager INSTANCE = new ResourceManager();
+    
     
     private List<ResourcesListener> listeners = new LinkedList<ResourcesListener>();
-    
-    public static ResourceManager getInstance() {
-        return ResourceManager.INSTANCE;
-    }
-    
+   
     private List<SearchPathEntry> searchPathEntries = new LinkedList<SearchPathEntry>();
     
     

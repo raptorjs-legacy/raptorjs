@@ -8,8 +8,8 @@ raptor.defineClass(
             files = raptor.require('files'),
             File = files.File;
         
-        var PageHtml = function() {
-            PageHtml.superclass.constructor.apply(this, arguments);
+        var PageRhtml = function() {
+            PageRhtml.superclass.constructor.apply(this, arguments);
             
             this.templateLoaded = false;
             
@@ -24,7 +24,7 @@ raptor.defineClass(
             
         };
         
-        PageHtml.prototype = {
+        PageRhtml.prototype = {
             getViewModel: function() {
                 
                 if (this.controller) {
@@ -106,5 +106,5 @@ raptor.defineClass(
             }
         };
         
-        return PageHtml;
+        return PageRhtml;
     });

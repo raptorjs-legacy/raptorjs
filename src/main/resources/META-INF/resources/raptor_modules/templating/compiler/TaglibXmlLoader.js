@@ -50,7 +50,7 @@ raptor.defineClass(
                         
                         var superTag = tagsById[extendsId];
                         if (!superTag) {
-                            raptor.throwError(new Error('Parent tag with ID "' + extendsId + '" not found in taglib at path "' + filePath + '"'));
+                            throw raptor.createError(new Error('Parent tag with ID "' + extendsId + '" not found in taglib at path "' + filePath + '"'));
                         }
                         
                         if (superTag['extends']) {
@@ -244,7 +244,7 @@ raptor.defineClass(
                                     _end: function(nestedVariable, tag) {
                                         
                                         if (!nestedVariable.name) {
-                                            raptor.throwError(new Error('The "name" attribute is required for an imported variable'));
+                                            throw raptor.createError(new Error('The "name" attribute is required for an imported variable'));
                                         }
                                         
                                         if (!tag.nestedVariables) {
@@ -270,10 +270,10 @@ raptor.defineClass(
                                     },
                                     _end: function(importedVariable, tag) {
                                         if (!importedVariable.propertyName) {
-                                            raptor.throwError(new Error('The "property-name" attribute is required for an imported variable'));
+                                            throw raptor.createError(new Error('The "property-name" attribute is required for an imported variable'));
                                         }
                                         if (!importedVariable.expression) {
-                                            raptor.throwError(new Error('The "expression" attribute is required for an imported variable'));
+                                            throw raptor.createError(new Error('The "expression" attribute is required for an imported variable'));
                                         }
                                         
                                         if (!tag.importedVariables) {
@@ -366,7 +366,7 @@ raptor.defineClass(
                                         importedXmlSource;
                                     
                                     if (!taglibResource.exists()) {
-                                        raptor.throwError(new Error('Imported taglib with path "' + path + '" not found in taglib at path "' + filePath + '"'));
+                                        throw raptor.createError(new Error('Imported taglib with path "' + path + '" not found in taglib at path "' + filePath + '"'));
                                     }
                                     
                                     importedXmlSource = taglibResource.readFully();

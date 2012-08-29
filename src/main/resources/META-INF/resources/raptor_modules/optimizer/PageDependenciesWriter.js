@@ -106,7 +106,7 @@ raptor.defineClass(
                                 entry.css.push(this.getBundleUrl(bundle, checksum));
                             }
                             else {
-                                raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                                throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                             }
                             
                         }, this);
@@ -129,7 +129,7 @@ raptor.defineClass(
                 pageDependencies.forEachPageBundle(function(bundle) {
                     var checksum = writeBundle(bundle);
                     if (bundle.isInline()) {
-                        raptor.throwError(new Error("Inline bundles not yet supported"));
+                        throw raptor.createError(new Error("Inline bundles not yet supported"));
                     }
                     else {
                         addHtml(bundle.getLocation(), this.getBundleIncludeHtml(bundle, checksum));
@@ -151,14 +151,14 @@ raptor.defineClass(
                     return '<link rel="stylesheet" type="text/css" href="' + url + '" />';
                 }
                 else {
-                    raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                    throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                 }
             },
             
             getBundleUrl: function(bundle, checksum) {
                 var urlBuilder = this.getUrlBuilder();
                 if (!urlBuilder) {
-                    raptor.throwError(new Error("URL builder not set."));
+                    throw raptor.createError(new Error("URL builder not set."));
                 }
                 return urlBuilder.buildBundleUrl(bundle, checksum);
             },
@@ -234,11 +234,11 @@ raptor.defineClass(
             },
             
             writeBundle: function(bundle, code, checksum) {
-                raptor.throwError(new Error("writeBundle() not implemented"));
+                throw raptor.createError(new Error("writeBundle() not implemented"));
             },
             
             writePageIncludeHtml: function(pageName, location, html) {
-                raptor.throwError(new Error("writeIncludeHtml() not implemented"));
+                throw raptor.createError(new Error("writeIncludeHtml() not implemented"));
             },
             
             setUrlBuilder: function(urlBuilder) {

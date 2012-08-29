@@ -351,7 +351,7 @@ raptor.defineClass(
                     return new Expression(expression);
                 }
                 else {
-                    raptor.throwError(new Error("Unsupported expression object: " + expression));
+                    throw raptor.createError(new Error("Unsupported expression object: " + expression));
                 }
             },
             

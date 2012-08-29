@@ -44,7 +44,7 @@ raptor.defineClass(
             getManifest: function() {
                 var manifest = raptor.oop.getModuleManifest(this.name);
                 if (!manifest) {
-                    raptor.throwError(new Error('Package manifest not found for module "' + this.name + '"'));    
+                    throw raptor.createError(new Error('Package manifest not found for module "' + this.name + '"'));    
                 }
                 return manifest;
             },

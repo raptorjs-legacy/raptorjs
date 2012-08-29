@@ -18,7 +18,7 @@ $rload(function(raptor) {
     "use strict";
     
     var forEach = raptor.forEach,
-        errors = raptor.errors,
+        strings = raptor.strings,
         logger = raptor.logging.logger('resources'),
         DirSearchPathEntry = raptor.require('resources.DirSearchPathEntry'),
         Resource = raptor.require('resources.Resource'),
@@ -39,7 +39,7 @@ $rload(function(raptor) {
             }
             else
             {
-                errors.throwError(new Error('Invalid search path type: ' + config.type));
+                throw raptor.createError(new Error('Invalid search path type: ' + config.type));
             }
         };
 
@@ -67,6 +67,14 @@ $rload(function(raptor) {
         FileResource: FileResource,
         
         createFileResource: function(path) {
+            var File = raptor.require('files').File;
+            if (path instanceof File) {
+                path = path.getAbsolutePath();
+            }
+            else if (typeof path !== 'string') {
+                throw raptor.createError(new Error("Invalid path: " + path));
+            }
+
             return new FileResource(null, path, path);
         },
         
@@ -102,7 +110,7 @@ $rload(function(raptor) {
             
             if (path.constructor !== String)
             {
-                raptor.errors.throwError(new Error("Invalid path: " + path));
+                throw raptor.createError(new Error("Invalid path: " + path));
             }
             
             var resource = null;
@@ -179,17 +187,49 @@ $rload(function(raptor) {
             return p1 + p2;
         },
         
+        resolvePath: function(basePath, relativePath) {
+            if (relativePath.charAt(0) === '/') {
+                return relativePath;
+            }
+            
+            var parts = relativePath.split('/'),
+                pathParts = basePath.split('/');
+            
+            for (var i=0, len=parts.length; i<len; i++) {
+                var part = parts[i];
+                if (part === '..') {
+                    pathParts.splice(pathParts.length-1, 1); //Remove the last element
+                }
+                else if (part !== '.') {
+                    pathParts.push(part);
+                }
+            }
+            
+            return pathParts.join('/');  
+        },
+        
         isResourceInstance: function(o) {
             return o instanceof Resource;
         },
         
-        /**
-         * Resolves a possibly path relative to a directory to an absolute path.
-         */
-        resolvePath: function(dirPath, relativePath) {
+        resolveResource: function(baseResource, relPath) {
             
-            var paths = raptor.require('paths');
-            return paths.resolve(dirPath, relativePath);
+            var resource;
+            
+            if (strings.startsWith(relPath, '/')) {
+                if (baseResource) {
+                    resource = this.findResource(relPath, baseResource.getSearchPathEntry() /* Search within the same search path entry */);    
+                }
+                
+                if (!resource || resource.exists() === false) {
+                    resource = this.findResource(relPath);
+                }
+            }
+            else if (baseResource) {
+                resource = baseResource.resolve(relPath);
+            }
+            
+            return resource || new MissingResource(relPath + (baseResource ? "@" + baseResource : ""));
         }
     });    
     

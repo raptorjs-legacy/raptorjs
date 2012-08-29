@@ -6,6 +6,7 @@ raptor.defineClass(
         var strings = raptor.require('strings');
         
         var Config = function(params) {
+            this.configResource = null;
             this.outputDir = "dist";
             this.bundlingEnabled = true;
             this.bundlesOutputDir = null;
@@ -41,8 +42,8 @@ raptor.defineClass(
             this.writeHtmlIncludes = false;
             this.pagesByName = {};
             this.pageClassNamesByExt = {
-                "html": "optimizer.PageHtml",
-                "xhtml": "optimizer.PageHtml",
+                "html": "optimizer.PageStatic",
+                "xhtml": "optimizer.PageStatic",
                 "rhtml": "optimizer.PageRhtml"
             };
             
@@ -68,7 +69,7 @@ raptor.defineClass(
                     this.forEachPageSearchPathEntry(function(searchPathEntry) {
                         if (searchPathEntry.type === 'dir') {
                             if (!searchPathEntry.path) {
-                                raptor.throwError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
+                                throw raptor.createError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
                             }
 
                             pageFileFinder.findPages(searchPathEntry.path, searchPathEntry.basePath, searchPathEntry.recursive !== false, this);
@@ -197,15 +198,23 @@ raptor.defineClass(
             },
             
             addBundleSetDef: function(bundleSetDef) {
+                var BundleSetDef = raptor.require('optimizer.BundleSetDef');
+                
+                if (!(bundleSetDef instanceof BundleSetDef)) {
+                    bundleSetDef = new BundleSetDef(bundleSetDef);
+                }
+                
                 if (!bundleSetDef.name) {
                     bundleSetDef.name = "default";
                 }
                 
                 if (this.bundleSetDefsByName[bundleSetDef.name]) {
-                    raptor.throwError(new Error('Bundles with name "' + bundleSetDef.name + '" defined multiple times'));
+                    throw raptor.createError(new Error('Bundles with name "' + bundleSetDef.name + '" defined multiple times'));
                 }
                 
                 this.bundleSetDefsByName[bundleSetDef.name] = bundleSetDef;
+                
+                return bundleSetDef;
             },
             
             getBundleSetDef: function(name) {
@@ -275,24 +284,50 @@ raptor.defineClass(
                 return this.enabledProfiles[profileName] === true;
             },
             
-            addPage: function(pageConfig) {
+            registerPage: function(pageConfig) {
                 var pageClassName,
                     viewFile = pageConfig.viewFile;
                 
                 if (viewFile) {
-                    pageClassName = this.pageClassNamesByExt[viewFile.getExtension()]; 
+                    pageClassName = this.pageClassNamesByExt[viewFile.getExtension()];
+                    
+                    if (!pageClassName) {
+                        pageClassName = "optimizer.PageStatic";
+                    }
+                }
+                else {
+                    pageClassName = "optimizer.Page";
                 }
                 
-                if (!pageClassName) {
-                    pageClassName = "optimizer.PageHtml";
+                if (pageConfig.packageFile) {
+                    pageConfig.packageResource = raptor.require("resources").createFileResource(pageConfig.packageFile);
+                }
+                
+                if (pageConfig.includes) {
+                    pageConfig.packageManifest = raptor.require('packager').createPackageManifest(pageConfig.packageResource || this.getConfigResource());
+                    pageConfig.packageManifest.setIncludes(pageConfig.includes);
+                }
+                else if (pageConfig.packageResource) {
+                    pageConfig.packageManifest = raptor.require('packager').getPackageManifest(pageConfig.packageResource);
+                }
+                
+                if (!pageConfig.packageManifest) {
+                    throw raptor.createError(new Error("A packageManifest property is required for a page config. Alternatively, a packageResource or packageFile property can be provided."));
                 }
                 
                 var PageClass = raptor.require(pageClassName);
                 var page = new PageClass(pageConfig);
                 
-                page.config = this;
                 this.pages.push(page);
                 this.pagesByName[page.getName()] = page;
+            },
+            
+            setConfigResource: function(configResource) {
+                this.configResource = configResource;
+            },
+            
+            getConfigResource: function() {
+                return this.configResource;
             },
             
             forEachPage: function(callback, thisObj) {
@@ -309,7 +344,7 @@ raptor.defineClass(
                         if (o.bundlesRef) {
                             var referencedBundleSetDef = config.getBundleSetDef(o.bundlesRef);
                             if (!referencedBundleSetDef) {
-                                raptor.throwError(new Error('Bundles not found with name "' + o.bundlesRef + '"'));
+                                throw raptor.createError(new Error('Bundles not found with name "' + o.bundlesRef + '"'));
                             }
                             addBundles(referencedBundleSetDef);
                             return;
@@ -318,7 +353,7 @@ raptor.defineClass(
                             var bundleName = o.name;
                             
                             if (!bundleName) {
-                                raptor.throwError(new Error("Illegal state. Bundle name is required"));
+                                throw raptor.createError(new Error("Illegal state. Bundle name is required"));
                             }
                             if (config.checksumsEnabled === false) {
                                 bundleName = bundleSetDef.name + "-" + bundleName; //Prefix the bundle name with the bundle set name to keep the bundle names unique

@@ -11,7 +11,7 @@ raptor.defineClass(
         
         var OptimizerEngine = function(config) {
             this.config = config;
-            this.pageIncludeCache = {};
+            
             this.writer = this.createWriter();
             this.watchers = [];
             listeners.makeObservable(this, OptimizerEngine.prototype, ['configReloaded', 'packageModified']);
@@ -19,9 +19,6 @@ raptor.defineClass(
             if (config.isWatchTemplatesEnabled()) {
                 raptor.require('templating.compiler').enableWatching();
             }
-            
-            
-            
             
             this._startWatching();
         };
@@ -88,10 +85,6 @@ raptor.defineClass(
                 var watchers = this.watchers;
                 watchers.push(watcher);
                 watchers['has' + category] = true;
-            },
-            
-            clearCaches: function() {
-                this.pageIncludeCache = {};
             },
 
             closeWatchers: function() {
@@ -172,15 +165,19 @@ raptor.defineClass(
             },
             
             getPageIncludes: function(page, options) {
-                options = options || {};
-                //TODO Use the enabled extensions and the page name as the cache key
-                //var page = 
-                //var lookupKey
-                var pageName = page.getName();
+                if (typeof page === 'string') {
+                    page = this.getPage(page);
+                }
                 
-                var htmlIncludesByLocation = this.pageIncludeCache[pageName];
+                options = options || {};
+
+                var extensions = options.enabledExtensions || page.getEnabledExtensions() || this.config.getEnabledExtensions();
+                var cacheKey = extensions.getKey();
+                var includeCache = page.getIncludeCache();
+                
+                var htmlIncludesByLocation = includeCache[cacheKey];
                 if (!htmlIncludesByLocation) {
-                    htmlIncludesByLocation = this.pageIncludeCache[pageName] = this.buildPageIncludes(page, options);    
+                    htmlIncludesByLocation = includeCache[cacheKey] = this.buildPageIncludes(page, options);    
                 }
                 
                 return htmlIncludesByLocation;
@@ -208,39 +205,55 @@ raptor.defineClass(
             
             getPageBundleSet: function(page, enabledExtensions) {
                 
-                var bundleSetDef = page.getBundleSetDef();
-                enabledExtensions = enabledExtensions || page.getEnabledExtensions();
+                var bundleSetDef = page.getBundleSetDef() || this.config.getBundleSetDef("default");
+                if (!bundleSetDef) {
+                    bundleSetDef = this.config.addBundleSetDef({
+                        name: "default"
+                    });
+                }
+                enabledExtensions = enabledExtensions || page.getEnabledExtensions() || this.config.getEnabledExtensions();
                 
-                var lookupKey = 'bundleSet-' + enabledExtensions.getKey();
-                var bundleSet = bundleSetDef[lookupKey];
+                var cacheKey = enabledExtensions.getKey();
+                var bundleSetCache = bundleSetDef.getBundleSetCache();
+                
+                var bundleSet = bundleSetCache[cacheKey];
                 if (!bundleSet) {
                     bundleSet = this.config.createBundleSet(bundleSetDef, enabledExtensions);
-                    bundleSetDef[lookupKey] = bundleSet;
+                    bundleSetCache[cacheKey] = bundleSet;
                 }
                 return bundleSet;
             },
             
-            buildPageIncludes: function(page, options) {
-                var config = this.config,
-                    optimizer = raptor.require('optimizer');
+            buildPageDependencies: function(page, options) {
                 
+                var config = this.config;
+            
                 var sourceUrlResolver = config.hasServerSourceMappings() ? function(path) {
-                        return config.getUrlForSourceFile(path);
-                    } : null;
-
-                var enabledExtensions = options.enabledExtensions || page.getEnabledExtensions(),
+                    return config.getUrlForSourceFile(path);
+                } : null;
+                
+                var enabledExtensions = options.enabledExtensions || page.getEnabledExtensions() || this.config.getEnabledExtensions(),
                     bundleSet = this.getPageBundleSet(page, enabledExtensions);
                     
                 
-                var pageDependencies = optimizer.buildPageDependencies({
+                var pageDependencies = raptor.require('optimizer').createPageDependencies({
                     inPlaceDeploymentEnabled: config.isInPlaceDeploymentEnabled(),
                     bundlingEnabled: config.isBundlingEnabled(),
                     pageName: page.getName(),
-                    packagePath: page.getPackagePath(),
+                    packageManifest: page.getPackageManifest(),
                     bundleSet: bundleSet,
                     sourceUrlResolver: sourceUrlResolver,
                     enabledExtensions: enabledExtensions
                 });
+                
+                return pageDependencies;
+            },
+            
+            
+            buildPageIncludes: function(page, options) {
+                var config = this.config;
+
+                var pageDependencies = this.buildPageDependencies(page, options);
                 
                 if (config.isWatchPackagesEnabled()) {
                     pageDependencies.getPackageManifests().forEach(this.watchPackage, this);
@@ -345,7 +358,7 @@ raptor.defineClass(
                         
                         var outputFile = this.getPageOutputFile(page);
                         if (outputFile == null) {
-                            raptor.throwError(new Error("Unable to write out page with dependencies. Output page directory (<page-output-dir>) is not set for configuration."));
+                            throw raptor.createError(new Error("Unable to write out page with dependencies. Output page directory (<page-output-dir>) is not set for configuration."));
                         }
                         
                         var writePage = function() {

@@ -25,12 +25,24 @@ $rload(function(raptor) {
         
     var File = function(path) {
         if (arguments.length === 1) {
+            if (!path) {
+                throw raptor.createError(new Error("path is required"));
+            }
             this._path = path;    
         }
         else if (arguments.length === 2) {
             var parentFile = arguments[0],                
                 childPath = arguments[1],
                 parentPath;
+            
+            if (!parentFile) {
+                throw raptor.createError(new Error("parentFile is required"));    
+            }
+            
+            if (!childPath) {
+                throw raptor.createError(new Error("childPath is required"));    
+            }
+            
             
             if (parentFile instanceof File) {
                 parentPath = parentFile.getAbsolutePath();
@@ -111,7 +123,7 @@ $rload(function(raptor) {
             var path = this._path;
             
             if (!existsSync(path)) {
-                raptor.throwError(new Error("File does not exist: " + path));
+                throw raptor.createError(new Error("File does not exist: " + path));
             }
             
             
@@ -181,7 +193,7 @@ $rload(function(raptor) {
         
         remove: function() {
             if (!this.exists()) {
-                raptor.throwError(new Error("Unable to delete file. File does not exist: " + this.getAbsolutePath()));
+                throw raptor.createError(new Error("Unable to delete file. File does not exist: " + this.getAbsolutePath()));
             }
             if (this.isSymbolicLink()) {
                 nodeFS.unlinkSync(this.getAbsolutePath());
@@ -206,6 +218,11 @@ $rload(function(raptor) {
                 return "";
             }
             return lastDot === -1 ? "" : filename.substring(lastDot+1); 
+        },
+        
+        resolveFile: function(relPath) {
+            var from = this.isDirectory() ? this : this.getParentFile();
+            return new File(nodePath.resolve(from.getAbsolutePath(), relPath));
         }
     };
     

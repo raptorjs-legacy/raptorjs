@@ -50,7 +50,7 @@ raptor.defineClass(
                     return 'css';
                 }
                 else {
-                    raptor.throwError(new Error("Unsupported content type: " + contentType));
+                    throw raptor.createError(new Error("Unsupported content type: " + contentType));
                     return null;
                 }
             },
@@ -65,7 +65,7 @@ raptor.defineClass(
                     prefix = this.styleSheetsPrefix || this.prefix;
                 }
                 else {
-                    raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                    throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                 }
                 
                 
@@ -81,7 +81,7 @@ raptor.defineClass(
                             toPath = this.styleSheetsDir;
                         }
                         else {
-                            raptor.throwError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                            throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
                         }
                         
                         fromPath = this.baseDir;
@@ -89,7 +89,8 @@ raptor.defineClass(
                         prefix = require('path').relative(fromPath, toPath) + '/';
                     }
                     else {
-                        raptor.throwError(new Error('Neither a URL prefix or base directory is set. Unable to calculate prefix for bundle URL.'));
+                        prefix = "";
+                        //throw raptor.createError(new Error('Neither a URL prefix or base directory is set. Unable to calculate prefix for bundle URL.'));
                     }
                 }
                 

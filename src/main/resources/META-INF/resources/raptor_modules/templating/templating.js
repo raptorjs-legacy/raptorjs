@@ -35,7 +35,7 @@ raptor.define('templating', function(raptor) {
                 helper = Clazz[name] || (Clazz.prototype && Clazz.prototype[name]);
             
             if (!helper) {
-                raptor.throwError(new Error('Helper function not found with name "' + name + '" in class "' + className + '"'));
+                throw raptor.createError(new Error('Helper function not found with name "' + name + '" in class "' + className + '"'));
             }
             
             return helper;
@@ -70,7 +70,7 @@ raptor.define('templating', function(raptor) {
          */
         render: function(templateName, data, context) {
             if (!context) {
-                raptor.throwError(new Error("Context is required"));
+                throw raptor.createError(new Error("Context is required"));
             }
             
             /*
@@ -109,7 +109,7 @@ raptor.define('templating', function(raptor) {
                 }
                 
                 if (!templateFunc) {
-                    raptor.throwError(new Error('Template not found with name "' + templateName + '"'));
+                    throw raptor.createError(new Error('Template not found with name "' + templateName + '"'));
                 }
                 loadedTemplates[templateName] = templateFunc; //Store the template rendering function in the lookup
             }
@@ -119,7 +119,7 @@ raptor.define('templating', function(raptor) {
                 templateFunc(data || {}, context); //Invoke the template rendering function with the required arguments
             }
             catch(e) {
-                raptor.throwError(new Error('Unable to render template with name "' + templateName + '". Exception: ' + e), e);
+                throw raptor.createError(new Error('Unable to render template with name "' + templateName + '". Exception: ' + e), e);
             }
         },
         

@@ -60,7 +60,7 @@ raptor.defineClass(
             inject: function(location, injectHtml) {
                 var injectIndex = this.injectIndexes[location];
                 if (injectIndex === undefined) {
-                    raptor.throwError(new Error('Starting marker not found for location "' + location + '"'));
+                    throw raptor.createError(new Error('Starting marker not found for location "' + location + '"'));
                 }
                 this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-include: ' + location + '] -->' + injectHtml + '<!-- [/raptor-include] -->') : injectHtml;
             },

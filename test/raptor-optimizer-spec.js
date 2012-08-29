@@ -4,10 +4,14 @@ describe('optimizer module', function() {
     var logger = raptor.require('logging').logger('raptor-optimizer-spec'),
         forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
-        testBundler = function(config) {
+        testOptimizer = function(config) {
         
             var optimizer = raptor.require("optimizer");
+            var pageIncludes = config.pageIncludes;
             
+            var packageManifest = raptor.require('packager').createPackageManifest();
+            packageManifest.setIncludes(pageIncludes);
+
             logger.debug("--------------------");
             logger.debug('Begin optimizer test for page "' + config.pageName + '":');
             //Build the bundle set
@@ -28,11 +32,10 @@ describe('optimizer module', function() {
                 });
             
             //Get the page dependencies
-            var pageIncludes = config.pageIncludes;
             
-            var pageDependencies = optimizer.buildPageDependencies({
+            var pageDependencies = optimizer.createPageDependencies({
                     pageName: config.pageName,
-                    includes: pageIncludes,
+                    packageManifest: packageManifest,
                     bundleSet: bundleSet,
                     enabledExtensions: config.enabledExtensions
                 });
@@ -191,7 +194,7 @@ describe('optimizer module', function() {
 
     it('should handle de-duplication correctly', function() {
         
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -241,7 +244,7 @@ describe('optimizer module', function() {
     });
     
     it('should handle page dependencies correctly', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -268,7 +271,7 @@ describe('optimizer module', function() {
                               },
                               {
                                   include: { "module": "test.optimizer.moduleC" },
-                                  toBundle: "page-pageB"
+                                  toBundle: "pageB"
                               }],
             expectedBundles: {
                 "body": [
@@ -283,7 +286,7 @@ describe('optimizer module', function() {
                         code: "moduleB"
                     },
                     {
-                        name: "page-pageB",
+                        name: "pageB",
                         contentType: "application/javascript",
                         code: "moduleC"
                     }
@@ -293,7 +296,7 @@ describe('optimizer module', function() {
     });
     
     it('should allow location for resource to be overridden', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -336,7 +339,7 @@ describe('optimizer module', function() {
     });
     
     it('should allow custom locations for resources', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -386,7 +389,7 @@ describe('optimizer module', function() {
     
     
     it('should allow asynchronous modules', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -413,7 +416,7 @@ describe('optimizer module', function() {
 
                 "body": [
                     {
-                        name: "page-pageE",
+                        name: "pageE",
                         contentType: "application/javascript",
                         code: "moduleA"
                     },
@@ -463,13 +466,13 @@ describe('optimizer module', function() {
                     requires: [],
                     bundles: [
                         {
-                            name: "page-async-pageE",
+                            name: "pageE-async",
                             location: "body",
                             contentType: "application/javascript",
                             code: "nestedB_js"
                         },
                         {
-                            name: "page-async-pageE",
+                            name: "pageE-async",
                             location: "head",
                             contentType: "text/css",
                             code: "nestedB_css"
@@ -481,7 +484,7 @@ describe('optimizer module', function() {
     });
     
     it('should allow page dependencies to be written to disk', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -509,7 +512,7 @@ describe('optimizer module', function() {
 
                 "body": [
                     {
-                        name: "page-pageE",
+                        name: "pageE",
                         contentType: "application/javascript",
                         code: "moduleA"
                     },
@@ -559,13 +562,13 @@ describe('optimizer module', function() {
                     requires: [],
                     bundles: [
                         {
-                            name: "page-async-pageE",
+                            name: "pageE-async",
                             location: "body",
                             contentType: "application/javascript",
                             code: "nestedB_js"
                         },
                         {
-                            name: "page-async-pageE",
+                            name: "pageE-async",
                             location: "head",
                             contentType: "text/css",
                             code: "nestedB_css"
@@ -603,7 +606,7 @@ describe('optimizer module', function() {
     });
     
     it('should allow output filters', function() {
-        testBundler({
+        testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
@@ -657,5 +660,13 @@ describe('optimizer module', function() {
                 
             }
         });
+    });
+    
+    it('should allow for a simple optimizer project', function() {
+        var configPath = raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml' );
+        var optimizer = raptor.require('optimizer').createOptimizer(configPath);
+        var pageIncludes = optimizer.getPageIncludes("page1");
+        expect(pageIncludes.body.indexOf('<script')).toNotEqual(-1);
+        
     });
 });

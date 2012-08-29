@@ -17,44 +17,28 @@
 $rload(function(raptor) {
     /*jshint strict:false */
 
-    /**
-     * @namespace
-     * @raptor
-     * @name errors
-     */
-    raptor.errors = /** @lends errors */ {
+    raptor.createError = function(message, cause) {
+        var error,
+            argsLen = arguments.length,
+            E = Error;
         
-        /**
-         * 
-         * @param message
-         * @param cause
-         */
-        throwError: function(message, cause)
+        if (argsLen === 2)
         {
-            var error,
-                argsLen = arguments.length,
-                E = Error;
-            
-            if (argsLen === 2)
-            {
-                error = message instanceof E ? message : new E(message);            
-                error._cause = cause;                        
-            }
-            else if (argsLen === 1)
-            {            
-                if (message instanceof E)
-                {
-                    error = message;
-                }
-                else
-                {
-                    error = new E(message);                
-                }
-            }
-            
-            throw error;
+            error = message instanceof E ? message : new E(message);            
+            error._cause = cause;                        
         }
-    };    
-    
-    raptor.throwError = raptor.errors.throwError;
+        else if (argsLen === 1)
+        {            
+            if (message instanceof E)
+            {
+                error = message;
+            }
+            else
+            {
+                error = new E(message);                
+            }
+        }
+        
+        return error;
+    };
 });

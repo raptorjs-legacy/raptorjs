@@ -17,8 +17,7 @@
 $rload(function(raptor) {
     "use strict";
     
-    var errors = raptor.errors,
-        arrays = raptor.arrays,
+    var arrays = raptor.arrays,
         forEachEntry = raptor.forEachEntry,
         logger = raptor.logging.logger('packager-server'),
         packageManifests = {},
@@ -116,13 +115,20 @@ $rload(function(raptor) {
             
             var includeClass = includeClasses[type];
             if (!includeClass) {
-                raptor.errors.throwError(new Error('Include class not found for include of type "' + type + '"'));
+                throw raptor.createError(new Error('Include class not found for include of type "' + type + '"'));
             }
             return includeClass;
         },
         
         removePackageManifestFromCache: function(manifest) {
             delete packageManifests[manifest.getSystemPath()];
+        },
+        
+        createPackageManifest: function(packageResource) {
+            var PackageManifest = this.PackageManifest;
+            var manifest = new PackageManifest();
+            manifest.setPackageResource(packageResource);
+            return manifest;
         },
         
         /**
@@ -150,30 +156,26 @@ $rload(function(raptor) {
             var manifest = packageManifests[packageResource.getSystemPath()];
             if (manifest === undefined)
             {
-                var packageDirPath;
-
                 if (!packageResource.exists())
                 {
                     return null;
                 }
-                
-                
-                resourcePath = packageResource.getPath();
-
-                var packageDirPathMatches = resourcePath.match(/[\\\/][^\\\/]+$/);
-                packageDirPath = resourcePath.substring(0, packageDirPathMatches.index);
-                
-                var packageJson = packageResource.readFully();
+                   
+                var packageJson = packageResource.readFully(),
+                    loadedManifest;
                 try
                 {
-                    manifest = JSON.parse(packageJson);
+                    loadedManifest = JSON.parse(packageJson);
                 }
                 catch(e) {
-                    errors.throwError(new Error('Unable to parse module manifest at path "' + packageResource.getSystemPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
+                    throw raptor.createError(new Error('Unable to parse module manifest at path "' + packageResource.getSystemPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
                 }
                 
-                raptor.extend(manifest, this.PackageManifest);
-                manifest.init(packageDirPath, packageResource);
+                manifest = this.createPackageManifest(packageResource);
+                raptor.extend(manifest, loadedManifest);
+                
+                manifest.setIncludes(loadedManifest.includes);
+                manifest.setExtensions(loadedManifest.extensions);
                 
                 packageManifests[packageResource.getSystemPath()] = manifest;
             }

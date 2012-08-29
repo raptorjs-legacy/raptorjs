@@ -24,13 +24,12 @@ raptor.defineClass(
             isArray = raptor.isArray,
             isEmpty = raptor.require('objects').isEmpty,
             splice = Array.prototype.splice,
-            errors = raptor.errors,
             setParentNode = function(nodes, newParent) {
                 forEach(nodes, function(node) {
                     if (node.parentNode) {
                         var removedChild = node.parentNode.removeChild(node);
                         if (!removedChild) {
-                            errors.throwError(new Error("Unexpected state. Child not found in parent. (node=" + node + ", parentNode=" + newParent + ")"));
+                            throw raptor.createError(new Error("Unexpected state. Child not found in parent. (node=" + node + ", parentNode=" + newParent + ")"));
                         }
                     }
                     node.parentNode = newParent;
@@ -63,7 +62,7 @@ raptor.defineClass(
             },
             addError: function(error) {
                 if (!this.compiler) {
-                    raptor.throwError(new Error("Template compiler not set for node " + this));
+                    throw raptor.createError(new Error("Template compiler not set for node " + this));
                 }
                 var pos = this.getPosition();
                 this.compiler.addError(error + " (" + this.toString() + ")", pos);
@@ -331,7 +330,7 @@ raptor.defineClass(
                     }
                 }
                 catch(e) {
-                    raptor.throwError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e), e);
+                    throw raptor.createError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e), e);
                 }
                 
                 if (preserveSpace) {
@@ -346,7 +345,7 @@ raptor.defineClass(
             
             generateCodeForChildren: function(template, indent) {
                 if (!template) {
-                    errors.throwError(new Error('The "template" argument is required'));
+                    throw raptor.createError(new Error('The "template" argument is required'));
                 }
                 if (indent === true) {
                     template.incIndent();

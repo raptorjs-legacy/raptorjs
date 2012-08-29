@@ -57,7 +57,7 @@ raptor.define('widgets', function(raptor) {
             
             if (nestedWidgetId) {
                 if (!parent) {
-                    raptor.throwError(new Error("Widget with an assigned ID is not scoped within another widget."));
+                    throw raptor.createError(new Error("Widget with an assigned ID is not scoped within another widget."));
                 }
                 widgetDef.docId = parent.id;
             }

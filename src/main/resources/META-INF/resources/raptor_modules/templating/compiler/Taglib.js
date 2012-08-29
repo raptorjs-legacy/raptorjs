@@ -82,7 +82,7 @@ raptor.defineClass(
             Transformer.prototype = {
                 getInstance: function() {
                     if (!this.className) {
-                        raptor.throwError(new Error("Transformer class not defined for tag transformer (tag=" + this.tag + ")"));
+                        throw raptor.createError(new Error("Transformer class not defined for tag transformer (tag=" + this.tag + ")"));
                     }
                     
                     if (!this.instance) {

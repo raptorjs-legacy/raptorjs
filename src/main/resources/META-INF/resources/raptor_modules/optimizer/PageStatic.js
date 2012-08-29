@@ -1,16 +1,16 @@
 raptor.defineClass(
-    'optimizer.PageHtml',
+    'optimizer.PageStatic',
     'optimizer.Page',
     function(raptor) {
         "use strict";
         
         var fileWatcher = raptor.require('file-watcher');
         
-        var PageHtml = function() {
-            PageHtml.superclass.constructor.apply(this, arguments);
+        var PageStatic = function() {
+            PageStatic.superclass.constructor.apply(this, arguments);
         };
         
-        PageHtml.prototype = {
+        PageStatic.prototype = {
             doWatch: function() {
                 var logger = this.logger();
                 
@@ -42,5 +42,5 @@ raptor.defineClass(
             }
         };
         
-        return PageHtml;
+        return PageStatic;
     });

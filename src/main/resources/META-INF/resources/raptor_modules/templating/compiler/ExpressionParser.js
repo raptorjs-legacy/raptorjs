@@ -116,7 +116,7 @@ raptor.defineClass(
                 
                 _invokeCallback: function(name, arg) {
                     if (!this.callback[name]) {
-                        raptor.throwError(new Error(name + " not allowed: " + arg));
+                        throw raptor.createError(new Error(name + " not allowed: " + arg));
                     }
                     
                     this.callback[name].call(this.callbackThisObj, arg);
@@ -212,7 +212,7 @@ raptor.defineClass(
                         return;
                     }
                     else {
-                        raptor.throwError(new Error(message));
+                        throw raptor.createError(new Error(message));
                     }
                 };
                 
@@ -258,7 +258,7 @@ raptor.defineClass(
                     textEnd = startMatches.index; //The text ends where the start token begins
                 }
                 else {
-                    raptor.throwError(new Error("Illegal state. Unexpected start token: " + startMatches[0]));
+                    throw raptor.createError(new Error("Illegal state. Unexpected start token: " + startMatches[0]));
                 }
 
                 expressionStart = startRegExp.lastIndex; //Expression starts where the start token ended

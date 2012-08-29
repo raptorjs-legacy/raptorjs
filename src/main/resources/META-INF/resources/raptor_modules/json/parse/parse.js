@@ -39,7 +39,7 @@ raptor.define(
     
                     return eval('(' + s + ')');
                 } else {
-                    raptor.errors.throwError(new Error('String expected'));
+                    throw raptor.createError(new Error('String expected'));
                 }
             }
         };

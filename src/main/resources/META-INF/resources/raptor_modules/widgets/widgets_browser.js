@@ -23,7 +23,6 @@ raptor.extend('widgets', function(raptor, widgets) {
     
     var PROTOTYPE = 'prototype',
         widgetsById = {},
-        errors = raptor.errors,
         listeners = raptor.listeners,
         EVENTS = 'events',
         Widget = raptor.require('widgets.Widget'),
@@ -86,7 +85,7 @@ raptor.extend('widgets', function(raptor, widgets) {
             var matching = this.widgetsById[id];
             if (!matching || matching.length === 0) return undefined;
             if (matching.length === 1) return matching[0];
-            raptor.throwError(new Error('getWidget: Multiple widgets found with ID "' + id + '"'));
+            throw raptor.createError(new Error('getWidget: Multiple widgets found with ID "' + id + '"'));
         },
         
         /**
@@ -168,7 +167,7 @@ raptor.extend('widgets', function(raptor, widgets) {
                         var originalWidgetClass = raptor.find(type);
                         if (!originalWidgetClass)
                         {
-                            errors.throwError(new Error('Unable to initialize widget of type "' + type + '". The class for the widget was not found.'));
+                            throw raptor.createError(new Error('Unable to initialize widget of type "' + type + '". The class for the widget was not found.'));
                         }
                         
                         if (originalWidgetClass.initWidget) {

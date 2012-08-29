@@ -50,7 +50,7 @@ raptor.defineClass(
                     manifest = this.getParentManifest();
             
                 if (relative && !manifest) {
-                    raptor.throwError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
+                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
                 }
                 else {
                     return manifest.resolveResource(path);                    
@@ -62,7 +62,7 @@ raptor.defineClass(
                     manifest = this.getParentManifest();
                 
                 if (relative && !manifest) {
-                    raptor.throwError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
+                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
                 }
                 else {
                     return path + ":" + (manifest ? ":" + manifest.getSystemPath() : "");                    
@@ -72,7 +72,7 @@ raptor.defineClass(
             load: function(context) {
                 var contentType = this.getContentType();
                 if (contentType != 'application/javascript') {
-                    raptor.throwError(new Error('Unable to load include "' + this.toString() + '". Expected content type of "application/javascript". Actual content type: ' + contentType));
+                    throw raptor.createError(new Error('Unable to load include "' + this.toString() + '". Expected content type of "application/javascript". Actual content type: ' + contentType));
                 }
                 
                 var resource = this.getResource(),
@@ -88,7 +88,7 @@ raptor.defineClass(
             },
             
             getKey: function() {
-                raptor.throwError(new Error("getKey() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getKey() not implemented for include: " + this.toString()));
             },
             
             getCode: function(context) {
@@ -98,15 +98,15 @@ raptor.defineClass(
                         return resource.readFully();
                     }
                     else {
-                        raptor.throwError(new Error('Unable to get code for include "' + this.toString() + '". Resource does not exist: ' + resource.getPath()));
+                        throw raptor.createError(new Error('Unable to get code for include "' + this.toString() + '". Resource does not exist: ' + resource.getPath()));
                     }
                 }
                 
-                raptor.throwError(new Error("getCode() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getCode() not implemented for include: " + this.toString()));
             },
             
             getContentType: function() {
-                raptor.throwError(new Error("getContentType() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getContentType() not implemented for include: " + this.toString()));
             },
             
             isPackageInclude: function() {

@@ -32,7 +32,7 @@ raptor.defineClass(
             load: function(context) {
                 if (!this.path) {
                     console.error("Invalid package include: ", this);
-                    raptor.throwError("Invalid package include");
+                    throw raptor.createError("Invalid package include");
                 }
                 raptor.packager.load(this.path);
             },
@@ -40,7 +40,7 @@ raptor.defineClass(
             getManifest: function() {
                 var manifest = raptor.packager.getPackageManifest(this.path);
                 if (!manifest) {
-                    raptor.throwError(new Error('Package manifest not found at path "' + this.path + '"'));    
+                    throw raptor.createError(new Error('Package manifest not found at path "' + this.path + '"'));    
                 }
                 return manifest;
             },

@@ -28,6 +28,7 @@ $rload(function(raptor) {
         isArray = raptor.isArray,
         isString = raptor.isString,
         isFunction = raptor.isFunction,
+        createError = raptor.createError,
         logging = raptor.logging, //Logging module used to add logging support to classes and modules
         PROTOTYPE = "prototype",
         ENUM_COUNT = "_count",
@@ -187,14 +188,14 @@ $rload(function(raptor) {
                 }
                 
                 if (!type) {
-                    raptor.throwError(new Error("Invalid definition for " + name));
+                    throw createError(new Error("Invalid definition for " + name));
                 }
             }
             else if (isEnum) {
                 type = function() {}; //Enum values were provided, but a constructor function is not required
             }
             else {
-                raptor.throwError(new Error(name + ' invalid'));
+                throw createError(new Error(name + ' invalid'));
             }
             
             clazz = mixinsTarget = type;

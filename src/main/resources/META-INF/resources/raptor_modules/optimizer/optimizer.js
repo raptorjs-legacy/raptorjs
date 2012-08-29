@@ -4,6 +4,7 @@ raptor.define(
         "use strict";
         
         var forEach = raptor.forEach,
+            File = raptor.require('files').File,
             packager = raptor.require('packager'),
             Bundle = raptor.require("optimizer.Bundle"),
             BundleSet = raptor.require("optimizer.BundleSet"),
@@ -11,8 +12,13 @@ raptor.define(
             fileWatcher = raptor.require('file-watcher');
             
         return {
-            createOptimizer: function(configXmlPath, params) {
-                var config = this.createConfig(configXmlPath, params);
+            
+            
+            createOptimizer: function(config, params) {
+                if (typeof config === 'string') {
+                    config = this.loadConfigXml(config);
+                }
+                
                 var OptimizerEngine = raptor.require('optimizer.OptimizerEngine');
                 var optimizerEngine = new OptimizerEngine(config);
                 var logger = this.logger();
@@ -38,13 +44,27 @@ raptor.define(
                 return optimizerEngine;
             },
             
-            createConfig: function(configXmlPath, params) {
+            loadConfigXml: function(configFile, params) {
+                if (typeof configFile === 'string') {
+                    configFile = new File(configFile);
+                }
+                
                 var Config = raptor.require('optimizer.Config');
-                var configXml = raptor.require('files').readFully(configXmlPath);
+                var configXml = configFile.readFully();
                 var config = new Config(params);
-                config.parseXml(configXml, configXmlPath);
+                config.setConfigResource(raptor.require('resources').createFileResource(configFile));
+                config.parseXml(configXml, configFile.getAbsolutePath());
                 config.findPages();
                 return config;
+            },
+            
+            createPage: function(pageConfig) {
+                var Page = raptor.require("optimizer.Page");
+                return new Page(pageConfig);
+            },
+            
+            createPageDependencies: function(config) {
+                return new PageDependencies(config);
             },
             
             createBundle: function(name) {
@@ -65,10 +85,7 @@ raptor.define(
                 return new SimpleUrlBuilder(config);
             },
             
-            buildPageDependencies: function(config) {
-                return new PageDependencies(config
-                    );
-            },
+            
             
             forEachInclude: function(options) {
     
@@ -82,7 +99,7 @@ raptor.define(
                 var foundIncludes = {};
                 
                 var handleManifest = function(manifest, parentPackage, recursive, depth, async) {
-                    var foundKey = manifest.getSystemPath() + "|" + async;
+                    var foundKey = manifest.getKey() + "|" + async;
                     
                     var context = {
                             recursive: recursive === true, 
@@ -130,7 +147,7 @@ raptor.define(
                         var dependencyManifest = include.getManifest();
                         
                         if (!dependencyManifest) {
-                            raptor.throwError(new Error("Dependency manifest not found for package include: " + include.toString()));
+                            throw raptor.createError(new Error("Dependency manifest not found for package include: " + include.toString()));
                         }
                         
                         handleManifest.call(this, dependencyManifest, parentPackage, recursive, depth, async);

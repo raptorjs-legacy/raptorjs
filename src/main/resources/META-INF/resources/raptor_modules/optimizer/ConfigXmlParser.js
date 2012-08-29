@@ -78,7 +78,7 @@ raptor.defineClass(
                             },
                             _end: function(child, bundleSetDef) {
                                 if (!child.ref) {
-                                    raptor.throwError(new Error('The "ref" attribute is required for nested <bundles> element'));
+                                    throw raptor.createError(new Error('The "ref" attribute is required for nested <bundles> element'));
                                 }
                                 bundleSetDef.addChild(child);
                             },
@@ -138,7 +138,7 @@ raptor.defineClass(
                                 _end: function(entry) {
                                     var dirPath = entry.path;
                                     if (!dirPath) {
-                                        raptor.throwError(new Error('"path" is required for directory resource search path entry'));
+                                        throw raptor.createError(new Error('"path" is required for directory resource search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
                                     if (!raptor.require('resources').getSearchPath().hasDir(dirPath)) {
@@ -166,7 +166,7 @@ raptor.defineClass(
                                 _end: function(entry) {
                                     var dirPath = entry.path;
                                     if (!dirPath) {
-                                        raptor.throwError(new Error('"path" is required for directory page search path entry'));
+                                        throw raptor.createError(new Error('"path" is required for directory page search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
                                     config.addPageSearchDir(dirPath, entry.basePath, entry.recursive !== false);
@@ -290,7 +290,7 @@ raptor.defineClass(
                                 _end: function(entry) {
                                     var dirPath = entry.path;
                                     if (!dirPath) {
-                                        raptor.throwError(new Error('"path" is required for directory page search path entry'));
+                                        throw raptor.createError(new Error('"path" is required for directory page search path entry'));
                                     }
                                     dirPath = resolvePath(dirPath);
                                     config.addCleanDir(dirPath);
@@ -406,16 +406,16 @@ raptor.defineClass(
                                 },
                                 
                                 _end: function(pageConfig) {
-                                    var htmlPath = pageConfig.htmlPath;
-                                    if (!htmlPath) {
-                                        raptor.throwError('The "htmlPath" property is required for a page config');
+                                    
+                                    if (pageConfig.htmlPath) {
+                                        pageConfig.htmlPath = htmlPath = resolvePath(htmlPath);    
                                     }
-                                    pageConfig.htmlPath = htmlPath = resolvePath(htmlPath);
-                                    pageConfig.packagePath = resolvePath(pageConfig.packagePath);
-                                    raptor.throwError(new Error("<page> elements not yet supported"));
-                                    config.addPage({
-                                        
-                                    });
+                                    
+                                    if (pageConfig.packagePath) {
+                                        pageConfig.packageFile = new File(resolvePath(pageConfig.packagePath));    
+                                    }
+                                    
+                                    config.registerPage(pageConfig);
                                     
                                 },
                                 
@@ -429,6 +429,11 @@ raptor.defineClass(
                                 "<bundles>": bundlesHandler,
                                 
                                 "<includes>": {
+                                    _type: "object",
+                                    _begin: function(page) {
+                                        return page; //Use the page as the parent for the includes
+                                    },
+                                    
                                     "<*>": includeHandler
                                 }
                             } //End <page>

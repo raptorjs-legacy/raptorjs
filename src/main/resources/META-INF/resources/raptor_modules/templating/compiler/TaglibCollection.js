@@ -91,7 +91,7 @@ raptor.defineClass(
                     as;
                 
                 if (!match) {
-                    raptor.throwError(new Error('Invalid import: "' + part + '"'));
+                    throw raptor.createError(new Error('Invalid import: "' + part + '"'));
                 }
                 else {
                     imports = match[1],
@@ -101,7 +101,7 @@ raptor.defineClass(
                     if (!as) {
                         as = taglibs.resolvePrefix(from) || taglibs.resolveShortName(from); //Use either the prefix (preferred) or the short name if provided
                         if (!as) {
-                            raptor.throwError(new Error('Unable to handle imports from "' + from + '". The taglib does not have a prefix or short name defined.'));
+                            throw raptor.createError(new Error('Unable to handle imports from "' + from + '". The taglib does not have a prefix or short name defined.'));
                         }
                     }
                 }

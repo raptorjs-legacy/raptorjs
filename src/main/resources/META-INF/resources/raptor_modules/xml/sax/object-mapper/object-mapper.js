@@ -143,7 +143,7 @@ raptor.define(
             },
             
             error: function(message) {
-                raptor.throwError(new Error(message + " (" + this.saxParser.getPos() + ")"));
+                throw raptor.createError(new Error(message + " (" + this.saxParser.getPos() + ")"));
             },
             
             getCurrentContext: function() {

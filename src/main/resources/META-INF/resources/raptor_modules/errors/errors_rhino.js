@@ -19,48 +19,33 @@ $rload(function(raptor) {
     
     var stacktraces = raptor.stacktraces;
     
-    /**
-     * @namespace
-     * @raptor
-     * @name errors
-     */
-    raptor.errors = /** @lends errors */ {        
-        /**
-         * 
-         * @param message
-         * @param cause
-         */
-        throwError: function(message, cause)
-        {
-            var output = '';
+    raptor.createError = function(message, cause) {
+        var output = '';
+        
+        var stackTrace = stacktraces.trace(message);
+        if (stackTrace == null) {
+            stackTrace = stacktraces.traceAndTrim(1);
+        }
+        if (message instanceof Error) {
+            output += message + "\nStacktrace:\n" + stackTrace;
+        }
+        else {
+            output += message;
+        }
+        
+        if (cause) {
+            output += "\n\nCaused by: ";
             
-            var stackTrace = stacktraces.trace(message);
-            if (stackTrace == null) {
-                stackTrace = stacktraces.traceAndTrim(1);
-            }
-            if (message instanceof Error) {
-                output += message + "\nStacktrace:\n" + stackTrace;
+            if (cause instanceof Error) {
+                output += cause + "\nStacktrace:\n" + stacktraces.trace(cause);
             }
             else {
-                output += message;
+                output += cause;
             }
-            
-            if (cause) {
-                output += "\n\nCaused by: ";
-                
-                if (cause instanceof Error) {
-                    output += cause + "\nStacktrace:\n" + stacktraces.trace(cause);
-                }
-                else {
-                    output += cause;
-                }
-            }
-            
-            output += "\n";
-            
-            throw new Error(output);
         }
-    };  
-    
-    raptor.throwError = raptor.errors.throwError;
+        
+        output += "\n";
+        
+        throw new Error(output);
+    };
 });

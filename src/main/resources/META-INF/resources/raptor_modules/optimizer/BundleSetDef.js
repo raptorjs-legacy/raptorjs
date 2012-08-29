@@ -3,10 +3,15 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var BundleSetDef = function() {
+        var BundleSetDef = function(config) {
             this.name = "default";
             this.ref = null;
             this.children = [];
+            this.bundleSetCache = {};
+            
+            if (config) {
+                raptor.extend(this, config);
+            }
         };
 
         BundleSetDef.prototype = {
@@ -18,6 +23,10 @@ raptor.defineClass(
             },
             forEachChild: function(callback, thisObj) {
                 raptor.forEach(this.children, callback, thisObj);
+            },
+            
+            getBundleSetCache: function() {
+                return this.bundleSetCache;
             }
         };
         

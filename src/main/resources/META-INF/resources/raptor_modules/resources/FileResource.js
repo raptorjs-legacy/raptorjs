@@ -37,16 +37,21 @@ $rload(function(raptor) {
             var FileResource = function(searchPathEntry, path, filePath) {
                 FileResource.superclass.init.call(this, searchPathEntry, path);               
                 if (!filePath) {
-                    raptor.throwError(new Error("filePath is required: " + filePath));
+                    console.error('FileResource(', arguments);
+                    throw raptor.createError(new Error("filePath is required (actual: " + filePath + ")"));
                 }
                 this.filePath = filePath;
             };
             
             FileResource.prototype = {
-                    /**
-                     * 
-                     * @returns {Boolean}
-                     */
+                exists: function() {
+                    return this.getFile().exists();
+                },
+                
+                /**
+                 * 
+                 * @returns {Boolean}
+                 */
                 isFileResource: function() {
                     return true;
                 },
@@ -72,8 +77,7 @@ $rload(function(raptor) {
                 },
                 
                 forEachChild: function(callback, thisObj) {
-                    var filenames = files.listFilenames(this.filePath),
-                        FileResource = raptor.require('resources.FileResource');
+                    var filenames = files.listFilenames(this.filePath);
                     
                     forEach(filenames, function(filename) {
                         var childResource = new FileResource(
@@ -93,6 +97,23 @@ $rload(function(raptor) {
                 getFile: function() {
                     var File = files.File;
                     return new File(this.getSystemPath());
+                },
+                
+                getParent: function() {
+                    return new FileResource(
+                            this.getSearchPathEntry(),
+                            this.getDirPath(), 
+                            this.getFile().getParent());
+                },
+                
+                resolve: function(relPath) {
+                    var absolutePath = this.getFile().resolveFile(relPath).getAbsolutePath();
+                    var resourcePath = raptor.require('resources').resolvePath(this.getFile().isDirectory() ? this.getPath() : this.getDirPath(), relPath); 
+                    
+                    return new FileResource(
+                            this.getSearchPathEntry(),
+                            resourcePath, 
+                            absolutePath);
                 }
             };
             return FileResource;

@@ -55,7 +55,7 @@ raptor.defineClass(
                 
                 parser.on({
                     error: function(e) {
-                        raptor.throwError(e);
+                        throw raptor.createError(e);
                     },
                     
                     characters: function(t) {

@@ -29,7 +29,7 @@ $rload(function(raptor) {
             resource = raptor.resources.findResource(resource);
             if (resource.exists() === false)
             {
-                raptor.errors.throwError(new Error('Resource not found: ' + resource.getPath()));
+                throw raptor.createError(new Error('Resource not found: ' + resource.getPath()));
             }
             
             if (resource.isFileResource())

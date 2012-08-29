@@ -33,9 +33,6 @@ public abstract class RaptorJSEnv {
     
     private RhinoHelpers rhinoHelpers = null;
     private ResourceManager resourceManager = null;
-    public RaptorJSEnv() {
-        this(ResourceManager.getInstance());
-    }
     
     public RaptorJSEnv(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;

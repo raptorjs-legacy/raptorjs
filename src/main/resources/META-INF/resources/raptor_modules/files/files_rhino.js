@@ -44,7 +44,7 @@ $rload(function(raptor) {
                 return new JavaFile(arguments[0], arguments[1]).getAbsolutePath();
             }
             else {
-                raptor.errors.throwError(new Error("Not supported"));
+                throw raptor.createError(new Error("Not supported"));
             }
         },
         

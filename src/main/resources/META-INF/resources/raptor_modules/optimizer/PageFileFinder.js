@@ -48,11 +48,11 @@ raptor.defineClass(
                                 
                                 pageName = pageFileDir.getAbsolutePath().substring(rootDir.length) + '/' + pageName;
                                 
-                                config.addPage({
+                                config.registerPage({
                                     basePath: basePath || rootDir,
                                     dir: file.getParentFile(),
                                     name: pageName,
-                                    packagePath: file.getAbsolutePath(),
+                                    packageFile: file,
                                     viewFile: viewFile
                                 });
                             }

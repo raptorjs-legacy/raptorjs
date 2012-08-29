@@ -18,7 +18,6 @@ $rload(function(raptor) {
     "use strict";
     
     var logger = raptor.logging.logger('oop-server'),
-        errors = raptor.errors,
         oop = raptor.oop,
         getModuleDirPath = function(name) {
             return '/' + name.replace(/\./g, '/');
@@ -44,7 +43,7 @@ $rload(function(raptor) {
                     //The file existed for the class by the class itself
                     //was not found so throw an error since the developer
                     //probably named the class incorrectly.
-                    errors.throwError(new Error('Definition with name "' + name + '" not found in file "' + pathToFile + '"'));
+                    throw raptor.createError(new Error('Definition with name "' + name + '" not found in file "' + pathToFile + '"'));
                 }
                 else
                 {   
@@ -150,7 +149,7 @@ $rload(function(raptor) {
         },
         
         _missing: function(name) {
-            errors.throwError(new Error('require failed. "' + name + '" not found. Search path:\n' + raptor.resources.getSearchPathString()));
+            throw raptor.createError(new Error('require failed. "' + name + '" not found. Search path:\n' + raptor.resources.getSearchPathString()));
         },
         
         /**

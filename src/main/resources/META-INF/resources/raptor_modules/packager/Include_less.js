@@ -108,19 +108,19 @@ raptor.defineClass(
 
                     parser.parse(lessSource, function (e, root) {
                         if (e) {
-                            raptor.throwError(new Error('Unable to parse Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));
+                            throw raptor.createError(new Error('Unable to parse Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));
                         } else {
                             try {
                                 result = root.toCSS();    
                             }
                             catch(e) {
-                                raptor.throwError(new Error('Unable to generate CSS code for Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));    
+                                throw raptor.createError(new Error('Unable to generate CSS code for Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));    
                             }
                         }
                     });
                 }
                 catch(e) {
-                    raptor.throwError(new Error('Unable to parse Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));
+                    throw raptor.createError(new Error('Unable to parse Less file at path "' + resource.getSystemPath() + '". Exception: ' + e.message));
                 }
                 finally {
                     Parser.importer = oldImporter;

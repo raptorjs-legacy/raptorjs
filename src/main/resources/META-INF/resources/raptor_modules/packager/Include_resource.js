@@ -23,7 +23,7 @@ raptor.defineClass(
         return {
             
             invalidInclude: function() {
-                raptor.throwError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
+                throw raptor.createError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
             },
             
             getKey: function() {
@@ -49,7 +49,7 @@ raptor.defineClass(
                     
                     var taglibResource = this.getResource(context);
                     if (!taglibResource.exists()) {
-                        raptor.throwError(new Error('Resource with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
+                        throw raptor.createError(new Error('Resource with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
                     }
                     return '$rset("resource","' + taglibResource.getPath() + '",' + JSON.stringify(taglibResource.readFully()) + ');';
                 }

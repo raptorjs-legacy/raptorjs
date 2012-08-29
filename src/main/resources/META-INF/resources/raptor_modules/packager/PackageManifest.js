@@ -21,14 +21,11 @@ $rload(function(raptor) {
      * @parent packager_Server
      */
     
-    var arrays = raptor.arrays,
-        objects = raptor.objects,
-        strings = raptor.strings,
-        errors = raptor.errors,
-        forEach = raptor.forEach,
+    var forEach = raptor.forEach,
         forEachEntry = raptor.forEachEntry,
         packager = raptor.packager,
-        ExtensionCollection = raptor.packager.ExtensionCollection;
+        ExtensionCollection = raptor.packager.ExtensionCollection,
+        nextId = 0;
 
     var createInclude = function(includeConfig, manifest) {
             
@@ -92,59 +89,94 @@ $rload(function(raptor) {
             return include;
         };
    
-    var PackageManifest = {
-        /**
-         * 
-         * @param packageDirPath
-         * @returns
-         */
-        init: function(packageDirPath, packageResource) {
-            this.packageDirPath = packageDirPath;
+    var PackageManifest = function() {
+        this.includes = [];
+        this.extensions = [];
+        this.packageResource = null;
+        this._isPackageManifest = true;
+        this.searchPathEntry = null;
+    };
+    
+    PackageManifest.prototype = {
+        
+        setPackageResource: function(packageResource) {
             this.packageResource = packageResource;
-            this._isPackageManifest = true;
+        },
             
-            forEach(this.includes, function(include, i) {
-                    this.includes[i] = createInclude(include, this); 
-                }, this);
-
-            if (this.extensions) {
-                var extensions = [];
-                
-                if (!arrays.isArray(this.extensions)) {
-                    //Convert the extensions to an ordered array
-                    forEachEntry(this.extensions, function(name, extDef) {
-                        extDef.name = name;
-                        extensions.push(extDef);
-                    });
-                    this.extensions = extensions;
-                    
-                    this.extensions.sort(function(a,b) {
-                        if (a === b) {
-                            return 0;
-                        }
-                        else if (a == null) {
-                            return -1;
-                        }
-                        else if (b == null) {
-                            return 1;
-                        }
-                        else {
-                            return a < b ? -1 : (a > b ? 1 : 0);
-                        }
-                    });
-                }
-                
-                forEach(this.extensions, function(extDef) {
-                    forEach(extDef.includes, function(include, i) {
-                        extDef.includes[i] = createInclude(include, this);
-                    }, this);
-                    
-                    if (extDef.condition) {
-                        extDef.condition = eval("(function(extensions) { return " + extDef.condition + ";})");
-                    }
-                }, this);
+        setIncludes: function(includes) {
+            if (!includes || includes.length === 0) {
+                this.includes = [];
+                return;
             }
             
+            forEach(includes, function(include, i) {
+                includes[i] = createInclude(include, this); 
+            }, this);
+            this.includes = includes;
+        },
+        
+        getKey: function() {
+            if (this.packageResource) {
+                return this.packageResource.getSystemPath();
+            }
+            else {
+                return this.key || (this.key = nextId++);
+            }
+        },
+        
+        setExtensions: function(extensions) {
+            
+            if (!extensions || extensions.length === 0) {
+                this.extensions = [];
+                return;
+            }
+            
+            if (!raptor.isArray(extensions)) {
+                this.extensions = [];
+                
+                //Convert the extensions to an ordered array
+                forEachEntry(extensions, function(name, extension) {
+                    extension.name = name;
+                    this.extensions.push(extension);
+                }, this);
+                
+                this.extensions.sort(function(a,b) {
+                    a = a.name;
+                    b = b.name;
+                    
+                    if (a === b) {
+                        return 0;
+                    }
+                    else if (a == null) {
+                        return -1;
+                    }
+                    else if (b == null) {
+                        return 1;
+                    }
+                    else {
+                        return a < b ? -1 : (a > b ? 1 : 0);
+                    }
+                });
+            }
+            else {
+                this.extensions = extensions;
+            }
+            
+            forEach(this.extensions, function(extension) {
+                forEach(extension.includes, function(include, i) {
+                    extension.includes[i] = createInclude(include, this);
+                }, this);
+                
+                if (extension.condition) {
+                    extension.condition = eval("(function(extensions) { return " + extension.condition + ";})");
+                }
+            }, this);
+            
+            
+        },
+        
+        addInclude: function(includeDef) {
+            this.includes.push(createInclude(includeDef, this));
         },
         
         /**
@@ -185,28 +217,12 @@ $rload(function(raptor) {
             return '[Module manifest: ' + this.getName() + ']';
         },
         
-        /**
-         * 
-         * @returns
-         */
-        getDirPath: function() {
-            return this.packageDirPath;
-        },
-        
-        resolveResource: function(path) {
-
-            if (!strings.startsWith(path, '/')) {
-                path = this.getDirPath() + '/' + path;
+        resolveResource: function(relPath) {
+            var resource = raptor.require('resources').resolveResource(this.getPackageResource(), relPath);
+            if (!resource || !resource.exists()) {
+                var packagePath = this.getPackageResource() ? '"' + this.getPackageResource().getSystemPath() + '"' : '(no package)';
+                throw raptor.createError(new Error('Resource "' + relPath + '" not found for package ' + packagePath));
             }
-            
-            var resource = raptor.resources.findResource(path, this.getSearchPathEntry() /* Search within the same search path entry */);
-            if (resource.exists() === false) {
-                resource = raptor.resources.findResource(path);
-                if (resource.exists() === false) {
-                    errors.throwError(new Error('Resource "' + path + '" not found for package "' + this.getPackageResource().getSystemPath()));
-                }
-            }
-            
             return resource;
         },
         
@@ -270,7 +286,7 @@ $rload(function(raptor) {
             
             
             var _handleIncludes = function(includes, extension) {
-                arrays.forEach(includes, function(include) {
+                forEach(includes, function(include) {
                     
                     if (include.extension && !_isExtensionIncluded(include.extension)) {
                         return;
@@ -290,7 +306,7 @@ $rload(function(raptor) {
             
             if (this.extensions) {
                 
-                arrays.forEach(this.extensions, function(extensionDef) {
+                forEach(this.extensions, function(extensionDef) {
                     var extensionName = extensionDef.name;
                     
                     if (extensionDef.condition)

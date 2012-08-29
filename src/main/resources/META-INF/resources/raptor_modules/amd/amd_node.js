@@ -114,14 +114,14 @@ $rload(function(raptor) {
                     }
                     
                     if (typeof callback !== 'function') {
-                        raptor.throwError(new Error("Invalid call to require. Callback expected"));
+                        throw raptor.createError(new Error("Invalid call to require. Callback expected"));
                     }
                     
                     if (isString(ids)) {
                         ids = [ids];
                     }
                     else if (!isArray(ids)) {
-                        raptor.throwError(new Error("Invalid call to require. Callback expected"));
+                        throw raptor.createError(new Error("Invalid call to require. Callback expected"));
                     }
                     
                     callback.apply(this, gatherDependencies(ids, {}));
@@ -136,7 +136,7 @@ $rload(function(raptor) {
             
             if (args.length == 2) {
                 if (isArray(id)) {
-                    raptor.throwError(new Error("Invalid call to define. ID is required."));
+                    throw raptor.createError(new Error("Invalid call to define. ID is required."));
                 }
                 else {
                     factory = dependencies;
@@ -151,7 +151,7 @@ $rload(function(raptor) {
             }
             
             if (args.length == 1 || !isString(id) || !isArray(dependencies)) {
-                raptor.throwError(new Error("Invalid call to define"));
+                throw raptor.createError(new Error("Invalid call to define"));
             }
             
             dependencies = dependencies.concat(["require", "exports", "module"]);

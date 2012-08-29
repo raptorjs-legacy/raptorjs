@@ -9,6 +9,8 @@ raptor.defineClass(
             this.bundleSetDef = null;
             this.enabledExtensions = null;
             this.htmlPath = null;
+            this.packagePath = null;
+            this.packageManifest = null;
         };
 
         PageConfig.prototype = {
@@ -28,7 +30,7 @@ raptor.defineClass(
             },
             
             getBundleSetDef: function() {
-                return this.bundleSetDef || this.config.getBundleSetDef("default");
+                return this.bundleSetDef;
             },
             
             getEnabledExtensions: function() {
@@ -37,7 +39,7 @@ raptor.defineClass(
             
             addBundleSetDef: function(bundleSetDef) {
                 if (this.bundleSetDef) {
-                    raptor.throwError(new Error('Page "' + this.name + '" already has bundles defined"'));
+                    throw raptor.createError(new Error('Page "' + this.name + '" already has bundles defined"'));
                 }
                 this.bundleSetDef = bundleSetDef;
             },

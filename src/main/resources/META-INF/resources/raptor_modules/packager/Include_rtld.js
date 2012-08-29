@@ -27,7 +27,7 @@ raptor.defineClass(
         Include_rtld.prototype = {
             
             invalidInclude: function() {
-                raptor.throwError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
+                throw raptor.createError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
             },
             
             getKey: function() {

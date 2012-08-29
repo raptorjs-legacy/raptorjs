@@ -1,0 +1,5 @@
+{
+    "includes": [
+        "module-b.js"
+    ]
+}

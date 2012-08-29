@@ -76,7 +76,7 @@ $rload(function(raptor) {
              * @returns
              */
             getSystemPath: function() {
-                raptor.errors.throwError(new Error('getSystemPath() Not Implemented'));
+                throw raptor.createError(new Error('getSystemPath() Not Implemented'));
             },
             
             /**
@@ -84,7 +84,7 @@ $rload(function(raptor) {
              * @returns
              */
             readFully: function() {
-                raptor.errors.throwError(new Error('Not Implemented'));
+                throw raptor.createError(new Error('Not Implemented'));
             },
             
             /**
@@ -128,10 +128,25 @@ $rload(function(raptor) {
              */
             getSearchPathEntry: function() {
                 return this.searchPathEntry;
+            },
+            
+            getDirPath: function() {
+                if (!this.dirPath) {
+                    var resourcePath = this.getPath();
+                    var packageDirPathMatches = resourcePath.match(/[\\\/][^\\\/]+$/);
+                    this.dirPath = resourcePath.substring(0, packageDirPathMatches.index);
+                }
+                return this.dirPath;
+            },
+            
+            getParent: function() {
+                throw raptor.createError(new Error('getParent() Not Implemented' + this.getClass().getName()));
+            },
+            
+            resolve: function(baseResource, path) {
+                throw raptor.createError(new Error('resolve() Not Implemented for ' + this.getClass().getName()));
             }
             
-            
-        
         };
     });
 });
