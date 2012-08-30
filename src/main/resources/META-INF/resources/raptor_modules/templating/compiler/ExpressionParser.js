@@ -290,11 +290,13 @@ raptor.defineClass(
                 isScriptlet = startToken === "{%";
                 isConditional = startToken === '{?';
                 
-                var endRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\%\}|[\{\}]/g;
+                var endRegExp = /"((?:[^"]|\\")*)"|'((?:[^']|\\')*)'|\%\}|[\{\}]/g;
                 //Now we need to find the ending curly
                 endRegExp.lastIndex = expressionStart; //Start searching from where the expression begins
                 
                 var depth = 0;
+                
+                var foundStrings = [];
                 
                 while((endMatches = endRegExp.exec(str))) {
                     if (endMatches[0] === '{') {
@@ -317,6 +319,15 @@ raptor.defineClass(
                         }
                     }
                     else {
+                        if (endMatches[0].charAt(0) === "'" || endMatches[0].charAt(0) === '"') {
+                            foundStrings.push({
+                                start: endMatches.index - expressionStart,
+                                end: endMatches.index + endMatches[0].length - expressionStart,
+                                value: endMatches[0].slice(1,-1),
+                                json: endMatches[0],
+                                quote: endMatches[0].charAt(0)
+                            });
+                        }
                         continue;
                     }
                     
@@ -348,6 +359,34 @@ raptor.defineClass(
                             helper.addExpression(this.getConditionalExpression(expression));
                         }
                         else {
+                            
+                            if (foundStrings.length) {
+                                for (var i=foundStrings.length-1; i>=0; i--) {
+                                    var foundString = foundStrings[i];
+                                    
+                                    if (!foundString.value) {
+                                        continue;
+                                    }
+                                    
+                                    var hasExpression = false,
+                                        parts = [];
+
+                                    ExpressionParser.parse(foundString.value, {
+                                        text: function(text) {
+                                            parts.push(foundString.quote + text + foundString.quote);
+                                        },
+                                        
+                                        expression: function(expression) {
+                                            hasExpression = true;
+                                            parts.push(expression);
+                                        }
+                                    });
+
+                                    if (hasExpression) {
+                                        expression = expression.substring(0, foundString.start) + "(" + parts.join('+') + ")" + expression.substring(foundString.end);
+                                    }
+                                }
+                            }
                             helper.addExpression(expression);
                         }
                         

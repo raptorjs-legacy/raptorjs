@@ -530,6 +530,12 @@ describe('templating module', function() {
         expect(output).toEqual('A,B,C,<div>C</div>');        
     });
     
+    it("should allow for expressions and variables inside JavaScript strings", function() {
+
+        var output = compileAndRender("/test-templates/string-expressions.rhtml", {name: "John", count: 10});
+        expect(output).toEqual('Hello JOHN! You have 10 new messages.');        
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
