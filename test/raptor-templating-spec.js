@@ -403,7 +403,7 @@ describe('templating module', function() {
     
     it("should allow for includes", function() {
         var output = compileAndRender("/test-templates/include.rhtml", {});
-        expect(output).toEqual('Hello Frank! You have 20 new messages.');
+        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
     });
     
     it("should allow for <c:invoke function... />", function() {

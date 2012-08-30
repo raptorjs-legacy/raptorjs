@@ -293,6 +293,11 @@
         </attribute>
         
         <attribute>
+            <name>templateData</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
             <name>resource</name>
             <type>string</type>
         </attribute>

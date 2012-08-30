@@ -34,19 +34,28 @@ raptor.defineClass(
             doGenerateCode: function(template) {
                 
                 var templateName = this.getProperty("template"),
+                    templateData = this.getProperty("templateData"),
                     resourcePath;
                 
                 if (templateName) {
                     this.removeProperty("template");
+                    var dataExpression;
+                    
+                    if (templateData) {
+                        dataExpression = templateData;
+                    }
+                    else {
+                        var propParts = [];
+                        
+                        this.forEachPropertyNS('', function(name, value) {
+                            propParts.push(stringify(name) + ": " + value);
+                        }, this);
+                        
+                        dataExpression = "{" + propParts.join(",") + "}";
+                    }
                     
                     
-                    var propParts = [];
-                    
-                    this.forEachPropertyNS('', function(name, value) {
-                        propParts.push(stringify(name) + ": " + value);
-                    }, this);
-                    
-                    template.statement("context.i(" + templateName + ",{" + propParts.join(",") + "});");
+                    template.statement("context.i(" + templateName + "," + dataExpression + ");");
                     
                 }
                 else if ((resourcePath = this.getAttribute("resource"))) {
