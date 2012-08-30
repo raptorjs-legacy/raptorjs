@@ -148,7 +148,7 @@ raptor.defineClass(
                         else {
                             if (namespacedProps.length) {
                                 template
-                                    .indent().code(",\n")
+                                    .code(",\n")
                                     .indent().code("null");
                             }
                         }
