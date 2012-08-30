@@ -84,11 +84,6 @@ public class BundleResource extends Resource {
     public boolean isFile() {
         return true;
     }
-
-    @Override
-    public Resource resolve(String relPath) {
-        throw new RuntimeException(this.getClass().getName() + ".resolve() not implemented");
-    }
     
     
 }
