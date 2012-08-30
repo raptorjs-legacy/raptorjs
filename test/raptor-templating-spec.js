@@ -525,15 +525,18 @@ describe('templating module', function() {
     });
     
     it("should allow for if...else", function() {
-
         var output = compileAndRender("/test-templates/if-else.rhtml", {});
         expect(output).toEqual('A,B,C,<div>C</div>');        
     });
     
     it("should allow for expressions and variables inside JavaScript strings", function() {
-
         var output = compileAndRender("/test-templates/string-expressions.rhtml", {name: "John", count: 10});
         expect(output).toEqual('Hello JOHN! You have 10 new messages.');        
+    });
+    
+    it("should allow for simple conditionals", function() {
+        var output = compileAndRender("/test-templates/simple-conditionals.rhtml", {name: "John", count: 51});
+        expect(output).toEqual('<div class="over-50"></div><div class=""></div><div class="over-50"></div><span class="under;-50\\"/>Hello John! Over 50');        
     });
     
     xit("should allow for widgets", function() {

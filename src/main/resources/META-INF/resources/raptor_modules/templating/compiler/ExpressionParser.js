@@ -21,12 +21,13 @@ raptor.defineClass(
         
         var Expression = raptor.require('templating.compiler.Expression'),
             strings = raptor.require('strings'),
+            stringify = raptor.require('json.stringify').stringify,
             regexp = raptor.require('regexp'),
             endingTokens = {
 //                "{": "}",
                 "${": "}",
                 "{%": "%}",
-//                "{?": "}", //TODO Finish implementing short-hand conditionals
+                "{?": "}",
                 "$": null
             },
             createStartRegExpStr = function(starts) {
@@ -37,10 +38,10 @@ raptor.defineClass(
                     parts.push(regexp.escape("\\" + start));
                     parts.push(regexp.escape(start));
                 });
-                
+
                 return parts.join("|");
             },
-            startRegExpStr = createStartRegExpStr(["{%", "${", "$"/*, "{?"*/]),
+            startRegExpStr = createStartRegExpStr(["{%", "${", "$", "{?"]),
             createStartRegExp = function() {
                 return new RegExp(startRegExpStr, "g");
             },
@@ -99,6 +100,83 @@ raptor.defineClass(
                     context += " ";
                 }
                 return context;
+            }, 
+            getConditionalExpression = function(expression) {
+                var tokensRegExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|\\\\;|\\;|[\{\};]/g,
+                    matches,
+                    depth = 0;
+                
+                var parts = [],
+                    partStart = 0;
+                
+                while((matches = tokensRegExp.exec(expression))) {
+                    if (matches[0] === '{') {
+                        depth++;
+                        continue;
+                    }
+                    else if (matches[0] === '}') {
+                        if (depth !== 0) {
+                            depth--;
+                            continue;
+                        }
+                    }
+                    else if (matches[0] === '\\\\;') { 
+                        /*
+                         * 1) Convert \\; --> \;
+                         * 2) Start searching again after the single slash 
+                         */
+                        expression = expression.substring(0, matches.index) + '\\;' + expression.substring(tokensRegExp.lastIndex);
+                        tokensRegExp.lastIndex = matches.index + 1;
+                        continue;
+                    }
+                    else if (matches[0] === '\\;') { 
+                        /*
+                         * 1) Convert \; --> ;
+                         * 2) Start searching again after the semocolon 
+                         */
+                        expression = expression.substring(0, matches.index) + ';' + expression.substring(tokensRegExp.lastIndex);
+                        tokensRegExp.lastIndex = matches.index + 1;
+                        continue;
+                    }
+                    else if (matches[0] === ';') {
+                        if (depth === 0) {
+                            parts.push(expression.substring(partStart, matches.index));
+                            partStart = tokensRegExp.lastIndex;    
+                        }
+                    }
+                }
+                
+                if (partStart < expression.length-1) {
+                    parts.push(expression.substring(partStart));
+                }
+
+                
+                var getExpression = function(part) {
+                    var expressionParts = [];
+                    
+                    ExpressionParser.parse(part, {
+                        text: function(text) {
+                            expressionParts.push(stringify(text));
+                        },
+                        
+                        expression: function(expression) {
+                            expressionParts.push(expression);
+                        }
+                    });
+                    
+                    return expressionParts.join('+');
+                }
+                
+                if (parts.length === 2) {
+                    return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : '')";    
+                }
+                else if (parts.length === 3) {
+                    return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : " + getExpression(parts[2]) + ")";
+                }
+                else {
+                    throw new Error('Invalid simple conditional of "' + expressin + '". Simple conditionals should be in the form {?<expression>;<true-template>[;<false-template>]}');
+                }
+                
             };
         
             
@@ -180,9 +258,6 @@ raptor.defineClass(
             
         };
         
-        ExpressionParser.getConditionalExpression = function() {
-            
-        },
         
         /**
          * @memberOf templating.compiler$ExpressionParser
@@ -351,12 +426,13 @@ raptor.defineClass(
                     }
                     
                     
+                    
                     if (!handler) {
                         if (isScriptlet) {
                             helper.addScriptlet(expression);
                         }
                         else if (isConditional) {
-                            helper.addExpression(this.getConditionalExpression(expression));
+                            helper.addExpression(getConditionalExpression(expression));
                         }
                         else {
                             
