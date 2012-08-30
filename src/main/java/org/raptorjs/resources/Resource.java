@@ -26,9 +26,11 @@ import java.io.StringWriter;
 public abstract class Resource {
 
     private String path = null;
+    private SearchPathEntry searchPathEntry = null;
     
-    public Resource(String path) {
+    public Resource(String path, SearchPathEntry searchPathEntry) {
         this.path = path;
+        this.searchPathEntry = searchPathEntry;
     }
     
     public String getPath() {
@@ -42,6 +44,20 @@ public abstract class Resource {
     public abstract boolean isFile();
     public abstract String getSystemPath();
     public abstract InputStream getResourceAsStream();
+    public Resource resolve(String relPath) {
+        String basePath;
+        
+        if (this.isDirectory()) {
+            basePath = this.getPath();
+        }
+        else {
+            basePath = ResourceUtils.getParentPath(this.getPath());
+        }
+        
+        String resolvedPath = ResourceUtils.resolvePath(basePath, relPath);
+        Resource resolvedResource = this.getSearchPathEntry().findResource(resolvedPath);
+        return resolvedResource;
+    }
     
     public String getParentPath() {
         int lastSlash = this.path.lastIndexOf('/');
@@ -85,5 +101,14 @@ public abstract class Resource {
             throw new RuntimeException("Unable to read resource as string \"" + this.getSystemPath() + "\" (charset=" + charset + "). Exception: " + e, e);
         } 
     }
+
+    public SearchPathEntry getSearchPathEntry() {
+        return searchPathEntry;
+    }
+
+    public void setSearchPathEntry(SearchPathEntry searchPathEntry) {
+        this.searchPathEntry = searchPathEntry;
+    }
+ 
     
 }

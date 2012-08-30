@@ -41,7 +41,7 @@ public class BundleSearchPathEntry extends SearchPathEntry {
         
         URL resourceURL = this.bundle.getResource(fullPath);
         if (resourceURL != null) {
-            return new BundleResource(path, this.bundle, fullPath, resourceURL);
+            return new BundleResource(path, this, this.bundle, fullPath, resourceURL);
         }
         return null;
     }

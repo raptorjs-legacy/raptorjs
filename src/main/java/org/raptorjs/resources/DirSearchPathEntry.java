@@ -30,7 +30,7 @@ public class DirSearchPathEntry extends SearchPathEntry {
     public Resource findResource(String path) {
         File file = new File(dir, path);
         if (file.exists()) {
-            return new FileResource(path, file);
+            return new FileResource(path, this, file);
         }
         return null;
     }

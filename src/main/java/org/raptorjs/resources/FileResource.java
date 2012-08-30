@@ -25,8 +25,8 @@ public class FileResource extends Resource {
 
     private File file = null;
     
-    public FileResource(String path, File file) {
-        super(path);
+    public FileResource(String path, SearchPathEntry searchPathEntry, File file) {
+        super(path, searchPathEntry);
         this.file = file;
     }
 
@@ -57,6 +57,5 @@ public class FileResource extends Resource {
     public boolean isFile() {
         return this.file.isFile();
     }
-
 
 }

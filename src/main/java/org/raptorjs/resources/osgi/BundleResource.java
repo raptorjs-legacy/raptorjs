@@ -22,6 +22,7 @@ import java.util.Dictionary;
 
 import org.osgi.framework.Bundle;
 import org.raptorjs.resources.Resource;
+import org.raptorjs.resources.SearchPathEntry;
 
 public class BundleResource extends Resource {
     
@@ -29,8 +30,8 @@ public class BundleResource extends Resource {
     private String fullPath = null;
     private URL url = null;
     
-    protected BundleResource(String path, Bundle bundle, String fullPath, URL url) {
-        super(path);
+    protected BundleResource(String path, SearchPathEntry searchPathEntry, Bundle bundle, String fullPath, URL url) {
+        super(path, searchPathEntry);
         this.bundle = bundle;
         this.fullPath = fullPath;
         this.url = url;
@@ -82,6 +83,11 @@ public class BundleResource extends Resource {
     @Override
     public boolean isFile() {
         return true;
+    }
+
+    @Override
+    public Resource resolve(String relPath) {
+        throw new RuntimeException(this.getClass().getName() + ".resolve() not implemented");
     }
     
     

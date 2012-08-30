@@ -100,6 +100,9 @@ raptorBootstrap = {
         this._require('resources/SearchPath.js');
         this._require('resources/resources.js');
         this._require('resources/resources_server.js');
+        this._require('resources/RhinoResourceAdapter.js', RHINO);
+        this._require('resources/RhinoSearchPathEntryAdapter.js', RHINO);
+        this._require('resources/RhinoResMgrSearchPathEntryAdapter.js', RHINO);
         
                 
         //AMD adapter

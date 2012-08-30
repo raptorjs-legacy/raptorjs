@@ -25,9 +25,10 @@ public class URLResource extends Resource {
     private URL url = null;
     private boolean isFile = true;
     private String fullPath;
+    private Boolean exists = null;
 
-    public URLResource(String path, String fullPath, URL url, boolean isFile) {
-        super(path);
+    public URLResource(String path, SearchPathEntry searchPathEntry, String fullPath, URL url, boolean isFile) {
+        super(path, searchPathEntry);
         this.url = url;
         this.isFile = true;
         this.fullPath = fullPath;
@@ -69,7 +70,4 @@ public class URLResource extends Resource {
     public URL getUrl() {
         return url;
     }
-    
-    
-
 }
