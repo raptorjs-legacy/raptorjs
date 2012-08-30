@@ -495,7 +495,7 @@ describe('templating module', function() {
         };
         
         tryTemplate("/test-templates/errors.rhtml", function(message, errors) {
-            expect(errors.length).toEqual(18);
+            expect(errors.length).toEqual(20);
         });
         
         

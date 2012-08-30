@@ -61,4 +61,22 @@
     <c:with vars="x=1;b=2;1">
     </c:with>
     
+    <c:if test="false">
+        A
+    </c:if>
+    INVALID
+    <c:else>
+        C
+    </c:else>
+    
+    <c:if test="false">
+        A
+    </c:if>
+    INVALID
+    <c:else-if test="false">
+        A
+    </c:else-if>
+    <c:else>
+        C
+    </c:else>
 </c:template>
