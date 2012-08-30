@@ -253,38 +253,12 @@ raptor.defineClass(
                     
                     if (tag.transformers) { //Check if the tag has any transformers that should be applied
                         
-                        var tagTransformersEntry; //A reference to the array of the tag transformers with the same key
-                        
-                        if (!(tagTransformersEntry = this.tagTransformersLookup[key])) { //Look up the existing transformers
-                            this.tagTransformersLookup[key] = tagTransformersEntry = { //No transformers found so create a new entry
-                                    transformers: [], //Initialize the transformers to an empty list
-                                    before: {}, //This map will contain entries for transformers that should be invoked after a transformer of a certain class name (class names are keys)
-                                    after: {}, //This map will contain entries for transformers that should be invoked before a transformer of a certain class name (class names are keys)
-                                    _addRelativeTransformer: function(beforeAfter, transformer, relativeTo) {
-                                        var existing = this[beforeAfter][relativeTo]; //There may be more than one transformer configured to be invoked before another transformer
-                                        if (!existing) { 
-                                            existing = this[beforeAfter][relativeTo] = [];
-                                        }
-                                        existing.push(transformer);
-                                    }
-                            };
-                        }
+                        var tagTransformersForTags = this.tagTransformersLookup[key] || (this.tagTransformersLookup[key] = []); //A reference to the array of the tag transformers with the same key
                         
                         //Now add all of the transformers for the node (there will typically only be one...)
                         forEach(tag.transformers, function(transformer) {
-                            
                             transformer = extend(new Transformer(), transformer); //Convert the transformer config to instance of Transformer
-                            
-                            if (transformer.after) { //Check if this transformer is configured to run after another transfrormer
-                                tagTransformersEntry._addRelativeTransformer("after", transformer, transformer.after);
-                            }
-                            else if (transformer.before) { //Check if this transformer is configured to run after another transfrormer
-                                tagTransformersEntry._addRelativeTransformer("before", transformer, transformer.before);
-                            }
-                            else {
-                                tagTransformersEntry.transformers.push(transformer);  //The transformer is not configured to run before/after another transformer so just append it to the list                             
-                            }
-                            
+                            tagTransformersForTags.push(transformer);
                         }, this);
                     }
                     
@@ -399,50 +373,55 @@ raptor.defineClass(
                     uri = '';
                 }
                 
+                var matchingTransformersByName = {};
+                var matchingTransformers = [];
+                var handled = {};
+                var before = {};
+                
                 /*
                  * Handle all of the transformers in the tag transformers entry
                  */
-                var _handleTransformers = function(entry, transformers) {
-                        if (!entry) { //If no entry then nothing to do
-                            return;
+                var _addTransformers = function(transformers) {
+                    raptor.forEach(transformers, function(transformer) {
+                        if (!matchingTransformersByName[transformer.className]) {
+                            matchingTransformersByName[transformer.className] = transformer;    
+                            matchingTransformers.push(transformer);
+                            
+                            if (transformer.before) {
+                                (before[transformer.before] || (before[transformer.before] = [])).push(transformer);
+                            }
                         }
                         
-                        if (!transformers) {
-                            transformers = entry.transformers; //If no transformers were provided then using the transformers in the entry
-                        }
-                        
-                        if (!transformers) { //Check if there are any transformers
-                            return;
-                        }
-                        /*
-                         * Loop over all of the transformers and invoke the provided callback
-                         */
-                        for (var i=0, len=transformers.length; i<len; i++)
-                        {
-                            var transformer = transformers[i];
-                            
-                            if (entry.before[transformer.className]) {
-                                _handleTransformers(entry, entry.before[transformer.className]); //Handle any transformers that are registered to be invoked before the current transformer
-                            }
-                            
-                            if (callback.call(thisObj, transformer) === false) { //Invoke the callback and if the return value is "false" then stop
-                                return;
-                            }
+                    });
+                };
 
-                            if (entry.after[transformer.className]) {
-                                _handleTransformers(entry, entry.after[transformer.className]); //Handle any transformers that are registered to be invoked after the current transformer 
-                            }
-                        }
-                    };
-                
                 /*
                  * Handle all of the transformers for all possible matching transformers.
                  * 
                  * Start with the most specific and end with the list specific.
                  */
-                _handleTransformers(this.tagTransformersLookup[uri + ":" + tagName]); //All transformers that match the URI and tag name exactly
-                _handleTransformers(this.tagTransformersLookup[uri + ":*"]); //Wildcard for tag name but matching URI (i.e. transformers that apply to every element with a URI, regadless of tag name)
-                _handleTransformers(this.tagTransformersLookup["*:*"]); //Wildcard for both URI and tag name (i.e. transformers that apply to every element)
+                _addTransformers(this.tagTransformersLookup["*:*"]); //Wildcard for both URI and tag name (i.e. transformers that apply to every element)
+                _addTransformers(this.tagTransformersLookup[uri + ":*"]); //Wildcard for tag name but matching URI (i.e. transformers that apply to every element with a URI, regadless of tag name)
+                _addTransformers(this.tagTransformersLookup[uri + ":" + tagName]); //All transformers that match the URI and tag name exactly
+                
+                var _handleTransformer = function(transformer) {
+                    if (!handled[transformer.className]) {
+                        handled[transformer.className] = true;
+                        
+                        if (transformer.after) { //Check if this transformer is required to run
+                            _handleTransformer(matchingTransformersByName[transformer.after]); //Handle any transformers that this transformer is supposed to run after
+                        }
+                        
+                        raptor.forEach(before[transformer.className], _handleTransformer); //Handle any transformers that are configured to run before this transformer
+                        
+                        callback.call(thisObj, transformer);
+                    }
+                    
+                };
+                
+                matchingTransformers.forEach(function(transformer) {
+                    _handleTransformer(transformer);
+                }, this);
             },
             
             /**

@@ -77,6 +77,7 @@ raptor.defineClass(
                 this.tag = null;
                 this.className = null;
                 this.instance = null;
+                this.properties = {};
             };
             
             Transformer.prototype = {

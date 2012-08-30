@@ -81,14 +81,14 @@ raptor.defineClass(
                  *       The checks to prevent transformers from being applied multiple times makes
                  *       sure that this is not a problem.
                  */
-                for (var i=0; i<node.childNodes.length; i++) {
-                    var childNode = node.childNodes[i];
+                
+                node.forEachChild(function(childNode) {
                     if (!childNode.parentNode) {
                         //Validate that the parentNode property is set correctly for this child node
                         throw raptor.createError(new Error("Invalid node found in tree. parentNode property of child node is not set. Node: " + node));
                     }
                     this.transformTree(childNode, templateBuilder);
-                }
+                }, this);
             },
 
             /**
@@ -255,6 +255,14 @@ raptor.defineClass(
             
             getErrors: function() {
                 return this.errors;
+            },
+            
+            getNodeClass: function(uri, localName) {
+                var tagDef = this.taglibs.getTagDef(uri, localName);
+                if (tagDef && tagDef.compilerClass) {
+                    return raptor.require(tagDef.compilerClass);
+                }
+                throw raptor.createError(new Error('Node class not found for uri "' + uri + '" and localName "' + localName + '"'));
             }
         };
         

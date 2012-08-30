@@ -28,7 +28,7 @@ raptor.defineClass(
         ScriptletNode.prototype = {
             doGenerateCode: function(template) {
                 if (this.code) {
-                    template.addJavaScriptCode(this.code);
+                    template.code(this.code);
                 }
             },
             

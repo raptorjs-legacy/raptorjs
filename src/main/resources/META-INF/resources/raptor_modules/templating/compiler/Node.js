@@ -22,26 +22,17 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             forEach = raptor.forEach,
             isArray = raptor.isArray,
-            isEmpty = raptor.require('objects').isEmpty,
-            splice = Array.prototype.splice,
-            setParentNode = function(nodes, newParent) {
-                forEach(nodes, function(node) {
-                    if (node.parentNode) {
-                        var removedChild = node.parentNode.removeChild(node);
-                        if (!removedChild) {
-                            throw raptor.createError(new Error("Unexpected state. Child not found in parent. (node=" + node + ", parentNode=" + newParent + ")"));
-                        }
-                    }
-                    node.parentNode = newParent;
-                }, this);
-            };
+            isEmpty = raptor.require('objects').isEmpty;
         
         var Node = function(nodeType) {
             if (!this.nodeType) {
                 this._isRoot = false;
                 this.nodeType = nodeType;
                 this.parentNode = null;
-                this.childNodes = [];
+                this.previousSibling = null;
+                this.nextSibling = null;
+                this.firstChild = null;
+                this.lastChild = null;
                 this.namespaceMappings = {};
                 this.prefixMappings = {};
                 this.transformersApplied = {};
@@ -50,6 +41,10 @@ raptor.defineClass(
         };
         
         Node.prototype = {
+            setRoot: function(isRoot) {
+                this._isRoot = isRoot;
+            },
+            
             getPosition: function() {
                 var pos = this.pos || this.getProperty("pos") || {
                     toString: function() {
@@ -167,7 +162,15 @@ raptor.defineClass(
             },
             
             forEachChild: function(callback, thisObj) {
-                forEach(this.childNodes, callback, thisObj);
+                if (!this.firstChild) {
+                    return;
+                }
+                
+                var curChild = this.firstChild;
+                while(curChild) {
+                    callback.call(thisObj, curChild);
+                    curChild = curChild.nextSibling;
+                }
             },
         
             isTransformerApplied: function(transformer) {
@@ -179,11 +182,27 @@ raptor.defineClass(
             },
             
             hasChildren: function() {
-                return this.childNodes.length > 0;
+                return this.firstChild != null;
             },
             
             appendChild: function(childNode) {
-                this.appendChildren([childNode]);
+                
+                if (childNode.parentNode) {
+                    childNode.parentNode.removeChild(childNode);
+                }
+                
+                if (!this.firstChild) {
+                    this.firstChild = this.lastChild = childNode;
+                    childNode.nextSibling = null;
+                    childNode.previousSibling = null;
+                }
+                else {
+                    this.lastChild.nextSibling = childNode;
+                    childNode.previousSibling = this.lastChild;
+                    this.lastChild = childNode;
+                }
+                
+                childNode.parentNode = this;
             },
             
             appendChildren: function(childNodes) {
@@ -191,13 +210,9 @@ raptor.defineClass(
                     return;
                 }
                 
-                if (!isArray(childNodes)) {
-                    childNodes = [childNodes];
-                }
-                
-                this.childNodes = this.childNodes.concat(childNodes);
-                setParentNode(childNodes, this); //Remove the nodes from all of their existing parents and set the parent node to this node
-                
+                raptor.forEach(childNodes, function(childNode) {
+                    this.appendChild(childNode);
+                }, this);
             },
             
             isRoot: function() {
@@ -205,69 +220,181 @@ raptor.defineClass(
             },
             
             removeChild: function(childNode) {
-                for (var i=0, len=this.childNodes.length, removedNode; i<len; i++) {
-                    if ((removedNode = this.childNodes[i]) === childNode) {
-                        childNode.parentNode = null;
-                        this.childNodes.splice(i, 1);
-                        return removedNode;
-                    }
+                
+                if (childNode.parentNode !== this) { //Check if the child node is a child of the parent
+                    return null;
                 }
-                return null;
+                
+                if (this.firstChild === childNode && this.lastChild === childNode) {
+                    //The child node is the one and only child node being removed
+                    this.firstChild = this.lastChild = null;
+                }
+                else if (this.firstChild === childNode) {
+                    //The child node being removed is the first child and there is another child after it
+                    this.firstChild = this.firstChild.nextSibling; //Make the next child the first child
+                    this.firstChild.previousSibling = null;
+                }
+                else if (this.lastChild === childNode) {
+                    //The child node being removed is the last child and there is another child before it
+                    this.lastChild = this.lastChild.previousSibling; //Make the previous child the last child
+                    this.lastChild.nextSibling = null;
+                }
+                else {
+                    childNode.previousSibling.nextSibling = childNode.nextSibling;
+                    childNode.nextSibling.previousSibling = childNode.previousSibling;
+                }
+                
+                //Make sure the removed node is completely detached
+                childNode.parentNode = null;
+                childNode.previousSibling = null;
+                childNode.nextSibling = null;
+                
+                return childNode;
             },
             
             removeChildren: function() {
-                setParentNode(this.childNodes, null);
-                var childNodes = this.childNodes;
-                this.childNodes = [];
-                return childNodes;
+                while (this.firstChild) {
+                    this.removeChild(this.firstChild);
+                }
             },
 
             replaceChild: function(newChild, replacedChild) {
+                
                 if (newChild === replacedChild) {
                     return false;
                 }
                 
-                for (var i=0, len=this.childNodes.length; i<len; i++) {
-                    if (this.childNodes[i] == replacedChild) {
-                        setParentNode(newChild, this); //Remove the nodes from all of their existing parents and set the parent node to this node
-                        
-                        this.childNodes[i] = newChild;
-                        replacedChild.parentNode = null; //Detach the replaced child from this parent node
-                        return true;
-                    }
+                if (!replacedChild) {
+                    return false;
                 }
-                return false;
+                
+                if (replacedChild.parentNode !== this) {
+                    return false; //The parent does not have the replacedChild as a child... nothing to do
+                }
+                
+                if (this.firstChild === replacedChild && this.lastChild === replacedChild) {
+                    this.firstChild = newChild;
+                    this.lastChild = newChild;
+                    newChild.previousSibling = null;
+                    newChild.nextSibling = null;
+                }
+                else if (this.firstChild === replacedChild) {
+                    newChild.nextSibling = replacedChild.nextSibling;
+                    replacedChild.nextSibling.previousSibling = newChild;
+                    this.firstChild = newChild;
+                }
+                else if (this.lastChild === replacedChild) {
+                    newChild.previousSibling = replacedChild;
+                    replacedChild.previousSibling.nextSibling = newChild;
+                    this.lastChild = newChild;
+                }
+                else {
+                    replacedChild.nextSibling.previousSibling = newChild;
+                    replacedChild.previousSibling.nextSibling = newChild;
+                    newChild.nextSibling = replacedChild.nextSibling;
+                    newChild.previousSibling = replacedChild.previousSibling;
+                }
+                
+                newChild.parentNode = this;
+                
+                replacedChild.parentNode = null;
+                replacedChild.previousSibling = null;
+                replacedChild.nextSibling = null;
+                
+                return true;
             },
             
-            insertAfter: function(nodes, referenceNode) {
-                if (!nodes) {
-                    return;
+            insertAfter: function(node, referenceNode) {
+                if (!node) {
+                    return false;
                 }
                 
-                if (!isArray(nodes)) {
-                    nodes = [nodes];
+                if (referenceNode && referenceNode.parentNode !== this) {
+                    return false;
                 }
                 
-                var childNodes = this.childNodes;
+                if (isArray(node)) {
+                    raptor.forEach(node, function(node) {
+                        this.insertAfter(node, referenceNode);
+                        referenceNode = node;
+                    }, this);
+                    return true;
+                }
                 
-                if (referenceNode) {
-                    for (var i=0, len=childNodes.length; i<len; i++) {
-                        if (childNodes[i] === referenceNode) {
-                            if (i === len - 1) {
-                                break; //We found the reference node at the end... just append the children
-                            }
-                            else {
-                                setParentNode(nodes, this); //Transfer the nodes to this parent
-                                var spliceArgs = [i+1, 0].concat(nodes);
-                                splice.apply(childNodes, spliceArgs); //Splice the new nodes into the child nodes
-                                return;
-                            }
-                        }
+                if (node === referenceNode) {
+                    return false;
+                }
+                
+                if (referenceNode === this.lastChild) {
+                    this.appendChild(node);
+                    return true;
+                }
+                
+                if (node.parentNode) {
+                    node.parentNode.removeChild(node);
+                }
+                
+                if (!referenceNode || referenceNode === this.lastChild) {
+                    this.appendChild(node);
+                    return true;
+                }
+                else {
+                    referenceNode.nextSibling.previousSibling = node;
+                    node.nextSibling = referenceNode.nextSibling; 
+                    node.previousSibling = referenceNode;
+                    referenceNode.nextSibling = node;
+                }
+                
+                node.parentNode = this;
+                
+                return true;
+            },
+            
+            insertBefore: function(node, referenceNode) {
+                if (!node) {
+                    return false;
+                }
+                
+                if (referenceNode && referenceNode.parentNode !== this) {
+                    return false;
+                }
+                
+                if (isArray(node)) {
+                    
+                    var nodes = node,
+                        i;
+                    
+                    for (i=nodes.length-1;i>=0; i--) {
+                        this.insertBefore(nodes[i], referenceNode);
+                        referenceNode = nodes[i];
                     }
+                    return true;
                 }
                 
-                this.appendChildren(nodes);
+                if (node === referenceNode) {
+                    return false;
+                }
                 
+                if (node.parentNode) {
+                    node.parentNode.removeChild(node);
+                }
+                
+                if (!referenceNode) {
+                    this.appendChild(node);
+                }
+                else if (this.firstChild === referenceNode) {
+                    this.firstChild = node;
+                    this.firstChild.nextSibling = referenceNode;
+                    this.firstChild.previousSibling = null;
+                    
+                    referenceNode.previousSibling = this.firstChild;
+                    node.parentNode = this;
+                }
+                else {
+                    this.insertAfter(node, referenceNode.previousSibling);     
+                }
+
+                return true;
             },
             
             isTextNode: function() {
@@ -312,21 +439,24 @@ raptor.defineClass(
                         }
                         var varName = '__strip' + (nextStripVarId++);
                         
-                        template.addJavaScriptCode('var ' + varName + ' = !(' + this.stripExpression + ');\n');
+                        template.statement('var ' + varName + ' = !(' + this.stripExpression + ');');
                         
-                        template.addJavaScriptCode('if (' + varName + ') {\n');
-                        template.incIndent();
-                        this.generateBeforeCode(template);
-                        template.decIndent();
-                        template.addJavaScriptCode('}\n');
+                        template
+                            .statement('if (' + varName + ') {')
+                            .indent(function() {
+                                this.generateBeforeCode(template);        
+                            }, this)
+                            .line("}");
+
                         
                         this.generateCodeForChildren(template);
                         
-                        template.addJavaScriptCode('if (' + varName + ') {\n');
-                        template.incIndent();
-                        this.generateAfterCode(template, true /* indent */);
-                        template.decIndent();
-                        template.addJavaScriptCode('}\n');
+                        template
+                            .statement('if (' + varName + ') {')
+                            .indent(function() {
+                                this.generateAfterCode(template);        
+                            }, this)
+                            .line("}");
                     }
                 }
                 catch(e) {
@@ -351,7 +481,7 @@ raptor.defineClass(
                     template.incIndent();
                 }
                 
-                forEach(this.childNodes, function(childNode) {
+                this.forEachChild(function(childNode) {
                     childNode.generateCode(template);
                 }, this);
                 
@@ -386,6 +516,21 @@ raptor.defineClass(
             
             setNodeClass: function(nodeClass) {
                 this.nodeClass = nodeClass;
+            },
+            
+            prettyPrintTree: function() {
+                var out = [];
+                var printNode = function(node, indent) {
+                    out.push(indent + node.toString() + '\n');
+                    
+                    node.forEachChild(function(child) {
+                        printNode(child, indent + "  ");
+                    }, this);
+                };
+                
+                printNode(this, "");
+                
+                return out.join('');
             }
         };
         

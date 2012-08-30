@@ -15,45 +15,37 @@
  */
 
 raptor.defineClass(
-    'templating.taglibs.core.WhenNode',
-    'templating.compiler.Node',
+    'templating.taglibs.core.ElseIfNode',
+    'templating.compiler.ElementNode',
     function() {
         "use strict";
         
-        var errors = raptor.errors;
-        
-        var WhenNode = function(props) {
-            WhenNode.superclass.constructor.call(this);
+        var ElseIfNode = function(props) {
+            ElseIfNode.superclass.constructor.call(this, "http://raptorjs.org/templates/core", "else-if", "c");
             if (props) {
                 this.setProperties(props);
             }
         };
         
-        WhenNode.prototype = {
-            
+        ElseIfNode.prototype = {
             doGenerateCode: function(template) {
                 var test = this.getProperty("test");
                 
                 if (!test) {
-                    this.addError('"test" attribute is required for ' + this.toString() + " tag.");
+                    this.addError('"test" attribute is required');
+                    return;
                 }
-                
-                var ifCode = 'if (' + test + ')';
-                if (!this.firstWhen) {
-                    template.line('else ' + ifCode + ' {\n');                    
-                }
-                else {
-                    template.statement(ifCode + ' {');
-                }
-                
+
                 template
+                    .line('else if (' + test + ') {')
                     .indent(function() {
-                        this.generateCodeForChildren(template);
+                            this.generateCodeForChildren(template);    
                     }, this)
                     .line('}');
+                
             }
             
         };
         
-        return WhenNode;
+        return ElseIfNode;
     });

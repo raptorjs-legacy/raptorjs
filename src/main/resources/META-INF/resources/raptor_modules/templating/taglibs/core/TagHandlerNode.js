@@ -21,6 +21,7 @@ raptor.defineClass(
         "use strict";
         
         var extend = raptor.extend,
+            objects = raptor.require('objects'),
             forEach = raptor.forEach,
             stringify = raptor.require('json.stringify').stringify,
             forEachEntry = raptor.forEachEntry,
@@ -48,18 +49,18 @@ raptor.defineClass(
                 if (props) {
                     forEachEntry(props, function(name, value) {
                         if (value instanceof Expression) {
-                            propsArray.push(template.indent(1) + stringify(name) + ":" + value.expression);
+                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + value.expression);
                         }
                         else if (typeof value === 'string') {
-                            propsArray.push(template.indent(1) + stringify(name) + ":" + stringify(value));
+                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + stringify(value));
                         }
                         else {
-                            propsArray.push(template.indent(1) + stringify(name) + ":" + value);
+                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + value);
                         }
                     });
                     
                     if (propsArray.length) {
-                        return "{\n" + propsArray.join(',\n') + "\n" + template.indent() + "}";
+                        return "{\n" + propsArray.join(',\n') + "\n" + template.indentStr() + "}";
                     }
                     else {
                         return "{}";
@@ -102,58 +103,76 @@ raptor.defineClass(
                     this.setProperty(importedVariable.propertyName, new Expression(importedVariable.expression));
                 }, this);
                 
-                
-                template.addJavaScriptCode('context.t(\n');
-                template.incIndent();
-                template.addJavaScriptCode(handlerVar + ',\n');
-                template.addJavaScriptCode(getPropsStr(this.getProperties(), template) + ",\n");
+                var bodyParams;
                 
                 if (this.hasChildren()) {
-                    var bodyParams = [];
+                    bodyParams = [];
+                    
                     forEach(this.tagDef.nestedVariables, function(v) {
                         bodyParams.push(v.name);
                     });
-                    
-                    template.addJavaScriptCode("function(" + bodyParams.join(",") + ") {\n");
-                    
-                    this.generateCodeForChildren(template, true /* indent */);
-                    
-                    template.addJavaScriptCode("}");
-                }
-                else {
-                    template.addJavaScriptCode("null");
                 }
                 
-                
-
                 var propertyNamespaces = this.getPropertyNamespaces();
                 var namespacedProps = [];
                 
                 forEach(propertyNamespaces, function(uri) {
                     if (uri !== "") {
-                        var props = this.getPropertiesNS(uri);
-                        namespacedProps.push('"' + uri + '":' + getPropsStr(props, template));
+                        namespacedProps.push({name: uri, props: this.getPropertiesNS(uri)});
                     }
                 }, this);
                 
                 if (this.dynamicAttributes) {
-                    namespacedProps.push('"*":' + getPropsStr(this.dynamicAttributes, template));    
+                    namespacedProps.push({name: '*', props: this.dynamicAttributes});
                 }
                 
+                ///////////
                 
-                
-                if (namespacedProps.length) {
-                    template.addJavaScriptCode(",\n", false /* no indent */);
-                    template.addJavaScriptCode("{");
-                    template.incIndent();
-                    template.addJavaScriptCode(namespacedProps.join("\n,"));
-                    template.decIndent();
-                    template.addJavaScriptCode("}");
-                }
-                
-                template.decIndent();
-                
-                template.addJavaScriptCode(");\n\n", false /* no indent */);
+                template
+                    .statement('context.t(')
+                    .indent(function() {
+                        template
+                            .line(handlerVar + ',')
+                            .indent().code(getPropsStr(this.getProperties(), template));
+                        
+                        if (this.hasChildren()) {
+                            template
+                                .code(',\n')
+                                .line("function(" + bodyParams.join(",") + ") {") 
+                                .indent(function() {
+                                    this.generateCodeForChildren(template);    
+                                }, this)
+                                .indent()
+                                .code('}');
+                        }
+                        else {
+                            if (namespacedProps.length) {
+                                template
+                                    .indent().code(",\n")
+                                    .indent().code("null");
+                            }
+                        }
+                        
+                        if (namespacedProps.length) {
+                            template
+                                .code(",\n")
+                                .line("{")
+                                .indent(function() {
+                                    
+                                    template.code(
+                                        namespacedProps.map(function(entry) {
+                                            return '"' + entry.name + '": ' + getPropsStr(entry.props, template)
+                                        }, this)
+                                        .join('n,'));
+                                    
+                                })
+                                .indent()
+                                .code("}");
+                        }
+                        
+                    }, this)
+                    .code(');\n');
+
             }
         };
         

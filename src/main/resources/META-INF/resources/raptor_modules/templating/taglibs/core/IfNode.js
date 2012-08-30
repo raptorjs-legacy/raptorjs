@@ -20,8 +20,6 @@ raptor.defineClass(
     function() {
         "use strict";
         
-        var errors = raptor.errors;
-        
         var IfNode = function(props) {
             IfNode.superclass.constructor.call(this);
             if (props) {
@@ -37,9 +35,12 @@ raptor.defineClass(
                     this.addError('"test" attribute is required');
                 }
                 
-                template.addJavaScriptCode('if (' + test + ') {\n');
-                this.generateCodeForChildren(template, true /* indent */);
-                template.addJavaScriptCode('}\n\n');
+                template
+                    .statement('if (' + test + ') {')
+                    .indent(function() {
+                            this.generateCodeForChildren(template);    
+                    }, this)
+                    .line('}');
             }
             
         };

@@ -26,17 +26,25 @@ raptor.defineClass(
             XML_URI_ALT = 'http://www.w3.org/XML/1998/namespace',
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser');
         
-        var ElementNode = function() {
+        var ElementNode = function(uri, localName, prefix) {
             ElementNode.superclass.constructor.call(this, 'element');
-            this.prefix = null;
-            this.localName = null;
-            this.uri = null;
-            this.qName = null;
-            this.dynamicAttributesExpression = null;
-            this.attributes = {};
+            
+            if (!this._elementNode) {
+                this._elementNode = true;
+                
+                this.prefix = prefix;
+                this.localName = localName;
+                this.uri = uri;
+                
+                
+                this.qName = this.localName ? (this.prefix ? this.prefix + ":" : "") + this.localName : null;
+                this.dynamicAttributesExpression = null;
+                this.attributes = {};
 
-            this.allowSelfClosing = true;
-            this.startTagOnly = false;
+                this.allowSelfClosing = true;
+                this.startTagOnly = false;
+            }
+            
         };
         
         ElementNode.prototype = {
@@ -259,10 +267,10 @@ raptor.defineClass(
                 }
                 
                 if (this.dynamicAttributesExpression) {
-                    template.addJavaScriptCode("context.a(" + this.dynamicAttributesExpression + ");\n");
+                    template.statement("context.a(" + this.dynamicAttributesExpression + ");");
                 }
                 
-                if (this.childNodes.length) {
+                if (this.hasChildren()) {
                     template.addText(">");
                 }
                 else {
@@ -278,7 +286,7 @@ raptor.defineClass(
             generateAfterCode: function(template) {
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
-                if (this.childNodes.length) {
+                if (this.hasChildren()) {
                     template.addText("</" + name + ">");
                 }
                 else {

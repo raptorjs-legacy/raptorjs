@@ -74,37 +74,50 @@ raptor.defineClass(
                 if (varStatus) {
                     forEachParams = [varName, varStatus];
                     
-                    template.addJavaScriptCode(template.getStaticHelperFunction("forEachVarStatus", "fv") + '(' + items + ', function(' + forEachParams.join(",") + '){\n');
-                    this.generateCodeForChildren(template, true /* indent */);
-                    if (separator) {
-                        template.incIndent();
-                        template.addJavaScriptCode("if (!" + varStatus + ".isLast()) {\n");
-                        template.incIndent();
-                        template.addWrite(template.isExpression(separator) ? separator.getExpression() : stringify(separator));
-                        template.decIndent();
-                        template.addJavaScriptCode("}\n");
-                        template.decIndent();
-                    }
-                    template.addJavaScriptCode('});\n\n');
+                    
+                    template
+                        .statement(template.getStaticHelperFunction("forEachVarStatus", "fv") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                        .indent(function() {
+                            this.generateCodeForChildren(template);
+                            if (separator) {
+                                template
+                                    .statement("if (!" + varStatus + ".isLast()) {")
+                                    .indent(function() {
+                                        template.addWrite(template.isExpression(separator) ? separator.getExpression() : stringify(separator));    
+                                    }, this)
+                                    .line('}');
+                            }
+                        }, this)
+                        .line('});');
                 }
                 else {
                     if (this.getProperty('forLoop') === true) {
                         forEachParams = ["__array", "__index", "__length", varName];
-                        template.addJavaScriptCode(template.getStaticHelperFunction("forLoop", "fl") + '(' + items + ', function(' + forEachParams.join(",") + '){\n');
-                        template.incIndent();
-                            template.addJavaScriptCode('for (;__index<__length;__index++) {\n');
-                            template.incIndent();
-                            template.addJavaScriptCode(varName + '=__array[__index];\n');
-                            this.generateCodeForChildren(template);
-                            template.decIndent();
-                        template.decIndent();
-                        template.addJavaScriptCode('}});\n');
+                        
+                        template
+                            .statement(template.getStaticHelperFunction("forLoop", "fl") + '(' + items + ', function(' + forEachParams.join(",") + ') {')
+                            .indent(function() {
+                                template
+                                    .statement('for (;__index<__length;__index++) {') 
+                                    .indent(function() {
+                                        template.statement(varName + '=__array[__index];');
+                                        this.generateCodeForChildren(template);    
+                                    }, this)
+                                    .line('}');
+                                
+                                this.generateCodeForChildren(template);
+                            }, this)
+                            .line('});');
                     }
                     else {
                         forEachParams = [varName];
-                        template.addJavaScriptCode(template.getStaticHelperFunction("forEach", "f") + '(' + items + ', function(' + forEachParams.join(",") + ') {\n');                    
-                        this.generateCodeForChildren(template, true /* indent */);
-                        template.addJavaScriptCode('});\n\n');
+                        
+                        template
+                            .statement(template.getStaticHelperFunction("forEach", "f") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                            .indent(function() {
+                                this.generateCodeForChildren(template);    
+                            }, this)
+                            .line('});');
                     }
                 }
                 

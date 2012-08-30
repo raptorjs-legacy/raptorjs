@@ -52,7 +52,9 @@ raptor.defineClass(
             },
             
             toString: function() {
-                return "[text]";
+                var text = this.text && this.text.length > 25 ? this.text.substring(0, 25) + '...' : this.text;
+                text = text.replace(/[\n]/g, '\\n');
+                return "[text: " + text + "]";
             }
         };
         

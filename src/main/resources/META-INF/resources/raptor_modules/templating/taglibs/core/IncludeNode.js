@@ -46,8 +46,8 @@ raptor.defineClass(
                         propParts.push(stringify(name) + ": " + value);
                     }, this);
                     
-                    var propsStr = "context.i(" + templateName + ",{" + propParts.join(",") + "});\n";
-                    template.addJavaScriptCode(propsStr);
+                    template.statement("context.i(" + templateName + ",{" + propParts.join(",") + "});");
+                    
                 }
                 else if ((resourcePath = this.getAttribute("resource"))) {
                     var isStatic = this.getProperty("static") !== false;

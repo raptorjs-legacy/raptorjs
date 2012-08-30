@@ -88,8 +88,11 @@ raptor.defineClass(
                             newNodes.push(newNode);
                         }
                     }
+                    if (newNodes.length) {
+                        node.parentNode.insertAfter(newNodes, node);    
+                    }
                     
-                    node.parentNode.insertAfter(newNodes, node);
+                    
                 }
             }
         };

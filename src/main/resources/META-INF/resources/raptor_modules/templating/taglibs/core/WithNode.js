@@ -61,18 +61,17 @@ raptor.defineClass(
                     if (!varNameRegExp.test(withVar.name)) {
                         this.addError('Invalid variable name of "' + withVar.name + '" in "' + vars + '"');
                     }
-                    varDefs.push((i > 0 ? template.indent(1) + "    " : "") + withVar.name + (withVar.value ? ("=" + withVar.value) : "") + (i < withVars.length - 1 ? ",\n" : ";\n\n"));
+                    varDefs.push((i > 0 ? template.indentStr(1) + "    " : "") + withVar.name + (withVar.value ? ("=" + withVar.value) : "") + (i < withVars.length - 1 ? ",\n" : ";"));
                 }, this);
                 
                 
-                template.addJavaScriptCode('(function() {\n');
-                
-                template.incIndent();
-                template.addJavaScriptCode('var ' + varDefs.join(""));
-                this.generateCodeForChildren(template);
-                template.decIndent();
-                
-                template.addJavaScriptCode('}());\n');
+                template
+                    .statement('(function() {')
+                    .indent(function() {
+                        template.statement('var ' + varDefs.join(""));
+                        this.generateCodeForChildren(template);
+                    }, this)
+                    .line('}());');
             }
             
         };

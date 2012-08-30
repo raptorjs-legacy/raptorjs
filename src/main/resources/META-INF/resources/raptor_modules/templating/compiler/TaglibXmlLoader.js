@@ -323,6 +323,18 @@ raptor.defineClass(
                                     "before": {
                                         _type: STRING,
                                         _targetProp: "before"
+                                    },
+                                    
+                                    "<properties>": {
+                                        _type: OBJECT,
+                                        
+                                        _begin: function(parent) {
+                                            return (parent.properties = {});
+                                        },
+                                        
+                                        "<*>": {
+                                            _type: STRING
+                                        }
                                     }
                                 }
                             },

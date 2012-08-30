@@ -33,6 +33,7 @@ raptor.defineClass(
             this.templateName = null;
             this.curText = null;
             this.attributes = {};
+            this.firstStatement = true;
             
             this.staticVars = [];
             this.staticVarsLookup = {};
@@ -47,6 +48,7 @@ raptor.defineClass(
             this.getStaticHelperFunction("notEmpty", "ne");
             
             this.preserveWhitespace = 0;
+            
             
             this._indent = INDENT + INDENT;
         };
@@ -131,6 +133,7 @@ raptor.defineClass(
             },
             
             _endText: function() {
+                
                 if (this.hasErrors()) {
                     return;
                 }
@@ -158,6 +161,12 @@ raptor.defineClass(
             _endWrites: function() {
                 var curWrites = this.curWrites; 
                 if (curWrites) {
+                    if (!this.firstStatement) {
+                        this.javaScriptCode.append("\n");
+                    }
+                    
+                    this.firstStatement = false;
+                    
 //                    this.curWrites = null;
 //                    this.javaScriptCode.append('write(');
 //                    this.javaScriptCode.append(curWrites.join(','));
@@ -183,10 +192,10 @@ raptor.defineClass(
                     forEach(curWrites, function(curWrite, i) {
                         if (i === 0)
                         {
-                            this.javaScriptCode.append(this.indent() + 'context.w(');
+                            this.javaScriptCode.append(this.indentStr() + 'context.w(');
                         }
                         else {
-                            this.javaScriptCode.append(this.indent() + INDENT + '.w(');
+                            this.javaScriptCode.append(this.indentStr() + INDENT + '.w(');
                         }
                         
                         this.javaScriptCode.append(curWrite);
@@ -249,53 +258,86 @@ raptor.defineClass(
             },
             
             incIndent: function() {
+                this.emptyLine = false;
                 this._endText();
                 this._endWrites();
                 
                 this._indent += INDENT;
+                
+                this.firstStatement = true;
             },
             
             decIndent: function() {
+                this.emptyLine = false;
                 this._endText();
                 this._endWrites();
                 
-                this._indent = this._indent.substring(INDENT.length); 
+                this._indent = this._indent.substring(INDENT.length);
+                
+                this.firstStatement = false;
             },
             
-            indent: function(delta) {
-                if (arguments.length === 1) {
+            code: function(code) {
+                if (this.hasErrors()) {
+                    return this;
+                }
+
+                this._endText();
+                this._endWrites();
+                
+                this.javaScriptCode.append(code);
+                
+                return this;
+            },
+            
+            statement: function(code) {
+                this._endText();
+                this._endWrites();
+                
+                this.code((this.firstStatement ? "" : "\n") + this._indent + code + "\n");
+                
+                this.firstStatement = false;
+                return this;
+            },
+            
+            line: function(code) {
+                this.code(this._indent + code + "\n");
+                return this;
+            },
+            
+            indentStr: function(delta) {
+                if (arguments.length === 0) {
+                    return this._indent;
+                }
+                else {
                     var indent = this._indent;
                     for (var i=0; i<delta; i++) {
                         indent += INDENT;
                     }
                     return indent;
                 }
-                else {
-                    return this._indent;
-                }
             },
             
-            addJavaScriptCodeNoIndent: function(code) {
-                this.addJavaScriptCode(code, false);
-            },
-            
-            addJavaScriptCode: function(code, options) {
-                
-                if (typeof options === 'boolean') {
-                    options = {indent: options};
+            indent: function() {
+                if (arguments.length === 0) {
+                    this.code(this._indent);
                 }
-                else if (!options) {
-                    options = {};
+                else if (typeof arguments[0] === 'number') {
+                    this.code(this.indentStr(arguments[0]));
+                }
+                else if (typeof arguments[0] === 'function') {
+                    var func = arguments[0],
+                        thisObj = arguments[1];
+                    
+                    this.incIndent();
+                    func.call(thisObj);
+                    this.decIndent();
+                }
+                else if (typeof arguments[0] === 'string') {
+                    this.code(this._indent + arguments[0]);
                 }
                 
-                //console.log('addJavaScriptCode: ' + code);
-                if (this.hasErrors()) {
-                    return;
-                }
-                
-                this._endText();
-                this._endWrites();
-                this.javaScriptCode.append((options.indent !== false ? this.indent() : "") + code);
+                return this;
             },
             
             getOutput: function() {
@@ -322,15 +364,18 @@ raptor.defineClass(
                 out.append('$rset("rhtml", ');
                 out.append(stringify(templateName));
                 out.append(', ');
-                out.append('function(helpers){\n');
+                out.append('function(helpers) {\n');
                 //Write out the static variables
                 this._writeVars(this.staticVars, out, INDENT);
-                out.append('\n' + INDENT + 'return function(data, context){\n');
+                out.append('\n' + INDENT + 'return function(data, context) {\n');
                 
                 
                 //Write out the render variables
-                this._writeVars(this.vars, out, INDENT + INDENT);
-                out.append("\n");
+                if (this.vars && this.vars.length) {
+                    this._writeVars(this.vars, out, INDENT + INDENT);
+                    out.append("\n");    
+                }
+                
                 
                 this._endText();
                 this._endWrites();
@@ -378,6 +423,10 @@ raptor.defineClass(
             
             getErrors: function() {
                 return this.compiler.getErrors();
+            },
+            
+            getNodeClass: function(uri, localName) {
+                return this.compiler.getNodeClass(uri, localName);
             }
             
         };

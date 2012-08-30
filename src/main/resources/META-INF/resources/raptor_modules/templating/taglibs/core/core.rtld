@@ -58,6 +58,16 @@
         </attribute>
         
         <attribute>
+            <name>else</name>
+            <type>empty</type>
+        </attribute>
+        
+        <attribute>
+            <name>else-if</name>
+            <type>expression</type>
+        </attribute>
+        
+        <attribute>
             <name>attrs</name>
             <type>expression</type>
         </attribute>
@@ -163,6 +173,34 @@
             <type>expression</type>
         </attribute>
 
+    </tag>
+    
+    <tag>
+        <name>else</name> 
+        <compiler-class>templating.taglibs.core.ElseNode</compiler-class>
+        
+        <transformer>
+            <class-name>templating.taglibs.core.ElseTagTransformer</class-name>
+            <after>templating.taglibs.core.CoreTagTransformer</after>
+            <properties>
+                <type>else</type>
+            </properties>
+        </transformer>
+    </tag>
+    
+    <tag>
+        <name>else-if</name>
+        <attribute name="test" type="expression"/>
+         
+        <compiler-class>templating.taglibs.core.ElseIfNode</compiler-class>
+        
+        <transformer>
+            <class-name>templating.taglibs.core.ElseTagTransformer</class-name>
+            <after>templating.taglibs.core.CoreTagTransformer</after>
+            <properties>
+                <type>else-if</type>
+            </properties>
+        </transformer>
     </tag>
     
     <tag>

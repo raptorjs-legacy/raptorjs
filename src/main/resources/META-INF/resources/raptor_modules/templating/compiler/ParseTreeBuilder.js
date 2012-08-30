@@ -144,7 +144,7 @@ raptor.defineClass(
                 
                 parser.parse(src, filePath);
                 
-                rootNode._isRoot = true;
+                rootNode.setRoot(true);
                 
                 return rootNode;
             },

@@ -9,6 +9,37 @@ describe('templating module', function() {
         createRaptor();
     });
     
+    it("should allow appending child nodes", function() {
+        var Node = raptor.require('templating.compiler.Node');
+        var root = new Node();
+        root.setRoot(true);
+        
+        var firstChild = new Node();
+        root.appendChild(firstChild);
+        expect(firstChild.parentNode).toEqual(root);
+        expect(firstChild).toEqual(root.firstChild);
+        expect(firstChild).toEqual(root.lastChild);
+        expect(firstChild.nextSibling).toEqual(null);
+        expect(firstChild.previousSibling).toEqual(null);
+        
+        var secondChild = new Node();
+        root.appendChild(secondChild);
+        expect(secondChild.parentNode).toEqual(root);
+        expect(firstChild).toEqual(root.firstChild);
+        expect(secondChild).toEqual(root.lastChild);
+        
+        var newFirstChild = new Node();
+        root.replaceChild(newFirstChild, firstChild);
+        
+        expect(firstChild.parentNode).toEqual(null);
+        expect(secondChild.parentNode).toEqual(root);
+        expect(newFirstChild).toEqual(root.firstChild);
+        expect(secondChild).toEqual(root.lastChild);
+        expect(newFirstChild.nextSibling).toEqual(secondChild);
+        expect(secondChild.previousSibling).toEqual(newFirstChild);
+        expect(newFirstChild.previousSibling).toEqual(null);
+    });
+    
     it("should allow expressions to be parsed", function() {
         var ExpressionParser = raptor.require('templating.compiler.ExpressionParser');
         
@@ -491,6 +522,12 @@ describe('templating module', function() {
     it("should allow type conversion", function() {
         var TypeConverter = raptor.require('templating.compiler.TypeConverter');
         expect(TypeConverter.convert('${entity:special}', "string", true).toString()).toEqual('"&special;"');
+    });
+    
+    it("should allow for if...else", function() {
+
+        var output = compileAndRender("/test-templates/if-else.rhtml", {});
+        expect(output).toEqual('A,B,C,<div>C</div>');        
     });
     
     xit("should allow for widgets", function() {

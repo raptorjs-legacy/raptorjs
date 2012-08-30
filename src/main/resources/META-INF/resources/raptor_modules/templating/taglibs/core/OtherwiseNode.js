@@ -22,19 +22,22 @@ raptor.defineClass(
         
         var strings = raptor.require("strings");
         
-        var ChooseNode = function(props) {
-            ChooseNode.superclass.constructor.call(this);
+        var OtherwiseNode = function(props) {
+            OtherwiseNode.superclass.constructor.call(this);
             if (props) {
                 this.setProperties(props);
             }
         };
         
-        ChooseNode.prototype = {
+        OtherwiseNode.prototype = {
             
             doGenerateCode: function(template) {
-                template.addJavaScriptCode(' else {\n', false /* no indent */);
-                this.generateCodeForChildren(template, true /* indent */);
-                template.addJavaScriptCode('}\n\n');
+                template
+                    .line('else {') 
+                    .indent(function() {
+                        this.generateCodeForChildren(template);
+                    }, this)
+                    .line('}');
             },
             
             toString: function() {
@@ -43,5 +46,5 @@ raptor.defineClass(
             
         };
         
-        return ChooseNode;
+        return OtherwiseNode;
     });

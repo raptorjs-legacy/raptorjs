@@ -64,14 +64,18 @@ raptor.defineClass(
                     this.generateCodeForChildren(template);
                     return;
                 }
-               
-                template.addJavaScriptCode('function ' + func + '{\n');
-                template.incIndent();
-                template.addJavaScriptCode('return context.c(function() {\n');
-                this.generateCodeForChildren(template, true /* true */);
-                template.addJavaScriptCode('});\n');
-                template.decIndent();
-                template.addJavaScriptCode('}\n');
+                
+                template
+                    .statement('function ' + func + ' {')
+                    .indent(function() {
+                        template
+                            .line('return context.c(function() {')
+                            .indent(function() {
+                                this.generateCodeForChildren(template);
+                            }, this)
+                            .line('});');
+                    }, this)
+                    .line('}');
             }
             
         };

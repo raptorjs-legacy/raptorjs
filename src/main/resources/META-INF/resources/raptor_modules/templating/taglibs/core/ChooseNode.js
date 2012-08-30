@@ -34,6 +34,9 @@ raptor.defineClass(
                 var otherwiseNode = null,
                     foundWhenNode = false;
                 
+                
+                var allowedNodes = [];
+                
                 this.forEachChild(function(child) {
 
                     if (child.isTextNode()) {
@@ -44,6 +47,7 @@ raptor.defineClass(
                     else if (child.getNodeClass() === WhenNode){
                         if (otherwiseNode) {
                             this.addError(otherwiseNode + ' tag must be last child of tag ' + this + '.');
+                            return;
                         }
                         
                         if (!foundWhenNode) {
@@ -51,22 +55,27 @@ raptor.defineClass(
                             child.firstWhen = true;
                         }
                         
-                        child.generateCode(template);
-                        
+                        allowedNodes.push(child);
                     }
                     else if (child.getNodeClass() === OtherwiseNode) {
                         if (otherwiseNode) {
                             this.addError('More than one ' + otherwiseNode + ' tag is not allowed as child of tag ' + this + '.');
+                            return;
                         }
                         
                         otherwiseNode = child;
-                        
-                        child.generateCode(template);
+                        allowedNodes.push(otherwiseNode);
                     }
                     else {
                         this.addError(child + ' tag is not allowed as child of tag ' + this + '.');
+                        child.generateCode(template); //Generate the code for the children so that we can still show errors to the user for nested nodes
                     }
                 }, this);
+                
+                allowedNodes.forEach(function(child, i) {
+                    child.hasElse = i < allowedNodes.length - 1;
+                    child.generateCode(template);
+                });
                 
                 if (!foundWhenNode) {
                     this.addError('' + otherwiseNode + ' tag is required to have at least one sibling <c:when> tag.');

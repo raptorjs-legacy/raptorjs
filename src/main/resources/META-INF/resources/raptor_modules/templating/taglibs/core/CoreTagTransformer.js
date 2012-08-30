@@ -27,6 +27,8 @@ raptor.defineClass(
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),
             ForNode = raptor.require("templating.taglibs.core.ForNode"),
             IfNode = raptor.require("templating.taglibs.core.IfNode"),
+            ElseIfNode = raptor.require("templating.taglibs.core.ElseIfNode"),
+            ElseNode = raptor.require("templating.taglibs.core.ElseNode"),
             WhenNode = raptor.require("templating.taglibs.core.WhenNode"),
             OtherwiseNode = raptor.require("templating.taglibs.core.OtherwiseNode"),
             TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
@@ -43,7 +45,9 @@ raptor.defineClass(
                 
                 var _this = this,
                     forEachAttr,
-                    renderedIfAttr,
+                    ifAttr,
+                    elseAttr,
+                    elseIfAttr,
                     attrsAttr,
                     whenAttr,
                     parseBodyTextAttr,
@@ -155,11 +159,11 @@ raptor.defineClass(
                     forEachNode.appendChild(node);
                 }
 
-                if ((renderedIfAttr = node.getAttributeNS(coreNS, "if")) != null) {
+                if ((ifAttr = node.getAttributeNS(coreNS, "if")) != null) {
                     node.removeAttributeNS(coreNS, "if");
                     
                     var ifNode = new IfNode({
-                        test: new Expression(renderedIfAttr),
+                        test: new Expression(ifAttr),
                         pos: node.getPosition()
                     });
                     
@@ -167,6 +171,33 @@ raptor.defineClass(
                     //node with the new "if" node and then adding the current node as a child
                     node.parentNode.replaceChild(ifNode, node);
                     ifNode.appendChild(node);
+                }
+                
+                if ((elseIfAttr = node.getAttributeNS(coreNS, "else-if")) != null) {
+                    node.removeAttributeNS(coreNS, "else-if");
+                    
+                    var elseIfNode = new ElseIfNode({
+                        test: new Expression(elseIfAttr),
+                        pos: node.getPosition()
+                    });
+                    
+                    //Surround the existing node with an "if" node by replacing the current
+                    //node with the new "if" node and then adding the current node as a child
+                    node.parentNode.replaceChild(elseIfNode, node);
+                    elseIfNode.appendChild(node);
+                }
+                
+                if ((elseAttr = node.getAttributeNS(coreNS, "else")) != null) {
+                    node.removeAttributeNS(coreNS, "else");
+                    
+                    var elseNode = new ElseNode({
+                        pos: node.getPosition()
+                    });
+                    
+                    //Surround the existing node with an "if" node by replacing the current
+                    //node with the new "if" node and then adding the current node as a child
+                    node.parentNode.replaceChild(elseNode, node);
+                    elseNode.appendChild(node);
                 }
                 
                 if ((contentAttr = node.getAttributeNS(coreNS, "bodyContent")) != null) {
@@ -186,11 +217,16 @@ raptor.defineClass(
                 }
                 
                 if (node.getAttributeNS && (replaceAttr = node.getAttributeNS(coreNS, "replace")) != null) {
+                    
+                    var parentNode = node.parentNode;
+                    
                     node.removeAttributeNS(coreNS, "replace");
                     
                     var replaceWriteNode = new WriteNode({expression: replaceAttr, pos: node.getPosition()});
                     //Replace the existing node with an node that only has children
+                    
                     node.parentNode.replaceChild(replaceWriteNode, node);
+                    
                     node = replaceWriteNode;
                 }
                 
