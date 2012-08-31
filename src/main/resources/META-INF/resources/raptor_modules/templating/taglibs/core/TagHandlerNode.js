@@ -149,7 +149,9 @@ raptor.defineClass(
                             }
                             
                             if (this.dynamicAttributes) {
-                                template.indent().code(getPropsStr(this.dynamicAttributes, template));
+                                template
+                                    .code(",\n")
+                                    .indent().code(getPropsStr(this.dynamicAttributes, template));
                             }
                             else {
                                 if (hasNamespacedProps) {

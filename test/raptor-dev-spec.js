@@ -9,6 +9,10 @@ describe('development spec', function() {
         createRaptor();
     });
     
+    xit("should allow for dynamic attributes", function() {
+        var output = compileAndRender("/test-templates/dynamic-attributes.rhtml", {});
+        expect(output).toEqual('test: Hello|dynamic attributes: [class=my-class, id=myId]');
+    });
     
     xit("should allow for template handlers with nested body content", function() {
         var output = compileAndRender("/test-templates/nested-handlers.rhtml", {showConditionalTab: false});

@@ -50,6 +50,15 @@
         <attribute name="title"/>
     </tag>
     
+    <tag>
+        <name>dynamic-attributes</name>
+        <handler-class>taglibs.test.DynamicAttributesTag</handler-class>
+        
+        <dynamic-attributes>true</dynamic-attributes>
+        
+        <attribute name="test" type="string"/>
+    </tag>
+    
     <function class="taglibs.test.TestFunctions">
         <name>user</name>
         <bind-to-context>true</bind-to-context>            

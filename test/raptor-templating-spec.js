@@ -544,6 +544,11 @@ describe('templating module', function() {
         expect(output).toEqual('<div></div><div class="some-class"></div><div></div>');        
     });
     
+    it("should allow for dynamic attributes", function() {
+        var output = compileAndRender("/test-templates/dynamic-attributes.rhtml", {});
+        expect(output).toEqual('test: Hello|dynamic attributes: [class=my-class, id=myId]');
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         

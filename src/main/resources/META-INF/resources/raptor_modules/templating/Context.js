@@ -182,7 +182,7 @@ raptor.defineClass(
             /**
              * Helper function invoke a tag handler
              */
-            t: function(handler, props, body, namespacedProps) {
+            t: function(handler, props, body, dynamicAttributes, namespacedProps) {
                 if (!props) {
                     props = {};
                 }
@@ -190,6 +190,10 @@ raptor.defineClass(
                 props._tag = true;
                 
                 props.invokeBody = body;
+                if (dynamicAttributes) {
+                    props.dynamicAttributes = dynamicAttributes;
+                }
+                
                 if (namespacedProps) {
                     raptor.extend(props, namespacedProps);
                 }
