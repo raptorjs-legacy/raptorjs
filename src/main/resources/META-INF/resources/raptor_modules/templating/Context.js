@@ -146,6 +146,23 @@ raptor.defineClass(
             
             renderTemplate: function(name, data) {
                 raptor.require("templating").render(name, data, this);
+                return this;
+            },
+            
+            attr: function(name, value) {
+                if (value === null) {
+                    value = '';
+                }
+                else if (value === undefined || typeof value === 'string' && value.trim() === '') {
+                    return this;
+                }
+                else {
+                    value = '="' + escapeXmlAttr(value) + '"';
+                }
+                
+                this.write(' ' + name + value);
+                
+                return this;
             },
             
             /**
@@ -153,17 +170,13 @@ raptor.defineClass(
              * @param attrs
              */
             attrs: function(attrs) {
-                if (!attrs) {
-                    return;
+                if (arguments.length === 2) {
+                    this.attr.apply(this, arguments);
                 }
-                
-                forEachEntry(attrs, function(name, value) {
-                    if (value === undefined) {
-                        return;
-                    }
-                    
-                    this.write(' ' + name + (value === null ? '' : ('="' + escapeXmlAttr(value) + '"')));
-                }, this);
+                else if (attrs) {
+                    forEachEntry(attrs, this.attr, this);    
+                }
+                return this;
             },
             
             /**
@@ -182,6 +195,8 @@ raptor.defineClass(
                 }
                 
                 this.invokeHandler(handler, props);
+                
+                return this;
             },
             
             c: function(func) {

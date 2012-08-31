@@ -100,6 +100,10 @@ raptor.defineClass(
                 return this.getPropertiesNS(null);
             },
             
+            getPropertiesByNS: function() {
+                return this.properties;
+            },
+            
             getPropertiesNS: function(uri) {
                 if (!uri) {
                     uri = "";

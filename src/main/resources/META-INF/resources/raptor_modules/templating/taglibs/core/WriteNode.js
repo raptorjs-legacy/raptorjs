@@ -35,7 +35,7 @@ raptor.defineClass(
                     escapeXml = this.getProperty("escapeXml") !== false;
                 
                 if (expression) {
-                    template.addWrite(expression, {escapeXml: escapeXml});
+                    template.write(expression, {escapeXml: escapeXml});
                 }
             },
             

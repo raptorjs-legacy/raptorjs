@@ -93,13 +93,13 @@ raptor.defineClass(
                         }
                     }, this);
                     
-                    template.addWrite(func + "(" + argParts.join(",") + ")");
+                    template.write(func + "(" + argParts.join(",") + ")");
                 }
                 else {
                     var funcName = func.substring(0, func.indexOf('('));
                     funcDef = definedFunctions ? definedFunctions[funcName] : null;
                     if (funcDef) {
-                        template.addWrite(func);
+                        template.write(func);
                     }
                     else {
                         template.statement(func + ";\n");

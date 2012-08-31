@@ -27,11 +27,7 @@ raptor.defineClass(
             forEachEntry = raptor.forEachEntry,
             Expression = raptor.require('templating.compiler.Expression'),
             addHandlerVar = function(template, handlerClass) {
-                var handlerVars = template._handlerVars;
-                
-                if (!handlerVars) {
-                    template._handlerVars = handlerVars = {}; 
-                }
+                var handlerVars = template._handlerVars || (template._handlerVars = {});
                 
                 var handlerVar = handlerVars[handlerClass];
                 if (!handlerVar) {
@@ -96,82 +92,96 @@ raptor.defineClass(
             
             doGenerateCode: function(template) {
                 
+                /*
+                    context.t(
+                        handler, 
+                        props, 
+                        bodyFunc, 
+                        dynamicAttributes, 
+                        namespacedProps)
+                */
+                
+                ///////////////////
+                
                 
                 var handlerVar = addHandlerVar(template, this.tagDef.handlerClass);
-
+                
                 forEach(this.tagDef.importedVariables, function(importedVariable) {
                     this.setProperty(importedVariable.propertyName, new Expression(importedVariable.expression));
                 }, this);
                 
-                var bodyParams;
                 
-                if (this.hasChildren()) {
-                    bodyParams = [];
-                    
-                    forEach(this.tagDef.nestedVariables, function(v) {
-                        bodyParams.push(v.name);
-                    });
-                }
-                
-                var propertyNamespaces = this.getPropertyNamespaces();
-                var namespacedProps = [];
-                
-                forEach(propertyNamespaces, function(uri) {
-                    if (uri !== "") {
-                        namespacedProps.push({name: uri, props: this.getPropertiesNS(uri)});
-                    }
-                }, this);
-                
-                if (this.dynamicAttributes) {
-                    namespacedProps.push({name: '*', props: this.dynamicAttributes});
-                }
+                var namespacedProps = raptor.extend({}, this.getPropertiesByNS());
+                delete namespacedProps[''];
+                var hasNamespacedProps = !objects.isEmpty(namespacedProps);
                 
                 ///////////
-                
-                template
-                    .statement('context.t(')
-                    .indent(function() {
-                        template
-                            .line(handlerVar + ',')
-                            .indent().code(getPropsStr(this.getProperties(), template));
-                        
-                        if (this.hasChildren()) {
+                template.addContextMethodCall("t", function() {
+                    template
+                        .code("\n")
+                        .indent(function() {
                             template
-                                .code(',\n')
-                                .line("function(" + bodyParams.join(",") + ") {") 
-                                .indent(function() {
-                                    this.generateCodeForChildren(template);    
-                                }, this)
-                                .indent()
-                                .code('}');
-                        }
-                        else {
-                            if (namespacedProps.length) {
+                                .line(handlerVar + ',')
+                                .indent().code(getPropsStr(this.getProperties(), template));
+                            
+                            if (this.hasChildren()) {
+                                var bodyParams = [];
+                                
+                                forEach(this.tagDef.nestedVariables, function(v) {
+                                    bodyParams.push(v.name);
+                                });
+                                
+                                template
+                                    .code(',\n')
+                                    .line("function(" + bodyParams.join(",") + ") {") 
+                                    .indent(function() {
+                                        this.generateCodeForChildren(template);    
+                                    }, this)
+                                    .indent()
+                                    .code('}');
+                            }
+                            else {
+                                if (hasNamespacedProps || this.dynamicAttributes) {
+                                    template
+                                        .code(",\n")
+                                        .indent().code("null");
+                                }
+                            }
+                            
+                            if (this.dynamicAttributes) {
+                                template.indent().code(getPropsStr(this.dynamicAttributes, template));
+                            }
+                            else {
+                                if (hasNamespacedProps) {
+                                    template
+                                        .code(",\n")
+                                        .indent().code("null");
+                                }
+                            }
+                            
+                            if (hasNamespacedProps) {
                                 template
                                     .code(",\n")
-                                    .indent().code("null");
+                                    .line("{")
+                                    .indent(function() {
+                                        var first = true;
+                                        forEachEntry(namespacedProps, function(uri, props) {
+                                            if (!first) {
+                                                template.code(',\n');
+                                            }
+                                            template.code(template.indentStr() + '"' + uri + '": ' + getPropsStr(props, template));
+                                            first = false;
+                                            
+                                        });                                        
+                                    })
+                                    .indent()
+                                    .code("}");
                             }
-                        }
-                        
-                        if (namespacedProps.length) {
-                            template
-                                .code(",\n")
-                                .line("{")
-                                .indent(function() {
-                                    
-                                    template.code(
-                                        namespacedProps.map(function(entry) {
-                                            return '"' + entry.name + '": ' + getPropsStr(entry.props, template)
-                                        }, this)
-                                        .join('n,'));
-                                    
-                                })
-                                .indent()
-                                .code("}");
-                        }
-                        
-                    }, this)
-                    .code(');\n');
+                            
+                        }, this);
+                }, this);
+                
+                
 
             }
         };

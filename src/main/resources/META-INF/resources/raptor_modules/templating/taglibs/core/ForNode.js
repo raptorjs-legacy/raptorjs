@@ -83,7 +83,7 @@ raptor.defineClass(
                                 template
                                     .statement("if (!" + varStatus + ".isLast()) {")
                                     .indent(function() {
-                                        template.addWrite(template.isExpression(separator) ? separator.getExpression() : stringify(separator));    
+                                        template.write(template.isExpression(separator) ? separator.getExpression() : stringify(separator));    
                                     }, this)
                                     .line('}');
                             }

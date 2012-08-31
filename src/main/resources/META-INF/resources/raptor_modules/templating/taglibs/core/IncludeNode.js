@@ -55,7 +55,7 @@ raptor.defineClass(
                     }
                     
                     
-                    template.statement("context.i(" + templateName + "," + dataExpression + ");");
+                    template.include(templateName, dataExpression);
                     
                 }
                 else if ((resourcePath = this.getAttribute("resource"))) {
@@ -67,7 +67,7 @@ raptor.defineClass(
                             return;
                         }
                         
-                        template.addWrite(raptor.require('json.stringify').stringify(resource.readFully()));
+                        template.write(raptor.require('json.stringify').stringify(resource.readFully()));
                     }
                 }
                 else {

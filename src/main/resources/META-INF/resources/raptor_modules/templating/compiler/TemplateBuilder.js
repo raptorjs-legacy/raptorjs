@@ -107,8 +107,10 @@ raptor.defineClass(
             },
             
             addStaticVar: function(name, expression) {
-                this.staticVarsLookup[name] = true;
-                this.staticVars.push({name: name, expression: expression});
+                if (!this.staticVarsLookup[name]) {
+                    this.staticVarsLookup[name] = true;
+                    this.staticVars.push({name: name, expression: expression});    
+                }
             },
             
             hasVar: function(name) {
@@ -141,7 +143,7 @@ raptor.defineClass(
                 var curText = this.curText; 
                 if (curText) {
                     this.curText = null;
-                    this.addWrite(stringify(curText, {useSingleQuote: true}));
+                    this.write(stringify(curText, {useSingleQuote: true}));
                 }
             },
             
@@ -190,22 +192,37 @@ raptor.defineClass(
       
                     this.curWrites = null;
                     forEach(curWrites, function(curWrite, i) {
+                        var methodName = curWrite[0],
+                            argsString = curWrite[1],
+                            thisObj = curWrite[2];
+                        
                         if (i === 0)
                         {
-                            this.javaScriptCode.append(this.indentStr() + 'context.w(');
+                            this.javaScriptCode.append(this.indentStr() + 'context.' + methodName + "(");
                         }
                         else {
-                            this.javaScriptCode.append(this.indentStr() + INDENT + '.w(');
+                            this.incIndent();
+                            this.javaScriptCode.append(this.indentStr() + '.' + methodName + "(");
                         }
                         
-                        this.javaScriptCode.append(curWrite);
-                        this.javaScriptCode.append(')');
+                        if (typeof argsString === 'string') {
+                            this.javaScriptCode.append(argsString);
+                        }
+                        else if (typeof argsString === 'function') {
+                            argsString.call(thisObj);
+                        }
+                        else {
+                            throw raptor.createError(new Error("Illegal state"));
+                        }
                         
                         if (i < curWrites.length -1) {
-                            this.javaScriptCode.append("\n");      
+                            this.javaScriptCode.append(")\n");      
                         }
                         else {
-                            this.javaScriptCode.append(";\n");
+                            this.javaScriptCode.append(");\n");
+                        }
+                        if (i !== 0) {
+                            this.decIndent();
                         }
                     }, this);
                     
@@ -234,27 +251,59 @@ raptor.defineClass(
                 }
             },
             
-            addWrite: function(expression, options) {
+            attr: function(name, valueExpression) {
+                if (!this.hasErrors()) {
+                    this.addContextMethodCall("a", stringify(name) + "," + valueExpression);    
+                }
+    
+                return this;
+            },
+            
+            attrs: function(attrsExpression) {
+                if (!this.hasErrors()) {
+                    this.addContextMethodCall("a", attrsExpression);    
+                }
+    
+                return this;
+            },
+            
+            include: function(templateName, dataExpression) {
+                if (!this.hasErrors()) {
+                    this.addContextMethodCall("i", templateName + "," + dataExpression);    
+                }
+    
+                return this;
+            },
+            
+            write: function(expression, options) {
+                if (!this.hasErrors()) {
+                    if (options) {
+                        if (options.escapeXml) {
+                            expression = this.getStaticHelperFunction("escapeXml", "x") + "(" + expression + ")";
+                        }
+                        if (options.escapeXmlAttr) {
+                            expression = this.getStaticHelperFunction("escapeXmlAttr", "xa") + "(" + expression + ")";
+                        }
+                    }
+                    this.addContextMethodCall("w", expression);    
+                }
+    
+                return this;
+            },
+            
+            addContextMethodCall: function(methodName, argString, thisObj) {
                 if (this.hasErrors()) {
                     return;
                 }
     
-                //console.log('addWrite: ' + expression);
+                //console.log('write: ' + expression);
                 this._endText();
                 
                 if (!this.curWrites) {
                     this.curWrites = [];
                 }
-                
-                if (options) {
-                    if (options.escapeXml) {
-                        expression = this.getStaticHelperFunction("escapeXml", "x") + "(" + expression + ")";
-                    }
-                    if (options.escapeXmlAttr) {
-                        expression = this.getStaticHelperFunction("escapeXmlAttr", "xa") + "(" + expression + ")";
-                    }
-                }
-                this.curWrites.push(expression);
+
+                this.curWrites.push([methodName, argString, thisObj]);
             },
             
             incIndent: function() {
@@ -366,6 +415,10 @@ raptor.defineClass(
                 out.append(', ');
                 out.append('function(helpers) {\n');
                 //Write out the static variables
+                
+                this._endText();
+                this._endWrites();
+                
                 this._writeVars(this.staticVars, out, INDENT);
                 out.append('\n' + INDENT + 'return function(data, context) {\n');
                 
@@ -427,7 +480,9 @@ raptor.defineClass(
             
             getNodeClass: function(uri, localName) {
                 return this.compiler.getNodeClass(uri, localName);
-            }
+            },
+            
+            INDENT: INDENT
             
         };
         

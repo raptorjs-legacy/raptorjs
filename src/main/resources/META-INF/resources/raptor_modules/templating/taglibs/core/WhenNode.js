@@ -40,7 +40,7 @@ raptor.defineClass(
                 
                 var ifCode = 'if (' + test + ')';
                 if (!this.firstWhen) {
-                    template.line('else ' + ifCode + ' {\n');                    
+                    template.line('else ' + ifCode + ' {');                    
                 }
                 else {
                     template.statement(ifCode + ' {');
