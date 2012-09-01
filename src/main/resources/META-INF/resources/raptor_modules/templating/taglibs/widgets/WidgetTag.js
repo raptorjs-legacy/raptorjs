@@ -9,14 +9,14 @@ raptor.defineClass(
             process: function(input, context) {
                 var type = input.jsClass,
                     config = input.config,
-                    widgetContext = input.widgetContext,
+                    widgetArgs = input.widgetArgs,
                     id = input.id,
                     parent,
                     nestedWidgetId;
                 
-                if (widgetContext) {
-                    parent = widgetContext[0];
-                    nestedWidgetId = widgetContext[1];
+                if (widgetArgs) {
+                    parent = widgetArgs[0];
+                    nestedWidgetId = widgetArgs[1];
                 }
 
                 var widget = widgets.addWidget(type, id, nestedWidgetId, config, parent, context);

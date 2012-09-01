@@ -127,6 +127,9 @@ raptor.defineClass(
                      * Allow imports for attributes that can be assigned to tags with a different URI
                      * e.g. <div c-if="someCondition"></div> --> <div c:if="someCondition"></div>
                      */
+                    if (!tag.forEachAttribute) {
+                        console.error('TAG w/o forEachAttribute: ', Object.keys(tag));
+                    }
                     tag.forEachAttribute(function(attr) {
                         
                         if (tag.uri !== from && (importsLookup['*'] || importsLookup["@" + attr.name])) {
@@ -152,25 +155,60 @@ raptor.defineClass(
         };
         
         
+        
         var TaglibCollection = function() {
             this.tagTransformersLookup = {}; //Tag transformers lookup
-            this.tagDefs = {}; //Tag definitions lookup
+            this.tags = {}; //Tag definitions lookup
             this.textTransformers = {};
             this.taglibsByURI = {}; //Lookup to track the URIs of taglibs that have been added to this collection
             this.shortNameToUriMapping = {};
             this.uriToShortNameMapping = {};
             this.uriToPrefixMapping = {};
             this.functionsLookup = {};
-            
         };
         
         TaglibCollection.prototype = {
+                
+            getAttribute: function(tagUri, tagName, attrUri, attrName) {
+                var tags = this.tags;
+                
+                var _findAttr = function(lookupKey) {
+                    var tag = tags[lookupKey];
+                    return tag ? tag.getAttribute(attrUri, attrName) : null;
+                };
+                
+                var attr = _findAttr(tagUri + ":" + tagName) || 
+                    _findAttr(tagUri + ":*") ||
+                    _findAttr("*:*");
+                
+                if (attr && attr.uri && attr.uri !== '*') {
+                    //The attribute is being imported
+                    
+                    var taglib = this.taglibsByURI[attr.uri];
+                    if (!taglib) {
+                        throw raptor.createError(new Error('Taglib with URI "' + attr.uri + '" not found for imported attribute with name "' + attrName + '"'));
+                    }
+                    attr = taglib.getAttribute(attrName);
+                    if (!attr) {
+                        throw raptor.createError(new Error('Attribute "' + attrName + '" imported from taglib with URI "' + attr.uri + '" not found in taglib.'));
+                    }
+                }
+                
+                if (!attr) {
+                    var attrShortUri = this.resolveShortName(attrUri);
+                    if (attrShortUri !== attrUri) {
+                        return this.getAttribute(tagUri, tagName, attrShortUri, attrName);
+                    }
+                }
+                
+                return attr;
+            },
+            
             forEachTag: function(uri, callback, thisObj) {
                 uri = this.resolveURI(uri);
                 
                 
                 var taglib = this.taglibsByURI[uri];
-                
                 
                 if (!taglib) {
                     return;
@@ -198,7 +236,6 @@ raptor.defineClass(
              * @param taglib {templating.compiler$Taglib} The taglib to add
              */
             add: function(taglib) {
-                taglib = extend(new Taglib(), taglib); //Convert the tag to an actual Tag class
                 var targetTaglib = this.taglibsByURI[taglib.uri] || taglib;
                 
                 this.taglibsByURI[taglib.uri] = targetTaglib; //Mark the taglib as added
@@ -224,32 +261,19 @@ raptor.defineClass(
                     }
                 }
                 
-                var tags = taglib.tags;
-                delete taglib.tags;
-                
-                taglib.tags = {};
-                
                 /*
                  * Index all of the tags in the taglib by registering them
                  * based on the tag URI and the tag name
                  */
-                forEach(tags, function(tag, i) {
+                taglib.forEachTag(function(tag, i) {
                     
-                    var uri = tag.uri == null ? taglib.uri : tag.uri, //If not specified, the tag URI should be the same as the taglib URI
+                    
+                    
+                    var uri = tag.uri == null ? (tag.uri = taglib.uri) : tag.uri, //If not specified, the tag URI should be the same as the taglib URI
                         name = tag.name,
                         key = uri + ":" + name; //The taglib will be registered using the combination of URI and tag name
-                    /*
-                     * NOTE: Wildcards are supported for URI and tag name. The tag URI can be a asterisk to indicate 
-                     *       that it matches any URI and similar for the tag name. 
-                     */
                     
-                    tag = extend(new Tag(), tag); //Convert the tag to an actual Tag class
-                    tag.taglib = targetTaglib; //Store a reference to the taglib that the tag belongs to
-                    tag.uri = uri;
-                    
-                    targetTaglib.tags[key] = tag;
-                    
-                    this.tagDefs[key] = tag; //Register the tag using the combination of URI and tag name so that it can easily be looked up
+                    this.tags[key] = tag; //Register the tag using the combination of URI and tag name so that it can easily be looked up
                     
                     if (tag.transformers) { //Check if the tag has any transformers that should be applied
                         
@@ -257,7 +281,6 @@ raptor.defineClass(
                         
                         //Now add all of the transformers for the node (there will typically only be one...)
                         forEach(tag.transformers, function(transformer) {
-                            transformer = extend(new Transformer(), transformer); //Convert the transformer config to instance of Transformer
                             tagTransformersForTags.push(transformer);
                         }, this);
                     }
@@ -269,22 +292,19 @@ raptor.defineClass(
                  * Now register all of the text transformers that are part of the provided taglibs
                  */
                 forEach(taglib.textTransformers, function(textTransformer) {
-                    this.textTransformers[textTransformer.className] = extend(new Transformer(), textTransformer);
+                    this.textTransformers[textTransformer.className] = textTransformer;
                 }, this);
-                
                 
                 
                 forEach(taglib.functions, function(func) {
                     if (!func.name) {
-                        return;
+                        throw raptor.createError(new Error("Function name not set."));
                     }
                     this.functionsLookup[taglib.uri + ":" + func.name] = func;
                     if (targetTaglib.shortName) {
                         this.functionsLookup[taglib.shortName + ":" + func.name] = func;
                     }
                 }, this);
-                
-                
             },
             
             /**
@@ -322,6 +342,7 @@ raptor.defineClass(
                 if (!shortName) {
                     return shortName;
                 }
+                
                 return this.shortNameToUriMapping[shortName] || shortName;
             },
             
@@ -447,12 +468,13 @@ raptor.defineClass(
              * @param localName
              * @returns
              */
-            getTagDef: function(uri, localName) {
-                var tagDef = this.tagDefs[uri + ":" + localName];
-                if (!tagDef) {
-                    tagDef = this.tagDefs[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
+            getTag: function(uri, localName) {
+                var tag = this.tags[uri + ":" + localName];
+                if (!tag) {
+                    tag = this.tags[uri + ":*"]; //See if there was a wildcard tag definition in the taglib
                 }
-                return tagDef;
+                
+                return tag;
             },
             
             getFunction: function(uri, functionName) {

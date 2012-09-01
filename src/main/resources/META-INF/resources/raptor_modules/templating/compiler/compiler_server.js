@@ -94,6 +94,7 @@ raptor.extend(
                     return;
                 }
                 discoveryComplete = true;
+                this.clearTaglibs();
                 
                 packager.forEachTopLevelPackageManifest(function(manifest) {
                     var taglibs = manifest['raptor-taglibs'];

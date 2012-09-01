@@ -20,10 +20,16 @@ raptor.defineClass(
         "use strict";
         
         var objectMapper = raptor.require('xml.sax.object-mapper'),
+            Taglib = raptor.require('templating.compiler.Taglib'),
+            Tag = Taglib.Tag,
+            Attribute = Taglib.Attribute,
+            NestedVariable = Taglib.NestedVariable,
+            ImportedVariable = Taglib.ImportedVariable,
+            Transformer = Taglib.Transformer,
+            Function = Taglib.Function,
             STRING = "string",
             BOOLEAN = "boolean",
-            OBJECT = "object",
-            transformerUniqueId = 0;
+            OBJECT = "object";
         
         var TaglibXmlLoader = function(src, path) {
             this.src = src;
@@ -95,16 +101,45 @@ raptor.defineClass(
                     };
                     
                 var taglib;
+                var attributeHandler = {
+                        _type: OBJECT,
+                        
+                        _begin: function() {
+                            return new Attribute(); 
+                            
+                        },
+                        _end: function(attr, parent) {
+                            parent.addAttribute(attr);
+                        },
+                        
+                        "name": {
+                            _type: STRING
+                        },
+                        
+                        "uri": {
+                            _type: STRING
+                        },
+                        
+                        "required": {
+                            _type: BOOLEAN
+                        },
+                        
+                        "type": {
+                            _type: STRING
+                        },
+                        
+                        "allow-expressions": {
+                            _type: BOOLEAN,
+                            _targetProp: "allowExpressions"
+                        }
+                    };
                 
                 var handlers = {
                         "raptor-taglib": { 
                             _type: OBJECT,
                             
                             _begin: function() {
-                                var newTaglib = {
-                                        uri: null,
-                                        shortName: null
-                                    };
+                                var newTaglib = new Taglib();
                                 
                                 if (!taglib) {
                                     taglib = newTaglib;
@@ -113,6 +148,8 @@ raptor.defineClass(
                                 
                                 return newTaglib;
                             },
+                            
+                            "attribute": attributeHandler,
                             
                             "tlib-version": {
                                 _type: STRING,
@@ -135,29 +172,19 @@ raptor.defineClass(
                                 _type: OBJECT,
                                 
                                 _begin: function() {
-                                    return {
-//                                        name: null,
-//                                        uri: null,
-//                                        handlerClass: null,
-//                                        dynamicAttributes: false
-                                    };
+                                    return new Tag();
                                 },
                                 
                                 _end: function(tag) {
-                                    if (tag.uri == null) {
+                                    if (tag.uri === null) {
                                         tag.uri = taglib.uri;
                                     }
-
-                                    if (!taglib.tags) {
-                                        taglib.tags = [];
-                                    }
+                                    
+                                    taglib.addTag(tag);
                                     
                                     if (tag.id) {
                                         tagsById[tag.id] = tag;
                                     }
-                                    
-                                    
-                                    taglib.tags.push(tag);
                                 },
                                 
                                 "name": {
@@ -193,64 +220,21 @@ raptor.defineClass(
                                     _targetProp: "dynamicAttributes"
                                 },
                                 
-                                "attribute": {
-                                    _type: OBJECT,
-                                    
-                                    _begin: function() {
-                                        return {
-//                                            name: null,
-//                                            uri: null,
-//                                            required: null,
-                                            type: "string"
-                                        };
-                                    },
-                                    _end: function(attr, tag) {
-                                        if (!tag.attributeMap) {
-                                            tag.attributeMap = {};
-                                        }
-                                        var uri = attr.uri || '';
-                                        tag.attributeMap[uri + ':' + attr.name] = attr;
-                                    },
-                                    
-                                    "name": {
-                                        _type: STRING
-                                    },
-                                    
-                                    "uri": {
-                                        _type: STRING
-                                    },
-                                    
-                                    "required": {
-                                        _type: BOOLEAN
-                                    },
-                                    
-                                    "type": {
-                                        _type: STRING
-                                    },
-                                    
-                                    "allow-expressions": {
-                                        _type: BOOLEAN,
-                                        _targetProp: "allowExpressions"
-                                    }
-                                },
+                                "attribute": attributeHandler,
+                                
                                 "nested-variable": {
                                     _type: OBJECT,
                                     
                                     _begin: function() {
-                                        return {
-                                            name: null
-                                        };
+                                        return new NestedVariable();
                                     },
                                     _end: function(nestedVariable, tag) {
                                         
                                         if (!nestedVariable.name) {
-                                            throw raptor.createError(new Error('The "name" attribute is required for an imported variable'));
+                                            throw raptor.createError(new Error('The "name" attribute is required for a nested variable'));
                                         }
-                                        
-                                        if (!tag.nestedVariables) {
-                                            tag.nestedVariables = [];
-                                        }
-                                        tag.nestedVariables.push(nestedVariable);
+
+                                        tag.addNestedVariable(nestedVariable);
                                     },
                                     
                                     "name": {
@@ -263,28 +247,21 @@ raptor.defineClass(
                                     _type: OBJECT,
                                     
                                     _begin: function() {
-                                        return {
-                                            propertyName: null,
-                                            expression: null
-                                        };
+                                        return new ImportedVariable();
                                     },
                                     _end: function(importedVariable, tag) {
-                                        if (!importedVariable.propertyName) {
-                                            throw raptor.createError(new Error('The "property-name" attribute is required for an imported variable'));
+                                        if (!importedVariable.targetProperty) {
+                                            throw raptor.createError(new Error('The "target-property" attribute is required for an imported variable'));
                                         }
                                         if (!importedVariable.expression) {
                                             throw raptor.createError(new Error('The "expression" attribute is required for an imported variable'));
                                         }
-                                        
-                                        if (!tag.importedVariables) {
-                                            tag.importedVariables = [];
-                                        }
-                                        tag.importedVariables.push(importedVariable);
+                                        tag.addImportedVariable(importedVariable);
                                     },
                                     
-                                    "property-name": {
+                                    "target-property": {
                                         _type: STRING,
-                                        _targetProp: "propertyName"
+                                        _targetProp: "targetProperty"
                                     },
                                     
                                     "expression": {
@@ -296,18 +273,11 @@ raptor.defineClass(
                                     _type: OBJECT,
                                     
                                     _begin: function() {
-                                        return {
-                                            id: transformerUniqueId++,
-                                            className: null,
-                                            path: null
-                                        };
+                                        return new Transformer();
                                     },
                                     
                                     _end: function(transformer, tag) {
-                                        if (!tag.transformers) {
-                                            tag.transformers = [];
-                                        }
-                                        tag.transformers.push(transformer);
+                                        tag.addTransformer(transformer);
                                     },
                                     
                                     "class-name": {
@@ -344,18 +314,11 @@ raptor.defineClass(
                                 _type: OBJECT,
                                 
                                 _begin: function() {
-                                    return {
-                                        id: transformerUniqueId++,
-                                        className: null,
-                                        path: null
-                                    };
+                                    return new Transformer();
                                 },
                                 
                                 _end: function(textTransformer) {
-                                    if (!taglib.textTransformers) {
-                                        taglib.textTransformers = [];
-                                    }
-                                    taglib.textTransformers.push(textTransformer);
+                                    taglib.addTextTransformer(textTransformer);
                                 },
                                 
                                 "class-name": {
@@ -399,16 +362,11 @@ raptor.defineClass(
                                 _type: OBJECT,
                                 
                                 _begin: function() {
-                                    return {
-                                        
-                                    };
+                                    return new Function();
                                 },
                                 
                                 _end: function(func) {
-                                    if (!taglib.functions) {
-                                        taglib.functions = [];
-                                    }
-                                    taglib.functions.push(func);
+                                    taglib.addFunction(func);
                                 },
                                 
                                 "name": {

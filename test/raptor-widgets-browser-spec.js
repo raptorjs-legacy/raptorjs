@@ -45,14 +45,21 @@ describe('widgets module in the browser', function() {
                 var PageWidget = raptor.require('pages.widgets.PageWidget');
                 window.initWidgets();
                 window.$(function() {
-                    expect(PageWidget.instance).toNotEqual(null);
-                    expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
-                    expect(PageWidget.instance.getDoc().getWidget('button1').getEl().id).toEqual("myButton");
-                    expect(PageWidget.instance.getDoc().getWidget('button1').getRootEl().id).toEqual("myButton");
-                    expect(PageWidget.instance.getDoc().getWidget('button1').$().prop("id")).toEqual("myButton");
-                    expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
-                    expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
-                    expect(PageWidget.instance.$("#myDiv .mySpan").prop("className")).toEqual("mySpan");
+                    try
+                    {
+                        expect(PageWidget.instance).toNotEqual(null);
+                        expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
+                        expect(PageWidget.instance.getDoc().getWidget('button1').getEl().id).toEqual("myButton");
+                        expect(PageWidget.instance.getDoc().getWidget('button1').getRootEl().id).toEqual("myButton");
+                        expect(PageWidget.instance.getDoc().getWidget('button1').$().prop("id")).toEqual("myButton");
+                        expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
+                        expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
+                        expect(PageWidget.instance.$("#myDiv .mySpan").prop("className")).toEqual("mySpan");    
+                    }
+                    catch(e) {
+                        console.error('Error: ' + e, e.stack);
+                    }
+                    
                     done();
                 });
                 

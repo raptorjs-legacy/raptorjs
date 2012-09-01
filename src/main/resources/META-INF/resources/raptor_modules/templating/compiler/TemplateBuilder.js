@@ -211,7 +211,11 @@ raptor.defineClass(
                         else if (typeof argsString === 'function') {
                             argsString.call(thisObj);
                         }
+                        else if (argsString instanceof Expression) {
+                            this.javaScriptCode.append(argsString.toString());
+                        }
                         else {
+                            console.error('Illegal argsString: ', argsString);
                             throw raptor.createError(new Error("Illegal state"));
                         }
                         

@@ -229,8 +229,8 @@ raptor.defineClass(
              */
             createTagHandlerNode: function(uri, localName) {
                 var TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode");
-                var tagDef = this.taglibs.getTagDef(uri, localName);
-                var tagHandlerNode = new TagHandlerNode(tagDef);
+                var tag = this.taglibs.getTag(uri, localName);
+                var tagHandlerNode = new TagHandlerNode(tag);
                 return tagHandlerNode;
             },
             
@@ -258,9 +258,9 @@ raptor.defineClass(
             },
             
             getNodeClass: function(uri, localName) {
-                var tagDef = this.taglibs.getTagDef(uri, localName);
-                if (tagDef && tagDef.compilerClass) {
-                    return raptor.require(tagDef.compilerClass);
+                var tag = this.taglibs.getTag(uri, localName);
+                if (tag && tag.compilerClass) {
+                    return raptor.require(tag.compilerClass);
                 }
                 throw raptor.createError(new Error('Node class not found for uri "' + uri + '" and localName "' + localName + '"'));
             }

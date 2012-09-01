@@ -55,6 +55,8 @@ raptor.defineClass(
                     contentAttr,
                     replaceAttr,
                     replaced,
+                    uri,
+                    tag,
                     forEachProp = function(callback, thisObj) {
                         forEach(node.getAttributes(), function(attr) {
 
@@ -63,18 +65,23 @@ raptor.defineClass(
                             }
                             var prefix = attr.prefix;
                             
-                            var attrUri = attr.prefix && (attr.uri != tagDef.taglib.uri) ? attr.uri : null;
+                            var attrUri = attr.prefix && (attr.uri != tag.getTaglibUri()) ? attr.uri : null;
                             
-                            var attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
-                            if (!attrDef && attrUri) {
-                                //Try again with the short name for the URI in that's how the attribute was defined
-                                attrUri = compiler.taglibs.resolveShortName(attrUri);
-                                attrDef = tagDef.getAttributeDef(attrUri, attr.localName);
-                            }
+                            var attrDef = compiler.taglibs.getAttribute(uri, node.localName, attrUri, attr.localName);
+                            
                             var type = attrDef ? (attrDef.type || 'string') : 'string',
-                                value,
-                                uri = attr.uri;
+                                value;
                                 
+                            if (attr.uri === tag.getTaglibUri()) {
+                                prefix = '';
+                            }
+                            
+                            if (!attrDef && !tag.dynamicAttributes) {
+                                //Tag doesn't allow dynamic attributes
+                                node.addError('The tag "' + tag.name + '" in taglib "' + tag.getTaglibUri() + '" does not support attribute "' + attr + '"');
+                                return;
+                            }
+                            
                             try
                             {
                                 value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true);
@@ -83,18 +90,13 @@ raptor.defineClass(
                                 node.addError('Invalid attribute value of "' + attr.value + '" for attribute "' + attr.name + '": ' + e.message);
                                 value = attr.value;
                             }
-                                
-                            if (uri === tagDef.taglib.uri) {
-                                uri = '';
-                                prefix = '';
+                            
+                            if (attrUri === 'widgets') {
+                                throw raptor.createError(new Error("INVALID WIDGETS ID ATTRIBUTE: " + attr));
                             }
                             
-                            if (!attrDef && !tagDef.dynamicAttributes) {
-                                //Tag doesn't allow dynamic attributes
-                                node.addError('The tag "' + tagDef.name + '" in taglib "' + tagDef.taglib.uri + '" does not support attribute "' + attr + '"');
-                            }
                             
-                            callback.call(thisObj, uri, attr.localName, value, prefix, attrDef);
+                            callback.call(thisObj, attrUri, attr.localName, value, prefix, attrDef);
                         }, this);
                     };
                 
@@ -232,22 +234,28 @@ raptor.defineClass(
                 
                 
                 
-                var uri = node.uri;
+                uri = node.uri;
                 
-                var tagDef = compiler.taglibs.getTagDef(uri, node.localName);
-                if (tagDef) {
-                    if (tagDef.preserveSpace) {
+                if (!uri && node.isRoot() && node.localName === 'template') {
+                    uri = coreNS;
+                }
+                
+                tag = compiler.taglibs.getTag(uri, node.localName);
+                
+
+                if (tag) {
+                    if (tag.preserveSpace) {
                         node.preserveSpace = true;
                     }
                     
-                    if (tagDef.handlerClass)
+                    if (tag.handlerClass)
                     {
                         //Instead of compiling as a static XML element, we'll
                         //make the node render as a tag handler node so that
                         //writes code that invokes the handler
                         TagHandlerNode.convertNode(
                             node, 
-                            tagDef);
+                            tag);
                         
                         forEachProp(function(uri, name, value, prefix, attrDef) {
                             if (attrDef) {
@@ -259,9 +267,9 @@ raptor.defineClass(
                             
                         });
                     }
-                    else if (tagDef.compilerClass){
+                    else if (tag.compilerClass){
                         
-                        var NodeCompilerClass = raptor.require(tagDef.compilerClass);
+                        var NodeCompilerClass = raptor.require(tag.compilerClass);
                         extend(node, NodeCompilerClass.prototype);
                         NodeCompilerClass.call(node);
                         
@@ -274,7 +282,7 @@ raptor.defineClass(
                     
                 }
                 else if (uri && compiler.taglibs.isTaglib(uri)) {
-                    node.addError('Tag ' + node.toString() + ' is not allowed in taglib "' + uri + '"');
+                    node.addError('Tag ' + node.toString() + ' is not allowed for taglib "' + uri + '"');
                 }
             }
         };

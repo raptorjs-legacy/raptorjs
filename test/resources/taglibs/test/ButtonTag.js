@@ -9,7 +9,7 @@ raptor.defineClass(
                     "taglibs/test/Button",
                     {
                         label: input.label,
-                        widgetContext: input.widgetContext,
+                        widgetArgs: input.widgetArgs,
                         widgetConfig: {
                             disabled: disabled
                         },

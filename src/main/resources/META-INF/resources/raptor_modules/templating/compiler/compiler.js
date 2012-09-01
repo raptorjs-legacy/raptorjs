@@ -176,6 +176,10 @@ startTagOnly: {
                 taglibs.add(taglib); 
             },
             
+            clearTaglibs: function() {
+                taglibs = new TaglibCollection();
+            },
+            
             hasTaglib: function(uri) {
                 return taglibs.isTaglib(uri);
             },

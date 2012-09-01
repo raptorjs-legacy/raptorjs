@@ -5,19 +5,13 @@
     <short-name>widgets</short-name>
     <uri>http://raptorjs.org/templates/widgets</uri>
     
+    <attribute name="id" type="string"/>
+    <attribute name="widget" type="string"/>
+    
     <tag>
         
         <name>*</name> 
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
-        
-        <attribute>
-            <name>id</name>
-            <type>string</type>
-        </attribute>
-        
-        <attribute>
-            <name>widget</name>
-        </attribute>
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
@@ -34,8 +28,8 @@
         
         <nested-variable name="widget"/>
         
-        <imported-variable property-name="config" expression="data.widgetConfig"/>
-        <imported-variable property-name="widgetContext" expression="data.widgetContext"/>
+        <imported-variable target-property="config" expression="data.widgetConfig"/>
+        <imported-variable target-property="widgetArgs" expression="data.widgetArgs"/>
     </tag>
     
     <tag>

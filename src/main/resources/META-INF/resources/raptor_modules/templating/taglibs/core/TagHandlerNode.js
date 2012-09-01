@@ -39,8 +39,7 @@ raptor.defineClass(
                 
             },
             getPropsStr = function(props, template) {
-                var propsStr,
-                propsArray = [];
+                var propsArray = [];
             
                 if (props) {
                     forEachEntry(props, function(name, value) {
@@ -67,17 +66,17 @@ raptor.defineClass(
                 }
             };
         
-        var TagHandlerNode = function(tagDef) {
+        var TagHandlerNode = function(tag) {
             if (!this.nodeType) {
                 TagHandlerNode.superclass.constructor.call(this);
             }
-            this.tagDef = tagDef;
+            this.tag = tag;
             this.dynamicAttributes = null;
         };
         
-        TagHandlerNode.convertNode = function(node, tagDef) {
+        TagHandlerNode.convertNode = function(node, tag) {
             extend(node, TagHandlerNode.prototype);
-            TagHandlerNode.call(node, tagDef);
+            TagHandlerNode.call(node, tag);
         };
         
         TagHandlerNode.prototype = {
@@ -104,10 +103,10 @@ raptor.defineClass(
                 ///////////////////
                 
                 
-                var handlerVar = addHandlerVar(template, this.tagDef.handlerClass);
+                var handlerVar = addHandlerVar(template, this.tag.handlerClass);
                 
-                forEach(this.tagDef.importedVariables, function(importedVariable) {
-                    this.setProperty(importedVariable.propertyName, new Expression(importedVariable.expression));
+                forEach(this.tag.importedVariables, function(importedVariable) {
+                    this.setProperty(importedVariable.targetProperty, new Expression(importedVariable.expression));
                 }, this);
                 
                 
@@ -127,7 +126,7 @@ raptor.defineClass(
                             if (this.hasChildren()) {
                                 var bodyParams = [];
                                 
-                                forEach(this.tagDef.nestedVariables, function(v) {
+                                forEach(this.tag.nestedVariables, function(v) {
                                     bodyParams.push(v.name);
                                 });
                                 

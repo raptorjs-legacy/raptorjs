@@ -26,7 +26,7 @@
         
         <attribute name="title"/>
         
-        <imported-variable property-name="tabs" expression="tabs"/>
+        <imported-variable target-property="tabs" expression="tabs"/>
     </tag>
     
     <tag>

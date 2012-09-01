@@ -30,7 +30,7 @@
         
         <attribute name="title"/>
         
-        <imported-variable property-name="tabs" expression="tabs"/>
+        <imported-variable target-property="tabs" expression="tabs"/>
     </tag>
     
     <tag>
@@ -40,7 +40,7 @@
         <attribute name="label"/>
         <attribute name="type"/>
         <attribute name="disabled" type="boolean"/>
-        <attribute name="id" uri="http://raptorjs.org/templates/widgets" type="string"/>
+        <attribute name="id" uri="http://raptorjs.org/templates/widgets"/>
     </tag>
     
     <tag>

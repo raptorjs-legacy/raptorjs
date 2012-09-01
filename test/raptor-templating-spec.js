@@ -552,7 +552,7 @@ describe('templating module', function() {
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
-        var output = compileAndRender("/test-templates/widgets.rhtml", "widgets", {});
+        var output = compileAndRender("/test-templates/widgets.rhtml", {});
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
     });
 });

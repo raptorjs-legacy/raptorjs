@@ -330,9 +330,15 @@ helpers = {
                            window.console = console;
                            window.DOMParser = DOMParser;
                            
-                           config.ready(window, window.raptor, function() {
+                           try {
+                               config.ready(window, window.raptor, function() {
+                                   done = true;
+                               });
+                           }
+                           catch(e) {
+                               console.error("Error in ready function: " + e);
                                done = true;
-                           });
+                           }
                        }
                    });
                }

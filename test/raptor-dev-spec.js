@@ -9,6 +9,23 @@ describe('development spec', function() {
         createRaptor();
     });
     
+    xit("should allow for includes", function() {
+        var output = compileAndRender("/test-templates/include.rhtml", {});
+        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
+    });
+    
+    xit("should allow for simple template handlers", function() {
+        var output = compileAndRender("/test-templates/simple-handlers.rhtml", {dynamic: "universe"});
+        expect(output).toEqual('<ul><li>Hello world! adult=false</li><li>Hello universe! adult=true</li><li>Hello Dynamic: universe! adult=false</li></ul>');
+    });
+    
+    xit("should allow for widgets", function() {
+        compileAndLoad("/test-templates/widgets_nested.rhtml");
+        
+        var output = compileAndRender("/test-templates/widgets.rhtml", {});
+        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
+    });
+    
     xit("should allow for dynamic attributes", function() {
         var output = compileAndRender("/test-templates/dynamic-attributes.rhtml", {});
         expect(output).toEqual('test: Hello|dynamic attributes: [class=my-class, id=myId]');

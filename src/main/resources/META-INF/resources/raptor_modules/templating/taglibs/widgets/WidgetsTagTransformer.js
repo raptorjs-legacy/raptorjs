@@ -25,11 +25,23 @@ raptor.defineClass(
             process: function(node, compiler, template) {
                 var id,
                     widgetAttr;
-                
+//                var widgetProps = node.getPropertiesNS(widgetsNS);;
+//                if (widgetProps) {
+//                    raptor.forEachEntry(function(name, value) {
+//                        if (name === 'id') {
+//                            
+//                        }
+//                    })
+//                }
+//                
+//                if ((id = node.getPropertyNS(widgetsNS, "id"))) {
+//                    node.removePropertyNS(widgetsNS, "id");
+//                    widgetProps[id] = id;
+//                }
                 
                 if ((id = node.getPropertyNS(widgetsNS, "id"))) {
                     node.removePropertyNS(widgetsNS, "id");
-                    node.setProperty("widgetContext", template.makeExpression("[widget, " + id + "]"));
+                    node.setProperty("widgetArgs", template.makeExpression("[widget, " + id + "]"));
                 }
                 
                 if ((widgetAttr = node.getAttributeNS(widgetsNS, "widget"))) {
@@ -39,7 +51,6 @@ raptor.defineClass(
                     node.parentNode.replaceChild(widgetNode, node);
                     widgetNode.appendChild(node);
                     widgetNode.setProperty("jsClass", widgetAttr);
-                    widgetNode.setProperty("widgetContext", template.makeExpression("[widget, " + id + "]"));
                     
                     var elId = node.getAttribute("id");
                     if (elId) {

@@ -5,6 +5,7 @@ raptor.defineClass(
         return {
             process: function(input, context) {
                 var disabled = input.disabled === true;
+                
                 context.renderTemplate(
                     "components/widgets/Button",
                     {
@@ -14,7 +15,7 @@ raptor.defineClass(
                             disabled: disabled                            
                         },
                         invokeBody: input.invokeBody,
-                        widgetContext: input.widgetContext,
+                        widgetArgs: input.widgetArgs,
                         buttonAttrs: {
                             disabled: disabled ? null : undefined,
                             type: input.type || "button"
