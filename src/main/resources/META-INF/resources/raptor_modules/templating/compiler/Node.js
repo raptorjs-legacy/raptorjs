@@ -152,6 +152,10 @@ raptor.defineClass(
                 
             },
             
+            removePropertiesNS: function(uri) {
+                delete this.properties[uri];
+            },
+            
             forEachPropertyNS: function(uri, callback, thisObj) {
                 if (uri == null) {
                     uri = '';
