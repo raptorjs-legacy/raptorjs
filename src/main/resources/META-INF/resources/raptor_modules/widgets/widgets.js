@@ -21,18 +21,14 @@
 raptor.define('widgets', function(raptor) {
     "use strict";
 
-    var WidgetDef = function(id, type, nestedWidgetId, config, parent) {
+    var WidgetDef = function(id, type, assignedId, config, scope, events) {
         this.type = type;
         this.id = id;
-        this.nestedWidgetId = nestedWidgetId;
+        this.assignedId = assignedId;
         this.config = config;
-//        this.nestedDocId = null;
-//        this.docId = null;
-        this.parent = parent;
+        this.scope = scope;
+        this.events = events;
         this.children = [];
-        if (parent) {
-            parent.children.push(this);
-        }
     };
 
     WidgetDef.prototype = {
@@ -47,30 +43,27 @@ raptor.define('widgets', function(raptor) {
     };
     
     return {
-        addWidget: function(type, widgetId, nestedWidgetId, config, parent, context) {
+        addWidget: function(type, widgetId, assignedId, config, parent, scope, events, context) {
             
             if (!widgetId) {
                 widgetId = this._nextWidgetId(context);
             }
             
-            var widgetDef = new WidgetDef(widgetId, type, nestedWidgetId, config, parent);
-            
-            if (nestedWidgetId) {
-                if (!parent) {
-                    throw raptor.createError(new Error("Widget with an assigned ID is not scoped within another widget."));
-                }
-                widgetDef.docId = parent.id;
+            var widgetDef = new WidgetDef(widgetId, type, assignedId, config, scope, events);
+            if (parent) {
+                parent.children.push(widgetDef);
+            }
+            if (assignedId && !scope) {
+                throw raptor.createError(new Error("Widget with an assigned ID is not scoped within another widget."));
             }
             
-            
-            if (!parent) {
+            if (!parent) { //Check if it is a top-level widget
                 var attributes = context.getAttributes();
                 if (!attributes.widgets) {
                     attributes.widgets = [];
                 }
                 attributes.widgets.push(widgetDef); 
             }
-            
             
             return widgetDef;
         },

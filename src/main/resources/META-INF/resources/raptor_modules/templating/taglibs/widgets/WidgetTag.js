@@ -11,17 +11,30 @@ raptor.defineClass(
                     config = input.config,
                     widgetArgs = input.widgetArgs,
                     id = input.id,
-                    parent,
-                    nestedWidgetId;
+                    scope,
+                    assignedId,
+                    events;
                 
                 if (widgetArgs) {
-                    parent = widgetArgs[0];
-                    nestedWidgetId = widgetArgs[1];
+                    scope = widgetArgs.scope;
+                    assignedId = widgetArgs.id;
+                    events = widgetArgs.events;
                 }
-
-                var widget = widgets.addWidget(type, id, nestedWidgetId, config, parent, context);
                 
-                input.invokeBody(widget);
+                var attributes = context.getAttributes();
+                
+                var widgetStack = attributes.widgetStack || (attributes.widgetStack = []);
+                var widget = widgets.addWidget(type, id, assignedId, config, widgetStack[widgetStack.length-1], scope, events, context);
+                
+                widgetStack.push(widget);
+                try
+                {
+                    input.invokeBody(widget);    
+                }
+                finally {
+                    widgetStack.splice(widgetStack.length-1, 1);
+                }
+                
             }
         };
     });

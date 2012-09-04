@@ -6,12 +6,14 @@
     <uri>http://raptorjs.org/templates/widgets</uri>
     
     <attribute name="id" type="string"/>
-    <attribute name="widget" type="string"/>
+    <attribute pattern="event-*" type="custom" allow-expressions="false"/>
     
     <tag>
         
         <name>*</name> 
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
+        
+        <attribute name="widget" type="string"/>
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>

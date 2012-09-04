@@ -145,21 +145,22 @@ raptor.extend('widgets', function(raptor, widgets) {
                         var widgetDef = widgetDefs[i], 
                             type = widgetDef[0],
                             id = widgetDef[1],
-                            docId = widgetDef[2],
-                            childId = widgetDef[3],
+                            scope = widgetDef[2],
+                            assignedId = widgetDef[3],
                             config = widgetDef[4] || {},
-                            children = widgetDef.slice(5);
+                            events = widgetDef[5] || {},
+                            children = widgetDef.slice(6);
                         
-                        if (docId === 0) {
-                            docId = undefined;
+                        if (scope === 0) {
+                            scope = undefined;
                         }
                             
-                        if (childId === 0) {
-                            childId = undefined;
+                        if (assignedId === 0) {
+                            assignedId = undefined;
                         }
                         
                         if (config === 0) {
-                            childId = undefined;
+                            config = undefined;
                         }
                         
                         logger.debug('Creating widget of type "' + type + '" (' + id + ')');
@@ -170,8 +171,21 @@ raptor.extend('widgets', function(raptor, widgets) {
                             throw raptor.createError(new Error('Unable to initialize widget of type "' + type + '". The class for the widget was not found.'));
                         }
                         
+                        if (events) {
+                            var convertedEvents = {};
+                            raptor.forEach(events, function(event) {
+                                convertedEvents[event[0]] = {
+                                    target: event[1],
+                                    props: event[2]
+                                };
+                            }, this);  
+                            events = convertedEvents;
+                        }
+                        
+                        
                         if (originalWidgetClass.initWidget) {
                             config.elId = id;
+                            config.events = events;
                             widget = originalWidgetClass;
                             widget.onReady = widgets.onReady;
                         }
@@ -188,9 +202,7 @@ raptor.extend('widgets', function(raptor, widgets) {
                                 raptor.extend(proto, Widget, false /* don't override */);
                             }
                             
-                            widget = new WidgetClass();
-                            
-                            listeners.makeObservable(widget, proto);
+                            widget = new WidgetClass(events);
                             
                             if (!proto.notify) {
                                 proto.notify = _notify;
@@ -199,18 +211,18 @@ raptor.extend('widgets', function(raptor, widgets) {
                             
                             widget.registerMessages(['beforeDestroy', 'destroy'], false);
                             
-                            var events = proto[EVENTS] || originalWidgetClass[EVENTS];
+                            var allowedEvents = proto[EVENTS] || originalWidgetClass[EVENTS];
     
-                            if (events) {
-                                widget.registerMessages(events, false);
+                            if (allowedEvents) {
+                                widget.registerMessages(allowedEvents, false);
                             }
                             
                             widget._id = id;
-                            widget._childId = childId;
+                            widget._assignedId = assignedId;
                             widgetsById[id] = widget;
                             
-                            if (childId && docId) {
-                                widgetsById[docId]._doc.addWidget(widget, childId);
+                            if (assignedId && scope) {
+                                widgetsById[scope]._doc.addWidget(widget, assignedId);
                             }
                             
                             widget._doc = new Document(widget);

@@ -47,16 +47,29 @@ raptor.extend('widgets', function(raptor) {
                     }
                 },
                 writeWidget = function(widget) {
-                    write('["');
+                    
+                    
+                    write('\n["');
                     write(widget.type);
                     write('","');
                     write(widget.id);
                     write('",');
-                    write(widget.docId != null ? stringify(widget.docId) : "0");
+                    write(widget.scope ? stringify(widget.scope.id) : "0");
                     write(',');
-                    write(widget.nestedWidgetId ? ('"' + widget.nestedWidgetId + '"') : "0");
+                    write(widget.assignedId ? ('"' + widget.assignedId + '"') : "0");
                     write(',');
                     write(widget.config ? stringify(widget.config, {special: specialRegExp}) : "0");
+                    if (widget.events) {
+                        write(',[');
+                        widget.events.forEach(function(event) {
+                            write('["' + event[0] + '","' + event[1] + (event[2] != null ? '",' + stringify(event[2]) + ']' : ']'));
+                        });
+                        write(']');
+                    }
+                    else {
+                        write(',0');    
+                    }
+                    
                     if (widget.children.length) {
                         write(',');
                         writeWidgets(widget.children);

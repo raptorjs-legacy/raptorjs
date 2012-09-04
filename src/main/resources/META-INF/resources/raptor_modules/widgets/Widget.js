@@ -70,9 +70,61 @@ raptor.defineMixin(
              * 
              * @returns
              */
-            _init: function() {
+            _init: function(events) {
                 this._children = [];
                 this._childrenById = {};
+                this._events = events;
+            },
+            
+            /**
+             * 
+             * @returns
+             */
+            getObservable: function() {
+                return this._observable || (this._observable = listeners.createObservable());
+            },
+            
+            /**
+             * 
+             * @param allowedMessages
+             * @param createFuncs
+             * @returns
+             */
+            registerMessages: function(allowedMessages, createFuncs) {
+                this.getObservable().registerMessages.apply(this, arguments);
+            },
+            
+            /**
+             * 
+             * @param message
+             * @param props
+             * @returns
+             */
+            publish: function(message, props) {
+                var ob = this.getObservable();
+                ob.publish.apply(ob, arguments);
+                var pubsubEvent;
+                
+                if (this._events && (pubsubEvent = this._events[message])) {
+                    
+                    if (pubsubEvent.props) {
+                        props = raptor.extend(props || {}, pubsubEvent.props); 
+                    }
+                    raptor.require('pubsub').publish(pubsubEvent.target, props);
+                    
+                }
+            },
+            
+            /**
+             * 
+             * @param message
+             * @param callback
+             * @param thisObj
+             * @returns
+             */
+            subscribe: function(message, callback, thisObj) {
+                var ob = this.getObservable();
+                return ob.subscribe.apply(ob, arguments);
             },
             
             /**
@@ -80,7 +132,6 @@ raptor.defineMixin(
              * widget element ID. 
              * 
              * <p>
-             * SUMMARIZE_TEST
              * Widget element IDs are generated at render
              * time using the following EL expression:<br>
              * <code>${widget.elId(widgetElId)}</code>
@@ -89,7 +140,7 @@ raptor.defineMixin(
              * the ID of the root element is returned.
              * Root widget element IDs are generated at render
              * time using the following EL expression:<br>
-             * <html>${widget.elId}</html>
+             * <html>${widget.elId()}</html>
              * 
              * <p>
              * The DOM element ID is resolved by prefixing the provided
