@@ -41,6 +41,8 @@
         <attribute name="type"/>
         <attribute name="disabled" type="boolean"/>
         <attribute name="id" uri="http://raptorjs.org/templates/widgets"/>
+        
+        <attribute name="event-click" uri="http://raptorjs.org/templates/widgets"/>
     </tag>
     
     <tag>

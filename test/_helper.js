@@ -148,7 +148,7 @@ var readTemplate = function(path) {
                 eval(compiledSrc);
             }
             catch(e) {
-                console.error('Unable to compile and load template at path "' + templatePath + '". Exception: ' + e + '\nStack: ' + e.stack);
+                console.error('Unable to compile and load template at path "' + templatePath + '". Exception: ' + e + '\nStack: ' + e.stack + "\n\nSource: " + compiledSrc);
                 throw new Error('Unable to compile and load template at path "' + templatePath + '". Exception: ' + e);
             }
             
