@@ -259,8 +259,8 @@ raptor.defineClass(
             
             getNodeClass: function(uri, localName) {
                 var tag = this.taglibs.getTag(uri, localName);
-                if (tag && tag.compilerClass) {
-                    return raptor.require(tag.compilerClass);
+                if (tag && tag.nodeClass) {
+                    return raptor.require(tag.nodeClass);
                 }
                 throw raptor.createError(new Error('Node class not found for uri "' + uri + '" and localName "' + localName + '"'));
             }

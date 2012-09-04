@@ -267,9 +267,9 @@ raptor.defineClass(
                             
                         });
                     }
-                    else if (tag.compilerClass){
+                    else if (tag.nodeClass){
                         
-                        var NodeCompilerClass = raptor.require(tag.compilerClass);
+                        var NodeCompilerClass = raptor.require(tag.nodeClass);
                         extend(node, NodeCompilerClass.prototype);
                         NodeCompilerClass.call(node);
                         

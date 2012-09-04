@@ -211,9 +211,9 @@ raptor.defineClass(
                                     _type: STRING,
                                     _targetProp: "handlerClass"
                                 },
-                                "compiler-class": {
+                                "node-class": {
                                     _type: STRING,
-                                    _targetProp: "compilerClass"
+                                    _targetProp: "nodeClass"
                                 },
                                 "dynamic-attributes": {
                                     _type: BOOLEAN,
