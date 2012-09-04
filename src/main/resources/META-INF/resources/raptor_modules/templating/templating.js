@@ -240,7 +240,10 @@ raptor.define('templating', function(raptor) {
                 var Handler = raptor.require(name), //Load the handler class
                     instance;
                 
-                if (!(instance = Handler.instance)) { //See if an instance has already been created
+                if (Handler.process) {
+                    instance = Handler;
+                }
+                else if (!(instance = Handler.instance)) { //See if an instance has already been created
                     instance = Handler.instance = new Handler(); //If not, create and store a new instance
                 }
                 
