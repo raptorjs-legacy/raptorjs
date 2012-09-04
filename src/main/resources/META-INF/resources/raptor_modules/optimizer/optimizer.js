@@ -16,7 +16,7 @@ raptor.define(
             
             createOptimizer: function(config, params) {
                 if (typeof config === 'string') {
-                    config = this.loadConfigXml(config);
+                    config = this.loadConfigXml(config, params);
                 }
                 
                 var OptimizerEngine = raptor.require('optimizer.OptimizerEngine');
