@@ -22,8 +22,6 @@ raptor.defineClass(
         var extend = raptor.extend,
             forEach = raptor.forEach,
             coreNS = "http://raptorjs.org/templates/core",
-            errors = raptor.errors,
-            Node = raptor.require('templating.compiler.Node'),
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),
             ForNode = raptor.require("templating.taglibs.core.ForNode"),
             IfNode = raptor.require("templating.taglibs.core.IfNode"),
@@ -43,10 +41,8 @@ raptor.defineClass(
             
             process: function(node, compiler) {
                 
-                var _this = this,
-                    forEachAttr,
+                var forEachAttr,
                     ifAttr,
-                    elseAttr,
                     elseIfAttr,
                     attrsAttr,
                     whenAttr,
@@ -54,7 +50,6 @@ raptor.defineClass(
                     stripAttr,
                     contentAttr,
                     replaceAttr,
-                    replaced,
                     uri,
                     tag,
                     forEachProp = function(callback, thisObj) {
@@ -64,6 +59,8 @@ raptor.defineClass(
                                 return; //Skip xmlns attributes
                             }
                             var prefix = attr.prefix;
+                            
+                            
                             
                             var attrUri = attr.prefix && (attr.uri != tag.getTaglibUri()) ? attr.uri : null;
                             
@@ -76,7 +73,9 @@ raptor.defineClass(
                                 prefix = '';
                             }
                             
-                            if (!attrDef && !tag.dynamicAttributes) {
+                            var isTaglibUri = compiler.taglibs.isTaglib(attr.uri);
+                            
+                            if (!attrDef && (isTaglibUri || !tag.dynamicAttributes)) {
                                 //Tag doesn't allow dynamic attributes
                                 node.addError('The tag "' + tag.name + '" in taglib "' + tag.getTaglibUri() + '" does not support attribute "' + attr + '"');
                                 return;
@@ -90,11 +89,6 @@ raptor.defineClass(
                                 node.addError('Invalid attribute value of "' + attr.value + '" for attribute "' + attr.name + '": ' + e.message);
                                 value = attr.value;
                             }
-                            
-                            if (attrUri === 'widgets') {
-                                throw raptor.createError(new Error("INVALID WIDGETS ID ATTRIBUTE: " + attr));
-                            }
-                            
                             
                             callback.call(thisObj, attrUri, attr.localName, value, prefix, attrDef);
                         }, this);
@@ -189,7 +183,7 @@ raptor.defineClass(
                     elseIfNode.appendChild(node);
                 }
                 
-                if ((elseAttr = node.getAttributeNS(coreNS, "else")) != null) {
+                if ((node.getAttributeNS(coreNS, "else")) != null) {
                     node.removeAttributeNS(coreNS, "else");
                     
                     var elseNode = new ElseNode({
