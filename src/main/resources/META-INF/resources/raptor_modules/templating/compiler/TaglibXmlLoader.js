@@ -210,7 +210,20 @@ raptor.defineClass(
                                     _type: STRING
                                 },
                                 "preserveSpace": {
-                                    _type: BOOLEAN
+                                    _type: BOOLEAN,
+                                    _targetProp: "preserveWhitespace"
+                                },
+                                "preserve-space": {
+                                    _type: BOOLEAN,
+                                    _targetProp: "preserveWhitespace"
+                                },
+                                "preserve-whitespace": {
+                                    _type: BOOLEAN,
+                                    _targetProp: "preserveWhitespace"
+                                },
+                                "preserveWhitespace": {
+                                    _type: BOOLEAN,
+                                    _targetProp: "preserveWhitespace"
                                 },
                                 "extends": {
                                     _type: STRING,

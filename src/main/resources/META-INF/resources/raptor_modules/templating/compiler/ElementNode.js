@@ -174,22 +174,26 @@ raptor.defineClass(
              * 
              * @returns {Boolean}
              */
-            isPreserveSpace: function() {
-                return this.preserveSpace === true || this.getAttributeNS(XML_URI, "space") === "preserve" || this.getAttributeNS(XML_URI_ALT, "space") === "preserve" || this.getAttribute("xml:space") === "preserve"; 
+            isPreserveWhitespace: function() {
+                var preserveSpace = ElementNode.superclass.isPreserveWhitespace.call(this);
+                
+                if (preserveSpace === true) {
+                    return true;
+                }
+                
+                var preserveAttr = this.getAttributeNS(XML_URI, "space") || this.getAttributeNS(XML_URI_ALT, "space") || this.getAttribute("xml:space") === "preserve";
+                if (preserveAttr === 'preserve') {
+                    return true;
+                }
+                
+                
+                return preserveSpace; 
             },
             
             removePreserveSpaceAttr: function() {
                 this.removeAttributeNS(XML_URI, "space");
                 this.removeAttributeNS(XML_URI_ALT, "space");
                 this.removeAttribute("space");
-            },
-            
-            /**
-             * 
-             * @param preserve
-             */
-            setPreserveSpace: function(preserve) {
-                this.preserveSpace = preserve;
             },
             
             setStripExpression: function(stripExpression) {
@@ -207,11 +211,11 @@ raptor.defineClass(
             },
             
             generateBeforeCode: function(template) {
-                var preserveSpace = this.preserveSpace = this.isPreserveSpace();
+                var preserveWhitespace = this.preserveWhitespace = this.isPreserveWhitespace();
                 
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
-                if (preserveSpace) {
+                if (preserveWhitespace) {
                     this.removePreserveSpaceAttr();
                 }
                 

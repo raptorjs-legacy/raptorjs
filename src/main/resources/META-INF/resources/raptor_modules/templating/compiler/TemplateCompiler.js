@@ -159,7 +159,6 @@ raptor.defineClass(
                      * The tree has been transformed and we can now generate
                      */
                     rootNode.generateCode(templateBuilder); //Generate the code and have all output be managed by the TemplateBuilder
-//                    console.log('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                 }
                 catch(e) {
                     throw raptor.createError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
@@ -170,6 +169,7 @@ raptor.defineClass(
                 }
                 
                 var output = templateBuilder.getOutput(); //Get the compiled output from the template builder
+                //console.error('COMPILED TEMPLATE (' + filePath + ')\n', '\n' + output, '\n------------------');
                 
                 if (minifier && this.options.minify === true) {
                     output = minifier.minify(output);

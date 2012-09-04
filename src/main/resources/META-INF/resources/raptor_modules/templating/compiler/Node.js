@@ -27,6 +27,7 @@ raptor.defineClass(
         var Node = function(nodeType) {
             if (!this.nodeType) {
                 this._isRoot = false;
+                this.preserveWhitespace = null;
                 this.nodeType = nodeType;
                 this.parentNode = null;
                 this.previousSibling = null;
@@ -420,11 +421,17 @@ raptor.defineClass(
             generateCode: function(template) {
                 this.compiler = template.compiler;
                 
-                var preserveSpace = this.preserveSpace || (this.isPreserveSpace && this.isPreserveSpace());
-                
-                if (preserveSpace) {
-                    template.beginPreserveWhitespace();
+                var preserveWhitespace = this.isPreserveWhitespace();
+                if (preserveWhitespace == null) {
+                    preserveWhitespace = template.options.preserveWhitespace;
+                    if (preserveWhitespace === true || (preserveWhitespace && preserveWhitespace["*"])) {
+                        this.setPreserveWhitespace(true);
+                    }
+                    else {
+                        this.setPreserveWhitespace(false);
+                    }
                 }
+                
                 try
                 {
                     if (!this.stripExpression || this.stripExpression.toString() === 'false') {
@@ -470,10 +477,22 @@ raptor.defineClass(
                 catch(e) {
                     throw raptor.createError(new Error("Unable to generate code for node " + this + " at position [" + this.getPosition() + "]. Exception: " + e), e);
                 }
-                
-                if (preserveSpace) {
-                    template.endPreserveWhitespace();
-                }
+            },
+            
+            /**
+             * 
+             * @returns {Boolean}
+             */
+            isPreserveWhitespace: function() {
+                return this.preserveWhitespace; 
+            },
+            
+            /**
+             * 
+             * @param preserve
+             */
+            setPreserveWhitespace: function(preserve) {
+                this.preserveWhitespace = preserve;
             },
             
             doGenerateCode: function(template) {
@@ -490,6 +509,10 @@ raptor.defineClass(
                 }
                 
                 this.forEachChild(function(childNode) {
+                    if (childNode.isPreserveWhitespace() == null) {
+                        childNode.setPreserveWhitespace(this.isPreserveWhitespace() === true);
+                    }
+                    
                     childNode.generateCode(template);
                 }, this);
                 

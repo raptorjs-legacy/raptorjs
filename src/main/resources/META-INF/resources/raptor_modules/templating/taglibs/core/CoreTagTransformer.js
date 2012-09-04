@@ -95,6 +95,13 @@ raptor.defineClass(
                     };
                 
                 
+                if (node.getAttributeNS(coreNS, "space") === "preserve" || node.getAttributeNS(coreNS, "whitespace") === "preserve") {
+                    node.setPreserveWhitespace(true);
+                }
+                node.removeAttributeNS(coreNS, "space");
+                node.removeAttributeNS(coreNS, "whitespace");
+                
+                
                 if ((parseBodyTextAttr = node.getAttributeNS(coreNS, "parseBodyText")) != null) {
                     node.removeAttributeNS(coreNS, "parseBodyText");
                     node.parseBodyText = parseBodyTextAttr !== "false";
@@ -238,8 +245,8 @@ raptor.defineClass(
                 
 
                 if (tag) {
-                    if (tag.preserveSpace) {
-                        node.preserveSpace = true;
+                    if (tag.preserveWhitespace) {
+                        node.setPreserveWhitespace(true);
                     }
                     
                     if (tag.handlerClass)

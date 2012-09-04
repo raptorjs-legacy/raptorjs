@@ -29,7 +29,7 @@ raptor.defineClass(
             doGenerateCode: function(template) {
                 var text = this.text;
                 if (text) {
-                    var preserveWhitespace = template.isPreserveWhitespace();
+                    var preserveWhitespace = this.isPreserveWhitespace();
                     
                     if (!preserveWhitespace) {
                         text = this.text.replace(/(^\n\s*|\n\s*$)/g, "").replace(/\s+/g, " ");

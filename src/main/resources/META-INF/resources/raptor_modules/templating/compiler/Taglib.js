@@ -93,6 +93,7 @@ raptor.defineClass(
                 this.transformers = [];
                 this.nestedVariables = [];
                 this.importedVariables = [];
+                this.preserveWhitespace = false;
                 this._taglib = null;
             };
             

@@ -30,8 +30,11 @@ raptor.defineClass(
                     var startTagOnly = options.startTagOnly || {};
                     
                     var lookupKey = node.uri ? node.uri + ":" + node.localName : node.localName;
-                    if (preserveWhitespace[lookupKey] === true) {
-                        node.setPreserveSpace(true);
+                    
+                    if (node.isPreserveWhitespace() == null) {
+                        if (preserveWhitespace[lookupKey] === true) {
+                            node.setPreserveWhitespace(true);
+                        }    
                     }
                     
                     if (allowSelfClosing[lookupKey] === false) {

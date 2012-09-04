@@ -47,9 +47,6 @@ raptor.defineClass(
             this.getStaticHelperFunction("empty", "e");
             this.getStaticHelperFunction("notEmpty", "ne");
             
-            this.preserveWhitespace = 0;
-            
-            
             this._indent = INDENT + INDENT;
         };
         
@@ -57,22 +54,6 @@ raptor.defineClass(
             getTemplateName: function() {
                 var options = this.options || {};
                 return options.templateName || this.templateName || options.defaultTemplateName;
-            },
-            
-            beginPreserveWhitespace: function() {
-                this.preserveWhitespace++;
-            },
-            
-            endPreserveWhitespace: function() {
-                this.preserveWhitespace--;
-            },
-            
-            isPreserveWhitespace: function() {
-                var preserveWhitespace = this.options.preserveWhitespace;
-                
-                return this.preserveWhitespace > 0 || 
-                    (preserveWhitespace === true) || 
-                    (preserveWhitespace && preserveWhitespace["*"]);
             },
 
             _getHelperFunction: function(varName, propName, isStatic) {

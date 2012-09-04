@@ -48,6 +48,18 @@
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
         
         <attribute>
+            <name>space</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>whitespace</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
             <name>for</name>
             <allow-expressions>false</allow-expressions>
         </attribute>

@@ -314,7 +314,7 @@ describe('templating module', function() {
     
     it("should allow whitespace to be removed", function() {
         var output = compileAndRender("/test-templates/whitespace.rhtml", {});
-        expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines.<ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div>begin end");
+        expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines.<ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div><div>\n   begin      end     \n</div>begin end");
     });
     
     it("should handle whitespace when using expressions", function() {
