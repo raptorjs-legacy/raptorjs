@@ -19,8 +19,6 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var extend = raptor.extend;
-        
         var Taglib = function() {
             this.uri = null;
             this.shortName = null;
@@ -28,6 +26,8 @@ raptor.defineClass(
             this.textTransformers = [];
             this.attributeMap = {};
             this.functions = [];
+            
+            this.patternAttributes = [];
         };
         
         Taglib.prototype = {
@@ -37,11 +37,26 @@ raptor.defineClass(
                     throw raptor.createError(new Error('"uri" is not allowed for taglib attributes'));
                 }
                 
-                this.attributeMap[attribute.name] = attribute;
+                if (attribute.name) {
+                    this.attributeMap[attribute.name] = attribute;    
+                }
+                else {
+                    this.patternAttributes.push(attribute);
+                }
             },
             
             getAttribute: function(name) {
-                return this.attributeMap[name];
+                var attribute = this.attributeMap[name];
+                if (!attribute) {
+                    for (var i=0, len=this.patternAttributes.length; i<len; i++) {
+                        var patternAttribute = this.patternAttributes[i];
+                        if (patternAttribute.pattern.test(name)) {
+                            attribute = patternAttribute;
+                        }
+                    }
+                }
+                
+                return attribute;
             },
             
             addTag: function(tag) {

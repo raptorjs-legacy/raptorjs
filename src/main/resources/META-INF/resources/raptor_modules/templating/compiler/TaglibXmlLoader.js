@@ -20,6 +20,7 @@ raptor.defineClass(
         "use strict";
         
         var objectMapper = raptor.require('xml.sax.object-mapper'),
+            regexp = raptor.require('regexp'),
             Taglib = raptor.require('templating.compiler.Taglib'),
             Tag = Taglib.Tag,
             Attribute = Taglib.Attribute,
@@ -114,6 +115,14 @@ raptor.defineClass(
                         
                         "name": {
                             _type: STRING
+                        },
+                        
+                        "pattern": {
+                            _type: STRING,
+                            _set: function(parent, name, value) {
+                                var patternRegExp = regexp.simple(value);
+                                parent.pattern = patternRegExp;
+                            }
                         },
                         
                         "uri": {
