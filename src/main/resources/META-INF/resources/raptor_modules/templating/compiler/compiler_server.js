@@ -119,18 +119,6 @@ raptor.extend(
                         this.discoverTaglibs(); //If the search path is modified then rediscover the taglibs
                     }, this);
                 }
-            },
-            
-            /**
-             * 
-             * @param taglibXml
-             * @param path
-             * @returns
-             */
-            compileTaglib: function(taglibXml, path) {
-                var TaglibXmlLoader = raptor.require("templating.compiler.TaglibXmlLoader");
-                var taglib = TaglibXmlLoader.load(taglibXml, path);
-                return "$rtld(" + json.stringify(taglib) + ")";
             }
            
         };
