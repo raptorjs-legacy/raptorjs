@@ -38,10 +38,19 @@ raptor.defineClass(
             };
         
         var Expression = function(expression, replaceSpecialOperators) {
+
             if (replaceSpecialOperators !== false && typeof expression === 'string') {
                 expression = handleBinaryOperators(expression);
             }
-            this.expression = expression;
+
+            try {
+                eval('var func = function() { return ' + expression + ';};');
+                this.expression = expression;
+            }
+            catch(e) {
+                throw new Error('Invalid expression "' + expression + '" - ' + e.message);
+            }
+            
         };
         
         Expression.prototype = {
