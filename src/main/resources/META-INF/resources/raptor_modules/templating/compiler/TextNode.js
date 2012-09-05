@@ -32,7 +32,21 @@ raptor.defineClass(
                     var preserveWhitespace = this.isPreserveWhitespace();
                     
                     if (!preserveWhitespace) {
-                        text = this.text.replace(/(^\n\s*|\n\s*$)/g, "").replace(/\s+/g, " ");
+                        
+                        if (!this.previousSibling) {
+                            //First child
+                            text = text.replace(/^\n\s*/g, "");  
+                        }
+                        if (!this.nextSibling) {
+                            //Last child
+                            text = text.replace(/\n\s*$/g, ""); 
+                        }
+                        
+                        if (/^\n\s*$/.test(text)) { //Whitespace between elements
+                            text = '';
+                        }
+                        
+                        text = text.replace(/\s+/g, " ");
                     }
 
                     template.addText(text);
