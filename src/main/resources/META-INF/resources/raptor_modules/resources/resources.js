@@ -19,6 +19,9 @@ $rload(function(raptor) {
     
     raptor.resources = {
             
+        isResource: function(o) {
+            return o instanceof raptor.require('resources.Resource');
+        }
     };
     
 });
