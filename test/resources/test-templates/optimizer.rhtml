@@ -1,0 +1,14 @@
+<c:template
+    xmlns:c="core"
+    xmlns:optimizer="optimizer">
+    
+    <optimizer:page name="test" package="optimizer-package.json"/>
+    <html>
+        <head>
+            <optimizer:slot name="head"/>
+        </head>
+        <body>
+            <optimizer:slot name="body"/>
+        </body>
+    </html>
+</c:template>

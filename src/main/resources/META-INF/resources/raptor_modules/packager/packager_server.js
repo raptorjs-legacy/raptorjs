@@ -141,7 +141,7 @@ $rload(function(raptor) {
             var resources = raptor.resources,
                 packageResource;
             
-            if (resources.isResourceInstance(resourcePath)) {
+            if (resources.isResource(resourcePath)) {
                 packageResource = resourcePath;
                 resourcePath = packageResource.getPath();
             }
@@ -156,11 +156,6 @@ $rload(function(raptor) {
             var manifest = packageManifests[packageResource.getSystemPath()];
             if (manifest === undefined)
             {
-                if (!packageResource.exists())
-                {
-                    return null;
-                }
-                   
                 var packageJson = packageResource.readFully(),
                     loadedManifest;
                 try

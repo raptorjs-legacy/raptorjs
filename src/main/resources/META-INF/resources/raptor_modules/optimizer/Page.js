@@ -20,6 +20,7 @@ raptor.defineClass(
             this.watching = false;
             this.watchers = [];
             this.includeCache = {};
+            this.pageKey = null;
             
             raptor.require('listeners').makeObservable(this, Page.prototype, ["modified"]);
             
@@ -128,6 +129,10 @@ raptor.defineClass(
             },
             toString: function() {
                 return "[Page name=" + this.name + "]";
+            },
+            
+            getKey: function() {
+                return this.pageKey || this.getName();
             }
         };
         

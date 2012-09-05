@@ -208,7 +208,7 @@ $rload(function(raptor) {
             return pathParts.join('/');  
         },
         
-        isResourceInstance: function(o) {
+        isResource: function(o) {
             return o instanceof Resource;
         },
         

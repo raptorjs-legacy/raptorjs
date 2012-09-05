@@ -47,6 +47,10 @@ raptor.defineClass(
                 }, this);
             },
             
+            registerPage: function(pageConfig) {
+                return this.config.registerPage(pageConfig);
+            },
+            
             getPage: function(name) {
                 return this.config.getPage(name);
             },
@@ -413,6 +417,10 @@ raptor.defineClass(
                         }
                     }    
                 }, this);
+            },
+            
+            configureForContext: function(context) {
+                raptor.require('optimizer').configureForContext(context, this);
             }
         };
         

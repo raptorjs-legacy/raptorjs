@@ -14,6 +14,7 @@
     "raptor-taglibs": [
         "/templating/taglibs/core/core.rtld",
         "/templating/taglibs/html/html.rtld",
+        "/templating/taglibs/optimizer/optimizer.rtld",
         "/templating/taglibs/widgets/widgets.rtld"
     ],
     

@@ -26,8 +26,18 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             forEach = raptor.forEach;
         
-        var TemplateBuilder = function(compiler, filePath) {
-            this.filePath = filePath;
+        var TemplateBuilder = function(compiler, resource) {
+            this.resource = resource;
+            
+            if (typeof resource === 'string') {
+                this.resource = null;
+                this.filePath = this.path = resource;
+            }
+            else if (raptor.require('resources').isResource(resource)) {
+                this.filePath = resource.getSystemPath();
+                this.path = resource.getPath();
+            }
+            
             this.compiler = compiler;
             this.options = compiler.options;
             this.templateName = null;
@@ -374,6 +384,14 @@ raptor.defineClass(
                 return this;
             },
             
+            getPath: function() {
+                return this.path;
+            },
+            
+            getFilePath: function() {
+                return this.filePath;
+            },
+            
             getOutput: function() {
                 if (this.hasErrors()) {
                     return '';
@@ -384,7 +402,7 @@ raptor.defineClass(
                 var templateName = this.getTemplateName();
                 if (!templateName) {
                     
-                    this.addError('Template name not defined in template at path "' + this.filePath + '"');
+                    this.addError('Template name not defined in template at path "' + this.getFilePath() + '"');
                 }
                 
                 var params = this.params;

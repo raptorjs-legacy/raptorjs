@@ -1,0 +1,26 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    <short-name>optimizer</short-name>
+    <uri>http://raptorjs.org/templates/optimizer</uri>
+
+    <tag>
+        <name>page</name>
+        <handler-class>templating.taglibs.optimizer.PageTag</handler-class>
+        
+        <!-- Add a transformer to provide the template path to the PageTag -->
+        <transformer-class>templating.taglibs.optimizer.PageTagTransformer</transformer-class>
+        
+        <attribute name="name" type="string"/>
+        <attribute name="package" type="string"/>
+    </tag>
+    
+    <tag>
+        <name>slot</name>
+        <handler-class>templating.taglibs.optimizer.SlotTag</handler-class>
+        
+        <attribute name="name" type="string"/>
+    </tag>
+    
+</raptor-taglib>

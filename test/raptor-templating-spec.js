@@ -357,7 +357,7 @@ describe('templating module', function() {
         var e;
         try
         {
-            compileAndRender("/test-templates/choose-when-invalid-otherwise-not-last.rhtml", {}, true /* invalid */);
+            compileAndRender("/test-templates/choose-when-invalid-otherwise-not-last.rhtml", {}, null /*context*/, true /* invalid */);
         }
         catch(_e) {
             e = _e;
@@ -429,10 +429,10 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("/test-templates/context-helper-functions-shortname.rhtml", {}, false, context);
+        var output = compileAndRender("/test-templates/context-helper-functions-shortname.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
-        output = compileAndRender("/test-templates/context-helper-functions-uri.rhtml", {}, false, context);
+        output = compileAndRender("/test-templates/context-helper-functions-uri.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
     });
@@ -467,7 +467,7 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("/test-templates/imports3.rhtml", {}, false, context);
+        var output = compileAndRender("/test-templates/imports3.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
     });
@@ -479,7 +479,7 @@ describe('templating module', function() {
         var tryTemplate = function(path, callback) {
             try
             {
-                compileAndRender(path, {}, true);
+                compileAndRender(path, {}, null, true /* invalid */);
                 callback("", []);
             }
             catch(e) {

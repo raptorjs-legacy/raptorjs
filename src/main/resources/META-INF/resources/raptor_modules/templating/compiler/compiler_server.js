@@ -66,7 +66,7 @@ raptor.extend(
                 
                 
                 
-                this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);
+                this.compileAndLoad(resource.readFully(), resource, options);
                 
                 if (watchingEnabled && resource.isFileResource()) {
                     raptor.require('file-watcher').watch(

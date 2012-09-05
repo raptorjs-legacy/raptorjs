@@ -72,18 +72,7 @@ raptor.defineClass(
             
             render: function(context) {
                 var optimizer = context.optimizer;
-                var includes = optimizer.getPageIncludes(this);
                 
-                if (!includes._wrapped) {
-                    /*
-                     * We wrap the includes in an object so that the HTML will not be automatically escaped
-                     */
-                    includes._wrapped = {};
-                    raptor.forEachEntry(includes, function(location, html) {
-                        includes._wrapped[location] = {toString: function() { return html; }};
-                    });
-                }
-                includes = includes._wrapped;
                 
                 
                 var templatePath = this.getViewFile().getAbsolutePath();
@@ -94,13 +83,9 @@ raptor.defineClass(
                 }
                 
                 var viewModel = this.getViewModel() || {};
-                viewModel.includes = includes;
-                
                 var renderContext = raptor.require('templating').createContext();
-                renderContext.getOptimizer = function() {
-                    return optimizer;
-                };
-                
+                optimizer.configureForContext(renderContext);
+                renderContext.getAttributes().optimizerPage = this;
                 var html = raptor.require('templating').renderToString(templatePath, viewModel, renderContext);
                 return html;
             }
