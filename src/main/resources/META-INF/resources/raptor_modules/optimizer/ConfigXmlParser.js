@@ -58,6 +58,18 @@ raptor.defineClass(
                 
                 var objectMapper = raptor.require('xml.sax.object-mapper'),
                     reader,
+                    echoHandler = {
+                        _type: "object",
+                        _begin: function() {
+                            return {};
+                        },
+                        _end: function(echo) {
+                            console.log(echo.message);
+                        },
+                        "@message": {
+                            _type: "string"
+                        }
+                    },
                     bundlesHandler = {
                         _type: "object",
                         _begin: function() {
@@ -108,6 +120,9 @@ raptor.defineClass(
                         _begin: function(parent, tagName) {
                             return config;
                         },
+                        
+                        "<echo>": echoHandler,
+                        
                         "<params>": {
                             "@file": {
                                 _set: function(parent, name, value) {
@@ -462,7 +477,9 @@ raptor.defineClass(
                                 reader.skipCurrentElement();    
                             }
                         }
-                    }
+                    },
+                    
+                    "<echo>": echoHandler
                 });
                 
                 nestedProfileConfigHandler["<profile>"] = nestedProfileConfigHandler;
