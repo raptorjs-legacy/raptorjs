@@ -180,6 +180,59 @@ raptor.defineClass(
                     callback.call(thisObj, curChild);
                     curChild = curChild.nextSibling;
                 }
+                
+                /*
+                 * Convert the child linked list to an array so that
+                 * if the callback code manipulates the child nodes
+                 * looping won't break
+                 */
+//                var children = [];
+//                
+//                var curChild = this.firstChild;
+//                while(curChild) {
+//                    children.push(curChild);
+//                    curChild = curChild.nextSibling;
+//                }
+//                
+//                for (var i=0, len=children.length; i<len; i++) {
+//                    curChild = children[i];
+//                    if (curChild.parentNode === this) {
+//                        //Make sure the node is still a child of this node
+//                        if (false === callback.call(thisObj, curChild)) {
+//                            return;
+//                        }
+//                    }
+//                }
+            },
+            
+            getExpression: function(template, childrenOnly) {
+                if (!template) {
+                    throw raptor.createError(new Error("template is required"));
+                }
+                
+                var _this = this;
+                return template.makeExpression({
+                    toString: function() {
+                        return template.captureCode(function() {
+                            template.statement("context.captureString(function() {")
+                                .indent(function() {
+                                    if (childrenOnly === true) {
+                                        _this.generateCode(template);    
+                                    }
+                                    else {
+                                        _this.generateCodeForChildren(template);
+                                    }
+                                    
+                                })
+                                .line("})");    
+                        });
+                        
+                    }
+                });
+            },
+            
+            getBodyContentExpression: function(template) {
+                return this.getExpression(template, true);
             },
         
             isTransformerApplied: function(transformer) {
@@ -226,6 +279,12 @@ raptor.defineClass(
             
             isRoot: function() {
                 return this._isRoot === true;
+            },
+            
+            detach: function() {
+                if (this.parentNode) {
+                    this.parentNode.removeChild(this);
+                }
             },
             
             removeChild: function(childNode) {

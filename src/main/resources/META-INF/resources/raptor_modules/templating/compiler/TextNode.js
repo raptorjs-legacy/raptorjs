@@ -49,7 +49,7 @@ raptor.defineClass(
                         text = text.replace(/\s+/g, " ");
                     }
 
-                    template.addText(text);
+                    template.text(text);
                 }
             },
             

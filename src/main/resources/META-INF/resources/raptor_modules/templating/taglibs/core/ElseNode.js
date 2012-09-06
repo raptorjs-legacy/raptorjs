@@ -23,7 +23,7 @@ raptor.defineClass(
         var strings = raptor.require('strings');
         
         var ElseNode = function(props) {
-            ElseNode.superclass.constructor.call(this, "http://raptorjs.org/templates/core", "else", "c");
+            ElseNode.superclass.constructor.call(this, "else", "http://raptorjs.org/templates/core", "c");
             
             if (props) {
                 this.setProperties(props);
@@ -32,7 +32,7 @@ raptor.defineClass(
         
         ElseNode.prototype = {
             doGenerateCode: function(template) {
-                if (this.valid !== true) {
+                if (this.valid == null) {
                     return; //Don't generate code for an invalid else
                 }
                 

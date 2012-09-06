@@ -38,6 +38,10 @@ raptor.defineClass(
             };
         
         var Expression = function(expression, replaceSpecialOperators) {
+            if (expression == null) {
+                throw raptor.createError(new Error("expression argument is required"));
+            }
+            
             if (replaceSpecialOperators !== false && typeof expression === 'string') {
                 expression = handleBinaryOperators(expression);
             }
@@ -56,7 +60,7 @@ raptor.defineClass(
             /**
              */
             toString: function() {
-                return this.expression;
+                return this.expression.toString();
             }
         };
         

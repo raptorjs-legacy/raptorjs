@@ -23,26 +23,23 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             forEach = raptor.forEach,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
-            stringify = raptor.require('json.stringify').stringify,
             XML_URI = 'http://www.w3.org/XML/1998/namespace',
             XML_URI_ALT = 'http://www.w3.org/XML/1998/namespace',
             ExpressionParser = raptor.require('templating.compiler.ExpressionParser');
         
-        var ElementNode = function(uri, localName, prefix) {
+        var ElementNode = function(localName, uri, prefix) {
             ElementNode.superclass.constructor.call(this, 'element');
             
             if (!this._elementNode) {
                 this._elementNode = true;
+
+                this.dynamicAttributesExpression = null;
+                this.attributes = {};
                 
                 this.prefix = prefix;
                 this.localName = localName;
-                this.uri = uri;
+                this.uri = uri;  
                 
-                
-                this.qName = this.localName ? (this.prefix ? this.prefix + ":" : "") + this.localName : null;
-                this.dynamicAttributesExpression = null;
-                this.attributes = {};
-
                 this.allowSelfClosing = true;
                 this.startTagOnly = false;
             }
@@ -50,6 +47,11 @@ raptor.defineClass(
         };
         
         ElementNode.prototype = {
+                
+            getQName: function() {
+                return this.localName ? (this.prefix ? this.prefix + ":" : "") + this.localName : null;
+            },
+            
             /**
              * 
              * @param startTagOnly
@@ -219,7 +221,7 @@ raptor.defineClass(
                     this.removePreserveSpaceAttr();
                 }
                 
-                template.addText("<" + name);
+                template.text("<" + name);
                 if (this.attributes) {
                     forEachEntry(this.attributes, function(key, attr) {
                         var prefix = attr.prefix;
@@ -235,7 +237,7 @@ raptor.defineClass(
                         }
                         
                         if (attr.value === null || attr.value === undefined) {
-                            template.addText(' ' + name);
+                            template.text(' ' + name);
                         }
                         else {
                             
@@ -280,20 +282,20 @@ raptor.defineClass(
                                         }
                                     });
                             if (invalidAttr) {
-                                template.addText(name + '="' + escapeXmlAttr(attr.value) + '"');    
+                                template.text(name + '="' + escapeXmlAttr(attr.value) + '"');    
                             }
                             else {
                                 if (hasExpression && attrParts.length === 1) {
                                     template.attr(name, attrParts[0].expression);
                                 }
                                 else {
-                                    template.addText(' ' + name + '="');
+                                    template.text(' ' + name + '="');
                                     forEach(attrParts, function(part) {
                                        if (part.text) {
-                                           template.addText(escapeXmlAttr(part.text));
+                                           template.text(escapeXmlAttr(part.text));
                                        } 
                                        else if (part.xml) {
-                                           template.addText(part.xml);
+                                           template.text(part.xml);
                                        }
                                        else if (part.expression) {
                                            template.write(part.expression, {escapeXmlAttr: true});
@@ -302,7 +304,7 @@ raptor.defineClass(
                                            throw raptor.createError(new Error("Illegal state"));
                                        }
                                     });
-                                    template.addText('"');
+                                    template.text('"');
                                 }
                             }
                             
@@ -316,14 +318,14 @@ raptor.defineClass(
                 }
                 
                 if (this.hasChildren()) {
-                    template.addText(">");
+                    template.text(">");
                 }
                 else {
                     if (this.startTagOnly) {
-                        template.addText(">");
+                        template.text(">");
                     }
                     else if (this.allowSelfClosing) {
-                        template.addText("/>");
+                        template.text("/>");
                     }
                 }
             },
@@ -332,11 +334,11 @@ raptor.defineClass(
                 var name = this.prefix ? (this.prefix + ":" + this.localName) : this.localName;
                 
                 if (this.hasChildren()) {
-                    template.addText("</" + name + ">");
+                    template.text("</" + name + ">");
                 }
                 else {
                     if (!this.startTagOnly && !this.allowSelfClosing) {
-                        template.addText("></" + name + ">");
+                        template.text("></" + name + ">");
                     }
                 }
             },

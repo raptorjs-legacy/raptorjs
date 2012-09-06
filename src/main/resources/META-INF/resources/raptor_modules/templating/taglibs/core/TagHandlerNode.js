@@ -115,7 +115,7 @@ raptor.defineClass(
                 var hasNamespacedProps = !objects.isEmpty(namespacedProps);
                 
                 ///////////
-                template.addContextMethodCall("t", function() {
+                template.contextMethodCall("t", function() {
                     template
                         .code("\n")
                         .indent(function() {

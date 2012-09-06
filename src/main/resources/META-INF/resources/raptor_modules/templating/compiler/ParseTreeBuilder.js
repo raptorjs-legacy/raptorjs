@@ -79,11 +79,12 @@ raptor.defineClass(
                             importedAttr,
                             importedTag;
                         
-                        var elementNode = new ElementNode();
-                        elementNode.prefix = el.getPrefix();
-                        elementNode.localName = el.getLocalName();
-                        elementNode.qName = el.getQName();
-                        elementNode.uri = taglibs.resolveURI(el.getNamespaceURI());
+                        var elementNode = new ElementNode(
+                                el.getLocalName(),
+                                taglibs.resolveURI(el.getNamespaceURI()),
+                                el.getPrefix());
+                        
+                        
                         elementNode.addNamespaceMappings(el.getNamespaceMappings());
                         
                         elementNode.pos = parser.getPos();

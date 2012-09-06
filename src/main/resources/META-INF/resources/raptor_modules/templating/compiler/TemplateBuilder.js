@@ -26,6 +26,174 @@ raptor.defineClass(
             Expression = raptor.require('templating.compiler.Expression'),
             forEach = raptor.forEach;
         
+        
+        var CodeWriter = function(indent) {
+            this._indent = indent != null ? indent : INDENT + INDENT;
+            this._code = strings.createStringBuilder();
+            this.firstStatement = true;
+            this._bufferedText = null;
+            this._bufferedContextMethodCalls = null;
+        };
+        
+        CodeWriter.prototype = {
+            
+            write: function(expression) {
+                this.contextMethodCall("w", expression);
+            },
+            
+            text: function(text) {
+                if (this._bufferedText === null) {
+                    this._bufferedText = text;
+                }
+                else {
+                    this._bufferedText += text;
+                }
+            },
+            
+            contextMethodCall: function(methodName, argString, thisObj) {
+                
+                this.flushText();
+                
+                if (!this._bufferedContextMethodCalls) {
+                    this._bufferedContextMethodCalls = [];
+                }
+
+                this._bufferedContextMethodCalls.push([methodName, argString, thisObj]);
+            },
+            
+            code: function(code) {
+                this.flush();
+                this._code.append(code);
+            },
+            
+            statement: function(code) {
+                this.flush();
+                this.code((this.firstStatement ? "" : "\n") + this._indent + code + "\n");
+                this.firstStatement = false;
+            },
+            
+            line: function(code) {
+                this.code(this._indent + code + "\n");
+            },
+            
+            indentStr: function(delta) {
+                if (arguments.length === 0) {
+                    return this._indent;
+                }
+                else {
+                    var indent = this._indent;
+                    for (var i=0; i<delta; i++) {
+                        indent += INDENT;
+                    }
+                    return indent;
+                }
+            },
+            
+            indent: function() {
+                if (arguments.length === 0) {
+                    this.code(this._indent);
+                }
+                else if (typeof arguments[0] === 'number') {
+                    this.code(this.indentStr(arguments[0]));
+                }
+                else if (typeof arguments[0] === 'function') {
+                    var func = arguments[0],
+                        thisObj = arguments[1];
+                    
+                    this.incIndent();
+                    func.call(thisObj);
+                    this.decIndent();
+                }
+                else if (typeof arguments[0] === 'string') {
+                    this.code(this._indent + arguments[0]);
+                }
+                
+                return this;
+            },
+            
+            flush: function() {
+                this.flushText();
+                this.flushMethodCalls();
+            },
+            
+            flushText: function() {
+                var curText = this._bufferedText; 
+                if (curText) {
+                    this._bufferedText = null;
+                    this.write(stringify(curText, {useSingleQuote: true}));
+                }
+            },
+            
+            flushMethodCalls: function() {
+                var _bufferedContextMethodCalls = this._bufferedContextMethodCalls; 
+                if (_bufferedContextMethodCalls) {
+                    if (!this.firstStatement) {
+                        this._code.append("\n");
+                    }
+                    
+                    this.firstStatement = false;
+
+                    this._bufferedContextMethodCalls = null;
+                    forEach(_bufferedContextMethodCalls, function(curWrite, i) {
+                        var methodName = curWrite[0],
+                            argsString = curWrite[1],
+                            thisObj = curWrite[2];
+                        
+                        if (i === 0)
+                        {
+                            this._code.append(this.indentStr() + 'context.' + methodName + "(");
+                        }
+                        else {
+                            this.incIndent();
+                            this._code.append(this.indentStr() + '.' + methodName + "(");
+                        }
+                        
+                        if (typeof argsString === 'string') {
+                            this._code.append(argsString);
+                        }
+                        else if (typeof argsString === 'function') {
+                            argsString.call(thisObj);
+                        }
+                        else if (argsString instanceof Expression) {
+                            this._code.append(argsString.toString());
+                        }
+                        else {
+                            console.error('Illegal argsString: ', argsString);
+                            throw raptor.createError(new Error("Illegal state"));
+                        }
+                        
+                        if (i < _bufferedContextMethodCalls.length -1) {
+                            this._code.append(")\n");      
+                        }
+                        else {
+                            this._code.append(");\n");
+                        }
+                        if (i !== 0) {
+                            this.decIndent();
+                        }
+                    }, this);
+                }
+            },
+            
+            incIndent: function() {
+                this.flush();
+                this._indent += INDENT;
+                this.firstStatement = true;
+            },
+            
+            decIndent: function() {
+                this.flush();
+                this._indent = this._indent.substring(INDENT.length);
+                this.firstStatement = false;
+            },
+            
+            getOutput: function() {
+                this.flush();
+                return this._code.toString();
+            }
+        };
+        
+        
         var TemplateBuilder = function(compiler, resource) {
             this.resource = resource;
             
@@ -41,9 +209,9 @@ raptor.defineClass(
             this.compiler = compiler;
             this.options = compiler.options;
             this.templateName = null;
-            this.curText = null;
             this.attributes = {};
-            this.firstStatement = true;
+            
+            this.writer = new CodeWriter();
             
             this.staticVars = [];
             this.staticVarsLookup = {};
@@ -52,12 +220,8 @@ raptor.defineClass(
             this.vars = [];
             this.varsLookup = {};
             
-            this.javaScriptCode = strings.createStringBuilder(); 
-            
             this.getStaticHelperFunction("empty", "e");
             this.getStaticHelperFunction("notEmpty", "ne");
-            
-            this._indent = INDENT + INDENT;
         };
         
         TemplateBuilder.prototype = {            
@@ -87,6 +251,21 @@ raptor.defineClass(
             
             getContextHelperFunction: function(varName, propName) {
                 return this._getHelperFunction(varName, propName, false);
+            },
+            
+            captureCode: function(func, thisObj) {
+                var oldWriter = this.writer;
+                var newWriter = new CodeWriter(oldWriter.indentStr());
+                
+                try
+                {
+                    this.writer = newWriter;
+                    func.call(thisObj);
+                    return newWriter.getOutput();
+                }
+                finally {
+                    this.writer = oldWriter;
+                }
             },
             
             getStaticHelperFunction: function(varName, propName) {
@@ -125,130 +304,17 @@ raptor.defineClass(
                 out.append(declarations.join(""));
             },
             
-            _endText: function() {
-                
-                if (this.hasErrors()) {
-                    return;
-                }
-    
-                var curText = this.curText; 
-                if (curText) {
-                    this.curText = null;
-                    this.write(stringify(curText, {useSingleQuote: true}));
-                }
-            },
-            
-            addText: function(text) {
-                if (this.hasErrors()) {
-                    return;
+            text: function(text) {
+                if (!this.hasErrors()) {
+                    this.writer.text(text);
                 }
                 
-                if (this.curText === null) {
-                    this.curText = text;
-                }
-                else {
-                    this.curText += text;
-                }
-            },
-            
-            _endWrites: function() {
-                var curWrites = this.curWrites; 
-                if (curWrites) {
-                    if (!this.firstStatement) {
-                        this.javaScriptCode.append("\n");
-                    }
-                    
-                    this.firstStatement = false;
-                    
-//                    this.curWrites = null;
-//                    this.javaScriptCode.append('write(');
-//                    this.javaScriptCode.append(curWrites.join(','));
-//                    this.javaScriptCode.append(');\n');
-                    
-//                    this.curWrites = null;
-//                    forEach(curWrites, function(curWrite, i) {
-//                        if (i === 0)
-//                        {
-//                            this.javaScriptCode.append('write(');
-//                        }
-//                        else {
-//                            this.javaScriptCode.append('(');
-//                        }
-//                        
-//                        this.javaScriptCode.append(curWrite);
-//                        this.javaScriptCode.append(')');
-//                    }, this);
-//                    
-//                    this.javaScriptCode.append(";");
-      
-                    this.curWrites = null;
-                    forEach(curWrites, function(curWrite, i) {
-                        var methodName = curWrite[0],
-                            argsString = curWrite[1],
-                            thisObj = curWrite[2];
-                        
-                        if (i === 0)
-                        {
-                            this.javaScriptCode.append(this.indentStr() + 'context.' + methodName + "(");
-                        }
-                        else {
-                            this.incIndent();
-                            this.javaScriptCode.append(this.indentStr() + '.' + methodName + "(");
-                        }
-                        
-                        if (typeof argsString === 'string') {
-                            this.javaScriptCode.append(argsString);
-                        }
-                        else if (typeof argsString === 'function') {
-                            argsString.call(thisObj);
-                        }
-                        else if (argsString instanceof Expression) {
-                            this.javaScriptCode.append(argsString.toString());
-                        }
-                        else {
-                            console.error('Illegal argsString: ', argsString);
-                            throw raptor.createError(new Error("Illegal state"));
-                        }
-                        
-                        if (i < curWrites.length -1) {
-                            this.javaScriptCode.append(")\n");      
-                        }
-                        else {
-                            this.javaScriptCode.append(");\n");
-                        }
-                        if (i !== 0) {
-                            this.decIndent();
-                        }
-                    }, this);
-                    
-//                    this.curWrites = null;
-//                    forEach(curWrites, function(curWrite, i) {
-//                        if (i === 0)
-//                        {
-//                            this.javaScriptCode.append('context.w(');
-//                        }
-//                        else {
-//                            this.javaScriptCode.append('(');
-//                        }
-//                        
-//                        this.javaScriptCode.append(curWrite);
-//                        this.javaScriptCode.append(')');
-//                    }, this);
-//                    
-//                    this.javaScriptCode.append(";\n");
-                    
-//                    this.curWrites = null;
-//                    forEach(curWrites, function(curWrite, i) {
-//                        this.javaScriptCode.append(this.indent() + 'context.w(');                        
-//                        this.javaScriptCode.append(curWrite);
-//                        this.javaScriptCode.append(');\n');
-//                    }, this);
-                }
+                return this;
             },
             
             attr: function(name, valueExpression) {
                 if (!this.hasErrors()) {
-                    this.addContextMethodCall("a", stringify(name) + "," + valueExpression);    
+                    this.contextMethodCall("a", stringify(name) + "," + valueExpression);    
                 }
     
                 return this;
@@ -256,7 +322,7 @@ raptor.defineClass(
             
             attrs: function(attrsExpression) {
                 if (!this.hasErrors()) {
-                    this.addContextMethodCall("a", attrsExpression);    
+                    this.contextMethodCall("a", attrsExpression);    
                 }
     
                 return this;
@@ -264,7 +330,15 @@ raptor.defineClass(
             
             include: function(templateName, dataExpression) {
                 if (!this.hasErrors()) {
-                    this.addContextMethodCall("i", templateName + "," + dataExpression);    
+                    this.contextMethodCall("i", templateName + "," + dataExpression);    
+                }
+    
+                return this;
+            },
+            
+            contextMethodCall: function(methodName, argString, thisObj) {
+                if (!this.hasErrors()) {
+                    this.writer.contextMethodCall(methodName, argString, thisObj);    
                 }
     
                 return this;
@@ -272,6 +346,7 @@ raptor.defineClass(
             
             write: function(expression, options) {
                 if (!this.hasErrors()) {
+                    
                     if (options) {
                         if (options.escapeXml) {
                             expression = this.getStaticHelperFunction("escapeXml", "x") + "(" + expression + ")";
@@ -280,107 +355,62 @@ raptor.defineClass(
                             expression = this.getStaticHelperFunction("escapeXmlAttr", "xa") + "(" + expression + ")";
                         }
                     }
-                    this.addContextMethodCall("w", expression);    
+                    
+                    this.writer.write(expression, options);
                 }
     
                 return this;
             },
             
-            addContextMethodCall: function(methodName, argString, thisObj) {
-                if (this.hasErrors()) {
-                    return;
+            incIndent: function() {
+                if (!this.hasErrors()) {
+                    this.writer.incIndent();
                 }
     
-                //console.log('write: ' + expression);
-                this._endText();
-                
-                if (!this.curWrites) {
-                    this.curWrites = [];
-                }
-
-                this.curWrites.push([methodName, argString, thisObj]);
-            },
-            
-            incIndent: function() {
-                this.emptyLine = false;
-                this._endText();
-                this._endWrites();
-                
-                this._indent += INDENT;
-                
-                this.firstStatement = true;
+                return this;
             },
             
             decIndent: function() {
-                this.emptyLine = false;
-                this._endText();
-                this._endWrites();
-                
-                this._indent = this._indent.substring(INDENT.length);
-                
-                this.firstStatement = false;
+                if (!this.hasErrors()) {
+                    this.writer.decIndent();
+                }
+    
+                return this;
             },
             
             code: function(code) {
-                if (this.hasErrors()) {
-                    return this;
+                if (!this.hasErrors()) {
+                    this.writer.code(code);
                 }
 
-                this._endText();
-                this._endWrites();
-                
-                this.javaScriptCode.append(code);
-                
                 return this;
             },
             
             statement: function(code) {
-                this._endText();
-                this._endWrites();
-                
-                this.code((this.firstStatement ? "" : "\n") + this._indent + code + "\n");
-                
-                this.firstStatement = false;
+                if (!this.hasErrors()) {
+                    this.writer.statement(code);
+                }
+
                 return this;
             },
             
             line: function(code) {
-                this.code(this._indent + code + "\n");
+                if (!this.hasErrors()) {
+                    this.writer.line(code);
+                }
+
                 return this;
             },
             
             indentStr: function(delta) {
-                if (arguments.length === 0) {
-                    return this._indent;
-                }
-                else {
-                    var indent = this._indent;
-                    for (var i=0; i<delta; i++) {
-                        indent += INDENT;
-                    }
-                    return indent;
-                }
+                return this.writer.indentStr(delta);
             },
             
             indent: function() {
-                if (arguments.length === 0) {
-                    this.code(this._indent);
+                if (!this.hasErrors()) {
+                    this.writer.indent.apply(this.writer, arguments);
                 }
-                else if (typeof arguments[0] === 'number') {
-                    this.code(this.indentStr(arguments[0]));
-                }
-                else if (typeof arguments[0] === 'function') {
-                    var func = arguments[0],
-                        thisObj = arguments[1];
-                    
-                    this.incIndent();
-                    func.call(thisObj);
-                    this.decIndent();
-                }
-                else if (typeof arguments[0] === 'string') {
-                    this.code(this._indent + arguments[0]);
-                }
-                
+
                 return this;
             },
             
@@ -419,8 +449,7 @@ raptor.defineClass(
                 out.append('function(helpers) {\n');
                 //Write out the static variables
                 
-                this._endText();
-                this._endWrites();
+                this.writer.flush();
                 
                 this._writeVars(this.staticVars, out, INDENT);
                 out.append('\n' + INDENT + 'return function(data, context) {\n');
@@ -432,10 +461,8 @@ raptor.defineClass(
                     out.append("\n");    
                 }
                 
+                out.append(this.writer.getOutput());
                 
-                this._endText();
-                this._endWrites();
-                out.append(this.javaScriptCode.toString());
                 out.append(INDENT + '}\n});');
                 return out.toString();
             },
@@ -448,11 +475,8 @@ raptor.defineClass(
                 if (expression instanceof Expression)  {
                     return expression;
                 }
-                else if (typeof expression === 'string') {
-                    return new Expression(expression);
-                }
                 else {
-                    throw raptor.createError(new Error("Unsupported expression object: " + expression));
+                    return new Expression(expression);
                 }
             },
             

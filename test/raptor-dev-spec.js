@@ -22,6 +22,27 @@ describe('development spec', function() {
         expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
     });
     
+    it("should allow for nodes to be converted to expressions", function() {
+        var ElementNode = raptor.require('templating.compiler.ElementNode');
+        var TextNode = raptor.require('templating.compiler.TextNode');
+        var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder');
+
+        var compiler = raptor.require('templating.compiler').createCompiler();
+        var template = new TemplateBuilder(compiler);
+        
+        var div = new ElementNode("div");
+        var text = new TextNode("Hello World!");
+        div.appendChild(text);
+        
+        var expression = div.getExpression(template).toString();
+        
+        var sb = raptor.require('strings').createStringBuilder();
+        var context = raptor.require('templating').createContext(sb);
+        var output = eval(expression);
+        expect(output.toString()).toEqual('<div>Hello World!</div>');
+        
+    });
+    
     xit("should allow for includes", function() {
         var output = compileAndRender("/test-templates/include.rhtml", {});
         expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');

@@ -84,8 +84,7 @@ raptor.defineClass(
                 
                 node.forEachChild(function(childNode) {
                     if (!childNode.parentNode) {
-                        //Validate that the parentNode property is set correctly for this child node
-                        throw raptor.createError(new Error("Invalid node found in tree. parentNode property of child node is not set. Node: " + node));
+                        return; //The child node might have been removed from the tree
                     }
                     this.transformTree(childNode, templateBuilder);
                 }, this);
