@@ -75,7 +75,7 @@ raptor.defineClass(
             this.enabledExtensions = config.enabledExtensions;
 
             this.pageBundleLookup = {};
-            this.bundlesByLocation = {};
+            this.bundlesBySlot = {};
             this.bundleCount = 0;
             this.asyncRequiresByName = {};
                         
@@ -142,7 +142,7 @@ raptor.defineClass(
                                 if (!bundle) {
                                     bundle = bundleSet.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
                                     bundle.sourceResource = sourceResource;
-                                    bundle.includeLocationInUrl = false;
+                                    bundle.includeSlotInUrl = false;
                                     if (!sourceResource) {
                                         bundle.requireChecksum = true;
                                     }
@@ -169,19 +169,19 @@ raptor.defineClass(
                             
                             this.bundleCount++;
                             
-                            var bundlesForLocation = this.bundlesByLocation[bundle.getLocation()];
-                            if (!bundlesForLocation) {
-                                bundlesForLocation = this.bundlesByLocation[bundle.getLocation()] = {
+                            var bundlesForSlot = this.bundlesBySlot[bundle.getSlot()];
+                            if (!bundlesForSlot) {
+                                bundlesForSlot = this.bundlesBySlot[bundle.getSlot()] = {
                                    css: [],
                                    js: []
                                 };
                             }
                             
                             if (bundle.isJavaScript()) {
-                                bundlesForLocation.js.push(bundle);
+                                bundlesForSlot.js.push(bundle);
                             }
                             else if (bundle.isStyleSheet()){
-                                bundlesForLocation.css.push(bundle);
+                                bundlesForSlot.css.push(bundle);
                             }
                             else {
                                 throw raptor.createError(new Error("Invalid content for bundle: " + bundle.getContentType()));
@@ -244,14 +244,14 @@ raptor.defineClass(
             },
             
             forEachPageBundle: function(callback, thisObj) {
-                forEachEntry(this.bundlesByLocation, function(location, bundlesByContentType) {
+                forEachEntry(this.bundlesBySlot, function(slot, bundlesByContentType) {
                     
                     //Loop over CSS bundles first
                     forEach(bundlesByContentType.css, function(bundle) {
                         callback.call(thisObj, bundle);    
                     });
                     
-                    //Followed by JS bundles for this location
+                    //Followed by JS bundles for this slot
                     forEach(bundlesByContentType.js, function(bundle) {
                         callback.call(thisObj, bundle);    
                     });

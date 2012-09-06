@@ -84,7 +84,7 @@ raptor.defineClass(
                 
                 var viewModel = this.getViewModel() || {};
                 var renderContext = raptor.require('templating').createContext();
-                optimizer.configureForContext(renderContext);
+                optimizer.setOptimizerForContext(renderContext);
                 renderContext.getAttributes().optimizerPage = this;
                 var html = raptor.require('templating').renderToString(templatePath, viewModel, renderContext);
                 return html;

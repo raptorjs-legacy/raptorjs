@@ -21,11 +21,11 @@ raptor.defineClass(
             },
             getIncludeKey = function(include) {
                 include = packager.createInclude(include);
-                var location = include.getLocation();
-                if (!location) {
-                    location = "body";
+                var slot = include.getSlot();
+                if (!slot) {
+                    slot = "body";
                 }
-                return location + "/" + include.getKey();
+                return slot + "/" + include.getKey();
             };
         
         var BundleSet = function(bundles, options) {
@@ -116,17 +116,17 @@ raptor.defineClass(
                 if (include.isPackageInclude()) {
                     throw raptor.createError(new Error("Illegal argument. Include cannot be a package include. Include: " + include.toString()));
                 }
-                var includeLocation = include.getLocation();
-                if (!includeLocation) {
-                    includeLocation = "body";
+                var includeSlot = include.getSlot();
+                if (!includeSlot) {
+                    includeSlot = "body";
                 }
                 
                 
-                var bundleKey = includeLocation + "/" + include.getContentType() + "/" + targetBundleName;
+                var bundleKey = includeSlot + "/" + include.getContentType() + "/" + targetBundleName;
                 var targetBundle = this.bundlesByKey[bundleKey];
                 if (!targetBundle) {
                     targetBundle = raptor.require('optimizer').createBundle(targetBundleName);
-                    targetBundle.setLocation(includeLocation);
+                    targetBundle.setSlot(includeSlot);
                     targetBundle.setContentType(include.getContentType());
                     this.bundlesByKey[bundleKey] = targetBundle;
                 }

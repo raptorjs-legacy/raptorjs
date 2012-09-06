@@ -11,7 +11,7 @@ raptor.define(
                 }
                 
                 var optimizer = raptor.require('optimizer').getFromContext(context);
-                var includes = optimizer.getPageIncludes(optimizerPage)[slotName];
+                var includes = optimizer.getPageHtmlBySlot(optimizerPage)[slotName];
                 if (includes) {
                     context.write(includes);
                 }

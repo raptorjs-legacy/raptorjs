@@ -28,9 +28,9 @@ raptor.defineClass(
                 return this._manifest;
             },
             
-            getLocation: function() {
-                if (this.location) {
-                    return this.location;
+            getSlot: function() {
+                if (this.slot) {
+                    return this.slot;
                 }
                 var contentType = this.getContentType();
                 return contentType === 'text/css' ? "head" : "body";

@@ -72,13 +72,13 @@ raptor.defineClass(
                         bundle.setWrittenToDisk(true);
                         return bundle.getChecksum();
                     },
-                    htmlByLocation = {},
-                    addHtml = function(location, html) {
-                        var htmlForLocation = htmlByLocation[location];
-                        if (!htmlForLocation) {
-                            htmlForLocation = htmlByLocation[location] = [];
+                    htmlBySlot = {},
+                    addHtml = function(slot, html) {
+                        var htmlForSlot = htmlBySlot[slot];
+                        if (!htmlForSlot) {
+                            htmlForSlot = htmlBySlot[slot] = [];
                         }
-                        htmlForLocation.push(html);
+                        htmlForSlot.push(html);
                     };
                 
                 
@@ -132,15 +132,15 @@ raptor.defineClass(
                         throw raptor.createError(new Error("Inline bundles not yet supported"));
                     }
                     else {
-                        addHtml(bundle.getLocation(), this.getBundleIncludeHtml(bundle, checksum));
+                        addHtml(bundle.getSlot(), this.getBundleIncludeHtml(bundle, checksum));
                     }
                 }, this);
                 
-                raptor.forEachEntry(htmlByLocation, function(location, html) {
-                    htmlByLocation[location] = html.join('\n');
+                raptor.forEachEntry(htmlBySlot, function(slot, html) {
+                    htmlBySlot[slot] = html.join('\n');
                 }, this);
                 
-                return htmlByLocation;
+                return htmlBySlot;
             },
             getBundleIncludeHtml: function(bundle, checksum) {
                 var url = this.getBundleUrl(bundle, checksum);
@@ -237,7 +237,7 @@ raptor.defineClass(
                 throw raptor.createError(new Error("writeBundle() not implemented"));
             },
             
-            writePageIncludeHtml: function(pageName, location, html) {
+            writePageIncludeHtml: function(pageName, slot, html) {
                 throw raptor.createError(new Error("writeIncludeHtml() not implemented"));
             },
             

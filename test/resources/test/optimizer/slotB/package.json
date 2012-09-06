@@ -1,0 +1,7 @@
+{
+    "name": "test.optimizer.slotB",
+    "includes": [
+        {"path": "slotB.js", "slot": "custom-body"},
+        {"path": "slotB.css", "slot": "custom-head"}
+    ]
+}

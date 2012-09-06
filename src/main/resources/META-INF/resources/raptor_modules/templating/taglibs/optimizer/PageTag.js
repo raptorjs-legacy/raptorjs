@@ -8,7 +8,7 @@ raptor.define(
                 
                 var optimizer = raptor.require('optimizer').getFromContext(context);
                 if (!optimizer) {
-                    throw raptor.createError(new Error('Optimizer not set for request. An OptimizerEnginer instance can be associated with a request using the optimizerEngine.configureForContext(context) method.'));
+                    throw raptor.createError(new Error('Optimizer not set for request. An OptimizerEnginer instance can be associated with a request using the optimizerEngine.setOptimizerForContext(context) method.'));
                 }
                 
                 var packagePath = input['package'];

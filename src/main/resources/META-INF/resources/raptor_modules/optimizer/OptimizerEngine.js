@@ -168,7 +168,7 @@ raptor.defineClass(
                 return writer;
             },
             
-            getPageIncludes: function(page, options) {
+            getPageHtmlBySlot: function(page, options) {
                 if (typeof page === 'string') {
                     page = this.getPage(page);
                 }
@@ -177,14 +177,9 @@ raptor.defineClass(
 
                 var extensions = options.enabledExtensions || page.getEnabledExtensions() || this.config.getEnabledExtensions();
                 var cacheKey = extensions.getKey();
-                var includeCache = page.getIncludeCache();
-                
-                var htmlIncludesByLocation = includeCache[cacheKey];
-                if (!htmlIncludesByLocation) {
-                    htmlIncludesByLocation = includeCache[cacheKey] = this.buildPageIncludes(page, options);    
-                }
-                
-                return htmlIncludesByLocation;
+                var pageHtmlCache = page.getPageHtmlCache();
+                var pageHtmlBySlot = pageHtmlCache[cacheKey] || (pageHtmlCache[cacheKey] = this.buildPageHtmlBySlot(page, options));
+                return pageHtmlBySlot;
             },
             
             watchPackage: function(manifest) {
@@ -254,7 +249,7 @@ raptor.defineClass(
             },
             
             
-            buildPageIncludes: function(page, options) {
+            buildPageHtmlBySlot: function(page, options) {
                 var config = this.config;
 
                 var pageDependencies = this.buildPageDependencies(page, options);
@@ -273,9 +268,9 @@ raptor.defineClass(
                     this.writer.getUrlBuilder().setBaseDir(null);
                 }
                 
-                var htmlIncludesByLocation = this.writer.writePageDependencies(pageDependencies);
+                var pageHtmlBySlot = this.writer.writePageDependencies(pageDependencies);
                 this.logger().info('Bundles for page "' + page.getName() + '" written to disk\n');
-                return htmlIncludesByLocation;
+                return pageHtmlBySlot;
             },
             
             forEachPage: function(callback, thisObj) {
@@ -316,7 +311,7 @@ raptor.defineClass(
                 return outputFile;
             },
             
-            writePageIncludesHtml: function(page) {
+            writePageIncludesHtml: function(page, options) {
                 var config = this.config;
                 var baseDir = config.getHtmlOutputDir(); 
                 if (!baseDir) {
@@ -333,16 +328,16 @@ raptor.defineClass(
                     outputDir = baseDir;
                 }
                 
-                var includes = this.getPageIncludes(page);
+                var pageHtmlBySlot = this.getPageHtmlBySlot(page, options);
                 
-                raptor.forEachEntry(includes, function(location, code) {
+                raptor.forEachEntry(pageHtmlBySlot, function(slot, code) {
                     var outputFile;
                     
                     if (relPath) {
-                        outputFile = new File(outputDir, "includes-" + location + ".html");
+                        outputFile = new File(outputDir, "includes-" + slot + ".html");
                     }
                     else {
-                        outputFile = new File(outputDir, page.getSimpleName() + "-includes-" + location + ".html");
+                        outputFile = new File(outputDir, page.getSimpleName() + "-includes-" + slot + ".html");
                     }
                     
                     this.logger().info('Writing page HTML includes for page "' + page.getName() + '" to "' + outputFile + '"...');
@@ -419,8 +414,8 @@ raptor.defineClass(
                 }, this);
             },
             
-            configureForContext: function(context) {
-                raptor.require('optimizer').configureForContext(context, this);
+            setOptimizerForContext: function(context) {
+                raptor.require('optimizer').setOptimizerForContext(context, this);
             }
         };
         

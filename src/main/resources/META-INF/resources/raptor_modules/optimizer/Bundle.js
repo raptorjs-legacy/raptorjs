@@ -11,7 +11,7 @@ raptor.defineClass(
         var Bundle = function(name) {
             this.name = name;
             this.includes = [];
-            this.location = "body";
+            this.slot = "body";
             this.contentType = null;
             this.writtenToDisk = false;
             
@@ -42,15 +42,15 @@ raptor.defineClass(
             },
             
             getKey: function() {
-                return this.location + "/" + this.contentType + "/" + this.name;
+                return this.slot + "/" + this.contentType + "/" + this.name;
             },
             
-            getLocation: function() {
-                return this.location;
+            getSlot: function() {
+                return this.slot;
             },
             
-            setLocation: function(location) {
-                this.location = location;
+            setSlot: function(slot) {
+                this.slot = slot;
             },
             
             getContentType: function() {

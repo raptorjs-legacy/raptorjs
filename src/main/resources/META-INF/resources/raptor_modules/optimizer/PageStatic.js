@@ -28,15 +28,15 @@ raptor.defineClass(
             
             render: function(context) {
                 var optimizer = context.optimizer;
-                var includes = optimizer.getPageIncludes(this);
+                var pageHtmlBySlot = optimizer.getPageHtmlBySlot(this);
                 
                 var config = this.config,
                     HtmlInjector = raptor.require('optimizer.HtmlInjector');
                 
                 var pageHtml = this.getViewFile().readFully();
                 var injector = new HtmlInjector(pageHtml, config.isKeepHtmlMarkersEnabled());
-                raptor.forEachEntry(includes, function(location, includeHtml) {
-                    injector.inject(location, includeHtml);
+                raptor.forEachEntry(pageHtmlBySlot, function(slot, html) {
+                    injector.inject(slot, html);
                 });
                 return injector.getHtml();
             }

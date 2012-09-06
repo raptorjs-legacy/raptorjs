@@ -1,1 +1,0 @@
-locationA_js

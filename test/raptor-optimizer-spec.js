@@ -44,7 +44,7 @@ describe('optimizer module', function() {
             var includesByKey = {},
                 duplicates = [];
                 
-            var actualBundlesByLocation = {},
+            var actualBundlesBySlot = {},
                 includeCountsByBundle = {};
             
             var bundleToString = function(bundle, indent) {
@@ -52,13 +52,13 @@ describe('optimizer module', function() {
                 if (code) {
                     code = code.replace(/[\n]/g, '\\n');
                 }
-                return indent + "name: " + bundle.getName() + "\n" + indent + "location: " + bundle.getLocation() + "\n" + indent + "contentType: " + bundle.getContentType() + "\n" + indent + "code: " + code + "\n" + indent + "checksum: " + bundle.calculateChecksum();
+                return indent + "name: " + bundle.getName() + "\n" + indent + "slot: " + bundle.getSlot() + "\n" + indent + "contentType: " + bundle.getContentType() + "\n" + indent + "code: " + code + "\n" + indent + "checksum: " + bundle.calculateChecksum();
             };
             
             pageDependencies.forEachPageBundle(function(bundle) {
-                var actualBundles = actualBundlesByLocation[bundle.getLocation()];
+                var actualBundles = actualBundlesBySlot[bundle.getSlot()];
                 if (!actualBundles) {
-                    actualBundles = actualBundlesByLocation[bundle.getLocation()] = [];
+                    actualBundles = actualBundlesBySlot[bundle.getSlot()] = [];
                 }
                 
                 actualBundles.push(bundle);
@@ -83,8 +83,8 @@ describe('optimizer module', function() {
                 if (expected.name) {
                     expect(expected.name).toEqual(actual.getName());
                 }
-                if (expected.location) {
-                    expect(expected.location).toEqual(actual.getLocation());
+                if (expected.slot) {
+                    expect(expected.slot).toEqual(actual.getSlot());
                 }
                 if (expected.contentType) {
                     expect(expected.contentType).toEqual(actual.getContentType());
@@ -138,8 +138,8 @@ describe('optimizer module', function() {
 
             
             if (config.expectedBundles) {
-                forEachEntry(config.expectedBundles, function(location, expectedBundles) {
-                    var actualBundles = actualBundlesByLocation[location] || [];
+                forEachEntry(config.expectedBundles, function(slot, expectedBundles) {
+                    var actualBundles = actualBundlesBySlot[slot] || [];
                     expect(actualBundles.length).toEqual(expectedBundles.length);
                     
                     if (actualBundles.length === expectedBundles.length) {
@@ -296,19 +296,19 @@ describe('optimizer module', function() {
         });
     });
     
-    it('should allow location for resource to be overridden', function() {
+    it('should allow slot for resource to be overridden', function() {
         testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
                     includes: [{ "module": "test.optimizer.mixedA" },
-                               { "module": "test.optimizer.locationA" }]
+                               { "module": "test.optimizer.slotA" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageC",
             pageIncludes: [{ "module": "test.optimizer.mixedA" },
-                           { "module": "test.optimizer.locationA" }],
+                           { "module": "test.optimizer.slotA" }],
 
             expectedBundles: {
                 "head": [
@@ -320,14 +320,14 @@ describe('optimizer module', function() {
                     {
                         name: "bundleA",
                         contentType: "application/javascript",
-                        code: "locationA_js"
+                        code: "slotA_js"
                     }
                 ],
                 "body": [
                     {
                         name: "bundleA",
                         contentType: "text/css",
-                        code: "locationA_css"
+                        code: "slotA_css"
                     },
                     {
                         name: "bundleA",
@@ -339,19 +339,19 @@ describe('optimizer module', function() {
         });
     });
     
-    it('should allow custom locations for resources', function() {
+    it('should allow custom slots for resources', function() {
         testOptimizer({
             bundleSet: [
                 { 
                     name: "bundleA",
                     includes: [{ "module": "test.optimizer.mixedA" },
-                               { "module": "test.optimizer.locationB" }]
+                               { "module": "test.optimizer.slotB" }]
                 }
             ],
             enabledExtensions: ["jquery", "browser"],
             pageName: "pageD",
             pageIncludes: [{ "module": "test.optimizer.mixedA" },
-                           { "module": "test.optimizer.locationB" }],
+                           { "module": "test.optimizer.slotB" }],
 
             expectedBundles: {
                 "head": [
@@ -365,7 +365,7 @@ describe('optimizer module', function() {
                     {
                         name: "bundleA",
                         contentType: "text/css",
-                        code: "locationB_css"
+                        code: "slotB_css"
                     }
                 ],
 
@@ -381,7 +381,7 @@ describe('optimizer module', function() {
                     {
                         name: "bundleA",
                         contentType: "application/javascript",
-                        code: "locationB_js"
+                        code: "slotB_js"
                     }
                 ]
             }
@@ -434,13 +434,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "bundleA",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "mixedA_js\nnestedA_js"
                         },
                         {
                             name: "bundleA",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "mixedA_css\nnestedA_css"
                         }
@@ -451,13 +451,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "bundleA",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "mixedA_js\nnestedA_js"
                         },
                         {
                             name: "bundleA",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "mixedA_css\nnestedA_css"
                         }
@@ -468,13 +468,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "pageE-async",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "nestedB_js"
                         },
                         {
                             name: "pageE-async",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "nestedB_css"
                         }
@@ -530,13 +530,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "bundleA",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "mixedA_js\nnestedA_js"
                         },
                         {
                             name: "bundleA",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "mixedA_css\nnestedA_css"
                         }
@@ -547,13 +547,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "bundleA",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "mixedA_js\nnestedA_js"
                         },
                         {
                             name: "bundleA",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "mixedA_css\nnestedA_css"
                         }
@@ -564,13 +564,13 @@ describe('optimizer module', function() {
                     bundles: [
                         {
                             name: "pageE-async",
-                            location: "body",
+                            slot: "body",
                             contentType: "application/javascript",
                             code: "nestedB_js"
                         },
                         {
                             name: "pageE-async",
-                            location: "head",
+                            slot: "head",
                             contentType: "text/css",
                             code: "nestedB_css"
                         }
@@ -598,9 +598,9 @@ describe('optimizer module', function() {
                 };
                 
                 
-                var htmlByLocation = writer.writePageDependencies(pageDependencies);
-                expect(htmlByLocation.head).toNotEqual(null);
-                expect(htmlByLocation.body).toNotEqual(null);
+                var htmlBySlot = writer.writePageDependencies(pageDependencies);
+                expect(htmlBySlot.head).toNotEqual(null);
+                expect(htmlBySlot.body).toNotEqual(null);
                 expect(Object.keys(writtenFiles).length).toEqual(7);
             }
         });
@@ -666,7 +666,7 @@ describe('optimizer module', function() {
     it('should allow for a simple optimizer project', function() {
         var configPath = raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml' );
         var optimizer = raptor.require('optimizer').createOptimizer(configPath);
-        var pageIncludes = optimizer.getPageIncludes("page1");
+        var pageIncludes = optimizer.getPageHtmlBySlot("page1");
         expect(pageIncludes.body.indexOf('<script')).toNotEqual(-1);
         
     });
@@ -676,7 +676,7 @@ describe('optimizer module', function() {
         var renderContext = template.createContext();
         var optimizerConfigPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
         var optimizer = raptor.require('optimizer').createOptimizer(optimizerConfigPath);
-        optimizer.configureForContext(renderContext);
+        optimizer.setOptimizerForContext(renderContext);
         
         var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
         expect(output.indexOf('<script')).toNotEqual(-1);

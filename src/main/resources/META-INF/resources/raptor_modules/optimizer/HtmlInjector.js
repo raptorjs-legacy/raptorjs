@@ -26,11 +26,11 @@ raptor.defineClass(
                 
                 
                 while ((startMatches = startRegExp.exec(pageHtml))) {
-                    var locationName = startMatches[1];
+                    var slotName = startMatches[1];
                     
                     parts.push(pageHtml.substring(begin, startMatches.index));
                     
-                    injectIndexes[locationName] = parts.length;
+                    injectIndexes[slotName] = parts.length;
                     parts.push('');
                     
                     endRegExp.lastIndex = startRegExp.lastIndex;
@@ -57,12 +57,12 @@ raptor.defineClass(
                 }
             },
             
-            inject: function(location, injectHtml) {
-                var injectIndex = this.injectIndexes[location];
+            inject: function(slot, injectHtml) {
+                var injectIndex = this.injectIndexes[slot];
                 if (injectIndex === undefined) {
-                    throw raptor.createError(new Error('Starting marker not found for location "' + location + '"'));
+                    throw raptor.createError(new Error('Starting marker not found for slot "' + slot + '"'));
                 }
-                this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-include: ' + location + '] -->' + injectHtml + '<!-- [/raptor-include] -->') : injectHtml;
+                this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-include: ' + slot + '] -->' + injectHtml + '<!-- [/raptor-include] -->') : injectHtml;
             },
             
             getHtml: function() {

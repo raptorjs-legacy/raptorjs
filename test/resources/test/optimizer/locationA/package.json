@@ -1,8 +1,0 @@
-{
-    "type": "location",
-    "name": "test.optimizer.locationA",
-    "includes": [
-        {"path": "locationA.js", "location": "head"},
-        {"path": "locationA.css", "location": "body"}
-    ]
-}

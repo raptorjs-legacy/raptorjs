@@ -1,1 +1,0 @@
-locationB_js

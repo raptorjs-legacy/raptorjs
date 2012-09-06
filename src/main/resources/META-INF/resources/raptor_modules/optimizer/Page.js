@@ -19,7 +19,7 @@ raptor.defineClass(
             this.dir = null;
             this.watching = false;
             this.watchers = [];
-            this.includeCache = {};
+            this.pageHtmlCache = {};
             this.pageKey = null;
             
             raptor.require('listeners').makeObservable(this, Page.prototype, ["modified"]);
@@ -39,8 +39,8 @@ raptor.defineClass(
 
         Page.prototype = {
                 
-            getIncludeCache: function() {
-                return this.includeCache;
+            getPageHtmlCache: function() {
+                return this.pageHtmlCache;
             },
             
             enableExtension: function(name) {

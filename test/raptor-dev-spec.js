@@ -16,7 +16,7 @@ describe('development spec', function() {
         var renderContext = template.createContext();
         var optimizerConfigPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
         var optimizer = raptor.require('optimizer').createOptimizer(optimizerConfigPath);
-        optimizer.configureForContext(renderContext);
+        optimizer.setOptimizerForContext(renderContext);
         
         var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
         expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');

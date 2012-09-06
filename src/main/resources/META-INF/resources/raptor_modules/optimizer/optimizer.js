@@ -177,7 +177,7 @@ raptor.define(
                 }
             },
             
-            configureForContext: function(context, optimizer) {
+            setOptimizerForContext: function(context, optimizer) {
                 var attributes = context.getAttributes();
                 attributes.optimizer = optimizer;
             },
