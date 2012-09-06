@@ -208,10 +208,6 @@ $rload(function(raptor) {
             return pathParts.join('/');  
         },
         
-        isResourceInstance: function(o) {
-            return o instanceof Resource;
-        },
-        
         resolveResource: function(baseResource, relPath) {
             
             var resource;

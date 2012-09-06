@@ -4,6 +4,7 @@ describe('optimizer module', function() {
     var logger = raptor.require('logging').logger('raptor-optimizer-spec'),
         forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
+        compileAndRender = helpers.templating.compileAndRender,
         testOptimizer = function(config) {
         
             var optimizer = raptor.require("optimizer");
@@ -668,5 +669,16 @@ describe('optimizer module', function() {
         var pageIncludes = optimizer.getPageIncludes("page1");
         expect(pageIncludes.body.indexOf('<script')).toNotEqual(-1);
         
+    });
+    
+    it("should allow for optimizer tags in templates", function() {
+        var template = raptor.require('templating');
+        var renderContext = template.createContext();
+        var optimizerConfigPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        var optimizer = raptor.require('optimizer').createOptimizer(optimizerConfigPath);
+        optimizer.configureForContext(renderContext);
+        
+        var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
+        expect(output.indexOf('<script')).toNotEqual(-1);
     });
 });

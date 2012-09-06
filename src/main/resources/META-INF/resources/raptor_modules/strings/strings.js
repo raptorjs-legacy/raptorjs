@@ -140,7 +140,7 @@ $rload(function(raptor) {
 
             while ((varMatches = varRegExp.exec(str))) {
                 parts.push(str.substring(lastIndex, varMatches.index));
-                parts.push(data[varMatches[1]] || varMatches[0]);
+                parts.push(data[varMatches[1]] || '');
                 lastIndex = varRegExp.lastIndex;
             }
             

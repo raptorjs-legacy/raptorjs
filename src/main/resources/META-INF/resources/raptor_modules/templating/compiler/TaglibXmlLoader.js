@@ -291,6 +291,15 @@ raptor.defineClass(
                                     }
                                 },
                                 
+                                "transformer-class": {
+                                    _type: STRING,
+                                    _set: function(tag, name, value) {
+                                        var transformer = new Transformer();
+                                        transformer.className = value;
+                                        tag.addTransformer(transformer);
+                                    }
+                                },
+                                
                                 "transformer": {
                                     _type: OBJECT,
                                     

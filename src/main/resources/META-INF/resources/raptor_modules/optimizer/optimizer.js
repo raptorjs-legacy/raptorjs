@@ -175,6 +175,16 @@ raptor.define(
                         handleManifest.call(this, packageManifest, null, options.recursive === true, -1, false);
                     }, this);
                 }
+            },
+            
+            configureForContext: function(context, optimizer) {
+                var attributes = context.getAttributes();
+                attributes.optimizer = optimizer;
+            },
+            
+            getFromContext: function(context) {
+                var attributes = context.getAttributes();
+                return attributes.optimizer;
             }
         }; //end return
     });

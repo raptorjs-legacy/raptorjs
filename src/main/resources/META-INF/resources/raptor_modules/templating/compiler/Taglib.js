@@ -221,6 +221,9 @@ raptor.defineClass(
                     
                     if (!this.instance) {
                         var Clazz = raptor.require(this.className);
+                        if (Clazz.process) {
+                            return Clazz;
+                        }
                         this.instance = new Clazz();
                         this.instance.id = this.id;
                     }

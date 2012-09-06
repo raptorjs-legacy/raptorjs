@@ -125,20 +125,18 @@ if (isCommonJS) {
     exports.before = before;
     exports.after = after;
 }
-var readTemplate = function(path) {
-        var resource = raptor.resources.findResource(path);
-        if (!resource.exists()) {
-            throw new Error('Template not found at path "' + path + '"');
-        }
-        var src = resource.readFully();
-        return src;
-    },
-    compileAndLoad = function(templatePath, invalid) {
+var compileAndLoad = function(templatePath, invalid) {
         try
         {
             var templateCompiler = raptor.require("templating.compiler").createCompiler({logErrors: invalid !== true, minify: false, templateName: templatePath});
-            var src = readTemplate(templatePath);
-            var compiledSrc = templateCompiler.compile(src, templatePath);
+            
+            var resource = raptor.require('resources').findResource(templatePath);
+            if (!resource.exists()) {
+                throw new Error('Template not found at path "' + path + '"');
+            }
+            
+            var src = resource.readFully();
+            var compiledSrc = templateCompiler.compile(src, resource);
             console.log('\n==================================\nCompiled source (' + templatePath + '):\n----------------------------------\n', compiledSrc, "\n----------------------------------\n");
             
             raptor.require("templating");
@@ -162,7 +160,7 @@ var readTemplate = function(path) {
             throw e;
         }
     },
-    compileAndRender = function(templatePath, data, invalid, context) {
+    compileAndRender = function(templatePath, data, context, invalid) {
         try
         {
             var compiledSrc = compileAndLoad(templatePath, invalid);

@@ -104,7 +104,7 @@ raptor.defineClass(
              * @param filePath {String} The path to the input template for debugging/error reporting only
              * @returns {String} The JavaScript code for the compiled template
              */
-            compile: function(xmlSrc, filePath, callback, thisObj) {
+            compile: function(xmlSrc, resource, callback, thisObj) {
                 var _this = this,
                     rootNode,
                     templateBuilder,
@@ -120,6 +120,15 @@ raptor.defineClass(
                         error.errors = _this.getErrors();
                         throw error;
                     };
+                    
+                var filePath;
+                
+                if (raptor.require('resources').isResource(resource)) {
+                    filePath = resource.getSystemPath();
+                }
+                else if (typeof resource === 'string'){
+                    filePath = resource;
+                }
                 
                 try
                 {
@@ -127,7 +136,7 @@ raptor.defineClass(
                      * First build the parse tree for the tempate
                      */
                     rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
-                    templateBuilder = new TemplateBuilder(this, filePath); //The templateBuilder object is need to manage the compiled JavaScript output              
+                    templateBuilder = new TemplateBuilder(this, resource); //The templateBuilder object is need to manage the compiled JavaScript output              
 
                     /*
                      * The tree is continuously transformed until we go through an entire pass where 
@@ -197,8 +206,8 @@ raptor.defineClass(
              * @param filePath {String} The path to the input template for debugging/error reporting only
              * @return {void}
              */
-            compileAndLoad: function(xmlSrc, filePath) {
-                var compiledSrc = this.compile(xmlSrc, filePath, function(result) { //Get the compiled output for the template
+            compileAndLoad: function(xmlSrc, resource) {
+                var compiledSrc = this.compile(xmlSrc, resource, function(result) { //Get the compiled output for the template
                     raptor.require('templating').unload(result.templateName); //Unload any existing template with the same name
                 }); 
                 
@@ -207,6 +216,13 @@ raptor.defineClass(
                     eval(compiledSrc); //Evaluate the compiled code and register the template
                 }
                 catch(e) {
+                    var filePath;
+                    if (typeof resource === 'string') {
+                        filePath = resource;
+                    }
+                    else if (raptor.require('resources').isResource(resource)) {
+                        filePath = resource.getSystempath();
+                    }
                     this.logger().error("Unable to load compiled template: " + compiledSrc, e);
                     throw raptor.createError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);
                 }

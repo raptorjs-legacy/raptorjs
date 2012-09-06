@@ -1,5 +1,7 @@
 require('./_helper.js');
 
+
+
 describe('development spec', function() {
     var logger = raptor.require('logging').logger('raptor-dev-spec'),
         compileAndLoad = helpers.templating.compileAndLoad,
@@ -7,6 +9,17 @@ describe('development spec', function() {
         
     before(function() {
         createRaptor();
+    });
+    
+    xit("should allow for optimizer tags in templates", function() {
+        var template = raptor.require('templating');
+        var renderContext = template.createContext();
+        var optimizerConfigPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        var optimizer = raptor.require('optimizer').createOptimizer(optimizerConfigPath);
+        optimizer.configureForContext(renderContext);
+        
+        var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
+        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
     });
     
     xit("should allow for includes", function() {

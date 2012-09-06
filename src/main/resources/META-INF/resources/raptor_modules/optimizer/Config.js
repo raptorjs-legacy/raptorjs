@@ -299,6 +299,9 @@ raptor.defineClass(
                     pageClassName = "optimizer.Page";
                 }
                 
+                
+                
+                
                 if (pageConfig.packageFile) {
                     pageConfig.packageResource = raptor.require("resources").createFileResource(pageConfig.packageFile);
                 }
@@ -319,7 +322,9 @@ raptor.defineClass(
                 var page = new PageClass(pageConfig);
                 
                 this.pages.push(page);
-                this.pagesByName[page.getName()] = page;
+                this.pagesByName[page.getKey()] = page;
+                
+                return page;
             },
             
             setConfigResource: function(configResource) {

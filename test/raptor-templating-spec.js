@@ -299,7 +299,7 @@ describe('templating module', function() {
 
     it("should allow entity expressions", function() {
         var output = compileAndRender("/test-templates/entities.rhtml", {});
-        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div><div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
+        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div> <div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
     });
     
     it("should allow escaped expressions", function() {
@@ -314,7 +314,7 @@ describe('templating module', function() {
     
     it("should allow whitespace to be removed", function() {
         var output = compileAndRender("/test-templates/whitespace.rhtml", {});
-        expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines.<ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div><div>\n   begin      end     \n</div>begin end");
+        expect(output).toEqual("BEGIN  this whitespace   should be retained   END test hello Long paragraph of text should retain spacing between lines. <ul><li>One</li><li>Two</li></ul><a href=\"Test\">Hello World!</a><pre>\n   begin      end     \n</pre><div>\n   begin      end     \n</div><div>\n   begin      end     \n</div>begin end");
     });
     
     it("should handle whitespace when using expressions", function() {
@@ -330,6 +330,11 @@ describe('templating module', function() {
     it("should normalize whitespace", function() {
         var output = compileAndRender("/test-templates/whitespace3.rhtml", {});
         expect(output).toEqual(" A B C ");
+    });
+    
+    it("should handle whitespace correctly for mixed text and element children", function() {
+        var output = compileAndRender("/test-templates/whitespace-inline-elements.rhtml", {});
+        expect(output).toEqual('<p>A <i>B</i> C</p> --- <p>D <i>E</i> F</p> --- <p>G <i>H</i> I</p> --- <p>J <div>K</div> L <div>M</div> N</p> --- <p><div>O</div><div>P</div><span>Q</span> <span>R</span> </p>');
     });
     
     it("should allow HTML output that is not well-formed XML", function() {
@@ -349,7 +354,7 @@ describe('templating module', function() {
     
     it("should allow for choose...when statements", function() {
         var output = compileAndRender("/test-templates/choose-when.rhtml", {});
-        expect(output).toEqual('TRUE,TRUE');
+        expect(output).toEqual('TRUE, TRUE');
     });
     
     it("should not allow <c:otherwise> to be before a <c:when> tag", function() {
@@ -357,7 +362,7 @@ describe('templating module', function() {
         var e;
         try
         {
-            compileAndRender("/test-templates/choose-when-invalid-otherwise-not-last.rhtml", {}, true /* invalid */);
+            compileAndRender("/test-templates/choose-when-invalid-otherwise-not-last.rhtml", {}, null /*context*/, true /* invalid */);
         }
         catch(_e) {
             e = _e;
@@ -368,7 +373,7 @@ describe('templating module', function() {
     
     it("should allow for <c:def> functions", function() {
         var output = compileAndRender("/test-templates/def.rhtml", {});
-        expect(output).toEqual('<p class="greeting">Hello, World!</p>,<p class="greeting">Hello, Frank!</p>');
+        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p>');
     });
     
     it("should allow for <c:with> functions", function() {
@@ -378,12 +383,12 @@ describe('templating module', function() {
     
     it("should allow for scriptlets", function() {
         var output = compileAndRender("/test-templates/scriptlet.rhtml", {});
-        expect(output).toEqual('HELLO,');
+        expect(output).toEqual(' HELLO ');
     });
     
     it("should allow for when and otherwise as attributes", function() {
         var output = compileAndRender("/test-templates/choose-when-attributes.rhtml", {});
-        expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
+        expect(output).toEqual('<div id="one"><div>TRUE</div></div><div id="two"><div>TRUE</div></div>');
     });
     
     it("should allow for elements to be stripped out at compile time", function() {
@@ -398,7 +403,7 @@ describe('templating module', function() {
     
     it("should allow for an element to be replaced with the result of an expression", function() {
         var output = compileAndRender("/test-templates/replace.rhtml", {message: "Hello World!"});
-        expect(output).toEqual('Hello,Hello World!');
+        expect(output).toEqual('Hello, Hello World!');
     });
     
     it("should allow for includes", function() {
@@ -410,7 +415,7 @@ describe('templating module', function() {
         compileAndLoad("/test-templates/invoke.rhtml");
         
         var output = compileAndRender("/test-templates/invoke.rhtml", {});
-        expect(output).toEqual('A<p>Hello World!Hello World!</p>B<p>Hello Frank! You have 10 new messages.Hello John! You have 20 new messages.</p>');
+        expect(output).toEqual(' A <p>Hello World!Hello World!</p> B <p>Hello Frank! You have 10 new messages.Hello John! You have 20 new messages.</p>');
     });
     
     it("should allow for helper functions", function() {
@@ -429,10 +434,10 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("/test-templates/context-helper-functions-shortname.rhtml", {}, false, context);
+        var output = compileAndRender("/test-templates/context-helper-functions-shortname.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
-        output = compileAndRender("/test-templates/context-helper-functions-uri.rhtml", {}, false, context);
+        output = compileAndRender("/test-templates/context-helper-functions-uri.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
     });
@@ -467,7 +472,7 @@ describe('templating module', function() {
                 lastName: "Doe"
         };
         
-        var output = compileAndRender("/test-templates/imports3.rhtml", {}, false, context);
+        var output = compileAndRender("/test-templates/imports3.rhtml", {}, context);
         expect(output).toEqual('Hello John Doe!');
         
     });
@@ -479,7 +484,7 @@ describe('templating module', function() {
         var tryTemplate = function(path, callback) {
             try
             {
-                compileAndRender(path, {}, true);
+                compileAndRender(path, {}, null, true /* invalid */);
                 callback("", []);
             }
             catch(e) {
@@ -504,13 +509,13 @@ describe('templating module', function() {
     it("should allow static file includes", function() {
 
         var output = compileAndRender("/test-templates/include-resource-static.rhtml", {});
-        expect(output).toEqual('BEGINHello World!END');        
+        expect(output).toEqual('BEGIN Hello World! END');        
     });
     
     it("should allow HTML pages with inline script", function() {
 
         var output = compileAndRender("/test-templates/inline-script.rhtml", {name: "World"});
-        expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World!<script>$(function() { alert(\'test\'); })</script></body></html>');        
+        expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World! <script>$(function() { alert(\'test\'); })</script></body></html>');        
     });
     
     it("should allow CDATA inside templates", function() {
@@ -526,7 +531,7 @@ describe('templating module', function() {
     
     it("should allow for if...else", function() {
         var output = compileAndRender("/test-templates/if-else.rhtml", {});
-        expect(output).toEqual('A,B,C,<div>C</div>');        
+        expect(output).toEqual('A , B , C , <div>C</div>');        
     });
     
     it("should allow for expressions and variables inside JavaScript strings", function() {
