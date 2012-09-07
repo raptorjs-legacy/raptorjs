@@ -145,18 +145,21 @@ raptorBuilder.addLoader(function(raptor) {
                     
                     var out = level.toUpperCase() + " " + this._loggerName + ": " + ( message != null ? message : '');
 
-                    if (exception != null)
+                    if (message instanceof Error)
+                    {
+                        exception = message;
+                    }
+                    
+                    if (stacktraces && exception)
                     {
                         out += '\n\n' + stacktraces.trace(exception);
                     }
-                    else if (message instanceof Error)
-                    {
-                        out += '\n\n' + stacktraces.trace(message);
-                    }
-                    
                     
                     console[level](out);
-                                  
+                    
+                    if (!stacktraces && exception) {
+                        console.error(exception);
+                    }
                 }
                 catch(e) {
                     
