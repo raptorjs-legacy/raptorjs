@@ -28,6 +28,7 @@ raptor.defineClass(
             if (!this.nodeType) {
                 this._isRoot = false;
                 this.preserveWhitespace = null;
+                this.wordWrapEnabled = null;
                 this.nodeType = nodeType;
                 this.parentNode = null;
                 this.previousSibling = null;
@@ -207,7 +208,7 @@ raptor.defineClass(
             
             getExpression: function(template, childrenOnly) {
                 if (!template) {
-                    throw raptor.createError(new Error("template is required"));
+                    throw raptor.createError(new Error("template argument is required"));
                 }
                 
                 var _this = this;
@@ -217,10 +218,10 @@ raptor.defineClass(
                             template.statement("context.captureString(function() {")
                                 .indent(function() {
                                     if (childrenOnly === true) {
-                                        _this.generateCode(template);    
+                                        _this.generateCodeForChildren(template);
                                     }
                                     else {
-                                        _this.generateCodeForChildren(template);
+                                        _this.generateCode(template);
                                     }
                                     
                                 })
@@ -293,6 +294,9 @@ raptor.defineClass(
                     return null;
                 }
                 
+                var previousSibling = childNode.previousSibling,
+                    nextSibling = childNode.nextSibling;
+                
                 if (this.firstChild === childNode && this.lastChild === childNode) {
                     //The child node is the one and only child node being removed
                     this.firstChild = this.lastChild = null;
@@ -308,8 +312,8 @@ raptor.defineClass(
                     this.lastChild.nextSibling = null;
                 }
                 else {
-                    childNode.previousSibling.nextSibling = childNode.nextSibling;
-                    childNode.nextSibling.previousSibling = childNode.previousSibling;
+                    previousSibling.nextSibling = nextSibling;
+                    nextSibling.previousSibling = previousSibling;
                 }
                 
                 //Make sure the removed node is completely detached
@@ -477,6 +481,20 @@ raptor.defineClass(
                 this.stripExpression = stripExpression;
             },
             
+            normalizeText: function() {
+                if (this.isTextNode()) {
+                    var normalizedText = this.getText();
+                    var curChild = this.nextSibling;
+                    while(curChild && curChild.isTextNode()) {
+                        normalizedText += curChild.getText();
+                        var nodeToRemove = curChild;
+                        curChild = curChild.nextSibling;
+                        nodeToRemove.detach(); 
+                    }
+                    this.setText(normalizedText);
+                }
+            },
+            
             generateCode: function(template) {
                 this.compiler = template.compiler;
                 
@@ -489,6 +507,25 @@ raptor.defineClass(
                     else {
                         this.setPreserveWhitespace(false);
                     }
+                }
+                
+                var wordWrapEnabled = this.isWordWrapEnabled();
+                if (wordWrapEnabled == null) {
+                    wordWrapEnabled = template.options.wordWrapEnabled;
+                    if (wordWrapEnabled !== false) {
+                        this.setWordWrapEnabled(true);
+                    }
+                }
+                
+                if (this.isTextNode()) {
+                    /*
+                     * After all of the transformation of the tree we
+                     * might have ended up with multiple text nodes
+                     * as siblings. We want to normalize adjacent
+                     * text nodes so that whitespace removal rules
+                     * will be correct
+                     */
+                    this.normalizeText();    
                 }
                 
                 try
@@ -546,12 +583,24 @@ raptor.defineClass(
                 return this.preserveWhitespace; 
             },
             
+            
+            
+            
+            
             /**
              * 
              * @param preserve
              */
             setPreserveWhitespace: function(preserve) {
                 this.preserveWhitespace = preserve;
+            },
+            
+            isWordWrapEnabled: function() {
+                return this.wordWrapEnabled; 
+            },
+            
+            setWordWrapEnabled: function(enabled) {
+                this.wordWrapEnabled = enabled;
             },
             
             doGenerateCode: function(template) {
@@ -570,6 +619,10 @@ raptor.defineClass(
                 this.forEachChild(function(childNode) {
                     if (childNode.isPreserveWhitespace() == null) {
                         childNode.setPreserveWhitespace(this.isPreserveWhitespace() === true);
+                    }
+                    
+                    if (childNode.isWordWrapEnabled() == null) {
+                        childNode.setWordWrapEnabled(this.isWordWrapEnabled() === true);
                     }
                     
                     childNode.generateCode(template);

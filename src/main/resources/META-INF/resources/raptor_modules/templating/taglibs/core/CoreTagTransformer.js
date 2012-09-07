@@ -39,7 +39,7 @@ raptor.defineClass(
         
         return {
             
-            process: function(node, compiler) {
+            process: function(node, compiler, template) {
                 
                 var forEachAttr,
                     ifAttr,
@@ -93,7 +93,6 @@ raptor.defineClass(
                             callback.call(thisObj, attrUri, attr.localName, value, prefix, attrDef);
                         }, this);
                     };
-                
                 
                 if (node.getAttributeNS(coreNS, "space") === "preserve" || node.getAttributeNS(coreNS, "whitespace") === "preserve") {
                     node.setPreserveWhitespace(true);
@@ -241,50 +240,66 @@ raptor.defineClass(
                     uri = coreNS;
                 }
                 
-                tag = compiler.taglibs.getTag(uri, node.localName);
+                var nestedTag;
                 
+                if (node.parentNode) {
+                    var parentUri = node.parentNode.uri;
+                    var parentName = node.parentNode.localName;
+                    nestedTag = compiler.taglibs.getNestedTag(parentUri, parentName, uri, node.localName);
+                }
+                
+                if (nestedTag) {
+                    node.setWordWrapEnabled(false);
+                    node.parentNode.setProperty(nestedTag.targetProperty, node.getBodyContentExpression(template));
+                    node.detach();
+                }
+                else {
+                    tag = compiler.taglibs.getTag(uri, node.localName);
+                    
 
-                if (tag) {
-                    if (tag.preserveWhitespace) {
-                        node.setPreserveWhitespace(true);
-                    }
-                    
-                    if (tag.handlerClass)
-                    {
-                        //Instead of compiling as a static XML element, we'll
-                        //make the node render as a tag handler node so that
-                        //writes code that invokes the handler
-                        TagHandlerNode.convertNode(
-                            node, 
-                            tag);
+                    if (tag) {
+                        if (tag.preserveWhitespace) {
+                            node.setPreserveWhitespace(true);
+                        }
                         
-                        forEachProp(function(uri, name, value, prefix, attrDef) {
-                            if (attrDef) {
-                                node.setPropertyNS(uri, name, value);    
-                            }
-                            else {
-                                node.addDynamicAttribute(prefix ? prefix + ':' + name : name, value);
-                            }
+                        if (tag.handlerClass)
+                        {
+                            //Instead of compiling as a static XML element, we'll
+                            //make the node render as a tag handler node so that
+                            //writes code that invokes the handler
+                            TagHandlerNode.convertNode(
+                                node, 
+                                tag);
                             
-                        });
+                            forEachProp(function(uri, name, value, prefix, attrDef) {
+                                if (attrDef) {
+                                    node.setPropertyNS(uri, name, value);    
+                                }
+                                else {
+                                    node.addDynamicAttribute(prefix ? prefix + ':' + name : name, value);
+                                }
+                                
+                            });
+                        }
+                        else if (tag.nodeClass){
+                            
+                            var NodeCompilerClass = raptor.require(tag.nodeClass);
+                            extend(node, NodeCompilerClass.prototype);
+                            NodeCompilerClass.call(node);
+                            
+                            node.setNodeClass(NodeCompilerClass);
+                            
+                            forEachProp(function(uri, name, value) {
+                                node.setPropertyNS(uri, name, value);
+                            });
+                        }
+                        
                     }
-                    else if (tag.nodeClass){
-                        
-                        var NodeCompilerClass = raptor.require(tag.nodeClass);
-                        extend(node, NodeCompilerClass.prototype);
-                        NodeCompilerClass.call(node);
-                        
-                        node.setNodeClass(NodeCompilerClass);
-                        
-                        forEachProp(function(uri, name, value) {
-                            node.setPropertyNS(uri, name, value);
-                        });
+                    else if (uri && compiler.taglibs.isTaglib(uri)) {
+                        node.addError('Tag ' + node.toString() + ' is not allowed for taglib "' + uri + '"');
                     }
-                    
                 }
-                else if (uri && compiler.taglibs.isTaglib(uri)) {
-                    node.addError('Tag ' + node.toString() + ' is not allowed for taglib "' + uri + '"');
-                }
+                
             }
         };
     });

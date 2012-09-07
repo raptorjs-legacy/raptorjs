@@ -554,6 +554,36 @@ describe('templating module', function() {
         expect(output).toEqual('test: Hello|dynamic attributes: [class=my-class, id=myId]');
     });
     
+    it("should allow for nodes to be converted to expressions", function() {
+        var ElementNode = raptor.require('templating.compiler.ElementNode');
+        var TextNode = raptor.require('templating.compiler.TextNode');
+        var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder');
+
+        var compiler = raptor.require('templating.compiler').createCompiler();
+        var template = new TemplateBuilder(compiler);
+        
+        var div = new ElementNode("div");
+        var text = new TextNode("Hello World!");
+        div.appendChild(text);
+        
+        var expression = div.getExpression(template).toString();
+        var bodyContentExpression = div.getBodyContentExpression(template).toString();
+        
+        var sb = raptor.require('strings').createStringBuilder();
+        var context = raptor.require('templating').createContext(sb);
+        var output = eval(expression);
+        expect(output.toString()).toEqual('<div>Hello World!</div>');
+        
+        output = eval(bodyContentExpression);
+        expect(output.toString()).toEqual('Hello World!');
+        
+    });
+    
+    it("should allow for nested tags", function() {
+        var output = compileAndRender("/test-templates/nested-tags.rhtml", {});
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><span title="Popover Title" data-content="Popover Content">Link Text</span>');
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         

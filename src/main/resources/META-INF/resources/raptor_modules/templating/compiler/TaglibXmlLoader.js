@@ -42,8 +42,6 @@ raptor.defineClass(
             return loader.load();
         };
         
-        
-        
         TaglibXmlLoader.prototype = {
             load: function() {
                 var src = this.src, 
@@ -243,6 +241,41 @@ raptor.defineClass(
                                 },
                                 
                                 "attribute": attributeHandler,
+                                
+                                "<nested-tag>": {
+                                    _type: OBJECT,
+                                    
+                                    _begin: function() {
+                                        return new Tag();
+                                    },
+                                    
+                                    _end: function(nestedTag, tag) {
+                                        if (nestedTag.uri === null || nestedTag.uri === undefined) {
+                                            nestedTag.uri = taglib.uri;
+                                        }
+                                        
+                                        nestedTag.targetProperty = nestedTag.targetProperty || nestedTag.name;
+                                        
+                                        if (!nestedTag.name) {
+                                            throw raptor.createError(new Error('The "name" property is required for a <nested-tag>'))
+                                        }
+                                        
+                                        tag.addNestedTag(nestedTag);
+                                    },
+                                    
+                                    "name": {
+                                        _type: STRING
+                                    },
+                                    
+                                    "type": {
+                                        _type: STRING
+                                    },
+                                    
+                                    "target-property": {
+                                        _type: STRING,
+                                        _targetProp: "targetProperty"
+                                    }
+                                },
                                 
                                 "nested-variable": {
                                     _type: OBJECT,

@@ -20,6 +20,8 @@ raptor.defineClass(
     function() {
         "use strict";
         
+        var strings = raptor.require('strings');
+        
         var TextNode = function(text) {
             TextNode.superclass.constructor.call(this, 'text');
             this.text = text;
@@ -47,6 +49,34 @@ raptor.defineClass(
                         }
                         
                         text = text.replace(/\s+/g, " ");
+                        
+                        
+                        if (this.isWordWrapEnabled() && text.length > 80) {
+                            
+                            var start=0,
+                                end;
+                            
+                            while (start < text.length) {
+                                end = Math.min(start+80, text.length);
+                                
+                                var lastSpace = text.substring(start, end).lastIndexOf(' ');
+                                if (lastSpace != -1) {
+                                    lastSpace = lastSpace + start; //Adjust offset into original string
+                                }
+                                else {
+                                    lastSpace = text.indexOf(' ', end); //No space before the 80 column mark... search for the first space after to break on
+                                }
+                                
+                                if (lastSpace != -1) {
+                                    text = text.substring(0, lastSpace) + "\n" + text.substring(lastSpace+1);
+                                    start = lastSpace + 1;
+                                }
+                                else {
+                                    break;
+                                }
+                                
+                            }
+                        }
                     }
 
                     template.text(text);
@@ -55,6 +85,10 @@ raptor.defineClass(
             
             getText: function() {
                 return this.text;
+            },
+            
+            setText: function(text) {
+                this.text = text;
             },
             
             isTextNode: function() {

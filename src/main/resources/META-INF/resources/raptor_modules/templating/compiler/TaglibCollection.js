@@ -165,6 +165,7 @@ raptor.defineClass(
             this.uriToShortNameMapping = {};
             this.uriToPrefixMapping = {};
             this.functionsLookup = {};
+            this.nestedTags = {};
         };
         
         TaglibCollection.prototype = {
@@ -285,7 +286,9 @@ raptor.defineClass(
                         }, this);
                     }
                     
-                    
+                    tag.forEachNestedTag(function(nestedTag) {
+                        this.nestedTags[tag.uri + ":" + tag.name + ":" + nestedTag.uri + ":" + nestedTag.name] = nestedTag;
+                    }, this);
                 }, this);
                 
                 /*
@@ -475,6 +478,12 @@ raptor.defineClass(
                 }
                 
                 return tag;
+            },
+            
+            getNestedTag: function(parentTagUri, parentTagName, nestedTagUri, nestedTagName) {
+                parentTagUri = parentTagUri || '';
+                nestedTagUri = nestedTagUri || '';
+                return this.nestedTags[parentTagUri + ":" + parentTagName + ":" + nestedTagUri + ":" + nestedTagName];
             },
             
             getFunction: function(uri, functionName) {

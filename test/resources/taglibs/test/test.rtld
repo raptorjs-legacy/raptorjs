@@ -78,5 +78,13 @@
     <function class="taglibs.test.TestFunctions">
         <name>upperCase</name>
     </function>
+    
+    <tag name="popover" handler-class="taglibs.test.PopoverTag">
+        <attribute name="title" type="string"/>
+        <attribute name="content" type="string"/>
+        
+        <nested-tag name="popover-title" type="string" target-property="title"/>
+        <nested-tag name="popover-content" type="string" target-property="content"/>
+    </tag>
 
 </raptor-taglib>

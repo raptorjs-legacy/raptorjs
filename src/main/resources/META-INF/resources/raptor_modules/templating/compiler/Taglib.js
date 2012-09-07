@@ -95,9 +95,21 @@ raptor.defineClass(
                 this.importedVariables = [];
                 this.preserveWhitespace = false;
                 this._taglib = null;
+                this.nestedTags = {};
             };
             
             Tag.prototype = {
+                addNestedTag: function(nestedTag) {
+                    var uri = nestedTag.uri || '';
+                    this.nestedTags[uri + ":" + nestedTag.name] = nestedTag;
+                },
+                
+                forEachNestedTag: function(callback, thisObj) {
+                    raptor.forEachEntry(this.nestedTags, function(key, nestedTag) {
+                        callback.call(thisObj, nestedTag);
+                    });
+                },
+                
                 addAttribute: function(attr) {
                     var uri = attr.uri || '';
                     this.attributeMap[uri + ':' + attr.name] = attr;
