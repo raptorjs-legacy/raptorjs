@@ -96,13 +96,26 @@ raptor.defineClass(
                 else if (typeof arguments[0] === 'number') {
                     this.code(this.indentStr(arguments[0]));
                 }
-                else if (typeof arguments[0] === 'function') {
-                    var func = arguments[0],
-                        thisObj = arguments[1];
+                else if (typeof arguments[0] === 'function' || typeof arguments[1] === 'function') {
+                    var func,
+                        thisObj,
+                        delta;
                     
-                    this.incIndent();
+                    if (typeof arguments[0] === 'function') {
+                        delta = 1;
+                        func = arguments[0];
+                        thisObj = arguments[1];
+                    }
+                    else {
+                        delta = arguments[0];
+                        func = arguments[1];
+                        thisObj = arguments[2];
+                    }
+                    
+                    
+                    this.incIndent(delta);
                     func.call(thisObj);
-                    this.decIndent();
+                    this.decIndent(delta);
                 }
                 else if (typeof arguments[0] === 'string') {
                     this.code(this._indent + arguments[0]);
@@ -175,15 +188,23 @@ raptor.defineClass(
                 }
             },
             
-            incIndent: function() {
+            incIndent: function(delta) {
+                if (arguments.length === 0) {
+                    delta = 1; 
+                }
+                
                 this.flush();
-                this._indent += INDENT;
+                this._indent = this.indentStr(delta);
                 this.firstStatement = true;
             },
             
-            decIndent: function() {
+            decIndent: function(delta) {
+                if (arguments.length === 0) {
+                    delta = 1; 
+                }
+                
                 this.flush();
-                this._indent = this._indent.substring(INDENT.length);
+                this._indent = this._indent.substring(INDENT.length * delta);
                 this.firstStatement = false;
             },
             
@@ -364,7 +385,7 @@ raptor.defineClass(
             
             incIndent: function() {
                 if (!this.hasErrors()) {
-                    this.writer.incIndent();
+                    this.writer.incIndent.apply(this.writer, arguments);
                 }
     
                 return this;
@@ -372,7 +393,7 @@ raptor.defineClass(
             
             decIndent: function() {
                 if (!this.hasErrors()) {
-                    this.writer.decIndent();
+                    this.writer.decIndent.apply(this.writer, arguments);
                 }
     
                 return this;

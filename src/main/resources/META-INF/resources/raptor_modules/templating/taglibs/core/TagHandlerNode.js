@@ -44,13 +44,18 @@ raptor.defineClass(
                 if (props) {
                     forEachEntry(props, function(name, value) {
                         if (value instanceof Expression) {
-                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + value.expression);
+                            var expressionStr;
+                            template.indent(function() {
+                                expressionStr = value.expression.toString();
+                            });
+                            
+                            propsArray.push(template.indentStr(1) + stringify(name) + ": " + expressionStr);
                         }
                         else if (typeof value === 'string') {
-                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + stringify(value));
+                            propsArray.push(template.indentStr(1) + stringify(name) + ": " + stringify(value));
                         }
                         else {
-                            propsArray.push(template.indentStr(1) + stringify(name) + ":" + value);
+                            propsArray.push(template.indentStr(1) + stringify(name) + ": " + value);
                         }
                     });
                     

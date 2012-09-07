@@ -215,7 +215,7 @@ raptor.defineClass(
                 return template.makeExpression({
                     toString: function() {
                         return template.captureCode(function() {
-                            template.statement("context.captureString(function() {")
+                            template.code("context.captureString(function() {\n")
                                 .indent(function() {
                                     if (childrenOnly === true) {
                                         _this.generateCodeForChildren(template);
@@ -225,7 +225,7 @@ raptor.defineClass(
                                     }
                                     
                                 })
-                                .line("})");    
+                                .code(template.indentStr() + "})");    
                         });
                         
                     }
