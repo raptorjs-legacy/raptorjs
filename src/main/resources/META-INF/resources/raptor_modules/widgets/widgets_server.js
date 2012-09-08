@@ -62,7 +62,7 @@ raptor.extend('widgets', function(raptor) {
                     if (widget.events) {
                         write(',[');
                         widget.events.forEach(function(event) {
-                            write('["' + event[0] + '","' + event[1] + (event[2] != null ? '",' + stringify(event[2]) + ']' : ']'));
+                            write('["' + event[0] + '","' + event[1] + (event[2] != null ? '",' + stringify(event[2]) + ']' : '"]'));
                         });
                         write(']');
                     }
