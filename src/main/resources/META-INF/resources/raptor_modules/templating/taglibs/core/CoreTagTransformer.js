@@ -340,6 +340,7 @@ raptor.defineClass(
                 node.removeAttribute("value");
                 node.removeAttribute("uri");
                 
+                
                 if (node.hasAttributesAnyNS()) {
                     //There shouldn't be any other attributes...
                     var invalidAttrs = node.getAllAttributes().map(function(attr) {
@@ -350,6 +351,8 @@ raptor.defineClass(
                 }
                 
                 node.detach(); //Remove the node out of the tree
+                
+                compiler.transformTree(node, template);
                 
                 if (hasValue) {                    
                     parentNode.setAttributeNS(attrUri, attrName, attrValue);

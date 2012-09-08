@@ -539,6 +539,10 @@ raptor.defineClass(
                 return this.compiler.getNodeClass(uri, localName);
             },
             
+            transformTree: function(node) {
+                this.compiler.transformTree(node, this);
+            },
+            
             INDENT: INDENT
             
         };

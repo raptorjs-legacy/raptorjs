@@ -53,41 +53,60 @@ raptor.defineClass(
              * @param node {templating.compiler$Node} The root node to transform
              * @param templateBuilder {templating.compiler$TemplateBuilder} The template builder object that is used to control how the compiled code is generated
              */
-            transformTree: function(node, templateBuilder) {
-                try
-                {
-                    this.taglibs.forEachNodeTransformer( //Handle all of the transformers that are appropriate for this node
-                        node, //The node being transformed 
-                        function(transformer) {
-                            if (!node.isTransformerApplied(transformer)) { //Check to make sure a transformer of a certain type is only applied once to a node
-                                node.setTransformerApplied(transformer); //Mark the node as have been transformed by the current transformer
-                                this._transformerApplied = true; //Set the flag to indicate that a node was transformed
-                                node.compiler = this;
-                                transformer.getInstance().process(node, this, templateBuilder); //Have the transformer process the node (NOTE: Just because a node is being processed by the transformer doesn't mean that it has to modify the parse tree)
-                            }
-                        },
-                        this);
+            transformTree: function(rootNode, templateBuilder) {
+                if (!templateBuilder) {
+                    throw raptor.createError(new Error("The templateBuilder argument is required"));
                 }
-                catch(e) {
-                    throw raptor.createError(new Error('Unable to compile template at path "' + templateBuilder.filePath + ". Error: " + e.message), e);
-                }
+                
+                var transformTreeHelper = function(node) {
+                    try
+                    {
+                        this.taglibs.forEachNodeTransformer( //Handle all of the transformers that are appropriate for this node
+                            node, //The node being transformed 
+                            function(transformer) {
+                                if (!node.isTransformerApplied(transformer)) { //Check to make sure a transformer of a certain type is only applied once to a node
+                                    node.setTransformerApplied(transformer); //Mark the node as have been transformed by the current transformer
+                                    this._transformerApplied = true; //Set the flag to indicate that a node was transformed
+                                    node.compiler = this;
+                                    transformer.getInstance().process(node, this, templateBuilder); //Have the transformer process the node (NOTE: Just because a node is being processed by the transformer doesn't mean that it has to modify the parse tree)
+                                }
+                            },
+                            this);
+                    }
+                    catch(e) {
+                        throw raptor.createError(new Error('Unable to compile template at path "' + templateBuilder.filePath + ". Error: " + e.message), e);
+                    }
+                    
+                    
+                    /*
+                     * Now process the child nodes by looping over the child nodes
+                     * and transforming the subtree recursively 
+                     * 
+                     * NOTE: The length of the childNodes array might change as the tree is being performed.
+                     *       The checks to prevent transformers from being applied multiple times makes
+                     *       sure that this is not a problem.
+                     */
+                    
+                    node.forEachChild(function(childNode) {
+                        if (!childNode.parentNode) {
+                            return; //The child node might have been removed from the tree
+                        }
+                        transformTreeHelper.call(this, childNode);
+                    }, this);
+                };
                 
                 
                 /*
-                 * Now process the child nodes by looping over the child nodes
-                 * and transforming the subtree recursively 
-                 * 
-                 * NOTE: The length of the childNodes array might change as the tree is being performed.
-                 *       The checks to prevent transformers from being applied multiple times makes
-                 *       sure that this is not a problem.
+                 * The tree is continuously transformed until we go through an entire pass where 
+                 * there were no new nodes that needed to be transformed. This loop makes sure that
+                 * nodes added by transformers are also transformed.
                  */
-                
-                node.forEachChild(function(childNode) {
-                    if (!childNode.parentNode) {
-                        return; //The child node might have been removed from the tree
-                    }
-                    this.transformTree(childNode, templateBuilder);
-                }, this);
+                do
+                {
+                    this._transformerApplied = false; //Reset the flag to indicate that no transforms were yet applied to any of the nodes for this pass
+                    transformTreeHelper.call(this, rootNode); //Run the transforms on the tree                 
+                }
+                while (this._transformerApplied);
             },
 
             /**
@@ -136,30 +155,12 @@ raptor.defineClass(
                      */
                     rootNode = ParseTreeBuilder.parse(xmlSrc, filePath, this.taglibs); //Build a parse tree from the input XML
                     templateBuilder = new TemplateBuilder(this, resource); //The templateBuilder object is need to manage the compiled JavaScript output              
-
-                    /*
-                     * The tree is continuously transformed until we go through an entire pass where 
-                     * there were no new nodes that needed to be transformed. This loop makes sure that
-                     * nodes added by transformers are also transformed.
-                     */
-                    do
-                    {
-                        this._transformerApplied = false; //Reset the flag to indicate that no transforms were yet applied to any of the nodes for this pass
-                        this.transformTree(rootNode, templateBuilder); //Run the transforms on the tree                 
-                    }
-                    while (this._transformerApplied);
-                
+                    this.transformTree(rootNode, templateBuilder);
                 }
                 catch(e) {
                     throw raptor.createError(new Error('An error occurred while trying to compile template at path "' + filePath + '". Exception: ' + e), e);
                 }
-                
-                
-//                if (this.hasErrors()) {
-//                    handleErrors();
-//                }
-                    
-                
+
                 try
                 {
                 
