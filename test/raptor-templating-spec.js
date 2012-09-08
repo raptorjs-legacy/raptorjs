@@ -500,7 +500,10 @@ describe('templating module', function() {
         };
         
         tryTemplate("/test-templates/errors.rhtml", function(message, errors) {
-            expect(errors.length).toEqual(20);
+            var len = errors ? errors.length : -1;
+            expect(len).toEqual(25);    
+            
+            
         });
         
         
@@ -582,6 +585,11 @@ describe('templating module', function() {
     it("should allow for nested tags", function() {
         var output = compileAndRender("/test-templates/nested-tags.rhtml", {});
         expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><span title="Popover Title" data-content="Popover Content">Link Text</span>');
+    });
+    
+    it("should allow for nested attributes", function() {
+        var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
     });
     
     xit("should allow for widgets", function() {

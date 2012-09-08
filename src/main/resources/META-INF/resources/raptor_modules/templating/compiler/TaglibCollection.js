@@ -422,7 +422,7 @@ raptor.defineClass(
                 /*
                  * Handle all of the transformers for all possible matching transformers.
                  * 
-                 * Start with the most specific and end with the list specific.
+                 * Start with the least specific and end with the most specific.
                  */
                 _addTransformers(this.tagTransformersLookup["*:*"]); //Wildcard for both URI and tag name (i.e. transformers that apply to every element)
                 _addTransformers(this.tagTransformersLookup[uri + ":*"]); //Wildcard for tag name but matching URI (i.e. transformers that apply to every element with a URI, regadless of tag name)

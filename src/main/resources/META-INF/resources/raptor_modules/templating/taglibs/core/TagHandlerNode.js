@@ -120,18 +120,21 @@ raptor.defineClass(
                 var hasNamespacedProps = !objects.isEmpty(namespacedProps);
                 
                 ///////////
+                
+                var _this = this;
+                
                 template.contextMethodCall("t", function() {
                     template
                         .code("\n")
                         .indent(function() {
                             template
                                 .line(handlerVar + ',')
-                                .indent().code(getPropsStr(this.getProperties(), template));
+                                .indent().code(getPropsStr(_this.getProperties(), template));
                             
-                            if (this.hasChildren()) {
+                            if (_this.hasChildren()) {
                                 var bodyParams = [];
                                 
-                                forEach(this.tag.nestedVariables, function(v) {
+                                forEach(_this.tag.nestedVariables, function(v) {
                                     bodyParams.push(v.name);
                                 });
                                 
@@ -139,23 +142,23 @@ raptor.defineClass(
                                     .code(',\n')
                                     .line("function(" + bodyParams.join(",") + ") {") 
                                     .indent(function() {
-                                        this.generateCodeForChildren(template);    
-                                    }, this)
+                                        _this.generateCodeForChildren(template);    
+                                    })
                                     .indent()
                                     .code('}');
                             }
                             else {
-                                if (hasNamespacedProps || this.dynamicAttributes) {
+                                if (hasNamespacedProps || _this.dynamicAttributes) {
                                     template
                                         .code(",\n")
                                         .indent().code("null");
                                 }
                             }
                             
-                            if (this.dynamicAttributes) {
+                            if (_this.dynamicAttributes) {
                                 template
                                     .code(",\n")
-                                    .indent().code(getPropsStr(this.dynamicAttributes, template));
+                                    .indent().code(getPropsStr(_this.dynamicAttributes, template));
                             }
                             else {
                                 if (hasNamespacedProps) {
@@ -184,8 +187,8 @@ raptor.defineClass(
                                     .code("}");
                             }
                             
-                        }, this);
-                }, this);
+                        });
+                });
                 
                 
 

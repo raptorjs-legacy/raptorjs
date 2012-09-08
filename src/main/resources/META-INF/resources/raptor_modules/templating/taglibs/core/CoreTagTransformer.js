@@ -40,6 +40,8 @@ raptor.defineClass(
         return {
             
             process: function(node, compiler, template) {
+                //Find and handle nested <c:attrs> elements
+                this.findNestedAttrs(node, compiler, template);
                 
                 var forEachAttr,
                     ifAttr,
@@ -52,8 +54,9 @@ raptor.defineClass(
                     replaceAttr,
                     uri,
                     tag,
+                    nestedTag,
                     forEachProp = function(callback, thisObj) {
-                        forEach(node.getAttributes(), function(attr) {
+                        node.forEachAttributeAnyNS(function(attr) {
 
                             if (attr.uri=== 'http://www.w3.org/2000/xmlns/' || attr.uri === 'http://www.w3.org/XML/1998/namespace' || attr.prefix == 'xmlns') {
                                 return; //Skip xmlns attributes
@@ -81,18 +84,44 @@ raptor.defineClass(
                                 return;
                             }
                             
-                            try
-                            {
-                                value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true);
-                            }
-                            catch(e) {
-                                node.addError('Invalid attribute value of "' + attr.value + '" for attribute "' + attr.name + '": ' + e.message);
+                            if (attr.value instanceof Expression) {
                                 value = attr.value;
+                            }
+                            else {
+                                try
+                                {
+                                    value = getPropValue(attr.value, type, attrDef ? attrDef.allowExpressions !== false : true);
+                                }
+                                catch(e) {
+                                    node.addError('Invalid attribute value of "' + attr.value + '" for attribute "' + attr.name + '": ' + e.message);
+                                    value = attr.value;
+                                }
                             }
                             
                             callback.call(thisObj, attrUri, attr.localName, value, prefix, attrDef);
                         }, this);
                     };
+                    
+                uri = node.uri;
+                
+                if (!uri && node.isRoot() && node.localName === 'template') {
+                    uri = coreNS;
+                }
+                
+                if (node.parentNode) {
+                    var parentUri = node.parentNode.uri;
+                    var parentName = node.parentNode.localName;
+                    nestedTag = compiler.taglibs.getNestedTag(parentUri, parentName, uri, node.localName);
+                    
+                    if (nestedTag) {
+                        node.setWordWrapEnabled(false);
+                        node.parentNode.setProperty(nestedTag.targetProperty, node.getBodyContentExpression(template));
+                        node.detach();
+                        return;
+                    }
+                }
+                
+                tag = compiler.taglibs.getTag(uri, node.localName);
                 
                 if (node.getAttributeNS(coreNS, "space") === "preserve" || node.getAttributeNS(coreNS, "whitespace") === "preserve") {
                     node.setPreserveWhitespace(true);
@@ -233,73 +262,101 @@ raptor.defineClass(
                 }
                 
                 
-                
-                uri = node.uri;
-                
-                if (!uri && node.isRoot() && node.localName === 'template') {
-                    uri = coreNS;
+
+                if (tag) {
+                    if (tag.preserveWhitespace) {
+                        node.setPreserveWhitespace(true);
+                    }
+                    
+                    if (tag.handlerClass)
+                    {
+                        //Instead of compiling as a static XML element, we'll
+                        //make the node render as a tag handler node so that
+                        //writes code that invokes the handler
+                        TagHandlerNode.convertNode(
+                            node, 
+                            tag);
+                        
+                        forEachProp(function(uri, name, value, prefix, attrDef) {
+                            if (attrDef) {
+                                node.setPropertyNS(uri, name, value);    
+                            }
+                            else {
+                                node.addDynamicAttribute(prefix ? prefix + ':' + name : name, value);
+                            }
+                            
+                        });
+                    }
+                    else if (tag.nodeClass){
+                        
+                        var NodeCompilerClass = raptor.require(tag.nodeClass);
+                        extend(node, NodeCompilerClass.prototype);
+                        NodeCompilerClass.call(node);
+                        
+                        node.setNodeClass(NodeCompilerClass);
+                        
+                        forEachProp(function(uri, name, value) {
+                            node.setPropertyNS(uri, name, value);
+                        });
+                    }
+                    
+                }
+                else if (uri && compiler.taglibs.isTaglib(uri)) {
+                    node.addError('Tag ' + node.toString() + ' is not allowed for taglib "' + uri + '"');
                 }
                 
-                var nestedTag;
                 
-                if (node.parentNode) {
-                    var parentUri = node.parentNode.uri;
-                    var parentName = node.parentNode.localName;
-                    nestedTag = compiler.taglibs.getNestedTag(parentUri, parentName, uri, node.localName);
+            },
+            
+            findNestedAttrs: function(node, compiler, template) {
+                node.forEachChild(function(child) {
+                    if (child.uri === coreNS && child.localName === 'attr') {
+                        this.handleAttr(child, compiler, template);
+                    }
+                }, this);
+            },
+            
+            handleAttr: function(node, compiler, template) {
+                
+                
+                var parentNode = node.parentNode;
+                if (!parentNode.isElementNode()) {
+                    node.addError(this.toString() + ' tag is not nested within an element tag.');
+                    return;
                 }
                 
-                if (nestedTag) {
-                    node.setWordWrapEnabled(false);
-                    node.parentNode.setProperty(nestedTag.targetProperty, node.getBodyContentExpression(template));
-                    node.detach();
+                var hasValue = node.hasAttribute("value");
+                
+                var attrName = node.getAttribute("name");
+                var attrValue = node.getAttribute("value");
+                var attrUri = node.getAttribute("uri") || '';
+                
+                if (parentNode.hasAttributeNS(attrUri, attrName)) {
+                    node.addError(node.toString() + ' tag adds duplicate attribute with name "' + attrName + '"' + (attrUri ? ' and URI "' + attrUri + '"' : ''));
+                    return;
+                }
+                
+                node.removeAttribute("name");
+                node.removeAttribute("value");
+                node.removeAttribute("uri");
+                
+                if (node.hasAttributesAnyNS()) {
+                    //There shouldn't be any other attributes...
+                    var invalidAttrs = node.getAllAttributes().map(function(attr) {
+                        return attr.qName;
+                    });
+                    node.addError("Invalid attributes for tag " + node.toString() + ': ' + invalidAttrs.join(", "));
+                    return;
+                }
+                
+                node.detach(); //Remove the node out of the tree
+                
+                if (hasValue) {                    
+                    parentNode.setAttributeNS(attrUri, attrName, attrValue);
                 }
                 else {
-                    tag = compiler.taglibs.getTag(uri, node.localName);
-                    
-
-                    if (tag) {
-                        if (tag.preserveWhitespace) {
-                            node.setPreserveWhitespace(true);
-                        }
-                        
-                        if (tag.handlerClass)
-                        {
-                            //Instead of compiling as a static XML element, we'll
-                            //make the node render as a tag handler node so that
-                            //writes code that invokes the handler
-                            TagHandlerNode.convertNode(
-                                node, 
-                                tag);
-                            
-                            forEachProp(function(uri, name, value, prefix, attrDef) {
-                                if (attrDef) {
-                                    node.setPropertyNS(uri, name, value);    
-                                }
-                                else {
-                                    node.addDynamicAttribute(prefix ? prefix + ':' + name : name, value);
-                                }
-                                
-                            });
-                        }
-                        else if (tag.nodeClass){
-                            
-                            var NodeCompilerClass = raptor.require(tag.nodeClass);
-                            extend(node, NodeCompilerClass.prototype);
-                            NodeCompilerClass.call(node);
-                            
-                            node.setNodeClass(NodeCompilerClass);
-                            
-                            forEachProp(function(uri, name, value) {
-                                node.setPropertyNS(uri, name, value);
-                            });
-                        }
-                        
-                    }
-                    else if (uri && compiler.taglibs.isTaglib(uri)) {
-                        node.addError('Tag ' + node.toString() + ' is not allowed for taglib "' + uri + '"');
-                    }
+                    parentNode.setAttributeNS(attrUri, attrName, node.getBodyContentExpression(template));
                 }
-                
             }
         };
     });

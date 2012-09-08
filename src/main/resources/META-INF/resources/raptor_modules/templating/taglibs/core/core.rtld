@@ -324,6 +324,26 @@
         
     </tag>
     
+    <tag>
+        
+        <name>attr</name> 
+
+        <attribute>
+            <name>name</name>
+            <type>string</type>
+        </attribute>
+        
+        <attribute>
+            <name>value</name>
+            <type>string</type>
+        </attribute>
+        
+        <attribute>
+            <name>uri</name>
+            <type>string</type>
+        </attribute>
+    </tag>
+    
     <text-transformer>
         <class-name>templating.taglibs.core.CoreTextTransformer</class-name>
     </text-transformer>

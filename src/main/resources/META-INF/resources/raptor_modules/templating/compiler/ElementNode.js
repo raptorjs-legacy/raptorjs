@@ -22,6 +22,7 @@ raptor.defineClass(
         
         var forEachEntry = raptor.forEachEntry,
             forEach = raptor.forEach,
+            objects = raptor.require('objects'),
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             XML_URI = 'http://www.w3.org/XML/1998/namespace',
             XML_URI_ALT = 'http://www.w3.org/XML/1998/namespace',
@@ -34,7 +35,7 @@ raptor.defineClass(
                 this._elementNode = true;
 
                 this.dynamicAttributesExpression = null;
-                this.attributes = {};
+                this.attributesByNS = {};
                 
                 this.prefix = prefix;
                 this.localName = localName;
@@ -84,6 +85,25 @@ raptor.defineClass(
                 return false;
             },
             
+            getAllAttributes: function() {
+                var allAttrs = [];
+                forEachEntry(this.attributesByNS, function(uri, attrs) {
+                    forEachEntry(attrs, function(name, attr) {
+                        allAttrs.push(attr);
+                    });
+                }, this);
+                
+                return allAttrs;
+            },
+            
+            forEachAttributeAnyNS: function(callback, thisObj) {
+                forEachEntry(this.attributesByNS, function(uri, attrs) {
+                    forEachEntry(attrs, function(name, attr) {
+                        callback.call(thisObj, attr);
+                    });
+                });
+            },
+            
             /**
              * 
              * @returns {Array}
@@ -112,8 +132,9 @@ raptor.defineClass(
              * @returns
              */
             getAttributeNS: function(uri, localName) {
-                var attr = this.attributes[(uri || '') + ":" + localName];
-                return attr ? attr.value : null;
+                var attrNS = this.attributesByNS[uri || ''];
+                var attr = attrNS ? attrNS[localName] : undefined;
+                return attr ? attr.value : undefined;
             },
             
             /**
@@ -134,7 +155,9 @@ raptor.defineClass(
              */
             setAttributeNS: function(uri, localName, value, prefix) {
                 
-                this.attributes[(uri || '') + ":" + localName] = {
+                var attrNS = this.attributesByNS[uri || ''] || (this.attributesByNS[uri || ''] = {});
+                
+                attrNS[localName] = {
                     localName: localName,
                     value: value,
                     prefix: prefix,
@@ -169,7 +192,13 @@ raptor.defineClass(
              * @param localName
              */
             removeAttributeNS: function(uri, localName) {
-                delete this.attributes[(uri || '') + ":" + localName];
+                var attrNS = this.attributesByNS[uri || ''] || (this.attributesByNS[uri || ''] = {});
+                if (attrNS) {
+                    delete attrNS[localName];
+                    if (objects.isEmpty(attrNS)) {
+                        delete this.attributesByNS[uri || ''];
+                    }
+                }
             },
             
             /**
@@ -190,6 +219,27 @@ raptor.defineClass(
                 
                 
                 return preserveSpace; 
+            },
+            
+            hasAttributesAnyNS: function() {
+                return !objects.isEmpty(this.attributesByNS);
+            },
+            
+            hasAttributes: function() {
+                return this.hasAttributesNS('');
+            },
+            
+            hasAttributesNS: function(uri) {
+                return this.attributesByNS[uri || ''] !== undefined;
+            },
+            
+            hasAttribute: function(localName) {
+                return this.hasAttributeNS('', localName);
+            },
+            
+            hasAttributeNS: function(uri, localName) {
+                var attrsNS = this.attributesByNS[uri || ''];
+                return attrsNS ? attrsNS.hasOwnProperty(localName) : false;
             },
             
             removePreserveSpaceAttr: function() {
@@ -222,96 +272,97 @@ raptor.defineClass(
                 }
                 
                 template.text("<" + name);
-                if (this.attributes) {
-                    forEachEntry(this.attributes, function(key, attr) {
-                        var prefix = attr.prefix;
-                        if (!prefix && attr.uri) {
-                            prefix = this.resolveNamespacePrefix(attr.uri);
-                        }
+                
+                this.forEachAttributeAnyNS(function(attr) {
+                    var prefix = attr.prefix;
+                    if (!prefix && attr.uri) {
+                        prefix = this.resolveNamespacePrefix(attr.uri);
+                    }
+                    
+                    if (prefix) {
+                        name = prefix + (attr.localName ? (":" + attr.localName) : "");
+                    }
+                    else {
+                        name = attr.localName;
+                    }
+                    
+                    if (attr.value === null || attr.value === undefined) {
+                        template.text(' ' + name);
+                    }
+                    else if (template.isExpression(attr.value)) {
                         
-                        if (prefix) {
-                            name = prefix + (attr.localName ? (":" + attr.localName) : "");
-                        }
-                        else {
-                            name = attr.localName;
-                        }
+                        template.attr(name, attr.value);
+                    }
+                    else {
                         
-                        if (attr.value === null || attr.value === undefined) {
-                            template.text(' ' + name);
-                        }
-                        else {
-                            
-                            var attrParts = [],
-                                hasExpression = false,
-                                expressionsOnly = true,
-                                invalidAttr = false;
-                            
-                            ExpressionParser.parse(
-                                    attr.value,
-                                    {
-                                        text: function(text) {
-                                            attrParts.push({
-                                                text: text
-                                            });
-                                            expressionsOnly = false;
-                                        },
-                                        xml: function(text) {
-                                            attrParts.push({
-                                                xml: text
-                                            });
-                                            expressionsOnly = false;
-                                        },
-                                        expression: function(expression) {
-                                            hasExpression = true;
-                                            
-                                            attrParts.push({
-                                                expression: expression
-                                            });
-                                        },
-                                        error: function(message) {
-                                            invalidAttr = true;
-                                            this.addError('Invalid expression found in attribute "' + name + '". ' + message);
-                                        }
+                        var attrParts = [],
+                            hasExpression = false,
+                            invalidAttr = false;
+                        
+                        ExpressionParser.parse(
+                                attr.value,
+                                {
+                                    text: function(text) {
+                                        attrParts.push({
+                                            text: text
+                                        });
                                     },
-                                    this,
-                                    {
-                                        custom: {
-                                            "entity": function(expression, helper) {
-                                                helper.add('xml', "&" + expression + ";"); 
-                                            }
+                                    xml: function(text) {
+                                        attrParts.push({
+                                            xml: text
+                                        });
+                                    },
+                                    expression: function(expression) {
+                                        hasExpression = true;
+                                        
+                                        attrParts.push({
+                                            expression: expression
+                                        });
+                                    },
+                                    error: function(message) {
+                                        invalidAttr = true;
+                                        this.addError('Invalid expression found in attribute "' + name + '". ' + message);
+                                    }
+                                },
+                                this,
+                                {
+                                    custom: {
+                                        "entity": function(expression, helper) {
+                                            helper.add('xml', "&" + expression + ";"); 
                                         }
-                                    });
-                            if (invalidAttr) {
-                                template.text(name + '="' + escapeXmlAttr(attr.value) + '"');    
+                                    }
+                                });
+                        if (invalidAttr) {
+                            template.text(name + '="' + escapeXmlAttr(attr.value) + '"');    
+                        }
+                        else {
+                            if (hasExpression && attrParts.length === 1) {
+                                template.attr(name, attrParts[0].expression);
                             }
                             else {
-                                if (hasExpression && attrParts.length === 1) {
-                                    template.attr(name, attrParts[0].expression);
-                                }
-                                else {
-                                    template.text(' ' + name + '="');
-                                    forEach(attrParts, function(part) {
-                                       if (part.text) {
-                                           template.text(escapeXmlAttr(part.text));
-                                       } 
-                                       else if (part.xml) {
-                                           template.text(part.xml);
-                                       }
-                                       else if (part.expression) {
-                                           template.write(part.expression, {escapeXmlAttr: true});
-                                       }
-                                       else {
-                                           throw raptor.createError(new Error("Illegal state"));
-                                       }
-                                    });
-                                    template.text('"');
-                                }
+                                template.text(' ' + name + '="');
+                                forEach(attrParts, function(part) {
+                                   if (part.text) {
+                                       template.text(escapeXmlAttr(part.text));
+                                   } 
+                                   else if (part.xml) {
+                                       template.text(part.xml);
+                                   }
+                                   else if (part.expression) {
+                                       template.write(part.expression, {escapeXmlAttr: true});
+                                   }
+                                   else {
+                                       throw raptor.createError(new Error("Illegal state"));
+                                   }
+                                });
+                                template.text('"');
                             }
-                            
-                            
                         }
-                    }, this);
-                }
+                        
+                        
+                    }
+                }, this);
+                
                 
                 if (this.dynamicAttributesExpression) {
                     template.attrs(this.dynamicAttributesExpression);

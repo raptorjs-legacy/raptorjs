@@ -11,6 +11,11 @@ describe('development spec', function() {
         createRaptor();
     });
     
+    xit("should allow for nested attributes", function() {
+        var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
+    });
+    
     xit("should allow for nested tags", function() {
         var output = compileAndRender("/test-templates/nested-tags.rhtml", {});
         expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><span title="Popover Title" data-content="Popover Content">Link Text</span>');

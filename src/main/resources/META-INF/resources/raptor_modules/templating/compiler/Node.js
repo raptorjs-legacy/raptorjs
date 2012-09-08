@@ -57,12 +57,25 @@ raptor.defineClass(
                 return pos;
                 
             },
+            
+            
             addError: function(error) {
-                if (!this.compiler) {
+                var compiler = this.compiler,
+                    curNode = this;
+                
+                while (curNode != null && !compiler) {
+                    compiler = curNode.compiler;
+                    if (compiler) {
+                        break;
+                    }
+                    curNode = curNode.parentNode;
+                }
+                
+                if (!compiler) {
                     throw raptor.createError(new Error("Template compiler not set for node " + this));
                 }
                 var pos = this.getPosition();
-                this.compiler.addError(error + " (" + this.toString() + ")", pos);
+                compiler.addError(error + " (" + this.toString() + ")", pos);
             },
             
             setProperty: function(name, value) {
@@ -176,34 +189,28 @@ raptor.defineClass(
                     return;
                 }
                 
-                var curChild = this.firstChild;
-                while(curChild) {
-                    callback.call(thisObj, curChild);
-                    curChild = curChild.nextSibling;
-                }
-                
                 /*
                  * Convert the child linked list to an array so that
                  * if the callback code manipulates the child nodes
                  * looping won't break
                  */
-//                var children = [];
-//                
-//                var curChild = this.firstChild;
-//                while(curChild) {
-//                    children.push(curChild);
-//                    curChild = curChild.nextSibling;
-//                }
-//                
-//                for (var i=0, len=children.length; i<len; i++) {
-//                    curChild = children[i];
-//                    if (curChild.parentNode === this) {
-//                        //Make sure the node is still a child of this node
-//                        if (false === callback.call(thisObj, curChild)) {
-//                            return;
-//                        }
-//                    }
-//                }
+                var children = [];
+                
+                var curChild = this.firstChild;
+                while(curChild) {
+                    children.push(curChild);
+                    curChild = curChild.nextSibling;
+                }
+                
+                for (var i=0, len=children.length; i<len; i++) {
+                    curChild = children[i];
+                    if (curChild.parentNode === this) {
+                        //Make sure the node is still a child of this node
+                        if (false === callback.call(thisObj, curChild)) {
+                            return;
+                        }
+                    }
+                }
             },
             
             getExpression: function(template, childrenOnly) {

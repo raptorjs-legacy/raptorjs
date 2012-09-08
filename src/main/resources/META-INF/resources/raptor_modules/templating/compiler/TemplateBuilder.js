@@ -50,15 +50,18 @@ raptor.defineClass(
                 }
             },
             
-            contextMethodCall: function(methodName, argString, thisObj) {
+            contextMethodCall: function(methodName, args) {
                 
                 this.flushText();
                 
                 if (!this._bufferedContextMethodCalls) {
                     this._bufferedContextMethodCalls = [];
                 }
+                
+                
+                args = raptor.arrayFromArguments(arguments, 1);
 
-                this._bufferedContextMethodCalls.push([methodName, argString, thisObj]);
+                this._bufferedContextMethodCalls.push([methodName, args]);
             },
             
             code: function(code) {
@@ -149,8 +152,7 @@ raptor.defineClass(
                     this._bufferedContextMethodCalls = null;
                     forEach(_bufferedContextMethodCalls, function(curWrite, i) {
                         var methodName = curWrite[0],
-                            argsString = curWrite[1],
-                            thisObj = curWrite[2];
+                            args = curWrite[1];
                         
                         if (i === 0)
                         {
@@ -161,19 +163,26 @@ raptor.defineClass(
                             this._code.append(this.indentStr() + '.' + methodName + "(");
                         }
                         
-                        if (typeof argsString === 'string') {
-                            this._code.append(argsString);
-                        }
-                        else if (typeof argsString === 'function') {
-                            argsString.call(thisObj);
-                        }
-                        else if (argsString instanceof Expression) {
-                            this._code.append(argsString.toString());
-                        }
-                        else {
-                            console.error('Illegal argsString: ', argsString);
-                            throw raptor.createError(new Error("Illegal state"));
-                        }
+                        args.forEach(function(arg, i) {
+                            if (i !== 0) {
+                                this._code.append(", ");
+                            }
+                            
+                            if (typeof arg === 'string') {
+                                this._code.append(arg);
+                            }
+                            else if (typeof arg === 'function') {
+                                arg();
+                            }
+                            else if (arg instanceof Expression) {
+                                this._code.append(arg.toString());
+                            }
+                            else {
+                                throw raptor.createError(new Error('Illegal arg for method call "' +methodName + '": ' + arg.toString() + " (" + i +")"));
+                            }
+                        }, this);
+                        
+                        
                         
                         if (i < _bufferedContextMethodCalls.length -1) {
                             this._code.append(")\n");      
@@ -335,7 +344,7 @@ raptor.defineClass(
             
             attr: function(name, valueExpression) {
                 if (!this.hasErrors()) {
-                    this.contextMethodCall("a", stringify(name) + "," + valueExpression);    
+                    this.contextMethodCall("a", stringify(name), valueExpression);    
                 }
     
                 return this;
@@ -351,15 +360,15 @@ raptor.defineClass(
             
             include: function(templateName, dataExpression) {
                 if (!this.hasErrors()) {
-                    this.contextMethodCall("i", templateName + "," + dataExpression);    
+                    this.contextMethodCall("i", templateName, dataExpression);    
                 }
     
                 return this;
             },
             
-            contextMethodCall: function(methodName, argString, thisObj) {
+            contextMethodCall: function(methodName, args) {
                 if (!this.hasErrors()) {
-                    this.writer.contextMethodCall(methodName, argString, thisObj);    
+                    this.writer.contextMethodCall.apply(this.writer, arguments);    
                 }
     
                 return this;
