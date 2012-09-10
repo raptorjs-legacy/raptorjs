@@ -193,10 +193,31 @@ raptor.define(
                 context.getAttributes().optimizerPage = optimizerPage;
             },
             
+            _getExtensionsForContext: function(context) {
+                var extensions = context.getAttributes().optimizerExtensions;
+                if (!extensions) {
+                    extensions = packager.createExtensionCollection();
+                    var page = this.getPageFromContext(context);
+                    if (page) {
+                        extensions.addAll(page.getEnabledExtensions());    
+                    }
+                    var optimizer = this.getOptimizerFromContext(context);
+                    if (optimizer) {
+                        extensions.addAll(optimizer.getEnabledExtensions());
+                    }
+                }
+                
+                return extensions;
+            },
+            
             enableExtensionForContext: function(context, extension) {
-                var attributes = context.getAttributes();
-                var extensions = attributes.optimizerExtensions || (attributes.optimizerExtensions = packager.createExtensionCollection());
+                var extensions = this._getExtensionsForContext(context);
                 extensions.add(extension);
+            },
+            
+            disableExtensionForContext: function(context, extension) {
+                var extensions = this._getExtensionsForContext(context);
+                extensions.remove(extension);
             },
             
             getEnabledExtensionsFromContext: function(context) {

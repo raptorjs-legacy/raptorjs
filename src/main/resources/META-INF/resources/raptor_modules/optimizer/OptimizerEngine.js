@@ -180,9 +180,6 @@ raptor.defineClass(
                     else {
                         extensions = packager.createExtensionCollection(options.enabledExtensions);
                     }
-
-                    extensions.addAll(page.getEnabledExtensions());
-                    extensions.addAll(this.config.getEnabledExtensions());
                 }
                 else {
                     extensions = page.getEnabledExtensions() || this.config.getEnabledExtensions();

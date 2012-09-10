@@ -56,6 +56,13 @@ $rload(function(raptor) {
             this.key = null;
         },
         
+        remove: function(ext) {
+            if (this.extensionsLookup[ext]) {
+                delete this.extensionsLookup[ext];
+                this.extensionsArray = Object.keys(this.extensionsLookup);
+            }
+        },
+        
         addAll: function(extensions) {
             if (!extensions) {
                 return;

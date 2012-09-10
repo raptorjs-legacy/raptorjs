@@ -30,4 +30,11 @@
         <attribute name="name" type="string"/>
     </tag>
     
+    <tag>
+        <name>disable-extension</name>
+        <handler-class>templating.taglibs.optimizer.DisableExtensionTag</handler-class>
+        
+        <attribute name="name" type="string"/>
+    </tag>
+    
 </raptor-taglib>
