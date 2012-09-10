@@ -165,7 +165,7 @@ raptor.defineClass(
                     });
                     
                     return expressionParts.join('+');
-                }
+                };
                 
                 if (parts.length === 2) {
                     return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : '')";    
