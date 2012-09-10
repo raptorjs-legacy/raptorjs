@@ -50,6 +50,11 @@ raptor.defineClass(
                 this.enabledExtensions.add(name);
             },
             
+            enableExtensions: function(extensions) {
+                this.enabledExtensions = raptor.require('packager').createExtensionCollection();
+                this.enabledExtensions.add(extensions);
+            },
+            
             isWatching: function() {
                 return this.watching === true;
             },

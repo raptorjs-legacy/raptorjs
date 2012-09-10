@@ -10,7 +10,7 @@ raptor.define(
                     throw raptor.createError(new Error('Optimizer page not defined for template. The <optimizer:page> tag should be used to define the optimizer page.'));
                 }
                 
-                var optimizer = raptor.require('optimizer').getFromContext(context);
+                var optimizer = raptor.require('optimizer').getOptimizerFromContext(context);
                 var includes = optimizer.getPageHtmlBySlot(optimizerPage)[slotName];
                 if (includes) {
                     context.write(includes);

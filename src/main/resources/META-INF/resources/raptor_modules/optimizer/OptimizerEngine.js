@@ -7,7 +7,8 @@ raptor.defineClass(
             File = files.File,
             fileWatcher = raptor.require('file-watcher'),
             listeners = raptor.require('listeners'),
-            strings = raptor.require('strings');
+            strings = raptor.require('strings'),
+            packager = raptor.require('packager');
         
         var OptimizerEngine = function(config) {
             this.config = config;
@@ -117,19 +118,13 @@ raptor.defineClass(
             createWriter: function() {
                 var config = this.config,     
                     optimizer = raptor.require('optimizer'),
-                    writer = optimizer.createPageDependenciesFileWriter({
-                        checksumsEnabled: config.isChecksumsEnabled(),
-                        scriptsOutputDir: config.getScriptsOutputDir(),
-                        styleSheetsOutputDir: config.getStyleSheetsOutputDir(),
-                        htmlOutputDir: config.getHtmlOutputDir(),
-                        checksumLength: 8
-                    });
+                    writer = optimizer.createPageDependenciesFileWriter(config);
                 
                 var urlBuilder = optimizer.createSimpleUrlBuilder({
                     scriptsDir: config.getScriptsOutputDir(),
-                    styleSheetsDir: config.getStyleSheetsOutputDir(),
+                    styleSheetsDir: config.getCssOutputDir(),
                     scriptsPrefix: config.getScriptsUrlPrefix(),
-                    styleSheetsPrefix: config.getStyleSheetsUrlPrefix() 
+                    styleSheetsPrefix: config.getUrlPrefix() 
                 });
             
             
@@ -175,7 +170,24 @@ raptor.defineClass(
                 
                 options = options || {};
 
-                var extensions = options.enabledExtensions || page.getEnabledExtensions() || this.config.getEnabledExtensions();
+                
+                var extensions;
+                
+                if (options.enabledExtensions) {
+                    if (packager.isExtensionCollection(options.enabledExtensions)) {
+                        extensions = options.enabledExtensions;
+                    }
+                    else {
+                        extensions = packager.createExtensionCollection(options.enabledExtensions);
+                    }
+
+                    extensions.addAll(page.getEnabledExtensions());
+                    extensions.addAll(this.config.getEnabledExtensions());
+                }
+                else {
+                    extensions = page.getEnabledExtensions() || this.config.getEnabledExtensions();
+                }
+                
                 var cacheKey = extensions.getKey();
                 var pageHtmlCache = page.getPageHtmlCache();
                 var pageHtmlBySlot = pageHtmlCache[cacheKey] || (pageHtmlCache[cacheKey] = this.buildPageHtmlBySlot(page, options));
@@ -193,13 +205,6 @@ raptor.defineClass(
                         });
                     }
                 }, this);
-            },
-            
-            getExtensionsKey: function(extensions) {
-                if (!extensions || extensions.length === 0) {
-                    return "";
-                }
-                return extensions.join("|");
             },
             
             getPageBundleSet: function(page, enabledExtensions) {
@@ -258,7 +263,7 @@ raptor.defineClass(
                     pageDependencies.getPackageManifests().forEach(this.watchPackage, this);
                 }
                 
-                this.logger().info('Writing bundles for page "' + page.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getStyleSheetsOutputDir());
+                this.logger().info('Writing bundles for page "' + page.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getCssOutputDir());
                 
                 var pageOutputFile = this.getPageOutputFile(page);
                 if (pageOutputFile) {
@@ -295,7 +300,7 @@ raptor.defineClass(
                     outputFile = viewFile;
                 }
                 else {
-                    var outputPageDir = this.config.getPageOutputDir();
+                    var outputPageDir = this.config.getRenderedPagesOutputDir();
                     if (!outputPageDir) {
                         return null;
                     }
@@ -311,7 +316,7 @@ raptor.defineClass(
                 return outputFile;
             },
             
-            writePageIncludesHtml: function(page, options) {
+            writePageSlotsHtml: function(page, options) {
                 var config = this.config;
                 var baseDir = config.getHtmlOutputDir(); 
                 if (!baseDir) {
@@ -361,13 +366,15 @@ raptor.defineClass(
                         }
                         
                         var writePage = function() {
-                            if (config.isWriteHtmlIncludesEnabled()) {
-                                _this.writePageIncludesHtml(page);    
+                            if (config.isWritePageSlotsHtmlEnabled()) {
+                                _this.writePageSlotsHtml(page);    
                             }
                             
-                            var html = page.render({
-                                optimizer: _this
-                            });
+                            if (config.isWriteRenderedPagesEnabled()) {
+                                var html = page.render({
+                                    optimizer: _this
+                                });    
+                            }
                             
                             logger.info('Writing page "' + page.getName() + '" with injected dependencies to "' + outputFile + '"...');
                             outputFile.writeFully(html);
@@ -414,8 +421,11 @@ raptor.defineClass(
                 }, this);
             },
             
-            setOptimizerForContext: function(context) {
+            setOptimizerForContext: function(context, page) {
                 raptor.require('optimizer').setOptimizerForContext(context, this);
+                if (arguments.length === 2) {
+                    raptor.require('optimizer').setPageForContext(context, page);    
+                }
             }
         };
         

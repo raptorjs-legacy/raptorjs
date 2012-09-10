@@ -35,7 +35,7 @@
     </tag>
     
     <tag>
-        <name>initWidgets</name>
+        <name>init-widgets</name>
         <handler-class>templating.taglibs.widgets.InitWidgetsTag</handler-class>
         
         <attribute name="includeScriptTag" type="boolean"/>

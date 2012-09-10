@@ -115,6 +115,18 @@ raptor.defineClass(
                 return this.getPropertiesNS(null);
             },
             
+            hasProperty: function(name) {
+                return this.hasPropertyNS('', name);
+            },
+            
+            hasPropertyNS: function(uri, name) {
+                if (!uri) {
+                    uri = "";
+                }
+                var namespaceProps = this.properties[uri];
+                return namespaceProps.hasOwnProperty(name);
+            },
+            
             getPropertiesByNS: function() {
                 return this.properties;
             },

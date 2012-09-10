@@ -10,8 +10,7 @@ raptor.defineClass(
             this.checksumLength = 8;
             this.urlBuilder = null;
             this.context = {};
-            
-            raptor.extend(this, config);
+            this.config = config;
             
             if (!this.filters) {
                 this.filters = [];
@@ -23,6 +22,10 @@ raptor.defineClass(
         };
         
         PageDependenciesWriter.prototype = {
+            getConfig: function() {
+                return this.config;
+            },
+            
             addFilter: function(filter) {
                 this.filters.push(filter);
             },
@@ -224,10 +227,11 @@ raptor.defineClass(
             calculateChecksum: function(code) {
                 var shasum = crypto.createHash('sha1');
                 shasum.update(code);
-                var checksum = shasum.digest('hex');
+                var checksum = shasum.digest('hex'),
+                    checksumLength = this.config.getChecksumLength();
                 
-                if (this.checksumLength > 0 && checksum.length > this.checksumLength) {
-                    checksum = checksum.substring(0, this.checksumLength);
+                if (checksumLength > 0 && checksum.length > checksumLength) {
+                    checksum = checksum.substring(0, checksumLength);
                 }
                 
                 return checksum;

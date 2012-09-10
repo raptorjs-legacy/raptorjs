@@ -122,13 +122,27 @@ raptor.define(
                     }
                 }
                 
-                var propertyName = schema._targetProp || (typeof el === 'string' ? el : (el.getNamespaceURI() ? el.getNamespaceURI() + ":" + el.getLocalName() : el.getLocalName()));
+                var propertyName = schema._targetProp;
+                if (!propertyName && this.options.defaultTargetProp) {
+                    propertyName = this.options.defaultTargetProp(context);
+                }
+                
+                if (!propertyName) {
+                    propertyName = (typeof el === 'string' ? el : (el.getNamespaceURI() ? el.getNamespaceURI() + ":" + el.getLocalName() : el.getLocalName()));
+                }
                 
                 if (schema._set) {
                     schema._set(targetObject, propertyName, value, context);
                 }
                 else {
-                    targetObject[propertyName] = value;
+                    var setter = 'set' + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+                    if (targetObject[setter]) {
+                        targetObject[setter](value);
+                    }
+                    else {
+                        targetObject[propertyName] = value;    
+                    }
+                    
                 }
             },
                 
@@ -178,6 +192,7 @@ raptor.define(
                            el: el, 
                            name: el.getQName(),
                            tagName: el.getLocalName(),
+                           localName: el.getLocalName(),
                            uri: el.getNamespaceURI(),
                            parentContext: parentContext
                         };
@@ -191,8 +206,6 @@ raptor.define(
                         context.schema = curSchema = getSchema(el, "element", parentSchema);
                             
                         if (!curSchema) {
-                            console.error("EL: ", el);
-                            console.error("parentSchema: ", parentSchema);
                             _this.error("Unexpected element: <" + el.getQName() + ">. Expected one of: " + _expected(parentSchema));
                         }
                         
@@ -225,6 +238,8 @@ raptor.define(
                                 
                                 var attrContext = raptor.extend({}, context);
                                 attrContext.attr = attr;
+                                attrContext.localName = attr.getLocalName();
+                                attrContext.uri = attr.getNamespaceURI();
                                 attrContext.name = attr.getQName();
                                 _this._setProperty(
                                         attr, //Current attribute

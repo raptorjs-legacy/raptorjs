@@ -202,26 +202,21 @@ raptor.defineClass(
                             }
                         },
                         "watch-files-enabled": {
-                            _type: "boolean",
-                            _targetProp: "watchFilesEnabled"
+                            _type: "boolean"
                         },
                         "watch-pages-enabled": {
-                            _type: "boolean",
-                            _targetProp: "watchPagesEnabled"
+                            _type: "boolean"
                         },
                         "watch-includes-enabled": {
-                            _type: "boolean",
-                            _targetProp: "watchIncludesEnabled"
+                            _type: "boolean"
                         }, 
                         
                         "watch-config-enabled": {
-                            _type: "boolean",
-                            _targetProp: "watchConfigEnabled"
+                            _type: "boolean"
                         }, 
                         
                         "watch-packages-enabled": {
-                            _type: "boolean",
-                            _targetProp: "watchPackagesEnabled"
+                            _type: "boolean"
                         }, 
                         
                         "watch": {
@@ -337,21 +332,47 @@ raptor.defineClass(
                         },
                         "css-output-dir": {
                             _type: "string",
-                            _targetProp: "styleSheetsOutputDir"
-                        },
-                        "html-output-dir": {
-                            _type: "string",
-                            _targetProp: "htmlOutputDir"
+                            _targetProp: "cssOutputDir"
                         },
                         
-                        "page-output-dir": {
-                            _type: "string",
-                            _targetProp: "pageOutputDir"
+                        "<write-rendered-pages>": {
+                            _type: "object",
+                            _begin: function() {
+                                return {};
+                            },
+                            _end: function(writeRenderedPages) {
+                                if (writeRenderedPages.enabled !== false) {
+                                    config.setWriteRenderedPagesEnabled(true);
+                                    config.setRenderedPagesOutputDir(resolvePath(writeRenderedPages.outputDir));
+                                }
+                            },
+                            
+                            "enabled": {
+                                _type: "boolean"
+                            },
+                            "output-dir": {
+                                _type: "string"
+                            }
                         },
                         
-                        "write-html-includes": {
-                            _type: "string",
-                            _targetProp: "writeHtmlIncludes"
+                        "<write-page-slots-html>": {
+                            _type: "object",
+                            _begin: function() {
+                                return {};
+                            },
+                            _end: function(writePageSlotsHtml) {
+                                if (writePageSlotsHtml.enabled !== false) {
+                                    config.setWritePageSlotsHtmlEnabled(true);
+                                    config.setPageSlotsHtmlOutputDir(resolvePath(writePageSlotsHtml.outputDir));
+                                }
+                            },
+                            
+                            "enabled": {
+                                _type: "boolean"
+                            },
+                            "output-dir": {
+                                _type: "string"
+                            }
                         },
                         
                         "inject-html-includes": {
@@ -375,7 +396,7 @@ raptor.defineClass(
                             
                             "page-output-dir": {
                                 _type: "string",
-                                _targetProp: "pageOutputDir"
+                                _targetProp: "renderedPagesOutputDir"
                             }
                         },
                         
@@ -384,12 +405,10 @@ raptor.defineClass(
                             _targetProp: "resourceUrlPrefix"
                         },
                         "js-url-prefix": {
-                            _type: "string",
-                            _targetProp: "scriptsUrlPrefix"
+                            _type: "string"
                         },
                         "css-url-prefix": {
-                            _type: "string",
-                            _targetProp: "styleSheetsUrlPrefix"
+                            _type: "string"
                         },
                         "enabled-extensions": {
                             _type: "string",
@@ -515,6 +534,13 @@ raptor.defineClass(
                         parseProp: function(value, context) {
                             var result = strings.merge(value, config.params);
                             return result;
+                        },
+                        
+                        defaultTargetProp: function(context) {
+                            var targetProp = context.localName.replace(/[\-][a-z]/g, function(match) {
+                                return match.substring(1).toUpperCase();
+                            }); 
+                            return targetProp;
                         }
                     });
                 
@@ -527,10 +553,9 @@ raptor.defineClass(
                 
                 ["bundlesOutputDir",
                  "scriptsOutputDir",
-                 "styleSheetsOutputDir",
+                 "cssOutputDir",
                  "bundlesOutputDir",
-                 "pageOutputDir",
-                 "htmlOutputDir"].forEach(function(dir) {
+                 "renderedPagesOutputDir"].forEach(function(dir) {
                      if (config[dir]) {
                          config[dir] = resolvePath(config[dir]);
                      }

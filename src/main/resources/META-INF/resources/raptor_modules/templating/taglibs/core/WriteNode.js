@@ -32,7 +32,14 @@ raptor.defineClass(
                 
             doGenerateCode: function(template) {
                 var expression = this.getExpression(),
-                    escapeXml = this.getProperty("escapeXml") !== false;
+                    escapeXml;
+                
+                if (this.hasProperty('escapeXml')) {
+                    escapeXml = this.getProperty("escapeXml") !== false
+                }
+                else {
+                    escapeXml = this.getProperty("escape-xml") !== false
+                }
                 
                 if (expression) {
                     template.write(expression, {escapeXml: escapeXml});

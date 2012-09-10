@@ -23,4 +23,11 @@
         <attribute name="name" type="string"/>
     </tag>
     
+    <tag>
+        <name>enable-extension</name>
+        <handler-class>templating.taglibs.optimizer.EnableExtensionTag</handler-class>
+        
+        <attribute name="name" type="string"/>
+    </tag>
+    
 </raptor-taglib>

@@ -21,44 +21,45 @@ raptor.defineClass(
                         if (file.isFile()) {
                             
                             var pageName,
-                            viewFile,
                                 filename = file.getName(),
-                                pageFileDir;
+                                filenameNoExt,
+                                pageFileDir,
+                                packageFile;
                             
-                            if (filename === 'package.json') {
-                                
-                                pageFileDir = file.getParentFile();
-                                pageName = pageFileDir.getName();
-                                
-                            }
-                            else if (strings.endsWith(filename, "-package.json")) {
-                                pageFileDir = file.getParentFile();
-                                pageName = filename.substring(0, filename.length - "-package.json".length);
-                            }
-
-                            if (pageName) {
-                                raptor.forEach(config.getPageViewFileExtensions(), function(ext) {
-                                    var possiblePageViewFile = new File(pageFileDir, pageName + "." + ext);
-                                    if (possiblePageViewFile.exists()) {
-                                        viewFile = possiblePageViewFile;
-                                        return false;
+                            
+                            var lastDot = filename.lastIndexOf('.');
+                            if (lastDot != -1) {
+                                var extension = filename.substring(lastDot+1);
+                                if (config.isPageViewFileExtension(extension)) {
+                                    pageFileDir = file.getParentFile();
+                                    filenameNoExt = filename.substring(0, lastDot);
+                                    pageName = pageFileDir.getAbsolutePath().substring(rootDir.length) + '/' + filenameNoExt;
+                                    packageFile = new File(pageFileDir, filenameNoExt + "-package.json");
+                                    if (!packageFile.exists()) {
+                                        packageFile = new File(pageFileDir, pageFileDir.getName() + "-package.json");
+                                        if (!packageFile.exists()) {
+                                            packageFile = new File(pageFileDir, "package.json");
+                                            if (!packageFile.exists()) {
+                                                packageFile = null;
+                                            }
+                                        }            
                                     }
-                                    return true;
-                                });
-                                
-                                pageName = pageFileDir.getAbsolutePath().substring(rootDir.length) + '/' + pageName;
-                                
-                                config.registerPage({
-                                    basePath: basePath || rootDir,
-                                    dir: file.getParentFile(),
-                                    name: pageName,
-                                    packageFile: file,
-                                    viewFile: viewFile
-                                });
+                                    
+                                    if (!packageFile) {
+                                        this.logger().warn('Package file not found for page "' + file + '". Skipping...');
+                                    }
+                                    else {
+                                        config.registerPage({
+                                            basePath: basePath || rootDir,
+                                            dir: file.getParentFile(),
+                                            name: pageName,
+                                            packageFile: packageFile,
+                                            viewFile: file
+                                        });
+                                    }
+                                    
+                                }
                             }
-                            
-                            
-                            
                         }
                     },
                     this,

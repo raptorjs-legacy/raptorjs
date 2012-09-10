@@ -11,12 +11,12 @@ raptor.defineClass(
             this.bundlingEnabled = true;
             this.bundlesOutputDir = null;
             this.scriptsOutputDir = null;
-            this.styleSheetsOutputDir = null;
+            this.cssOutputDir = null;
             this.checksumsEnabled = true;
-            this.htmlOutputDir = null;
-            this.pageOutputDir = null;
+            this.pageSlotsHtmlOutputDir = null;
+            this.renderedPagesOutputDir = null;
             this.scriptsUrlPrefix = null;
-            this.styleSheetsUrlPrefix = null;
+            this.cssUrlPrefix = null;
             this.enabledProfiles = {};
             this.resourceUrlPrefix = null;
             this.modifyPages = false;
@@ -39,8 +39,11 @@ raptor.defineClass(
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
             this.injectHtmlIncludesEnabled = false;
-            this.writeHtmlIncludes = false;
+            this.writePageSlotsHtmlEnabled = false;
+            this.writeRenderedPagesEnabled = true;
             this.pagesByName = {};
+            this.checksumLength = 8;
+            
             this.pageClassNamesByExt = {
                 "html": "optimizer.PageStatic",
                 "xhtml": "optimizer.PageStatic",
@@ -76,6 +79,10 @@ raptor.defineClass(
                         }
                     }, this);
                 }
+            },
+            
+            setOutputDir: function(outputDir) {
+                this.outputDir = outputDir;
             },
             
             isChecksumsEnabled: function() {
@@ -181,20 +188,24 @@ raptor.defineClass(
                 return this.scriptsUrlPrefix || this.resourceUrlPrefix;
             },
             
-            getStyleSheetsUrlPrefix: function() {
-                return this.styleSheetsUrlPrefix || this.resourceUrlPrefix;
+            getUrlPrefix: function() {
+                return this.cssUrlPrefix || this.resourceUrlPrefix;
             },
-            
+
             getScriptsOutputDir: function() {
                 return this.scriptsOutputDir || this.bundlesOutputDir || this.outputDir;
             },
             
-            getStyleSheetsOutputDir: function() {
-                return this.styleSheetsOutputDir || this.bundlesOutputDir || this.outputDir;
+            getCssOutputDir: function() {
+                return this.cssOutputDir || this.bundlesOutputDir || this.outputDir;
             },
             
             getHtmlOutputDir: function() {
-                return this.htmlOutputDir || this.outputDir;
+                return this.pageSlotsHtmlOutputDir || this.outputDir;
+            },
+            
+            setPageSlotsHtmlOutputDir: function(pageSlotsHtmlOutputDir) {
+                this.pageSlotsHtmlOutputDir = pageSlotsHtmlOutputDir;
             },
             
             addBundleSetDef: function(bundleSetDef) {
@@ -234,8 +245,21 @@ raptor.defineClass(
                 return this.injectHtmlIncludesEnabled === true;
             },
             
-            isWriteHtmlIncludesEnabled: function() {
-                return this.writeHtmlIncludes === true;
+            isWritePageSlotsHtmlEnabled: function(writePageSlotsHtmlEnabled) {
+                return this.writePageSlotsHtmlEnabled === true;
+            },
+            
+            setWritePageSlotsHtmlEnabled: function(writePageSlotsHtmlEnabled) {
+                this.writePageSlotsHtmlEnabled = writePageSlotsHtmlEnabled;
+            },
+            
+            
+            isWriteRenderedPagesEnabled: function(writeRenderedPagesEnabled) {
+                return this.writeRenderedPagesEnabled === true;
+            },
+            
+            setWriteRenderedPagesEnabled: function(writeRenderedPagesEnabled) {
+                this.writeRenderedPagesEnabled = writeRenderedPagesEnabled;
             },
             
             isModifyPagesEnabled: function() {
@@ -246,12 +270,20 @@ raptor.defineClass(
                 return this.keepHtmlMarkers === true;
             },
             
-            getPageOutputDir: function() {
-                return this.pageOutputDir;
+            getRenderedPagesOutputDir: function() {
+                return this.renderedPagesOutputDir;
+            },
+            
+            setRenderedPagesOutputDir: function(renderedPagesOutputDir) {
+                this.renderedPagesOutputDir = renderedPagesOutputDir;
             },
             
             getPageViewFileExtensions: function() {
                 return Object.keys(this.pageClassNamesByExt);
+            },
+            
+            isPageViewFileExtension: function(ext) {
+                return this.pageClassNamesByExt.hasOwnProperty(ext);
             },
             
             hasPages: function() {
@@ -299,9 +331,6 @@ raptor.defineClass(
                     pageClassName = "optimizer.Page";
                 }
                 
-                
-                
-                
                 if (pageConfig.packageFile) {
                     pageConfig.packageResource = raptor.require("resources").createFileResource(pageConfig.packageFile);
                 }
@@ -320,7 +349,6 @@ raptor.defineClass(
                 
                 var PageClass = raptor.require(pageClassName);
                 var page = new PageClass(pageConfig);
-                
                 this.pages.push(page);
                 this.pagesByName[page.getKey()] = page;
                 
@@ -333,6 +361,10 @@ raptor.defineClass(
             
             getConfigResource: function() {
                 return this.configResource;
+            },
+            
+            getChecksumLength: function() {
+                return this.checksumLength;
             },
             
             forEachPage: function(callback, thisObj) {

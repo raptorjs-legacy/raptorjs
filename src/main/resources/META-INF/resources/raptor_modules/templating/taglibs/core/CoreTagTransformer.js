@@ -20,7 +20,6 @@ raptor.defineClass(
         "use strict";
         
         var extend = raptor.extend,
-            forEach = raptor.forEach,
             coreNS = "http://raptorjs.org/templates/core",
             WriteNode = raptor.require('templating.taglibs.core.WriteNode'),
             ForNode = raptor.require("templating.taglibs.core.ForNode"),
@@ -130,8 +129,8 @@ raptor.defineClass(
                 node.removeAttributeNS(coreNS, "whitespace");
                 
                 
-                if ((parseBodyTextAttr = node.getAttributeNS(coreNS, "parseBodyText")) != null) {
-                    node.removeAttributeNS(coreNS, "parseBodyText");
+                if ((parseBodyTextAttr = node.getAttributeNS(coreNS, "parse-body-text")) != null) {
+                    node.removeAttributeNS(coreNS, "parse-body-text");
                     node.parseBodyText = parseBodyTextAttr !== "false";
                 }
                 if ((whenAttr = node.getAttributeNS(coreNS, "when")) != null) {
@@ -166,10 +165,10 @@ raptor.defineClass(
                                 separator: {
                                     type: "expression"
                                 },
-                                varStatus: {
+                                "status-var": {
                                     type: "identifier"
                                 },
-                                forLoop: {
+                                "for-loop": {
                                     type: "boolean",
                                     allowExpressions: false
                                 }
@@ -231,8 +230,9 @@ raptor.defineClass(
                     elseNode.appendChild(node);
                 }
                 
-                if ((contentAttr = node.getAttributeNS(coreNS, "bodyContent")) != null) {
+                if ((contentAttr = (node.getAttributeNS(coreNS, "bodyContent") || node.getAttributeNS(coreNS, "content"))) != null) {
                     node.removeAttributeNS(coreNS, "bodyContent");
+                    node.removeAttributeNS(coreNS, "content");
                     
                     var newChild = new WriteNode({expression: contentAttr, pos: node.getPosition()});
                     node.removeChildren();
@@ -248,9 +248,6 @@ raptor.defineClass(
                 }
                 
                 if (node.getAttributeNS && (replaceAttr = node.getAttributeNS(coreNS, "replace")) != null) {
-                    
-                    var parentNode = node.parentNode;
-                    
                     node.removeAttributeNS(coreNS, "replace");
                     
                     var replaceWriteNode = new WriteNode({expression: replaceAttr, pos: node.getPosition()});
@@ -260,8 +257,6 @@ raptor.defineClass(
                     
                     node = replaceWriteNode;
                 }
-                
-                
 
                 if (tag) {
                     if (tag.preserveWhitespace) {

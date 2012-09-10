@@ -196,7 +196,7 @@ describe('templating module', function() {
         var result;
         
         result = AttributeSplitter.parse(
-            "item in ['one', 'two', 'three']; separator=', '; varStatus=loop;  ", 
+            "item in ['one', 'two', 'three']; separator=', '; status-var=loop;  ", 
             {
                 each: {
                     type: "custom"
@@ -204,7 +204,7 @@ describe('templating module', function() {
                 separator: {
                     type: "expression"
                 },
-                varStatus: {
+                "status-var": {
                     type: "custom"
                 }
             },
@@ -215,7 +215,7 @@ describe('templating module', function() {
         expect(raptor.keys(result).length).toEqual(3);
         expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
         expect(result["separator"].getExpression()).toEqual("', '");
-        expect(result["varStatus"]).toEqual("loop");
+        expect(result["status-var"]).toEqual("loop");
         
         //////
         result = AttributeSplitter.parse(

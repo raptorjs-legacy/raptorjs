@@ -45,7 +45,7 @@ raptor.defineClass(
             doGenerateCode: function(template) {
                 var each = this.getProperty("each"),
                     separator = this.getProperty("separator"),
-                    varStatus = this.getProperty("varStatus");
+                    statusVar = this.getProperty("status-var") || this.getProperty("varStatus");
                 
                 if (!each) {
                     this.addError('"each" attribute is required');
@@ -66,22 +66,22 @@ raptor.defineClass(
                 
                 var items = template.makeExpression(parts["in"]);
                 var varName = parts["var"];
-                if (separator && !varStatus) {
-                    varStatus = "__loop";
+                if (separator && !statusVar) {
+                    statusVar = "__loop";
                 }
                 
                 var forEachParams;
-                if (varStatus) {
-                    forEachParams = [varName, varStatus];
+                if (statusVar) {
+                    forEachParams = [varName, statusVar];
                     
                     
                     template
-                        .statement(template.getStaticHelperFunction("forEachVarStatus", "fv") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                        .statement(template.getStaticHelperFunction("forEachWithStatusVar", "fv") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
                         .indent(function() {
                             this.generateCodeForChildren(template);
                             if (separator) {
                                 template
-                                    .statement("if (!" + varStatus + ".isLast()) {")
+                                    .statement("if (!" + statusVar + ".isLast()) {")
                                     .indent(function() {
                                         template.write(template.isExpression(separator) ? separator.getExpression() : stringify(separator));    
                                     }, this)
@@ -91,7 +91,7 @@ raptor.defineClass(
                         .line('});');
                 }
                 else {
-                    if (this.getProperty('forLoop') === true) {
+                    if (this.getProperty('for-loop') === true) {
                         forEachParams = ["__array", "__index", "__length", varName];
                         
                         template

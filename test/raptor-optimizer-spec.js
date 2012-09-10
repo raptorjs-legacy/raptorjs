@@ -580,11 +580,11 @@ describe('optimizer module', function() {
             
             done: function(pageDependencies) {
                 var optimizer = raptor.require("optimizer");
+                var Config = raptor.require('optimizer.Config');
+                var config = new Config();
+                config.setOutputDir("/some/dir/static");
                 
-                var writer = optimizer.createPageDependenciesFileWriter({
-                    outputDir: "/some/dir/static",
-                    checksumLength: 8
-                });
+                var writer = optimizer.createPageDependenciesFileWriter(config);
                 
                 writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
                     prefix: "http://localhost:8080/static/"
@@ -620,11 +620,11 @@ describe('optimizer module', function() {
 
             done: function(pageDependencies) {
                 var optimizer = raptor.require("optimizer");
+                var Config = raptor.require('optimizer.Config');
+                var config = new Config();
+                config.setOutputDir("/some/dir/static");
                 
-                var writer = optimizer.createPageDependenciesFileWriter({
-                    outputDir: "/some/dir/static",
-                    checksumLength: 8
-                });
+                var writer = optimizer.createPageDependenciesFileWriter(config);
                 
                 writer.addFilter(function(code, contentType) {
                     if (contentType === 'application/javascript') {

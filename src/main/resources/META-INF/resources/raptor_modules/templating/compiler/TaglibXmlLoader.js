@@ -127,6 +127,10 @@ raptor.defineClass(
                             _type: STRING
                         },
                         
+                        "deprecated": {
+                            _type: STRING
+                        },
+                        
                         "required": {
                             _type: BOOLEAN
                         },

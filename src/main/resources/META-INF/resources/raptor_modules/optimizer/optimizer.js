@@ -178,13 +178,29 @@ raptor.define(
             },
             
             setOptimizerForContext: function(context, optimizer) {
-                var attributes = context.getAttributes();
-                attributes.optimizer = optimizer;
+                context.getAttributes().optimizer = optimizer;
             },
             
-            getFromContext: function(context) {
+            getOptimizerFromContext: function(context) {
+                return context.getAttributes().optimizer;
+            },
+            
+            getPageFromContext: function(context) {
+                return context.getAttributes().optimizerPage;
+            },
+            
+            setPageForContext: function(context, optimizerPage) {
+                context.getAttributes().optimizerPage = optimizerPage;
+            },
+            
+            enableExtensionForContext: function(context, extension) {
                 var attributes = context.getAttributes();
-                return attributes.optimizer;
+                var extensions = attributes.optimizerExtensions || (attributes.optimizerExtensions = packager.createExtensionCollection());
+                extensions.add(extension);
+            },
+            
+            getEnabledExtensionsFromContext: function(context) {
+                return context.getAttributes().optimizerExtensions;
             }
         }; //end return
     });

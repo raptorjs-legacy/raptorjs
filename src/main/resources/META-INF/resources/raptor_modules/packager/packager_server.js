@@ -46,6 +46,11 @@ $rload(function(raptor) {
             return new ExtensionCollection(enabledExtensions);
         },
         
+        isExtensionCollection: function(extensions) {
+            var ExtensionCollection = this.ExtensionCollection;
+            return extensions instanceof ExtensionCollection;
+        },
+        
         config: raptor.config.create({
             "enabledExtensions": {
                 value: raptor.getModuleConfig('packager').enabledExtensions,

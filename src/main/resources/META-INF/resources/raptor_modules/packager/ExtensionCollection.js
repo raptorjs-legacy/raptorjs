@@ -33,27 +33,49 @@ $rload(function(raptor) {
         this.extensionsArray = [];
         this.key = null;
         
-        if (raptor.isArray(extensions)) {
-            forEach(extensions, function(ext) {
-                this.add(ext);
-            }, this);
-        }
-        else if (typeof extensions === 'object') {
-            forEachEntry(extensions, function(ext) {
-                this.add(ext);
-            }, this);
-        }
+        this.addAll(extensions);
     };
     
     ExtensionCollection.prototype = {
+        isEmpty: function() {
+            return this.extensionsArray.length === 0;
+        },
+        
         /**
          * 
          * @param ext
          */
         add: function(ext) {
+            if (typeof ext !== 'string') {
+                this.addAll(ext);
+                return;
+            }
+            
             this.extensionsLookup[ext] = true;
             this.extensionsArray.push(ext);
             this.key = null;
+        },
+        
+        addAll: function(extensions) {
+            if (!extensions) {
+                return;
+            }
+            
+            if (extensions instanceof ExtensionCollection) {
+                extensions = extensions.extensionsArray;
+            } 
+
+            if (raptor.isArray(extensions)) {
+                forEach(extensions, function(ext) {
+                    this.add(ext);
+                }, this);
+            }
+            else if (typeof extensions === 'object') {
+                forEachEntry(extensions, function(ext) {
+                    this.add(ext);
+                }, this);
+            }
+            
         },
         
         getKey: function() {

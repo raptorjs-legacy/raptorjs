@@ -34,7 +34,7 @@ raptor.defineClass(
             doGenerateCode: function(template) {
                 
                 var templateName = this.getProperty("template"),
-                    templateData = this.getProperty("templateData"),
+                    templateData = this.getProperty("templateData") || this.getProperty("template-data"),
                     resourcePath;
                 
                 if (templateName) {

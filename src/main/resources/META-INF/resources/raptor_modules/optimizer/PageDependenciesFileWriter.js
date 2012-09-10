@@ -15,18 +15,6 @@ raptor.defineClass(
         
         PageDependenciesFileWriter.prototype = {
             
-            getScriptsOutputDir: function(bundle) {
-                return this.scriptsOutputDir || this.bundlesOutputDir || this.outputDir;
-            },
-            
-            getStyleSheetsOutputDir: function(bundle) {
-                return this.styleSheetsOutputDir || this.bundlesOutputDir || this.outputDir;
-            },
-            
-            getHtmlOutputDir: function(bundle) {
-                return this.htmlOutputDir || this.outputDir;
-            },
-            
             getFileExtension: function(contentType) {
                 if (contentType === 'application/javascript') {
                     return 'js';
@@ -48,10 +36,10 @@ raptor.defineClass(
                 var contentType = bundle.getContentType();
                 
                 if (contentType === 'application/javascript') {
-                    return this.getScriptsOutputDir();
+                    return this.getConfig().getScriptsOutputDir();
                 }
                 else if (contentType === 'text/css') {
-                    return this.getStyleSheetsOutputDir();
+                    return this.getConfig().getCssOutputDir();
                 }
                 else {
                     throw raptor.createError(new Error("Unsupported content type: " + contentType));
