@@ -117,7 +117,7 @@
 		<dependency>
 			<groupId>org.mozilla.javascript</groupId>
 			<artifactId>com.springsource.org.mozilla.javascript</artifactId>
-			<version>1.7.0.R3</version>
+			<version>1.7.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
