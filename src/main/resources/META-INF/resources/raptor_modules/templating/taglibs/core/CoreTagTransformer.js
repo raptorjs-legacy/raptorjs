@@ -97,7 +97,7 @@ raptor.defineClass(
                                 }
                             }
                             
-                            callback.call(thisObj, attrUri, attr.localName, value, prefix, attrDef);
+                            callback.call(thisObj, attrUri, (attrDef && attrDef.targetProperty) || attr.localName, value, prefix, attrDef);
                         }, this);
                     };
                     

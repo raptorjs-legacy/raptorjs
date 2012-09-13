@@ -136,6 +136,24 @@ raptor.defineClass(
                     writer.addFilter(raptor.require("optimizer.MinifyJSFilter"));
                 }
                 
+                raptor.forEach(config.getFilters(), function(filterDef) {
+                    var Filter = raptor.require(filterDef.className);
+                    if (Filter.filter) {
+                        writer.addFilter(Filter);
+                    }
+                    else if (typeof Filter === 'function') {
+                        if (Filter.prototype.filter) {
+                            writer.addFilter(new Filter());
+                        }
+                        else {
+                            writer.addFilter(filter);
+                        }
+                    }
+                    else {
+                        throw raptor.createError(new Error('Invalid filter: ' + filterDef));
+                    }
+                });
+                
                 if (config.isWatchIncludesEnabled()) {
                     writer.subscribe('bundleWritten', function(eventArgs) {
                         var bundle = eventArgs.bundle,

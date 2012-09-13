@@ -221,7 +221,7 @@ raptor.defineClass(
                         filePath = resource;
                     }
                     else if (raptor.require('resources').isResource(resource)) {
-                        filePath = resource.getSystempath();
+                        filePath = resource.getSystemPath();
                     }
                     this.logger().error("Unable to load compiled template: " + compiledSrc, e);
                     throw raptor.createError(new Error('Unable to load template at path "' + filePath + '". Exception: ' + e.message), e);

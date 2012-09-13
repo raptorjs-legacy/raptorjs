@@ -123,6 +123,11 @@ raptor.defineClass(
                             }
                         },
                         
+                        "target-property": {
+                            _type: STRING,
+                            _targetProp: "targetProperty"
+                        },
+                        
                         "uri": {
                             _type: STRING
                         },

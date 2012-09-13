@@ -310,6 +310,22 @@ raptor.defineClass(
                                 }
                             }
                         },
+                        
+                        "<filter>": {
+                            _type: "object",
+                            _begin: function() {
+                                return {};
+                            },
+                            _end: function(filter) {
+                                if (!filter.className) {
+                                    throw raptor.createError(new Error('The "class-name" attribute is required for a filter.'));
+                                }
+                                config.addFilter(filter);
+                            },
+                            "class-name": {
+                                _type: "string"
+                            }
+                        },
                         "minify-js": {
                             _type: "boolean",
                             _targetProp: "minifyJs"
@@ -453,8 +469,9 @@ raptor.defineClass(
                                     
                                 },
                                 
-                                "htmlPath": {
-                                    _type: "string"
+                                "html-path": {
+                                    _type: "string",
+                                    _targetProp: "htmlPath"
                                 },
                                 
                                 "@name": {

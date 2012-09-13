@@ -43,6 +43,7 @@ raptor.defineClass(
             this.writeRenderedPagesEnabled = true;
             this.pagesByName = {};
             this.checksumLength = 8;
+            this.filters = [];
             
             this.pageClassNamesByExt = {
                 "html": "optimizer.PageStatic",
@@ -79,6 +80,19 @@ raptor.defineClass(
                         }
                     }, this);
                 }
+            },
+            
+            addFilter: function(filter) {
+                if (typeof filter === 'string') {
+                    filter = {
+                        className: filter
+                    };
+                }
+                this.filters.push(filter);
+            },
+            
+            getFilters: function() {
+                return this.filters;
             },
             
             setOutputDir: function(outputDir) {
