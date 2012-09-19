@@ -1,0 +1,1 @@
+var symbols = raptor.require('jsdocs').loadSymbols("/Users/psteeleidem/development/ebay/github/Raptor/RaptorJSOpenSource/src/main/resources/META-INF/resources/raptor_modules");
