@@ -146,7 +146,7 @@ raptor.defineClass(
                             writer.addFilter(new Filter());
                         }
                         else {
-                            writer.addFilter(filter);
+                            writer.addFilter(Filter);
                         }
                     }
                     else {
@@ -381,18 +381,21 @@ raptor.defineClass(
                         }
                         
                         var writePage = function() {
+                            var html;
+                            
                             if (config.isWritePageSlotsHtmlEnabled()) {
                                 _this.writePageSlotsHtml(page);    
                             }
                             
                             if (config.isWriteRenderedPagesEnabled()) {
-                                var html = page.render({
+                                html = page.render({
                                     optimizer: _this
-                                });    
+                                });
+                                logger.info('Writing page "' + page.getName() + '" with injected dependencies to "' + outputFile + '"...');
+                                outputFile.writeFully(html);
                             }
                             
-                            logger.info('Writing page "' + page.getName() + '" with injected dependencies to "' + outputFile + '"...');
-                            outputFile.writeFully(html);
+                            
                         };
                         
                         if (config.isWatchPagesEnabled()) {

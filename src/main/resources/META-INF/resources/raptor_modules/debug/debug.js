@@ -17,19 +17,103 @@
 $rload(function(raptor) {
     "use strict";
     
+    var INDENT_STR = "  ",
+        indent = function(depth) {
+            var indent = ""; 
+            
+            for (var i=0;i<depth;i++) { 
+                indent += INDENT_STR;
+            } 
+            return indent; 
+        },
+        prettyPrintHelper = function(o, indent, depth, options) {
+            var ret;
+            
+            if (o === null) {
+                return "null";
+            }
+            else if (o === undefined) {
+                return "undefined";
+            }
+            else if (typeof o === 'string') {
+                return JSON.stringify(o);
+            }
+            else if (typeof o == 'function') {
+                return options.includeFunctions !== false ? ("" + o).replace(/\r|\n|\r\n/g, "\n" + indent) : "(function)";
+            }
+            else if (raptor.isArray(o)) {
+
+                if (depth > options.maxDepth)
+                {
+                    ret = '[(max depth exceeded)]';
+                    return ret;
+                }
+                else
+                {
+                    var len = o.length;
+                    ret = "[\n";
+                    for (var i=0; i<len; i++) {
+                        ret += indent + INDENT_STR + prettyPrintHelper(o[i], indent + INDENT_STR, depth+1, options);
+                        if (i < len - 1)
+                        {
+                            ret += ',';
+                        }
+                        ret += '\n';
+                    }
+                    ret += indent + ']';
+                    return ret;
+                }
+            }
+            else if (typeof o === 'object') {
+                if (depth > options.maxDepth)
+                {
+                    ret = '{(max depth exceeded)}';
+                    return ret;
+                }
+                else
+                {
+                    var keys = [];
+                    
+                    for (var key in o) {
+                        if (options.allProps || o.hasOwnProperty(key)) {
+                            keys.push(key);
+                        }
+                    }
+
+                    ret = "{\n";
+                    for (var j=0; j<keys.length; j++) {
+                        var k = keys[j];
+                        var value = o[k];
+                        ret += indent + INDENT_STR + k + ": " + prettyPrintHelper(value, indent + INDENT_STR, depth+1, options);
+                        if (j < keys.length - 1)
+                        {
+                            ret += ',';
+                        }
+                        ret += '\n';
+                    }
+
+                    ret += indent + '}';
+                    return ret;
+                }
+            }
+            else {
+                return o.toString();
+            }
+        };
+    
     /**
      * @namespace
      * @raptor
      * @name debug
      */
     raptor.debug = /** @lends arrays */ {
+
         /**
-         * 
-         * @param o
-         * @returns
+         * @static
          */
-        dumpToString : function(o) {
-            return raptor.require('json').stringify(o); //For now just use json.stringify
+        prettyPrint: function(o, options)
+        {
+            return prettyPrintHelper(o, "", 1, options || {});
         }
     };    
 });

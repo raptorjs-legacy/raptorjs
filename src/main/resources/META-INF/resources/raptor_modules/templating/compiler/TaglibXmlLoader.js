@@ -266,7 +266,7 @@ raptor.defineClass(
                                         nestedTag.targetProperty = nestedTag.targetProperty || nestedTag.name;
                                         
                                         if (!nestedTag.name) {
-                                            throw raptor.createError(new Error('The "name" property is required for a <nested-tag>'))
+                                            throw raptor.createError(new Error('The "name" property is required for a <nested-tag>'));
                                         }
                                         
                                         tag.addNestedTag(nestedTag);

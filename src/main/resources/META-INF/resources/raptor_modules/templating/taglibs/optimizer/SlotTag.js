@@ -1,6 +1,7 @@
 raptor.define(
     'templating.taglibs.optimizer.SlotTag',
     function(raptor) {
+        "use strict";
         
         return {
             process: function(input, context) {

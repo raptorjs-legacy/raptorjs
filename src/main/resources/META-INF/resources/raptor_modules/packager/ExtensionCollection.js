@@ -26,7 +26,10 @@ $rload(function(raptor) {
         regexp = raptor.regexp;
     
     /**
-     * 
+     * The ExtensionCollection class is used to maintain a set
+     * of extensions and provides methods for adding
+     * extension names and checking if an extension
+     * is an enabled. 
      */
     var ExtensionCollection = function(extensions) {
         this.extensionsLookup = {};
@@ -51,18 +54,26 @@ $rload(function(raptor) {
                 return;
             }
             
-            this.extensionsLookup[ext] = true;
-            this.extensionsArray.push(ext);
-            this.key = null;
+            this.extensionsLookup[ext] = true; //Add the extension to a map for quick lookup
+            this.extensionsArray.push(ext); //Maintain an array of extensions
+            this.key = null; //Clear out the key so that it is regenerated since the collection changed
         },
         
         remove: function(ext) {
             if (this.extensionsLookup[ext]) {
                 delete this.extensionsLookup[ext];
                 this.extensionsArray = Object.keys(this.extensionsLookup);
+                this.key = null; //Clear the key since the collection changed
             }
         },
         
+        /**
+         * Adds one or more extensions to the collection. This method
+         * supports an array of extension names, as well as an
+         * object map with extension names as property names.
+         * 
+         * @param extensions {Array|Object|packager.ExtensionCollection}
+         */
         addAll: function(extensions) {
             if (!extensions) {
                 return;
@@ -85,9 +96,16 @@ $rload(function(raptor) {
             
         },
         
+        /**
+         * Returns a string that can be used to uniquely
+         * identify a set of extensions. If two 
+         * ExtensionCollection instances contain the same set
+         * of extensions then the same key will be returned.
+         * @returns
+         */
         getKey: function() {
             
-            if (this.key == null) {
+            if (this.key == null) { 
                 this.extensionsArray.sort();
                 this.key = this.extensionsArray.join("|");
             }

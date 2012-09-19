@@ -458,7 +458,7 @@ raptor.defineClass(
                                 _end: function(pageConfig) {
                                     
                                     if (pageConfig.htmlPath) {
-                                        pageConfig.htmlPath = htmlPath = resolvePath(htmlPath);    
+                                        pageConfig.htmlPath = resolvePath(pageConfig.htmlPath);    
                                     }
                                     
                                     if (pageConfig.packagePath) {

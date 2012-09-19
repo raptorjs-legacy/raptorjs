@@ -1,6 +1,7 @@
 raptor.define(
     'templating.taglibs.optimizer.PageTagTransformer',
     function(raptor) {
+        "use strict";
         
         return {
             process: function(node, compiler, template) {

@@ -16,8 +16,9 @@
 
 raptor.defineClass(
     'templating.compiler.ExpressionParser',
-    function(raptor) {
+    function(raptor) {        
         "use strict";
+        
         
         var Expression = raptor.require('templating.compiler.Expression'),
             strings = raptor.require('strings'),
@@ -174,7 +175,7 @@ raptor.defineClass(
                     return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : " + getExpression(parts[2]) + ")";
                 }
                 else {
-                    throw new Error('Invalid simple conditional of "' + expressin + '". Simple conditionals should be in the form {?<expression>;<true-template>[;<false-template>]}');
+                    throw new Error('Invalid simple conditional of "' + expression + '". Simple conditionals should be in the form {?<expression>;<true-template>[;<false-template>]}');
                 }
                 
             };

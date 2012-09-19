@@ -15,7 +15,10 @@ raptor.define(
             
             
             createOptimizer: function(config, params) {
+                var configXmlPath = null;
+                
                 if (typeof config === 'string') {
+                    configXmlPath = config;
                     config = this.loadConfigXml(config, params);
                 }
                 
@@ -23,7 +26,7 @@ raptor.define(
                 var optimizerEngine = new OptimizerEngine(config);
                 var logger = this.logger();
                 
-                if (config.isWatchConfigEnabled()) {
+                if (config.isWatchConfigEnabled() && configXmlPath) {
                     fileWatcher.watch(configXmlPath, function(eventArgs) {
                         logger.info("Optimizer configuration file modified: " + configXmlPath);
                         try

@@ -51,7 +51,6 @@ raptor.defineClass(
                 }
                 else {
                     throw raptor.createError(new Error("Unsupported content type: " + contentType));
-                    return null;
                 }
             },
             

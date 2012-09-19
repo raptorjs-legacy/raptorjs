@@ -5,8 +5,7 @@
 raptor.define(
     "jsdocs.ASTWalker",
     function(raptor) {
-        
-        
+        "use strict";
         
         var arrays = raptor.require('arrays'),
             Type = raptor.require("jsdocs.Type");
@@ -54,7 +53,7 @@ raptor.define(
                 },
                 
                 AssignmentExpression: function() {
-                	return nodeToString(this.left) + "=" + nodeToString(this.right);
+                    return nodeToString(this.left) + "=" + nodeToString(this.right);
                 },
                 
                 Property: function() {
@@ -62,11 +61,11 @@ raptor.define(
                 },
                 
                 ThisExpression: function() {
-                	return "this";
+                    return "this";
                 },
                 
                 VariableDeclarator: function() {
-                	return nodeToString(this.id) + (this.init ? "=" + nodeToString(this.init) : "");  
+                    return nodeToString(this.id) + (this.init ? "=" + nodeToString(this.init) : "");  
                 }
             },
             nodeToString = function(node) {
@@ -100,40 +99,40 @@ raptor.define(
             },
             
             resolveAssignmentObject: function(node) {
-            	this.logger().info('resolveAssignmentObject(): ' + nodeToString(node));
-            	
-            	if (node.type === 'Identifier') {
-            		var existingVar = this.currentScope().resolveVar(node.name);
-            		if (existingVar) {
-            			return existingVar;
-            		}
-            		else {
-            			var newGlobal = new Type();
-            			this.getGlobal().setProperty(node.name, newGlobal);
-            			return newGlobal;
-            		}
-            	}
-            	else if (node.type === 'MemberExpression') {
-            		var objectType = this.resolveAssignmentObject(node.object);
-            		if (objectType) {
-            			var existingProperty = objectType.getPropertyType(node.property.name);
-            			if (existingProperty) {
-            				return existingProperty;
-            			}
-            			else {
-            				var newProperty = new Type();
-            				objectType.setProperty(node.property.name, newProperty);
-            				return newProperty;
-            			}
-            		}
-    				else {
-    					return null;
-    				}
-            	}
-            	else {
-            		this.walk(node);
-            		return node.resolvedType;
-            	}
+                this.logger().info('resolveAssignmentObject(): ' + nodeToString(node));
+                
+                if (node.type === 'Identifier') {
+                    var existingVar = this.currentScope().resolveVar(node.name);
+                    if (existingVar) {
+                        return existingVar;
+                    }
+                    else {
+                        var newGlobal = new Type();
+                        this.getGlobal().setProperty(node.name, newGlobal);
+                        return newGlobal;
+                    }
+                }
+                else if (node.type === 'MemberExpression') {
+                    var objectType = this.resolveAssignmentObject(node.object);
+                    if (objectType) {
+                        var existingProperty = objectType.getPropertyType(node.property.name);
+                        if (existingProperty) {
+                            return existingProperty;
+                        }
+                        else {
+                            var newProperty = new Type();
+                            objectType.setProperty(node.property.name, newProperty);
+                            return newProperty;
+                        }
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else {
+                    this.walk(node);
+                    return node.resolvedType;
+                }
             },
             
             getSymbols: function() {
@@ -149,22 +148,22 @@ raptor.define(
             },
             
             invokeFunctionExpression: function(node, args) {
-            	if (node.type !== 'FunctionExpression') {
-            		throw raptor.createError(new Error("invokeFunctionExpressionNode() Invalid node type: " + node.type));
-            	}
-            	
+                if (node.type !== 'FunctionExpression') {
+                    throw raptor.createError(new Error("invokeFunctionExpressionNode() Invalid node type: " + node.type));
+                }
+                
                 node.args = args;
                 this.walk(node);
                 return node.scope;
             },
             
             resolveType: function(node) {
-            	this.walk(node);
-        		return node.resolvedType;
+                this.walk(node);
+                return node.resolvedType;
             },
             
             getGlobal: function() {
-            	return this.env.getGlobal();
+                return this.env.getGlobal();
             },
             
             argsToString: function(args) {
@@ -190,13 +189,13 @@ raptor.define(
             },
             
             publishAfterWalk: function(node) {
-            	this.env.publish(node.type, {
-                	scope: this.currentScope(),
-                	resolvedType: node.resolvedType,
-                	comment: node.comment,
-                	symbols: this.symbols,
-                	node: node,
-                	walker: this
+                this.env.publish(node.type, {
+                    scope: this.currentScope(),
+                    resolvedType: node.resolvedType,
+                    comment: node.comment,
+                    symbols: this.symbols,
+                    node: node,
+                    walker: this
                 });
             },
             
@@ -209,12 +208,12 @@ raptor.define(
             },
             
             walk_ExpressionStatement: function(node) {
-            	if (node.comment) {
-            		/*
-            		 * Pass along the comment from the expression statement to the actual expression "CallExpression" node
-            		 */
-            		node.expression.comment = node.comment;
-            	}
+                if (node.comment) {
+                    /*
+                     * Pass along the comment from the expression statement to the actual expression "CallExpression" node
+                     */
+                    node.expression.comment = node.comment;
+                }
                 this.walk(node.expression);
                 
                 this.resolvedType = node.expression.resolvedType;
@@ -222,44 +221,44 @@ raptor.define(
             
             walk_CallExpression: function(node) {
                 
-            	//See if there is a static type resolver for this function
-            	this.walk(node.callee);
-            	
-            	if (node.callee.resolvedType && node.callee.resolvedType.resolver) {
-            		/*
-            		 * Rely on the custom resolver to walk to invoke the function
-            		 */
-            		node.resolvedType = node.callee.resolvedType.resolver(node, this);
-            	}
-            	else {
-            		/*
-            		 * If no custom resolver is provided then just walk the arguments
-            		 */
-            		if (node.arguments) {
-                		node.arguments.forEach(function(arg) {
-                			this.walk(arg);
-                		}, this);
-                	}
-            	}
-            	
-            	
+                //See if there is a static type resolver for this function
+                this.walk(node.callee);
+                
+                if (node.callee.resolvedType && node.callee.resolvedType.resolver) {
+                    /*
+                     * Rely on the custom resolver to walk to invoke the function
+                     */
+                    node.resolvedType = node.callee.resolvedType.resolver(node, this);
+                }
+                else {
+                    /*
+                     * If no custom resolver is provided then just walk the arguments
+                     */
+                    if (node.arguments) {
+                        node.arguments.forEach(function(arg) {
+                            this.walk(arg);
+                        }, this);
+                    }
+                }
+                
+                
             },
             
             walk_FunctionExpression: function(node) {
-            	
-            	var scope = new Type();
+                
+                var scope = new Type();
                 scope.functionExpressionNode = node;
                 scope.functionType = node.resolvedType = new Type("function");
                 scope.functionType.functionScope = scope;
                 
                 this.scopeStack.push(scope);
                 try
-                {                	
-                	if (node.args) {
-                		raptor.forEachEntry(node.args, function(name, type) {
+                {                    
+                    if (node.args) {
+                        raptor.forEachEntry(node.args, function(name, type) {
                             scope.setProperty(name, type); //Add the parameters to the scope
-                        });	
-                	}
+                        });    
+                    }
 
                     this.walk(node.body);
                     
@@ -271,46 +270,46 @@ raptor.define(
             },
             
             walk_AssignmentExpression: function(node) {
-            	var leftNode = node.left,
-            		rightNode = node.right;
-            	
-            	this.walk(rightNode);
-            	
-            	if (rightNode.resolvedType) {
-            		if (leftNode.type === 'MemberExpression') {
-                		/*
-                		 * The l-value is a member expression.
-                		 * 
-                		 * We will split it into two parts so that
-                		 * we can add the new property
-                		 */
-                		var objectNode = leftNode.object;
-                		var objectType = this.resolveAssignmentObject(objectNode);
-                		if (objectType) {
-                			objectType.setProperty(leftNode.property.name, rightNode.resolvedType, node.comment);
-                		}
-                	}
-                	else if (leftNode.type === 'Identifier') {
-                		//Simple variable assignment: a = "Hello";
-                		var existingVarType = this.currentScope().resolveVar(leftNode.name);
-                		
+                var leftNode = node.left,
+                    rightNode = node.right;
+                
+                this.walk(rightNode);
+                
+                if (rightNode.resolvedType) {
+                    if (leftNode.type === 'MemberExpression') {
+                        /*
+                         * The l-value is a member expression.
+                         * 
+                         * We will split it into two parts so that
+                         * we can add the new property
+                         */
+                        var objectNode = leftNode.object;
+                        var objectType = this.resolveAssignmentObject(objectNode);
+                        if (objectType) {
+                            objectType.setProperty(leftNode.property.name, rightNode.resolvedType, node.comment);
+                        }
+                    }
+                    else if (leftNode.type === 'Identifier') {
+                        //Simple variable assignment: a = "Hello";
+                        var existingVarType = this.currentScope().resolveVar(leftNode.name);
+                        
                         if (existingVarType) {
-                        	existingVarType.addType(rightNode.resolvedType);
-                        	return;
+                            existingVarType.addType(rightNode.resolvedType);
+                            return;
                         }
                         else {
-                        	//Creating a new global
-                        	this.getGlobal().setProperty(leftNode.name, rightNode.resolvedType);
-                        	
+                            //Creating a new global
+                            this.getGlobal().setProperty(leftNode.name, rightNode.resolvedType);
+                            
                         }
-                	}
-            	}
-            	else {
-            		/*
-            		 * Don't do any assignment but still walk the tree
-            		 */
-            		this.walk(leftNode);
-            	}
+                    }
+                }
+                else {
+                    /*
+                     * Don't do any assignment but still walk the tree
+                     */
+                    this.walk(leftNode);
+                }
             },
             
             walk_BlockStatement: function(node) {
@@ -323,10 +322,10 @@ raptor.define(
                 var type = this.resolveType(node.argument);
                 var scope = this.currentScope();
                 if (scope.returnType) {
-                	scope.returnType.addType(type);
+                    scope.returnType.addType(type);
                 }
                 else {
-                	scope.returnType = type;	
+                    scope.returnType = type;    
                 }
                 
                 node.resolvedReturnType = scope.returnType;
@@ -334,11 +333,11 @@ raptor.define(
             
             walk_VariableDeclaration: function(node) {
                 
-            	if (node.comment && node.declarations.length) {
-            		//Pass along the comment to the first variable declarator
-            		node.declarations[0].comment = node.comment;
-            	}
-            	
+                if (node.comment && node.declarations.length) {
+                    //Pass along the comment to the first variable declarator
+                    node.declarations[0].comment = node.comment;
+                }
+                
                 node.declarations.forEach(function(declarator) {
                     this.walk(declarator);
                 }, this);
@@ -356,56 +355,56 @@ raptor.define(
                 }
 
                 if (node.comment && type) {
-                	type.setComment(node.comment);
+                    type.setComment(node.comment);
                 }
                 
                 scope.addLocalVariable(varName, type, node.comment);
                 
                 this.env.publish("var", {
-                	type: type,
-                	scope: this.currentScope(),
-                	comment: node.comment,
-                	symbols: this.symbols,
-                	node: node,
-                	walker: this
+                    type: type,
+                    scope: this.currentScope(),
+                    comment: node.comment,
+                    symbols: this.symbols,
+                    node: node,
+                    walker: this
                 });
             },
             
             walk_IfStatement: function(node) {
-            	this.walk(node.test);
-            	this.walk(node.consequent);
-            	
-            	if (node.alternate) {
-            		this.walk(node.alternate);
-            	}
+                this.walk(node.test);
+                this.walk(node.consequent);
+                
+                if (node.alternate) {
+                    this.walk(node.alternate);
+                }
             },
             
             walk_WhileStatement: function(node) {
-            	this.walk(node.test);
-            	this.walk(node.body);
-            	
+                this.walk(node.test);
+                this.walk(node.body);
+                
             },
             
             walk_DoWhileStatement: function(node) {
-            	this.walk(node.body);
-            	this.walk(node.test);
+                this.walk(node.body);
+                this.walk(node.test);
             },
             
             walk_MemberExpression: function(node) {
-            	this.walk(node.object);
-            	
-            	//Property is always an identifier... don't try to resolve the property
-            	
-            	var objectType = node.object.resolvedType;
-            	
-            	if (objectType) {
-            		node.resolvedType = objectType.getPropertyType(node.property.name);
-            	}
+                this.walk(node.object);
+                
+                //Property is always an identifier... don't try to resolve the property
+                
+                var objectType = node.object.resolvedType;
+                
+                if (objectType) {
+                    node.resolvedType = objectType.getPropertyType(node.property.name);
+                }
             },
             
             walk_ObjectExpression: function(node) {
-            	var objectType = new Type("object");
-            	
+                var objectType = new Type("object");
+                
                 node.properties.forEach(function(prop) {
                     var keyNode = prop.key,
                         key;
@@ -429,17 +428,17 @@ raptor.define(
             },
             
             walk_ThisExpression: function(node) {
-            	var scope = this.currentScope();
-            	node.resolvedType = scope.functionType.getInstanceType();
+                var scope = this.currentScope();
+                node.resolvedType = scope.functionType.getInstanceType();
             },
             
             walk_Literal: function(node) {
-            	node.resolvedType = new Type(typeof node.value);
-            	node.resolvedType.value = node.value;
+                node.resolvedType = new Type(typeof node.value);
+                node.resolvedType.value = node.value;
             },
             
             walk_Identifier: function(node) {
-            	node.resolvedType = this.currentScope().resolveVar(node.name);
+                node.resolvedType = this.currentScope().resolveVar(node.name);
             }
         };
         

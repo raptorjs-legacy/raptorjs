@@ -35,10 +35,10 @@ raptor.defineClass(
                     escapeXml;
                 
                 if (this.hasProperty('escapeXml')) {
-                    escapeXml = this.getProperty("escapeXml") !== false
+                    escapeXml = this.getProperty("escapeXml") !== false;
                 }
                 else {
-                    escapeXml = this.getProperty("escape-xml") !== false
+                    escapeXml = this.getProperty("escape-xml") !== false;
                 }
                 
                 if (expression) {

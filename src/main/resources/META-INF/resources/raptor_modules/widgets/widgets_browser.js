@@ -133,6 +133,16 @@ raptor.extend('widgets', function(raptor, widgets) {
                 _notify = function(name, args) {
                     return this.publish(name, arrayFromArguments(arguments, 1));
                 },
+                _convertEvents = function(events) {
+                    var convertedEvents = {};
+                    raptor.forEach(events, function(event) {
+                        convertedEvents[event[0]] = {
+                            target: event[1],
+                            props: event[2]
+                        };
+                    }, this);
+                    return convertedEvents;
+                },
                 _initWidgets = function(widgetDefs, parentWidget) {
                     if (!widgetDefs) return;
                     
@@ -172,14 +182,7 @@ raptor.extend('widgets', function(raptor, widgets) {
                         }
                         
                         if (events) {
-                            var convertedEvents = {};
-                            raptor.forEach(events, function(event) {
-                                convertedEvents[event[0]] = {
-                                    target: event[1],
-                                    props: event[2]
-                                };
-                            }, this);  
-                            events = convertedEvents;
+                            events = _convertEvents(events);
                         }
                         
                         

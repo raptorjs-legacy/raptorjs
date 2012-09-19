@@ -43,6 +43,9 @@ $rload(function(raptor) {
             }
         };
 
+    /**
+     * @raptorExtension Server
+     */
     raptor.extend(raptor.resources, {
         /**
          * @field

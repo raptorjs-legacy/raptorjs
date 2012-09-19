@@ -1,6 +1,7 @@
 raptor.define(
     'templating.taglibs.optimizer.EnableExtensionTag',
     function(raptor) {
+        "use strict";
         
         return {
             process: function(input, context) {
