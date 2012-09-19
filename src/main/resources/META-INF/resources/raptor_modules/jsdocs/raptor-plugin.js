@@ -3,8 +3,7 @@ raptor.define(
     function(raptor) {
         "use strict";
         
-        var RaptorSymbol = raptor.require("jsdocs.RaptorSymbol"),
-            Type = raptor.require("jsdocs.Type"),
+        var Type = raptor.require("jsdocs.Type"),
             resolveDefine = function(methodName, node, walker, isClass) {
             
                 var name = null,
@@ -39,8 +38,6 @@ raptor.define(
                     }
                 });
                 
-                var symbol;
-                
                 
                 if (!def) {
                     this.logger().warn('Invalid args to "' + methodName + '". Definition argument not found. Args: ' + walker.argsToString(args));
@@ -63,9 +60,9 @@ raptor.define(
                                 varType = prop.type;
                             
                             if (varType && varType !== scope.returnType && varType.isJavaScriptFunction() && varType.hasProperty("prototype")) {
-                                var anonSymbol = new RaptorSymbol(name + "-" + varName, varType);
-                                anonSymbol.setAnonymous(true);
-                                walker.getSymbols().addSymbol(anonSymbol);
+                                varType.setName(varName);
+                                varType.setAnonymous(true);
+                                walker.getSymbols().addSymbol(name + "-" + varName, varType);
                             }
                         }, this);
                     }
@@ -75,15 +72,23 @@ raptor.define(
                 }
                 
                 if (type) {
-                    if (type.isJavaScriptFunction()) {
-                        if (!type.hasProperty("prototype")) {
-                            type.setProperty("prototype", new Type()); //Make it clear that this a class and not just a regular function
-                        }
+                    if (node.comment) {
+                        //Attach the comment or the main node to the type
+                        type.raptorDefineComment = node.comment;
                     }
-                    else if (isClass) {
+                    
+                    if (modifiers) {
+                        type.superclassName = modifiers.superclass;
+                        type.raptorModifiers = modifiers;
+                    }
+                        
+                    if (!type.isJavaScriptFunction() && isClass) {
                         /*
-                         * The object being defined is a class but it is not a function constructor
-                         * so convert it to a function constructor
+                         * The object being defined is a class defined using
+                         * raptor.defineClass, but the class definition object
+                         * is an object. We need to convert it to a
+                         * function type to make it clear that it is a 
+                         * class
                          */
                         var initProp = type.getProperty("init");
                         
@@ -105,22 +110,21 @@ raptor.define(
                         
                         type = classType;
                     }
+                     
+                    if (type.isJavaScriptFunction()) {
+                        if (!type.hasProperty("prototype")) {
+                            type.setProperty("prototype", new Type()); //Make it clear that this a class and not just a regular function
+                        }
+                    }
+                    type.setName(name);
+                    type.raptorDefineMethod = methodName;
+                    type.raptorType = type.isJavaScriptFunction() ? "class" : "module";
                     
-//                    
-
-                    type.raptorDefineMethod = methodName; //Associate the type with the raptor symbol
+                    //TODO: Handle enums and mixins
                 }
                 
                 if (name) {
-                    symbol = new RaptorSymbol(name, type);
-                    symbol.setComment(node.comment);
-                    symbol.setModifiers(modifiers);
-                    
-                    if (isClass) {
-                        symbol.setRaptorType("class");    
-                    }
-
-                    walker.getSymbols().addSymbol(symbol);
+                    walker.getSymbols().addSymbol(name, type);
                 } 
                 
                 
@@ -141,8 +145,7 @@ raptor.define(
                             var nameTag = comment.getTag("name");
                             
                             if (nameTag) {
-                                var symbol = new RaptorSymbol(nameTag.getValue(), eventArgs.type);
-                                eventArgs.symbols.addSymbol(symbol);    
+                                eventArgs.symbols.addSymbol(nameTag.getValue(), eventArgs.type);    
                             }
                         }
                     }

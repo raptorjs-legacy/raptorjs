@@ -9,13 +9,12 @@ raptor.define(
         
         var arrays = raptor.require('arrays'),
             Type = raptor.require("jsdocs.Type");
-        
-        
-        
+
         var toStrings = {
                 Literal: function() {
                     return JSON.stringify(this.value);
                 },
+                
                 Identifier: function() {
                     return this.name;
                 },
@@ -34,7 +33,7 @@ raptor.define(
                 
                 BlockStatement: function() {
                     return "{" + this.body.map(function(statement) {
-                        return nodeToString(statement) + ";";
+                        return nodeToString(statement);
                     }).join("\n") + "}";
                 },
                 
@@ -43,7 +42,7 @@ raptor.define(
                 },
                 
                 ExpressionStatement: function() {
-                    return nodeToString(this.expression);
+                    return nodeToString(this.expression) + ";";
                 },
                 
                 ObjectExpression: function() {
@@ -62,6 +61,12 @@ raptor.define(
                 
                 ThisExpression: function() {
                     return "this";
+                },
+                
+                VariableDeclaration: function() {
+                    return "var " + this.declarations.map(function(declarator) {
+                        return nodeToString(declarator);
+                    }).join(",") + ";"
                 },
                 
                 VariableDeclarator: function() {
@@ -84,55 +89,51 @@ raptor.define(
                 }).join(", ");
             };
             
-        var ASTWalker = function(ast, env, symbols) {
-            this.ast = ast;
+        var ASTWalker = function(env) {
             this.env = env;
-            this.symbols = symbols;
+            this.symbols = env.getSymbols();
             
             this.scopeStack = [this.env.getGlobal()];
             this.stack = [];
         };
         
         ASTWalker.prototype = {
-            loadSymbols: function() {
-                this.walk(this.ast);
-            },
-            
             resolveAssignmentObject: function(node) {
-                this.logger().info('resolveAssignmentObject(): ' + nodeToString(node));
                 
                 if (node.type === 'Identifier') {
                     var existingVar = this.currentScope().resolveVar(node.name);
                     if (existingVar) {
-                        return existingVar;
+                        node.resolvedType = existingVar;
                     }
                     else {
                         var newGlobal = new Type();
                         this.getGlobal().setProperty(node.name, newGlobal);
-                        return newGlobal;
+                        node.resolvedType = newGlobal;
                     }
+                    
+                    this.publishAfterWalk(node);
                 }
                 else if (node.type === 'MemberExpression') {
                     var objectType = this.resolveAssignmentObject(node.object);
                     if (objectType) {
                         var existingProperty = objectType.getPropertyType(node.property.name);
                         if (existingProperty) {
-                            return existingProperty;
+                            node.resolvedType = existingProperty;
+
                         }
                         else {
                             var newProperty = new Type();
                             objectType.setProperty(node.property.name, newProperty);
-                            return newProperty;
+                            node.resolvedType = newProperty;
                         }
                     }
-                    else {
-                        return null;
-                    }
+                    
+                    this.publishAfterWalk(node);
                 }
                 else {
                     this.walk(node);
-                    return node.resolvedType;
                 }
+                return node.resolvedType;
             },
             
             getSymbols: function() {
@@ -303,6 +304,9 @@ raptor.define(
                             
                         }
                     }
+                    leftNode.resolvedType = rightNode.resolvedType;
+                    
+                    this.publishAfterWalk(leftNode);
                 }
                 else {
                     /*

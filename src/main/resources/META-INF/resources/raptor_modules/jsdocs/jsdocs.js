@@ -97,8 +97,9 @@ raptor.define(
                     source = source.readFully();
                 }
                 
-                this.logger().info("Parsing: " + source);
-                
+                if (this.logger().isInfoEnabled()) {
+                    this.logger().info("Parsing: " + source);    
+                }
                 
                 var ast = esprima.parse(source, {comment: true, range: true, loc: true});
                 attachComments(ast, commentParser);
@@ -113,18 +114,14 @@ raptor.define(
                 return new Environment();
             },
             
-            loadSymbols: function(ast, env, symbols) {
-                if (!symbols) {
-                    symbols = this.createSymbols();
-                }
-                
+            loadSymbols: function(ast, env) {
                 if (!env) {
                     env  = this.createEnvironment();
                 }
                 
-                var symbolLoader = new ASTWalker(ast, env, symbols);
-                symbolLoader.loadSymbols();
-                return symbols;
+                var walker = new ASTWalker(env);
+                walker.walk(ast);
+                return env.getSymbols();
             }
         };
     });

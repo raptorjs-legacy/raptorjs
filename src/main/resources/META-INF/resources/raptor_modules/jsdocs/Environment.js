@@ -4,11 +4,14 @@ raptor.define(
         "use strict";
         
         var Type = raptor.require('jsdocs.Type'),
-            Tag = raptor.require('jsdocs.Tag');
+            Tag = raptor.require('jsdocs.Tag'),
+            SymbolSet = raptor.require('jsdocs.SymbolSet');
         
-        var Environment = function() {
+        var Environment = function(symbols) {
+            this.symbols = symbols || new SymbolSet();
             this.handlers = raptor.require("listeners").createObservable();
-            this.global = new Type("object");
+            this.global = new Type("object", "Global");
+            this.symbols.addSymbol("global", this.global);
             this.tagParsers = {};
         };
         
@@ -43,6 +46,14 @@ raptor.define(
             
             publish: function(name, args) {
                 this.handlers.publish(name, args);
+            },
+            
+            getSymbols: function() {
+                return this.symbols;
+            },
+            
+            setSymbols: function(symbols) {
+                this.symbosl = symbols;
             }
         };
         

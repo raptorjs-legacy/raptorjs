@@ -5,7 +5,8 @@ var File = raptor.require('files').File,
     logger = raptor.require('logging').logger("raptor-jsdocs-spec"),
     createEnv = function() {
 		var jsdocs = raptor.require('jsdocs');
-	    var env = jsdocs.createEnvironment();
+		var symbols = jsdocs.createSymbols();
+	    var env = jsdocs.createEnvironment(symbols);
 	    raptor.require('jsdocs.raptor-plugin').load(env);
 	    return env;
 	},
@@ -17,14 +18,13 @@ var File = raptor.require('files').File,
             var jsdocs = raptor.require('jsdocs');
             var env = createEnv();
             
-            var symbols = jsdocs.createSymbols();
             var ast = jsdocs.parse(new File(dir, path), env);
             
             //console.log('AST for "' + path + '":\n', raptor.require('debug').prettyPrint(ast));
             
-            jsdocs.loadSymbols(ast, env, symbols);
+            var symbols = jsdocs.loadSymbols(ast, env);
             
-            console.log('Symbols for "' + path + '":\n' + symbols);
+            console.log('\n-------------------------------------------------\nSymbols for "' + path + '":\n' + symbols.toString());
             
             return symbols;
         }
@@ -71,7 +71,7 @@ describe('strings module', function() {
         
         var symbols = loadSymbols("resources/jsdocs/raptor-class-object.js");
         expect(symbols.hasSymbol("Simple")).toEqual(true);
-        expect(symbols.getSymbol("Simple").getType().getPropertyType('prototype').hasProperty('hello')).toEqual(true);
+        expect(symbols.getSymbol("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
         
     });
     
@@ -79,36 +79,37 @@ describe('strings module', function() {
         
         var symbols = loadSymbols("resources/jsdocs/raptor-class-var.js");
         expect(symbols.hasSymbol("Simple")).toEqual(true);
-        expect(symbols.getSymbol("Simple").getType().getPropertyType('prototype').hasProperty('hello')).toEqual(true);
+        expect(symbols.getSymbol("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
         
     });
     
     it('should allow for non-Raptor anonymous classes', function() {
         
         var symbols = loadSymbols("resources/jsdocs/anon-class-non-raptor.js");
-        expect(symbols.getCount()).toEqual(2);
+        expect(symbols.hasSymbol("global")).toEqual(true);
+        expect(symbols.hasSymbol("simple-Anon")).toEqual(true);
+        expect(symbols.hasSymbol("simple")).toEqual(true);
+        expect(symbols.getCount()).toEqual(3);
     });
     
     it('should allow for tags to register new symbols', function() {
         
         var symbols = loadSymbols("resources/jsdocs/tags.js");
         expect(symbols.hasSymbol("mySymbol")).toEqual(true);
-        expect(symbols.getSymbol("mySymbol").getType().hasComment()).toEqual(true);
-        expect(symbols.getSymbol("mySymbol").getType().getComment().hasTag("name")).toEqual(true);
+        expect(symbols.getSymbol("mySymbol").hasComment()).toEqual(true);
+        expect(symbols.getSymbol("mySymbol").getComment().hasTag("name")).toEqual(true);
     });
     
     it('should allow for instance properties', function() {
         
         var symbols = loadSymbols("resources/jsdocs/this.js");
-        expect(symbols.getSymbol("Simple").getType().getInstanceType().getProperty("a")).toNotEqual(null);
+        expect(symbols.getSymbol("Simple").getInstanceType().getProperty("a")).toNotEqual(null);
         
         
         expect(symbols.getSymbol("Simple")
-    			.getType()
     			.getPropertyType("prototype")).toNotEqual(null);
         
         expect(symbols.getSymbol("Simple")
-    			.getType()
     			.getPropertyType("prototype")
     			.getPropertyType("test")
     			.getInstanceType()

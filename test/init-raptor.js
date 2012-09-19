@@ -30,7 +30,7 @@ createRaptor = function(override) {
                 'optimizer': {level: 'DEBUG'},
                 'raptor-optimizer-spec': {level: 'DEBUG'},
                 'oop-server': {level: 'WARN'},
-                'jsdocs': {level: 'DEBUG'},
+                'jsdocs': {level: 'WARN'},
                 'resources': {level: 'WARN'}
             }
         },

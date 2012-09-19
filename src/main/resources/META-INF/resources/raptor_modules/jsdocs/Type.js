@@ -5,16 +5,17 @@ raptor.define(
         
         var INDENT = "  ";
         
-        var Type = function(jsType) {
+        var Type = function(jsType, name) {
             this.properties = {};
-            this.parentScope = null;
-            this.functionParamNames = null;
-            this.localVarNames = {};
-            this.scope = null;
-            this.javaScriptType = jsType;
-            this.comment = null;
-            
-            this.instanceType = null;
+            this.anonymous = false;
+            this.functionParamNames = null; //Only valid when this type is a function
+            this.parentScope = null; //Only valid when this type is a function scope
+            this.localVarNames = {}; //Only valid when this type is a function scope
+            this.javaScriptType = jsType; //The primitive type of the JavaScript object. One of: function, object, boolean, number and string
+            this.comment = null; //The jsdoc.Comment associated with the type
+            this.instanceType = null; //Only valid when this type is a function
+            this.name = name; //The name to use for display
+            this.superclassName = null; //The symbol name of the superclass
         };
         
         Type.prototype = {
@@ -156,11 +157,6 @@ raptor.define(
             
             addLocalVariable: function(name, type, comment) {
                 this.localVarNames[name] = true;
-                
-                if (type) {
-                    type.setScope(this); //Associate the local variable with the scope
-                }
-                
                 this.setProperty(name, type, comment);
             },
             
@@ -201,12 +197,10 @@ raptor.define(
                     commentStr = '';
                 
                 if (this.getComment()) {
-                    commentStr = '\n' + indentComment(this.getComment(), indent) ;
-                    typeStr = indent + this.javaScriptType;
+                    commentStr = '\n' + indentComment(this.getComment(), indent) + indent;
                 }
-                else {
-                    typeStr = this.javaScriptType;
-                }
+                
+                typeStr = this.name ? '[' + this.name + ']' + " (" + this.javaScriptType + ")" : this.javaScriptType;
                 
                 
                 if (keys.length) {
@@ -244,21 +238,38 @@ raptor.define(
                 return "object";
             },
             
-            setScope: function(scope) {
-                this.scope = scope;
-            },
-            
-            getScope: function() {
-                return this.scope;
-            },
-            
             setComment: function(comment) {
                 this.comment = comment;
             },
             
             getComment: function() {
                 return this.comment;
+            },
+            
+            setSuperclassName: function(superclassName) {
+                this.superclassName = superclassName;
+            },
+            
+            getSuperclassName: function() {
+                return this.superclassName;
+            },
+            
+            setAnonymous: function(anonymous) {
+                this.anonymous = anonymous;
+            },
+            
+            isAnonymous: function() {
+                return this.anonymous;
+            },
+            
+            setName: function(name) {
+                this.name = name;
+            },
+            
+            getName: function() {
+                return this.name;
             }
+            
         };
         
         return Type;

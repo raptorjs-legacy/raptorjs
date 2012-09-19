@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * @raptorExtension Rhino
+ */
 raptor.defineClass(
     "xml.sax.SaxParser",
     "xml.sax.BaseSaxParser",

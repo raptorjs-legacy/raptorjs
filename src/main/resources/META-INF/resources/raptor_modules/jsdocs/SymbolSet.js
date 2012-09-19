@@ -19,15 +19,19 @@ raptor.define(
         };
         
         SymbolSet.prototype = {
-            addSymbol: function(symbol) {
-                if (!symbol) {
-                    throw raptor.createError(new Error("symbol is null"));
-                }
-                else if (!symbol.getType()) {
-                    throw raptor.createError(new Error("symbol does not have a type"));
+            addSymbol: function(name, type) {
+                if (!name || typeof name !== 'string') {
+                    throw raptor.createError(new Error("invalid symbol"));
                 }
                 
-                this.symbols[symbol.name] = symbol;
+                if (!type) {
+                    throw raptor.createError(new Error("type is null"));
+                }
+                
+                if (!type.getName()) {
+                    type.setName(name);
+                }
+                this.symbols[name] = type;
             },
             
             toString: function() {
@@ -46,6 +50,10 @@ raptor.define(
             
             getSymbol: function(name) {
                 return this.symbols[name];
+            },
+            
+            getSymbols: function() {
+                return raptor.require('objects').values(this.symbols);
             },
             
             getCount: function() {

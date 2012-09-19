@@ -106,25 +106,16 @@
              */
             var newRaptor = {
                     /**
-                     * 
-                     */
-                    global: global,
-                    
-                    /**
                      * The global object for the environment.
                      * 
                      * This object normalizes the JavaScript global object across multiple environments. 
                      * In a browser, the global object will be the "window" object. In a NodeJS environment
                      * the global object will be the GLOBAL object.
                      * 
-                     * @name global
-                     * @property
-                     * @memberOf raptor
-                     * @type Object
-                     * 
-                     * @see env
-                     * 
+                     * @type {global}
                      */
+                    global: global,
+                    
                     
                     /**
                      * 
