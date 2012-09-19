@@ -29,14 +29,8 @@ raptor.define(
                     'pre': true,
                     'textarea': true
                 },
-                allowSelfClosing: {
-                    'script': false,
-                    'div': false,
-                    'textarea': false,
-                    'li': false,
-                    'b': false,
-                    'a': false,
-                    'i': false
+                allowSelfClosing: { //Conditionally enable self-closing tags for specific elements. Self-closing tag: <div /> Not self-closing tag: <div></div>
+                    //'pre': true
                 },
                 startTagOnly: {
                     'img': true,

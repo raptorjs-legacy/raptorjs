@@ -41,7 +41,7 @@ raptor.defineClass(
                 this.localName = localName;
                 this.uri = uri;  
                 
-                this.allowSelfClosing = true;
+                this.allowSelfClosing = false;
                 this.startTagOnly = false;
             }
             

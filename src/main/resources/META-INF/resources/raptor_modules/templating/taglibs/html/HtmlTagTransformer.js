@@ -37,8 +37,8 @@ raptor.defineClass(
                         }    
                     }
                     
-                    if (allowSelfClosing[lookupKey] === false) {
-                        node.setAllowSelfClosing(false);
+                    if (allowSelfClosing[lookupKey] === true) {
+                        node.setAllowSelfClosing(true);
                     }
                     
                     if (compiler.options.xhtml !== true && startTagOnly[lookupKey] === true) {
