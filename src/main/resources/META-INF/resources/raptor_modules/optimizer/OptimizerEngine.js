@@ -280,13 +280,19 @@ raptor.defineClass(
                 
                 this.logger().info('Writing bundles for page "' + page.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getCssOutputDir());
                 
-                var pageOutputFile = this.getPageOutputFile(page);
-                if (pageOutputFile) {
-                    this.writer.getUrlBuilder().setBaseDir(pageOutputFile.getParent());    
+                if (page.getBasePath()) {
+                    this.writer.getUrlBuilder().setBaseDir(page.getBasePath().toString());
                 }
                 else {
-                    this.writer.getUrlBuilder().setBaseDir(null);
+                    var pageOutputFile = this.getPageOutputFile(page);
+                    if (pageOutputFile) {
+                        this.writer.getUrlBuilder().setBaseDir(pageOutputFile.getParent());    
+                    }
+                    else {
+                        this.writer.getUrlBuilder().setBaseDir(null);
+                    }
                 }
+                
                 
                 var pageHtmlBySlot = this.writer.writePageDependencies(pageDependencies);
                 this.logger().info('Bundles for page "' + page.getName() + '" written to disk\n');

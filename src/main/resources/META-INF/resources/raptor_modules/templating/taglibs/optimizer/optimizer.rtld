@@ -14,6 +14,8 @@
         
         <attribute name="name" type="string"/>
         <attribute name="package" type="string"/>
+        <attribute name="base-path" type="string"/>
+        <attribute name="optimizer" type="expression"/>
     </tag>
     
     <tag>

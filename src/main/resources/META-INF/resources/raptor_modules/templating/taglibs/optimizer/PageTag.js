@@ -8,15 +8,23 @@ raptor.define(
                 
                 
                 var optimizer = raptor.require('optimizer'), 
+                    optimizerEngine = input.optimizer;
+                
+                if (!optimizerEngine) {
                     optimizerEngine = optimizer.getOptimizerFromContext(context);
+                }
+                else {
+                    optimizer.setOptimizerForContext(context, optimizerEngine);
+                }
                 
                 if (!optimizerEngine) {
                     throw raptor.createError(new Error('Optimizer not set for request. An OptimizerEnginer instance can be associated with a request using the optimizerEngine.setOptimizerForContext(context) method.'));
                 }
                 
                 var packagePath = input['package'];
+                var basePath = input['base-path'];
                 
-                var pageKey = input.templatePath + "/" + input['package'];
+                var pageKey = input.templatePath + "/" + packagePath + "/" + basePath;
                 
                 var page = optimizer.getPageFromContext(context);
                 
@@ -39,6 +47,7 @@ raptor.define(
                     page = optimizerEngine.registerPage({
                         pageKey: pageKey,
                         name: input.name,
+                        basePath: basePath,
                         packageResource: packageResource
                     });
                 }

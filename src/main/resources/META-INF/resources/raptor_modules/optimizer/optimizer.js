@@ -17,7 +17,7 @@ raptor.define(
             createOptimizer: function(config, params) {
                 var configXmlPath = null;
                 
-                if (typeof config === 'string') {
+                if (typeof config === 'string' || config instanceof File) {
                     configXmlPath = config;
                     config = this.loadConfigXml(config, params);
                 }
