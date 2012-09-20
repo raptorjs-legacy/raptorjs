@@ -26,6 +26,7 @@ raptor.defineClass(
             IfNode = raptor.require("templating.taglibs.core.IfNode"),
             ElseIfNode = raptor.require("templating.taglibs.core.ElseIfNode"),
             ElseNode = raptor.require("templating.taglibs.core.ElseNode"),
+            WithNode = raptor.require("templating.taglibs.core.WithNode"),
             WhenNode = raptor.require("templating.taglibs.core.WhenNode"),
             OtherwiseNode = raptor.require("templating.taglibs.core.OtherwiseNode"),
             TagHandlerNode = raptor.require("templating.taglibs.core.TagHandlerNode"),
@@ -47,6 +48,7 @@ raptor.defineClass(
                     elseIfAttr,
                     attrsAttr,
                     whenAttr,
+                    withAttr,
                     parseBodyTextAttr,
                     stripAttr,
                     contentAttr,
@@ -228,6 +230,18 @@ raptor.defineClass(
                     //node with the new "if" node and then adding the current node as a child
                     node.parentNode.replaceChild(elseNode, node);
                     elseNode.appendChild(node);
+                }
+                
+                if ((withAttr = node.getAttributeNS(coreNS, "with")) != null) {
+                    node.removeAttributeNS(coreNS, "with");
+                    
+                    var withNode = new WithNode({
+                        vars: withAttr,
+                        pos: node.getPosition()
+                    });
+                    
+                    node.parentNode.replaceChild(withNode, node);
+                    withNode.appendChild(node);
                 }
                 
                 if ((contentAttr = (node.getAttributeNS(coreNS, "bodyContent") || node.getAttributeNS(coreNS, "content"))) != null) {

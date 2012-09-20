@@ -378,7 +378,7 @@ describe('templating module', function() {
     
     it("should allow for <c:with> functions", function() {
         var output = compileAndRender("/test-templates/with.rhtml", {});
-        expect(output).toEqual('1 7 11');
+        expect(output).toEqual('1 7 11<div>1) hello</div><div>2) hello</div><div>3) hello</div>');
     });
     
     it("should allow for scriptlets", function() {

@@ -190,7 +190,7 @@ raptor.define('templating', function(raptor) {
          * @returns {templating$Context} The newly created context object
          */
         createContext: function(writer) {
-            return new Context(writer); //Create a new context using the writer provided
+            return new Context(writer || new StringBuilder()); //Create a new context using the writer provided
         },
         
         /**

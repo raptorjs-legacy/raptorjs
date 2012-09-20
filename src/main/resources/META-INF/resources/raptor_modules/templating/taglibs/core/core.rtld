@@ -90,6 +90,11 @@
         </attribute>
         
         <attribute>
+            <name>with</name>
+            <type>custom</type>
+        </attribute>
+        
+        <attribute>
             <name>otherwise</name>
             <type>empty</type>
         </attribute>
