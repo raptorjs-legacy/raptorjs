@@ -132,7 +132,9 @@ $rload(function(raptor) {
         createPackageManifest: function(packageResource) {
             var PackageManifest = this.PackageManifest;
             var manifest = new PackageManifest();
-            manifest.setPackageResource(packageResource);
+            if (packageResource) {
+                manifest.setPackageResource(packageResource);    
+            }
             return manifest;
         },
         

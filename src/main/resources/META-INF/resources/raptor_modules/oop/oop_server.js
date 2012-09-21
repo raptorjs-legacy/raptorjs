@@ -70,6 +70,15 @@ $rload(function(raptor) {
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
         },
+        createModuleManifestForResource = function(resource) {
+            var manifest = raptor.require('packager').createPackageManifest();
+            manifest.setPackageResource(resource);
+            manifest.setIncludes([{
+                path: resource.getName()
+            }]);
+
+            return manifest;
+        },
         mappings = {},
         addMappings = function(_mappings) {
             raptor.extend(mappings, _mappings);
@@ -171,6 +180,34 @@ $rload(function(raptor) {
                 manifest = packager.getPackageManifest(dir + "/package.json");
                 if (!manifest) {
                     manifest = packager.getPackageManifest(dir + "-package.json");
+                }
+                
+                if (!manifest) {
+                    /*
+                     * Sample module name:
+                     * my-module.sub-module
+                     */
+                    var resources = raptor.resources;
+                    var basePath = '/' + name.replace(/\./g, '/'); //sample basePath: /my-module/sub-module
+                    var resourcePath = basePath + '.js'; //sample resourcePath: /my-module/sub-module.js
+                    
+                    var resource = resources.findResource(resourcePath);
+                    if (resource.exists())
+                    {
+                        manifest = createModuleManifestForResource(resource);
+                    }
+                    else {
+                        var lastSlash = basePath.lastIndexOf('/');
+                        if (lastSlash != -1) {
+                            resourcePath =  basePath + '/' + basePath.substring(lastSlash+1) + ".js"; //sample resourcePath: /my-module/sub-module/sub-module.js
+                            resource = resources.findResource(resourcePath);
+                            if (resource.exists())
+                            {
+                                manifest = createModuleManifestForResource(resource);
+                            }
+                        }
+                        
+                    }
                 }
             }
             
