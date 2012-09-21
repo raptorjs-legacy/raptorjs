@@ -1,0 +1,7 @@
+{
+    "includes": [
+        { "module": "jsdoc-global" },
+        { "module": "components/jsdoc/Nav" },
+        "symbol.css"
+     ]
+}

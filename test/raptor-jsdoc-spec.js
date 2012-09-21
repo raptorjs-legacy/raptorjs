@@ -2,12 +2,12 @@ require('./_helper.js');
 
 var File = raptor.require('files').File,
     dir = new File(__dirname),
-    logger = raptor.require('logging').logger("raptor-jsdocs-spec"),
+    logger = raptor.require('logging').logger("raptor-jsdoc-spec"),
     createEnv = function() {
-		var jsdocs = raptor.require('jsdocs');
-		var symbols = jsdocs.createSymbols();
-	    var env = jsdocs.createEnvironment(symbols);
-	    raptor.require('jsdocs.raptor-plugin').load(env);
+		var jsdoc = raptor.require('jsdoc');
+		var symbols = jsdoc.createSymbols();
+	    var env = jsdoc.createEnvironment(symbols);
+	    raptor.require('jsdoc.raptor-plugin').load(env);
 	    return env;
 	},
     loadSymbols = function(path) {
@@ -15,14 +15,14 @@ var File = raptor.require('files').File,
 	    
         try
         {
-            var jsdocs = raptor.require('jsdocs');
+            var jsdoc = raptor.require('jsdoc');
             var env = createEnv();
             
-            var ast = jsdocs.parse(new File(dir, path), env);
+            var ast = jsdoc.parse(new File(dir, path), env);
             
             //console.log('AST for "' + path + '":\n', raptor.require('debug').prettyPrint(ast));
             
-            var symbols = jsdocs.loadSymbols(ast, env);
+            var symbols = jsdoc.loadSymbols(ast, env);
             
             console.log('\n-------------------------------------------------\nSymbols for "' + path + '":\n' + symbols.toString());
             
@@ -37,7 +37,7 @@ var File = raptor.require('files').File,
         var File = raptor.require('files').File;
         
     	try {
-    		var CommentParser = raptor.require('jsdocs.CommentParser');
+    		var CommentParser = raptor.require('jsdoc.CommentParser');
         	var env = createEnv();
         	var parser = new CommentParser(env);
         	var comment = parser.parse(new File(dir, path).readFully());
@@ -63,53 +63,53 @@ describe('strings module', function() {
     
     it('should allow for simple modules', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/raptor-module-simple.js");
+        var symbols = loadSymbols("resources/jsdoc/raptor-module-simple.js");
         
     });
     
     it('should allow for simple classes created by returning an object', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/raptor-class-object.js");
+        var symbols = loadSymbols("resources/jsdoc/raptor-class-object.js");
         expect(symbols.hasSymbol("Simple")).toEqual(true);
-        expect(symbols.getSymbol("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
+        expect(symbols.getSymbolType("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
         
     });
     
     it('should allow for simple classes created using local variables', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/raptor-class-var.js");
+        var symbols = loadSymbols("resources/jsdoc/raptor-class-var.js");
         expect(symbols.hasSymbol("Simple")).toEqual(true);
-        expect(symbols.getSymbol("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
+        expect(symbols.getSymbolType("Simple").getPropertyType('prototype').hasProperty('hello')).toEqual(true);
         
     });
     
     it('should allow for non-Raptor anonymous classes', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/anon-class-non-raptor.js");
+        var symbols = loadSymbols("resources/jsdoc/anon-class-non-raptor.js");
         expect(symbols.hasSymbol("global")).toEqual(true);
-        expect(symbols.hasSymbol("simple-Anon")).toEqual(true);
+        expect(symbols.hasSymbol("simple.Anon")).toEqual(true);
         expect(symbols.hasSymbol("simple")).toEqual(true);
         expect(symbols.getCount()).toEqual(3);
     });
     
     it('should allow for tags to register new symbols', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/tags.js");
+        var symbols = loadSymbols("resources/jsdoc/tags.js");
         expect(symbols.hasSymbol("mySymbol")).toEqual(true);
-        expect(symbols.getSymbol("mySymbol").hasComment()).toEqual(true);
-        expect(symbols.getSymbol("mySymbol").getComment().hasTag("name")).toEqual(true);
+        expect(symbols.getSymbolType("mySymbol").hasComment()).toEqual(true);
+        expect(symbols.getSymbolType("mySymbol").getComment().hasTag("name")).toEqual(true);
     });
     
     it('should allow for instance properties', function() {
         
-        var symbols = loadSymbols("resources/jsdocs/this.js");
-        expect(symbols.getSymbol("Simple").getInstanceType().getProperty("a")).toNotEqual(null);
+        var symbols = loadSymbols("resources/jsdoc/this.js");
+        expect(symbols.getSymbolType("Simple").getInstanceType().getProperty("a")).toNotEqual(null);
         
         
-        expect(symbols.getSymbol("Simple")
+        expect(symbols.getSymbolType("Simple")
     			.getPropertyType("prototype")).toNotEqual(null);
         
-        expect(symbols.getSymbol("Simple")
+        expect(symbols.getSymbolType("Simple")
     			.getPropertyType("prototype")
     			.getPropertyType("test")
     			.getInstanceType()
@@ -117,7 +117,7 @@ describe('strings module', function() {
     });
     
     it('should allow comments to be parsed', function() {
-    	var comment = parseComment('resources/jsdocs/comment-simple.js');
+    	var comment = parseComment('resources/jsdoc/comment-simple.js');
     	expect(comment.hasTag('test')).toEqual(true);
     	expect(comment.getTag('test').getValue()).toEqual('test');
     	

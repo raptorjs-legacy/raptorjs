@@ -1,0 +1,19 @@
+{
+    "type": "raptor-library",
+    "version": "1.0",
+    "description": "RaptorJS JSDoc Library for JSDoc",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor-search-path": [
+        {"dir": "modules"}
+    ],
+    
+    "raptor-taglibs": [
+        "taglibs/jsdoc/jsdoc.rtld"
+    ]
+}

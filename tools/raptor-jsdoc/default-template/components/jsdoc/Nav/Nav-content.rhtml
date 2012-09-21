@@ -1,0 +1,18 @@
+<c:template xmlns:c="core"
+    params="rootNode">
+    Nav Content
+    
+    <c:def function="tree(parentNode)">
+        <ul>
+            <li c:for="childNode in parentNode.children" id="${childNode.liElId}" class="${childNode.liClass}">
+                <a href="${childNode.href}">${childNode.label}</a>
+                <c:invoke c:if="notEmpty(childNode.children)" function="tree" parentNode="${childNode}"/>            
+            </li>
+        </ul>
+    </c:def>
+    
+    
+    <c:invoke function="tree" parentNode="${rootNode}"/>
+    
+
+</c:template>

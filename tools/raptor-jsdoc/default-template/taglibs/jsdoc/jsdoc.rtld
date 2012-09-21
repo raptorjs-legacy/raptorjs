@@ -1,0 +1,13 @@
+<raptor-taglib>
+    <uri>http://jsdoc.raptorjs.org/</uri>
+    <short-name>jsdoc</short-name>
+    <prefix>jsdoc</prefix>
+    
+<!--     <function name="url" bind-to-context="true" class="taglibs.jsdoc.JSDocFunctions"/> -->
+
+    <function name="symbolUrl" bind-to-context="true" class="taglibs.jsdocs.JSDocFunctions"/>
+
+    <import-taglib path="/components/jsdoc/Nav/Nav.rtld"/>
+    
+    
+</raptor-taglib>

@@ -1,0 +1,11 @@
+{
+    "includes": [
+        {"module": "widgets"},
+        {"module": "jsTree/cookie"},
+        {"module": "jsTree/hotkeys"},
+        {"module": "jsTree"},
+        {"module": "jsTree/theme-classic"},
+        "NavWidget.js",
+        "Nav.css"
+    ]
+}

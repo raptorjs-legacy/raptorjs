@@ -1,0 +1,7 @@
+{
+    "type": "raptor-module",
+    "name": "jsTree-hotkeys",
+    "includes": [
+        {"path": "jstree_pre1.0_fix_1/_lib/jquery.hotkeys.js"}
+    ]
+}

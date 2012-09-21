@@ -1,0 +1,8 @@
+<raptor-taglib>
+
+    <tag name="nav" handler-class="components.jsdoc.Nav.NavTag">
+        <attribute name="allSymbols" type="expression"/>
+        <attribute name="symbolName" type="string"/>
+    </tag>
+    
+</raptor-taglib>

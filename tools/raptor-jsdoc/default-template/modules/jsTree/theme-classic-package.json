@@ -1,0 +1,7 @@
+{
+    "type": "raptor-module",
+    "name": "jsTree-cookie",
+    "includes": [
+        {"path": "jstree_pre1.0_fix_1/themes/classic/style.css", "resolveImageUrls": true}
+    ]
+}
