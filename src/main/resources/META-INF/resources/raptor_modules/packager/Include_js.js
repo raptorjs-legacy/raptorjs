@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_js",
     "packager.Include",
     function(raptor) {
         "use strict";
         
-        var loaded = {};
+        var Include_js = function() {
+            Include_js.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
         
-        return {
+        Include_js.prototype = {
             
             getKey: function() {
                 return "js:" + this.resolvePathKey(this.path);
@@ -48,4 +53,6 @@ raptor.defineClass(
                 return true;
             }
         };
+        
+        return Include_js;        
     });

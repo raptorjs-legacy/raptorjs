@@ -21,8 +21,26 @@ raptor.defineClass(
         
         var runtime = raptor.require('runtime');
         
-        return {
+
+        var Include = function() {
+            this.properties = {};
+
+            this.addProperty("recursive", {
+                type: "boolean"
+            });
+        };
+        
+        Include.prototype = {
             __include: true,
+
+            addProperty: function(name, config) {
+                this.properties[name] = config;
+            },
+
+            getPropertyType: function(name) {
+                var prop = this.properties[name];
+                return (prop ? prop.type : "string") || "string";
+            },
             
             getParentManifest: function() {
                 return this._manifest;
@@ -151,4 +169,6 @@ raptor.defineClass(
                 return false;
             }
         };
+        
+        return Include;
     });

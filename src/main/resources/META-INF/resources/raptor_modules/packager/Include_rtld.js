@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_rtld",
     "packager.Include_resource",
     function(raptor) {
         "use strict";
 
         var Include_rtld = function() {
+            Include_rtld.superclass.constructor.apply(this, arguments);
             
+            this.addProperty("path", {
+                type: "string"
+            });
         };
         
         Include_rtld.prototype = {

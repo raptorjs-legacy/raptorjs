@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_4cc",
     "packager.Include",
     function(raptor) {
         "use strict";
         
-        return {
+        var Include_4cc = function() {
+            Include_4cc.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
+        
+        Include_4cc.prototype = {
             getKey: function() {
                 return "4cc:" + this.resolvePathKey(this.path);
             },
@@ -49,4 +56,6 @@ raptor.defineClass(
             }
             
         };
+
+        return Include_4cc;
     });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_init-raptor",
     "packager.Include",
     function(raptor) {
@@ -23,7 +23,15 @@ raptor.defineClass(
         var loaded = {},
             runtime = raptor.require('runtime');
         
-        return {
+        var Include_init_raptor = function() {
+            Include_init_raptor.superclass.constructor.apply(this, arguments);
+
+            this.addProperty("config", {
+                type: "object"
+            });
+        };
+        
+        Include_init_raptor.prototype = {
             getKey: function() {
                 return "init-raptor";
             },
@@ -45,4 +53,6 @@ raptor.defineClass(
                 return "$rcreate(" + (typeof config === 'string' ? config : JSON.stringify(config)) + ");";
             }
         };
+        
+        return Include_init_raptor;
     });

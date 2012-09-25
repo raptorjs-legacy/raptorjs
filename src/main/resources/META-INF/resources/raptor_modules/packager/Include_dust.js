@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_dust",
     "packager.Include",
     function(raptor) {
         "use strict";
+                
+        var Include_dust = function() {
+            Include_dust.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
         
-        return {
+        Include_dust.prototype = {
             getKey: function() {
                 return "dust:" + this.resolvePathKey(this.path);
             },
@@ -54,4 +61,6 @@ raptor.defineClass(
             }
             
         };
+        
+        return Include_dust;
     });

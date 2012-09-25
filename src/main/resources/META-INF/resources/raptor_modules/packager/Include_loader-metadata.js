@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_loader-metadata",
     "packager.Include",
     function(raptor) {
         "use strict";
         
-        return {
+        var Include_loader_metadata = function() {
+            Include_loader_metadata.superclass.constructor.apply(this, arguments);
+        };
+        
+        Include_loader_metadata.prototype = {
             
             getKey: function() {
                 return "loader-metadata";
@@ -45,4 +49,6 @@ raptor.defineClass(
                 return "application/javascript";
             }
         };
+
+        return Include_loader_metadata;
     });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_less",
     "packager.Include",
     function(raptor) {
@@ -61,7 +61,14 @@ raptor.defineClass(
                 };
             }; //End createLessImporter
         
-        return {
+        var Include_less = function() {
+            Include_less.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
+        
+        Include_less.prototype = {
             getKey: function() {
                 return "less:" + this.resolvePathKey(this.path);
             },
@@ -133,4 +140,6 @@ raptor.defineClass(
                 return true;
             }
         };
+        
+        return Include_less;
     });

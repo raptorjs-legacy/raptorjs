@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_resource",
     "packager.Include",
     function(raptor) {
         "use strict";
 
-        return {
+        var Include_resource = function() {
+            Include_resource.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
+        
+        Include_resource.prototype = {
             
             invalidInclude: function() {
                 throw raptor.createError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
@@ -62,4 +69,6 @@ raptor.defineClass(
                 return true;
             }
         };
+
+        return Include_resource;
     });

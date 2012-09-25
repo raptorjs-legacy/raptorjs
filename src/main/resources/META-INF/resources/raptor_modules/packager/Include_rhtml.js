@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_rhtml",
     "packager.Include",
     function(raptor) {
         "use strict";
         
-        return {
+        var Include_rhtml = function() {
+            Include_rhtml.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
+        };
+        
+        Include_rhtml.prototype = {
             getKey: function() {
                 return "rhtml:" + this.resolvePathKey(this.path);
             },
@@ -55,4 +62,6 @@ raptor.defineClass(
                 return true;
             }
         };
+        
+        return Include_rhtml;
     });

@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-raptor.defineClass(
+raptor.define(
     "packager.Include_module",
     "packager.Include",
     function(raptor) {
         "use strict";
         
-        return {
+        var Include_module = function() {
+            Include_module.superclass.constructor.apply(this, arguments);
+            this.addProperty("name", {
+                type: "string"
+            });
+        };
+        
+        Include_module.prototype = {
             getKey: function() {
                 return "module:" + this.name;
             },
@@ -53,6 +60,8 @@ raptor.defineClass(
                 return true;
             }
         };
+
+        return Include_module;
     });
 
 
