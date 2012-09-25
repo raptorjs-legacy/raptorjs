@@ -453,18 +453,6 @@ describe('templating module', function() {
     });
     
     it("should allow for context helper functions", function() {
-
-        raptor.require('templating').registerFunctions(
-            "http://raptorjs.org/templates/test",
-            "test",
-            {
-                "user": function(str) {
-                    return this.attributes["loggedInUser"];
-                },
-                "isLoggedIn": function() {
-                    return this.attributes["loggedInUser"] != null; 
-                }
-            });
         
         var context = raptor.require('templating').createContext();
         context.getAttributes()["loggedInUser"] = {

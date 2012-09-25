@@ -38,7 +38,7 @@ raptor.defineClass(
                 this.attributesByNS = {};
                 
                 this.prefix = prefix;
-                this.localName = localName;
+                this.localName = this.tagName = localName;
                 this.uri = uri;  
                 
                 this.allowSelfClosing = false;

@@ -51,7 +51,7 @@ raptor.defineClass(
                             
                             propsArray.push(template.indentStr(1) + stringify(name) + ": " + expressionStr);
                         }
-                        else if (typeof value === 'string') {
+                        else if (typeof value === 'string' || typeof value === 'object') {
                             propsArray.push(template.indentStr(1) + stringify(name) + ": " + stringify(value));
                         }
                         else {
