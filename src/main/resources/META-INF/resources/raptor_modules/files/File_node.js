@@ -98,6 +98,12 @@ $rload(function(raptor) {
         getName: function() {
             return nodePath.basename(this._path);
         },
+
+        getNameWithoutExtension: function() {
+            var name = this.getName();
+            var lastDot = name.lastIndexOf('.');
+            return lastDot !== -1 ? name.substring(0, lastDot) : name;
+        },
         
         getParent: function() {
             return nodePath.dirname(this._path);
