@@ -358,7 +358,7 @@ $rload(function(raptor) {
      * @raptor
      * @name oop
      */
-    raptor.oop = oop = /** @lends oop */ {
+    raptor.oop = oop = {
             
         /**
          * Defines a module or class.

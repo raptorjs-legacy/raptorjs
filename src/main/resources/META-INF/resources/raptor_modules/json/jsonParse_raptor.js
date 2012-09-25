@@ -26,7 +26,7 @@ raptor.extend('json', function(raptor, target) {
         
         target.registerImpl('raptor', 'parse', parse);
         
-        return /** @lends json_Raptor_Parse */ {
+        return {
             /**
              * 
              * @function

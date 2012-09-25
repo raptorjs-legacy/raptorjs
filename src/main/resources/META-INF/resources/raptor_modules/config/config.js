@@ -19,7 +19,7 @@ $rload(function(raptor) {
     
     /**
      * @class
-     * @name config-Config
+     * @name config.Config
      */
     var Config = function(properties) {
         this.properties = {};
@@ -30,7 +30,7 @@ $rload(function(raptor) {
         }
     };
     
-    Config.prototype = /** @lends config-Config.prototype */ {
+    Config.prototype = {
         
         /**
          * Adds the provided properties to the configuration object. 
@@ -142,20 +142,20 @@ $rload(function(raptor) {
      * properties that can have attached onChange listeners.
      * 
      * <p>
-     * See {@link config-Config#add} for the format of the properties.
+     * See {@link config.Config#add} for the format of the properties.
      * 
      * @namespace
      * @raptor
      * @name config
      */
-    raptor.config = /** @lends config */ {
+    raptor.config = {
         /**
          * 
          * Creates a configuration object with the specified properties.
          * 
          * @param properties
-         * @returns {config-Config}
-         * @see {@link config-Config#add}
+         * @returns {config.Config}
+         * @see {@link config.Config#add}
          */
         create: function(properties) {
             return new Config(properties);

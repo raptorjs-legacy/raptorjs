@@ -29,7 +29,10 @@ $rload(function(raptor) {
     var EMPTY_FUNC = function() {
             return false;
         },
-        voidLogger = /** @lends logging-VoidLogger.prototype */ {
+        /**
+         * @name logging.voidLogger
+         */
+        voidLogger = {
             
             /**
              * 
@@ -100,6 +103,7 @@ $rload(function(raptor) {
     /**
      * @namespace
      * @name logging
+     * @raptor
      */
     raptor.logging = {
         /**

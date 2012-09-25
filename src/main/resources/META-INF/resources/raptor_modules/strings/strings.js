@@ -29,7 +29,7 @@ $rload(function(raptor) {
      * @raptor
      * @name strings
      */
-    raptor.strings = /** @lends strings */{
+    raptor.strings = {
 
         compare: function(s1, s2)
         {

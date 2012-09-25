@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * This module provides the runtime for rendering compiled templates.
+ * 
+ * 
+ * <p>The code for the Raptor Templates compiler is kept separately
+ * in the {@link templating.compiler} module. 
+ */
 raptor.define('templating', function(raptor) {
     "use strict";
     
@@ -21,7 +28,6 @@ raptor.define('templating', function(raptor) {
             return $rget('rhtml', name);
         },
         loadedTemplates = {},
-        forEachEntry = raptor.forEachEntry,
         isArray = raptor.isArray,
         strings = raptor.require('strings'),
         StringBuilder = strings.StringBuilder,
@@ -191,28 +197,6 @@ raptor.define('templating', function(raptor) {
          */
         createContext: function(writer) {
             return new Context(writer || new StringBuilder()); //Create a new context using the writer provided
-        },
-        
-        /**
-         * 
-         * @param name
-         * @param func
-         * @param thisObj
-         */
-        registerFunctions: function(uri, shortName, newHelpers, thisObj) {
-            forEachEntry(newHelpers, function(name, func) {
-                var helperFunc;
-                if (thisObj) {
-                    helperFunc = function() { return func.apply(thisObj, arguments); };
-                }
-                else {
-                    helperFunc = func;
-                }
-                helpers[uri + ":" + name] = helperFunc;
-                if (shortName) {
-                    helpers[shortName + ":" + name] = helperFunc;
-                }
-            }, this);
         },
         
         /**

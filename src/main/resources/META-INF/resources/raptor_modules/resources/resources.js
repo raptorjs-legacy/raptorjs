@@ -17,6 +17,10 @@
 $rload(function(raptor) {
     "use strict";
     
+    /**
+     * @name resources
+     * @raptor
+     */
     raptor.resources = {
             
         isResource: function(o) {

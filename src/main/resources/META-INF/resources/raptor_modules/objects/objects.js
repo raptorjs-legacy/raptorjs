@@ -25,7 +25,7 @@ $rload(function(raptor) {
      * @borrows raptor.forEachEntry as forEachEntry
      * @borrows raptor.keys as keys
      */
-    raptor.objects = /** @lends objects */ {
+    raptor.objects = {
         extend: raptor.extend,
         
         

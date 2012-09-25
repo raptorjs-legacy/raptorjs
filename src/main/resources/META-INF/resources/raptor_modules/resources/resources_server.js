@@ -44,12 +44,13 @@ $rload(function(raptor) {
         };
 
     /**
-     * @raptorExtension Server
+     * @extensionFor resources
+     * @extension Server
      */
     raptor.extend(raptor.resources, {
         /**
          * @field
-         * @type config-Config
+         * @type config.Config
          */
         config: raptor.config.create({
             "searchPath": {

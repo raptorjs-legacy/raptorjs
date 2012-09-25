@@ -24,7 +24,7 @@ $rload(function(raptor) {
      * @raptor
      * @name runtime
      */
-    raptor.runtime = /** @lends runtime */ {
+    raptor.runtime = {
         evaluateResource : function(resource) {
             resource = raptor.resources.findResource(resource);
             if (resource.exists() === false)

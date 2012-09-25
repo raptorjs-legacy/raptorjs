@@ -107,8 +107,8 @@ raptor.define('pubsub', function(raptor) {
      * 
      * @class
      * @anonymous
-     * @name pubsub-Message
-     * @augments listeners-Message
+     * @name pubsub.Message
+     * @augments listeners.Message
      * 
      * @param topic {String} The topic name of the message
      * @param props {Object} An object with properties that should be applied to the newly created message 
@@ -118,7 +118,7 @@ raptor.define('pubsub', function(raptor) {
         this.topic = topic;
     };
     
-    Message.prototype = /** @lends pubsub-Message.prototype */ {
+    Message.prototype = {
         /**
          * Returns the topic name that the message was published to.
          * 
@@ -164,7 +164,7 @@ raptor.define('pubsub', function(raptor) {
              * 
              * </js>
              * 
-             * @param topic {String|pubsub-Message} The topic name or the Message object that should be published 
+             * @param topic {String|pubsub.Message} The topic name or the Message object that should be published 
              * @param data {Object} The data object to associate with the published message (optional)
              * 
              * 
@@ -218,7 +218,7 @@ raptor.define('pubsub', function(raptor) {
              * @param callback {Function} The callback function
              * @param thisObj {Object} The "this" object to use for the callback function
              * 
-             * @returns {listeners-ObservableListenerHandle} A handle to remove the subscriber(s)
+             * @returns {listeners.ObservableListenerHandle} A handle to remove the subscriber(s)
              */
             subscribe: function(topic, callback, thisObj) {
                 return this.observable.subscribe(topic, callback, thisObj);
@@ -275,7 +275,7 @@ raptor.define('pubsub', function(raptor) {
          * NOTE: Calling this method is equivalent to the following code:
          * <js>pubsub.global().publish(topic, props)</js>
          * 
-         * @param topic {String|pubsub-Message} The topic name or the Message object that should be published 
+         * @param topic {String|pubsub.Message} The topic name or the Message object that should be published 
          * @param props {Object} An object with properties that should be applied to the message object (optional)
          * 
          * 
@@ -320,7 +320,7 @@ raptor.define('pubsub', function(raptor) {
          * @param callback {Function} The callback function
          * @param thisObj {Object} The "this" object to use for the callback function
          * 
-         * @returns {listeners-ObservableListenerHandle} A handle to remove the subscriber(s)
+         * @returns {listeners.ObservableListenerHandle} A handle to remove the subscriber(s)
          * 
          * @see pubsub-Channel#subscribe
          */
@@ -330,11 +330,11 @@ raptor.define('pubsub', function(raptor) {
         },
         
         /**
-         * Returns a new {@Link pubsub-Message} object with the provided topic and properties applied.
+         * Returns a new {@Link pubsub.Message} object with the provided topic and properties applied.
          * 
          * @param topic {String} The topic name
          * @param props {Object} Properties to apply to the newly created Message object (optional)
-         * @returns {pubsub-Message} The newly created Message object.
+         * @returns {pubsub.Message} The newly created Message object.
          */
         createMessage: function(topic, data) {
             return new Message(topic, data);

@@ -31,7 +31,7 @@ raptor.define('json', function(raptor) {
         registerImplementation,
         json = {
             /**
-             * @funtion
+             * @function
              * @param o {Object} The object to stringify
              * @returns {String} The JSON string representation of the provided object
              */
@@ -103,7 +103,7 @@ raptor.define('json', function(raptor) {
         
         /**
          * @field
-         * @type config-Config
+         * @type config.Config
          */
         json.config = raptor.config.create();
         

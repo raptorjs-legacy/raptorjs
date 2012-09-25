@@ -22,7 +22,7 @@ $rload(function(raptor) {
      * @raptor
      * @name files
      */
-    raptor.files = /** @lends files */ {
+    raptor.files = {
         /**
          * 
          * @param path

@@ -27,7 +27,7 @@ $rload(function(raptor) {
      * @raptor
      * @name regexp
      */
-    raptor.regexp = /** @lends regexp */ {
+    raptor.regexp = {
         
         /**
          * Escapes special regular expression characters in a string so that the resulting string can be used

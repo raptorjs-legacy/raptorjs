@@ -22,7 +22,7 @@ $rload(function(raptor) {
      * @raptor
      * @name stacktraces
      */
-    raptor.stacktraces = /** @lends stacktraces */{
+    raptor.stacktraces = {
         trace : function(e) {
             return "[trace not implemented]";
         }

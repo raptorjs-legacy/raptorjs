@@ -27,7 +27,7 @@ raptor.extend('json', function(raptor, target) {
         //NOTE: Target is the "json" module that we are extending with this mixin
         target.registerImpl('raptor', 'stringify', stringify);
         
-        return /** @lends json_Raptor_Stringify */ {
+        return {
             /**
              * @funtion
              * @param o {Object} The object to stringify

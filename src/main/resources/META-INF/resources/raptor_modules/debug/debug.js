@@ -106,7 +106,7 @@ $rload(function(raptor) {
      * @raptor
      * @name debug
      */
-    raptor.debug = /** @lends arrays */ {
+    raptor.debug = {
 
         /**
          * @static

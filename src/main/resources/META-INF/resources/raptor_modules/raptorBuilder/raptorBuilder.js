@@ -94,6 +94,7 @@
              * 
              * @namespace
              * @name raptor
+             * @raptor
              * @borrows oop.require as require
              * @borrows oop.find as find
              * @borrows oop.defineClass as defineClass

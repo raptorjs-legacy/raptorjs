@@ -29,7 +29,7 @@ raptor.extend(
         //NOTE: Target is the "json" module that we are extending with this mixin
         target.registerImpl('jquery', 'parse', parse);
         
-        return /** @lends json_jQuery_Parse */ {
+        return {
             /**
              * 
              * @function

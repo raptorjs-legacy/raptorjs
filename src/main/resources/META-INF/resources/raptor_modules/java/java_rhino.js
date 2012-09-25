@@ -24,7 +24,7 @@ $rload(function(raptor) {
      * @raptor
      * @name java
      */
-    raptor.java = /** @lends java */ {
+    raptor.java = {
 
         convertString: function(str) 
         {
