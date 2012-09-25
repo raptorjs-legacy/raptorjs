@@ -280,8 +280,8 @@ raptor.defineClass(
                 
                 this.logger().info('Writing bundles for page "' + page.getName() + '" to the following directories:\n   JavaScript: ' + config.getScriptsOutputDir() + '\n   CSS: ' + config.getCssOutputDir());
                 
-                if (page.getBasePath()) {
-                    this.writer.getUrlBuilder().setBaseDir(page.getBasePath().toString());
+                if (page.getOutputDir()) {
+                    this.writer.getUrlBuilder().setBaseDir(page.getOutputDir().toString());
                 }
                 else {
                     var pageOutputFile = this.getPageOutputFile(page);

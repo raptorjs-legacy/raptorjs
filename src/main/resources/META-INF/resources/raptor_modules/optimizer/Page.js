@@ -21,6 +21,7 @@ raptor.defineClass(
             this.watchers = [];
             this.pageHtmlCache = {};
             this.pageKey = null;
+            this.outputDir = null;
             
             raptor.require('listeners').makeObservable(this, Page.prototype, ["modified"]);
             
@@ -138,6 +139,10 @@ raptor.defineClass(
             
             getKey: function() {
                 return this.pageKey || this.getName();
+            },
+            
+            getOutputDir: function() {
+                return this.outputDir;
             }
         };
         

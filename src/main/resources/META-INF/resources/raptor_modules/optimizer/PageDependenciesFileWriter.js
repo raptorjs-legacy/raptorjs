@@ -32,7 +32,10 @@ raptor.defineClass(
             },
             
             getBundleOutputDir: function(bundle) {
-                var contentType = bundle.getContentType();
+                return this.getOutputDirForContentType(bundle.getContentType());
+            },
+
+            getOutputDirForContentType: function(contentType) {
                 
                 if (contentType === 'application/javascript') {
                     return this.getConfig().getScriptsOutputDir();
@@ -74,6 +77,24 @@ raptor.defineClass(
             rewriteBundle: function(path, bundle) {
                 var bundleData = this.readBundle(bundle, this.context);
                 this.writeBundleFile(path, bundleData.code, bundleData.checksum, bundle);    
+            },
+
+            writeResource: function(filename, code, contentType, addChecksum) {
+                if (!filename || typeof filename !== 'string') {
+                    throw raptor.createError(new Error('"filename" argument is required'));
+                }
+
+                var outputDir = this.getOutputDirForContentType(contentType);
+
+                var outputFile = new File(outputDir, filename);
+                if (addChecksum !== false) {
+                    var ext = outputFile.getExtension();
+                    var nameNoExt = outputFile.getNameWithoutExtension();
+                    var checksum = this.calculateChecksum(code);
+                    outputFile = new File(outputDir, nameNoExt + "_" + checksum + "." + ext);
+                }
+
+                outputFile.writeFully(code);
             }
         };
 

@@ -9,16 +9,14 @@ raptor.defineClass(
         var PageDependenciesWriter = function(config) {
             this.checksumLength = 8;
             this.urlBuilder = null;
-            this.context = {};
+            this.context = (this.config && this.config.context) || {};
             this.config = config;
             
             if (!this.filters) {
                 this.filters = [];
             }
-            
-            if (!this.context) {
-                this.context = {};
-            }
+            this.context.writer = this;
+            this.context.urlBuilder = this;
         };
         
         PageDependenciesWriter.prototype = {
@@ -38,6 +36,7 @@ raptor.defineClass(
                 }
                 
                 this.context.loaderMetadata = null;
+                this.enabledExtensions = pageDependencies.enabledExtensions;
                 
                 var _this = this,
                     bundleChecksums = {},
@@ -243,6 +242,10 @@ raptor.defineClass(
             
             writePageIncludeHtml: function(pageName, slot, html) {
                 throw raptor.createError(new Error("writeIncludeHtml() not implemented"));
+            },
+
+            writeResource: function(filename, code, addChecksum) {
+                throw raptor.createError(new Error("writeResource() not implemented"));
             },
             
             setUrlBuilder: function(urlBuilder) {

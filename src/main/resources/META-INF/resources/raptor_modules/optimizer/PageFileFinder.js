@@ -51,6 +51,7 @@ raptor.defineClass(
                                     else {
                                         config.registerPage({
                                             basePath: basePath || rootDir,
+                                            outputDir: null, 
                                             dir: file.getParentFile(),
                                             name: pageName,
                                             packageFile: packageFile,
