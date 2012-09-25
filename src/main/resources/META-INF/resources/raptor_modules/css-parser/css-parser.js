@@ -1,11 +1,12 @@
 raptor.define(
     'css-parser',
     function() {
-        
+        "use strict";
         
         return {
             findUrls: function(code, callback, thisObj) {
-                var urlRegExp = /url\(\s*"([^\)]*)"\s*\)|url\(([^\)]*)\)/g;
+                var urlRegExp = /url\(\s*"([^\)]*)"\s*\)|url\(([^\)]*)\)/g,
+                    matches;
                 
                 while((matches = urlRegExp.exec(code)) != null) {
                     var url = matches[1] || matches[2];
