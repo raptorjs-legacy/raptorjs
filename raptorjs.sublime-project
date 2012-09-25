@@ -1,0 +1,79 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"bin/raptor-jsdoc",
+				"output-dir=${project_path}/docs/api",
+				"${project_path}/tools/raptor-jsdoc/sample-js"
+			],
+			"name": "Raptor JSDoc (sample js)",
+			"working_dir": "${project_path}"
+		},
+		{
+			"cmd":
+			[
+				"bin/raptor-jsdoc",
+				"output-dir=${project_path}/docs/api",
+				"${project_path}/src/main/resources/META-INF/resources/raptor_modules"
+			],
+			"name": "Raptor JSDoc",
+			"working_dir": "${project_path}"
+		},
+		{
+			"cmd":
+			[
+				"bin/raptor-jsdoc",
+				"output-dir=${project_path}/docs/api",
+				"${project_path}/tools/raptor-jsdoc/sample-js/jsdoc-sample-json.js"
+			],
+			"name": "Raptor JSDoc (single file)",
+			"working_dir": "${project_path}"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"."
+			],
+			"name": "Jasmine Tests",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jshint",
+				"${project_path}/lib/raptor/raptor_modules"
+			],
+			"name": "JSHint (RaptorJS)",
+			"working_dir": "${project_path}"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "src/main/resources/META-INF/resources/raptor_modules"
+		},
+		{
+			"path": "tools/raptor-jsdoc"
+		},
+		{
+			"path": "docs/jsdoc-template"
+		},
+		{
+			"path": "tools/jsdoc-toolkit-2.4.0"
+		}
+	],
+	"settings":
+	{
+		"build_switcher_systems":
+		[
+			"Raptor JSDoc",
+			"Raptor JSDoc (sample js)",
+			"Jasmine Tests",
+			"JSHint (RaptorJS)"
+		]
+	}
+}

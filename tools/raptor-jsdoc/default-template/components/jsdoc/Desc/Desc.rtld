@@ -1,0 +1,7 @@
+<raptor-taglib>
+
+    <tag name="desc" handler-class="components.jsdoc.Desc.DescTag">
+        <attribute name="value" type="string"/>
+    </tag>
+    
+</raptor-taglib>

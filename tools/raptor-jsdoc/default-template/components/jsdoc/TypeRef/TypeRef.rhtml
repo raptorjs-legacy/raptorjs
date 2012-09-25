@@ -1,0 +1,26 @@
+<c:template xmlns:c="core"
+    params="type">
+
+    <c:def function="renderType(type)">
+        <c:if test="type.isMultiType()">
+            {<c:invoke function="renderType" type="${allowedType}" c:for="allowedType in type.allowedTypes;separator='|'"/>}
+        </c:if>
+        <c:else>
+            <c:if test="type.href">
+                <a href="${type.href}" class="type-name"><span class="type-name">${type.label}</span></a>
+            </c:if>
+            <c:else>
+                <span class="type-name">${type.label}</span>
+            </c:else>
+
+            <c:if test="type.isGeneric()">
+                ${entity:lt}<c:invoke function="renderType" type="${genericType}" c:for="genericType in type.genericTypes;separator=', '"/>>
+            </c:if>
+        </c:else>
+    </c:def>
+    
+    <span class="type-ref">
+        <c:invoke function="renderType" type="${type}"/>
+    </span>
+    
+</c:template>

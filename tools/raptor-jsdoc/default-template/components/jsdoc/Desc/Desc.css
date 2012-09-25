@@ -1,0 +1,50 @@
+.properties > H2 {
+    background-color: #007DDD;
+    border: 1px solid #7F8FB1;
+    border-radius: 8px 8px 8px 8px;
+    color: #FFFFFF;
+    font-size: 130%;
+    margin: 0 0 8px;
+    padding: 2px 6px;
+    text-align: left;
+}
+
+.options {
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.expand-collapse-bar {
+    background: -moz-linear-gradient(center top , #FFFFFF 0%, #F2F6FF 100%) repeat scroll 0 0 transparent;
+    cursor: pointer;
+    padding: 2px;
+}
+.expand-collapse-icon {
+    background-image: url("expand-icon.png");
+    height: 16px;
+    margin: auto;
+    width: 16px;
+}
+BUTTON > .expand-collapse-icon {
+    float: left;
+    margin: 0 4px 0 0;
+}
+.expanded .expand-collapse-icon, .expand-collapse-icon.expanded {
+    background-image: url("collapse-icon.png");
+}
+
+H3 {
+    color: Navy;
+    font-size: 14px;
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+
+.more {
+    display: none;
+}
+
+.type-ref .type-name {
+    color: Blue;
+    font-weight: normal;
+}

@@ -38,7 +38,7 @@
   },
   "bin": {
     "raptor-optimizer": "bin/raptor-optimizer",
-    "raptor-docs": "bin/raptor-jsdoc"
+    "raptor-jsdoc": "bin/raptor-jsdoc"
   },
   "main": "lib/raptor/raptor-node-main"
 }

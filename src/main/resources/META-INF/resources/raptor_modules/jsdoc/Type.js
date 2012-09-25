@@ -11,6 +11,7 @@ raptor.define(
             this.properties = {};
             this.anonymous = false;
             this.functionParamNames = null; //Only valid when this type is a function
+            this.functionParamsByName = null;
             this.parentScope = null; //Only valid when this type is a function scope
             this.localVarNames = {}; //Only valid when this type is a function scope
             this.javaScriptType = jsType; //The primitive type of the JavaScript object. One of: function, object, boolean, number and string
@@ -28,7 +29,11 @@ raptor.define(
             },
             
             getCommentTag: function(name) {
-                return this.comment && this.comment.getTag(name);
+                return (this.comment && this.comment.getTag(name)) || [];
+            },
+            
+            getCommentTags: function(name) {
+                return (this.comment && this.comment.getTags(name)) || [];
             },
             
             getCommentTagValue: function(name) {
@@ -37,10 +42,14 @@ raptor.define(
             },
             
             getLabel: function() {
-                var label = (this.hasCommentTag("label") ? this.getCommentTagValue("label") : null) || this.label || this.name;
-                if (this.getExtension()) {
-                    label += " (" + this.getExtension() + " Extension)";
+                var label = (this.hasCommentTag("label") ? this.getCommentTagValue("label") : null) || this.label;
+                if (!label) {
+                    label = this.name;
+                    if (this.getExtension()) {
+                        label += " (" + this.getExtension() + " Extension)";
+                    }
                 }
+                
                 return label;
             },
             
@@ -55,13 +64,47 @@ raptor.define(
                     return label;
                 }
             },
+
+            getShortName: function() {
+                var name = this.getName();
+                var lastDot = name.lastIndexOf('.');
+                return lastDot !== -1 ? name.substring(lastDot+1) : name;
+            },
+
+            addFunctionParam: function(param) {
+                if (!this.functionParamNames) {
+                    this.functionParamNames = [];
+                    this.functionParamsByName = {};
+                }
+
+                var name = param.name;
+
+                if (!name) {
+                    throw raptor.createError(new Error("Invalid function param. Param name is required"));
+                }
+                
+
+                this.functionParamNames.push(name);
+                this.functionParamsByName[name] = param;
+            },
+
+            forEachFunctionParam: function(callback, thisObj) {
+                if (!this.functionParamNames) {
+                    return;
+                }
+
+                this.functionParamNames.forEach(function(paramName) {
+                    var param = this.functionParamsByName[paramName];
+                    callback.call(thisObj, param);
+                }, this)
+            },
+
+            getFunctionParamNames: function() {
+                return this.functionParamNames;
+            },
             
             getExtension: function() {
                 return (this.hasCommentTag("extension") ? this.getCommentTagValue("extension") : null) || this.extension;
-            },
-            
-            getCommentTags: function(name) {
-                return this.comment && this.comment.getTags(name);
             },
             
             hasComment: function() {
@@ -72,21 +115,13 @@ raptor.define(
                 this.javaScriptType = jsType;
             },
             
-            setFunctionParamNames: function(paramNames) {
-                this.functionParamNames = paramNames;
-            },
-            
-            getFunctionParamNames: function() {
-                return this.functionParamNames;
-            },
-            
             getJavaScriptType: function() {
                 return this.javaScriptType;
             },
             
             
             isJavaScriptFunction: function() {
-                return this.javaScriptType === "function";
+                return this.javaScriptType === "function" || this.hasCommentTag("function");
             },
             
             isJavaScriptObject: function() {
@@ -117,6 +152,10 @@ raptor.define(
                 return this.properties[name];
             },
             
+            getPropertyNames: function() {
+                return Object.keys(this.properties);
+            },
+            
             getPropertyType: function(name) {
                 var prop = this.properties[name];
                 return prop ? prop.type : null;
@@ -126,32 +165,50 @@ raptor.define(
                 return this.instanceType || (this.instanceType = new Type("this"));
             },
             
-            setInstanceProperty: function(name, type, comment) {
-                this.getInstanceType().setProperty(name, type, comment);
+            setInstanceProperty: function(prop) {
+                this.getInstanceType().setProperty(prop);
+            },
+
+            forEachInstanceProperty: function(callback, thisObj) {
+                if (this.instanceType) {
+                    this.instanceType.forEachProperty(callback, thisObj);
+                }
             },
             
-            setProperty: function(name, type, comment) {
-                if (!(type instanceof Type)) {
-                    throw raptor.createError(new Error('Invalid property type for "' + name + '": ' + type));
+            setProperty: function(prop) {
+                if (typeof prop !== 'object') {
+                    throw raptor.createError(new Error('"prop" argument should be an object'));
                 }
+
+                var name = prop.name;
+                if (name == null) {
+                    throw raptor.createError(new Error('"name" property is required'));
+                }
+
                 var currentProperty = this.properties[name];
                 if (currentProperty) {
-                    if (!currentProperty.comment) {
-                        currentProperty.comment = comment;
-                    }
+                    raptor.forEachEntry(prop, function(name, value) {
+                        if (!currentProperty[name]) {
+                            currentProperty[name] = value;
+                        }
+                        else if (name === 'type') {
+                            if (value && value.instanceType) { //See if the duplicate property has instance properties
+                                /*
+                                 * Attach the instance properties from the duplicate property to the existing type
+                                 */
+                                value.getInstanceType().forEachProperty(function(prop) {
+                                    currentProperty.type.setInstanceProperty(prop);
+                                }, this);
+                            }
+                        }
+                    }, this);
                     
-                    if (type.instanceType) {
-                        type.getInstanceType().forEachProperty(function(prop) {
-                            currentProperty.type.setInstanceProperty(prop.name, prop.type, prop.comment);
-                        }, this);
-                    }
+
+                    
                 }
                 else {
-                    this.properties[name] = {
-                        name: name,
-                        type: type,
-                        comment: comment
-                    };
+                    prop.parentType = this;
+                    this.properties[name] = prop;
                 }
             },
             
@@ -172,7 +229,10 @@ raptor.define(
                         throw raptor.createError(new Error("Invalid type: " + type));
                     }
                     
-                    this.setProperty(name, type);
+                    this.setProperty({
+                        name: name,
+                        type: type
+                    });
                     
                     if (typeof def === 'object') {
                         type.addProperties(def);
@@ -202,7 +262,11 @@ raptor.define(
             
             addLocalVariable: function(name, type, comment) {
                 this.localVarNames[name] = true;
-                this.setProperty(name, type, comment);
+                this.setProperty({
+                    name: name,
+                    type: type,
+                    comment: comment
+                });
             },
             
             isLocalVariable: function(name) {
@@ -220,7 +284,7 @@ raptor.define(
                 }, this);
             },
             
-            toString: function(indent) {
+            toString: function(indent, context) {
                 
                 var typeStr;
                 
@@ -232,6 +296,21 @@ raptor.define(
                 if (indent == null) {
                     indent = "";
                 }
+                
+                if (context == null) {
+                    context = {};
+                }
+                
+                
+                if (this.name) {
+                    if (context[this.name]) {
+                        return indent + "(circular type: " + this.name + ")";
+                    }
+                    
+                    context[this.name] = true;
+                }
+                
+                
                 
                 
                 
@@ -245,7 +324,7 @@ raptor.define(
                     commentStr = '\n' + indentComment(this.getComment(), indent) + indent;
                 }
                 
-                typeStr = this.name ? '[' + this.name + ']' + " (" + this.javaScriptType + ")" : this.javaScriptType;
+                typeStr = this.name ? '[' + this.name + ']' + " " + this.javaScriptType : this.javaScriptType;
                 
                 
                 if (keys.length) {
@@ -257,7 +336,7 @@ raptor.define(
                         if (prop.comment) {
                             commentStr = indentComment(prop.comment, indent + INDENT + INDENT);
                         }
-                        return commentStr + indent + INDENT + INDENT + JSON.stringify(key) + ": " + prop.type.toString(indent + INDENT + INDENT);
+                        return commentStr + indent + INDENT + INDENT + JSON.stringify(key);// + ": " + (prop.type ? prop.type.toString(indent + INDENT + INDENT, context) : "(unknown type)");
                     }, this).join(",\n\n") + "\n" + indent + INDENT + "}";
                 }
                 
@@ -266,12 +345,12 @@ raptor.define(
                 }
                 
                 if (this.javaScriptType === 'function') {
-                    var params = this.getFunctionParamNames() || [];
+                    var params = this.functionParamNames || [];
                     paramsStr = "(" + params.join(", ") + ")";
                 }
                 
                 if (this.instanceType) {
-                    instancePropsStr = this.instanceType.toString(indent);
+                    instancePropsStr = this.instanceType.toString(indent, context);
                 }
                 
                 
@@ -296,7 +375,7 @@ raptor.define(
             },
             
             getSuperclassName: function() {
-                return this.superclassName;
+                return this.superclassName || this.getCommentTagValue("superclass");
             },
             
             setAnonymous: function(anonymous) {
@@ -321,6 +400,14 @@ raptor.define(
             
             isObject: function() {
                 return this.isJavaScriptObject();
+            },
+            
+            addType: function(type) {
+                //Currently not implemented... could be used to track a property/variable with multiple assigned types
+            },
+            
+            getExtensionFor: function() {
+                return this.hasCommentTag("extensionFor") ? this.getCommentTagValue("extensionFor") : this.extensionFor;
             }
             
             

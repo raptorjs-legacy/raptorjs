@@ -22,10 +22,13 @@ raptor.define(
                         var parsedComment =  commentParser.parse('/*' + comment.value + '*/');
                         parsedComment.range = comment.range;
                         nodes.push(parsedComment);
+                        parsedComment.type = "JSDocComment";
+                        ast.comments[i] = parsedComment;
+                    }
+                    else {
+                        comment.type += "Comment";
                     }
                 });
-                
-                delete ast.comments;
                 
                 var attachCommentsHelper = function(node) {
                     if (node == null) {
@@ -81,8 +84,6 @@ raptor.define(
                 }
 
                 //console.error(nodes);
-                
-                delete ast.comments;
             };
         
         
@@ -122,7 +123,7 @@ raptor.define(
                 }
                 
                 if (typeof ast === 'string' || ast instanceof File) {
-                    ast = this.parse(ast);
+                    ast = this.parse(ast, env);
                 }
                 
                 var walker = new ASTWalker(env);

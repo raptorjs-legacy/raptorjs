@@ -1,0 +1,8 @@
+<raptor-taglib>
+
+    <tag name="type-ref" handler-class="components.jsdoc.TypeRef.TypeRefTag">
+        <attribute name="type" type="string"/>
+        <attribute name="label" type="string"/>
+    </tag>
+    
+</raptor-taglib>

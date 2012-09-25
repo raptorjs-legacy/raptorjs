@@ -9,6 +9,22 @@ raptor.define(
                 },
                 "plugins" : ["html_data","crrm"]
             });
+
+
+
+
+            var rootEl = this.getEl();
+            setTimeout(function() {
+                rootEl.style.visibility = "visible";
+                console.error(config.activeElId);
+                if (config.activeElId) {
+                    $("#" + config.activeElId).addClass("active");
+                }
+
+            }, 0);
+
+
+            
         };
         
         

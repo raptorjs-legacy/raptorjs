@@ -1,0 +1,151 @@
+
+.description H1 {
+    background-color: #F0F0F0;
+    border-bottom: 1px solid Black;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 3px;
+}
+
+.properties > H2 {
+    background-color: #007DDD;
+    border: 1px solid #7F8FB1;
+    border-radius: 8px 8px 8px 8px;
+    color: #FFFFFF;
+    font-size: 130%;
+    padding: 2px 6px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.description H2 {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.options {
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.expand-collapse-bar {
+    background: rgb(255,255,255); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(242,246,255,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(242,246,255,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(242,246,255,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(242,246,255,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(242,246,255,1) 100%); /* IE10+ */
+    background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(242,246,255,1) 100%); /* W3C */
+    cursor: pointer;
+    padding: 2px;
+}
+.expand-collapse-icon {
+    background-image: url("expand-icon.png");
+    height: 16px;
+    margin: auto;
+    width: 16px;
+}
+BUTTON > .expand-collapse-icon {
+    float: left;
+    margin: 0 4px 0 0;
+}
+.expanded .expand-collapse-icon, .expand-collapse-icon.expanded {
+    background-image: url("collapse-icon.png");
+}
+
+H3 {
+    color: #317EAC;
+    font-size: 14px;
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+
+.properties {
+    margin-top: 10px;
+}
+
+.properties:first-child {
+    margin-top: 0px;
+}
+
+.properties > .property {
+    border-bottom: 1px solid #317EAC;
+    position: relative;
+    clear: both;
+}
+
+.properties > .property > H3 > .name {
+    color: #660000;
+}
+
+/*.properties > .property:last-child {
+    border-bottom: 0;
+}
+*/
+
+.property > .desc {
+    padding-bottom: 14px;
+}
+
+.more {
+    display: none;
+}
+
+.more > .padding {
+    padding-top: 0px;
+}
+
+.modifiers {
+    display: inline-block;
+    float: right;
+    margin-left: 10px;
+    
+}
+.modifier {
+    background-color: #FFFFCC;
+    border: 1px solid #000000;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    position: relative;
+    top: -6px;
+}
+.modifiers > .modifier-deprecated {
+    background-color: #FFF7F7;
+    border: 1px solid #C40000;
+}
+.modifiers > .modifier-private, .modifiers > .modifier-protected {
+    background-color: #FFDA91;
+    border: 1px solid #750000;
+    color: #750000;
+}
+
+.property-link {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.property-link > I {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(link.png);
+}
+
+.mixin-icon {
+    margin-right: 5px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url(mixin.png);
+}
+
+.defined-in {
+    float: right;
+    font-size: 14px;
+    font-weight: normal;
+    margin-right: 5px;
+}

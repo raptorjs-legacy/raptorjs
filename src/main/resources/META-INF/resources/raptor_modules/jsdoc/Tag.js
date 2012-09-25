@@ -15,6 +15,10 @@ raptor.define(
             
             getValue: function() {
                 return this.value;
+            },
+            
+            toString: function() {
+                return "@" + this.name + " " + this.value;
             }
         };
         

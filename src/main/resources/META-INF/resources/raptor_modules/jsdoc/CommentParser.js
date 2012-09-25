@@ -36,8 +36,13 @@ raptor.define("jsdoc.CommentParser", function(raptor) {
             lines.forEach(function(line) {
                 line = line.replace(/\s*\*\s*/g, '');
                 if (line.trim() === '') {
-                    //We found an empty line... end the current tag
-                    endTag();
+                    if (curTagName) {
+                        //We found an empty line... end the current tag
+                        endTag();    
+                    }
+                    else {
+                        description.push(line);
+                    }
                 }
                 else if (strings.startsWith(line, '@')) {
                     endTag();
@@ -65,7 +70,7 @@ raptor.define("jsdoc.CommentParser", function(raptor) {
             
             endTag();
             
-            description = description.join('\n');
+            description = description.join('\n').trim();
             if (description.length) {
                 comment.setDescription(description);    
             }

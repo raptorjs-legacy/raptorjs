@@ -7,7 +7,10 @@
 
     <function name="symbolUrl" bind-to-context="true" class="taglibs.jsdocs.JSDocFunctions"/>
 
+    <import-taglib path="/components/jsdoc/Desc/Desc.rtld"/>
     <import-taglib path="/components/jsdoc/Nav/Nav.rtld"/>
+    <import-taglib path="/components/jsdoc/Type/Type.rtld"/>
+    <import-taglib path="/components/jsdoc/TypeRef/TypeRef.rtld"/>
     
     
 </raptor-taglib>

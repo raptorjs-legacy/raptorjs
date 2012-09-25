@@ -1,0 +1,7 @@
+<raptor-taglib>
+
+    <tag name="type" handler-class="components.jsdoc.Type.TypeTag">
+        <attribute name="type" type="expression"/>
+    </tag>
+    
+</raptor-taglib>

@@ -1,0 +1,162 @@
+<c:template xmlns:c="core"
+    xmlns:w="widgets"
+    xmlns:jsdoc="jsdoc"
+    params="type">
+    
+
+    <c:def function="renderParams(params)">
+        
+            ( 
+            <c:for each="param in params" separator=", ">
+                <span class="param-type" c:if="param.type">
+                    <jsdoc:type-ref type="${param.getTypeName()}"/>
+                </span> 
+                ${param.name}
+            </c:for> 
+            )
+    </c:def>
+
+    <c:def function="renderProperty(prop)">
+        <div class="property property-${prop.type}">
+            <h3 id="${prop.anchorName}">
+                <div class="mixin-icon" c:if="prop.isMixin()"/>
+                <span class="name" data-more-target="${prop.moreTarget}">${prop.getLabel()}</span>
+
+                <c:if test="prop.isFunction()">
+                    <span class="params">
+                        <c:invoke function="renderParams" params="${prop.params}"/>
+                    </span>
+                    <c:if test="prop.returnType">
+                        :
+                        <span class="return-type">
+                            <jsdoc:type-ref type="${prop.returnType}"/>
+                        </span>
+                    </c:if>
+
+                </c:if>
+                <c:else>
+                    <c:if test="prop.getTypeName()">
+                        :
+                        <jsdoc:type-ref type="${prop.getTypeName()}"/>
+                    </c:if>
+                </c:else>
+
+                <div class="modifiers">
+                    <c:if test="prop.hasModifiers()">
+                        <span class="modifier modifier-${modifier.type}" c:for="modifier in prop.modifiers">
+                            <c:if test="modifier.type === 'inherits'">
+                                inherited from <jsdoc:type-ref type="${modifier.inherits}"/>
+                            </c:if>
+                            <c:else-if test="modifier.type === 'overrides'">
+                                overrides 
+                                <jsdoc:type-ref 
+                                        label="${prop.name}" 
+                                        type="${modifier.overridesMethodRef}"/> 
+
+                                in 
+                                
+                                <jsdoc:type-ref type="${modifier.overridesSource}"/>
+                                
+                            </c:else-if>
+                            <c:else-if test="modifier.type === 'borrow'">
+                                borrowed from 
+                                
+                                <jsdoc:type-ref 
+                                        label="${modifier.borrowFromPropName}" 
+                                        type="${modifier.borrowFrom}#${modifier.borrowFromPropName}"/> 
+
+                                in 
+                                
+                                <jsdoc:type-ref type="${modifier.borrowFrom}"/>
+
+                            </c:else-if>
+                            <c:else-if test="modifier.type === 'mixin'">
+                                mixin from 
+                                <jsdoc:type-ref type="${modifier.mixinSource}"/> 
+                            </c:else-if>
+                        </span>
+                    </c:if>
+                    <a href="${prop.permaLinkHref}" class="property-link"><i/></a>
+                </div>
+            </h3>
+
+            <div class="desc" c:if="prop.shortDesc">
+                <jsdoc:desc value="${prop.shortDesc}"/>
+            </div>
+
+            <div class="more" c:if="prop.hasMore()" id="${prop.moreElId}">
+                <div class="padding">
+                    <div c:if="prop.remainingDesc">
+                        <jsdoc:desc value="${prop.remainingDesc}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expand-collapse-bar" id="${prop.moreTarget}" data-more-target="${prop.moreElId}" c:if="prop.hasMore()">
+                <div class="expand-collapse-icon"></div>
+            </div>
+
+            
+        </div>
+    </c:def>
+
+    <c:def function="renderProperties(id, heading, properties)">
+        <div class="properties" id="${id}" c:if="!properties.isEmpty()">
+            <h2>${heading}</h2>
+
+            <c:invoke function="renderProperty" prop="${prop}" c:for="prop in properties.getProperties()"/>
+        </div>
+    </c:def>
+    
+    <div w:widget="components.jsdoc.Type.TypeWidget">
+        <h1>
+            ${type.label}
+            <span class="defined-in" c:if="type.sourceLink">
+                Defined in: <a href="${type.sourceLink.href}">${type.sourceLink.label}</a>
+            </span>
+        </h1>
+
+        <div class="description" c:if="type.desc">
+            <jsdoc:desc value="${type.desc}"/>
+        </div>
+
+        <div class="options">
+                <button id="expandAll" type="button" id="expandAll">
+                    <div class="expand-collapse-icon"></div>
+                    Expand all
+                </button>
+                ${entity:nbsp}
+                ${entity:nbsp}
+                <button id="collapseAll" type="button" id="collapseAll">
+                    <div class="expand-collapse-icon expanded"></div>
+                    Collapse all
+                </button>
+        </div>
+
+        <c:if test="type.isClass()">
+            <div class="properties-container">
+                <c:invoke function="renderProperties" id="constructor" heading="Constructor" properties="${type.ctorProperties}"/>
+
+                <!-- Static Properties -->
+                <c:invoke function="renderProperties" id="static-properties" heading="Static Properties" properties="${type.staticProperties}"/>
+                <c:invoke function="renderProperties" id="static-methods" heading="Static Methods" properties="${type.staticMethods}"/>
+
+                <!-- Instance Properties -->
+                <c:invoke function="renderProperties" id="instance-properties" heading="Instance Properties" properties="${type.instanceProperties}"/>
+                <c:invoke function="renderProperties" id="instance-methods" heading="Instance Methods" properties="${type.instanceMethods}"/>
+
+                <!-- Prototype Properties -->
+                <c:invoke function="renderProperties" id="proto-properties" heading="Properties" properties="${type.protoProperties}"/>
+                <c:invoke function="renderProperties" id="proto-methods" heading="Methods" properties="${type.protoMethods}"/>
+            </div>
+        </c:if>
+        <c:else>
+            <div class="properties-container">
+                <c:invoke function="renderProperties" id="static-properties" heading="Properties" properties="${type.staticProperties}"/>
+                <c:invoke function="renderProperties" id="static-methods" heading="Methods" properties="${type.staticMethods}"/>
+            </div>
+        </c:else>
+
+    </div>
+    
+</c:template>

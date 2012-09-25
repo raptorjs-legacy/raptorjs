@@ -14,7 +14,7 @@ raptor.defineClass("Simple", function(raptor) {
 		hello: function() {
 			
 		}
-	}
+	};
 	
 	return Simple;
 });

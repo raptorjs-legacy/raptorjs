@@ -1,0 +1,28 @@
+#navTree LI.active > A {
+    background-color: #50A8DC;
+}
+
+#navTree LI.object > A > INS {
+    background-image: url("object.png");
+    background-position: 0 0;
+}
+
+#navTree LI.raptor-module > A > INS, #navTree LI.module > A > INS {
+    background-image: url("module.png");
+    background-position: 0 0;
+}
+
+#navTree LI.raptor-class > A > INS, #navTree LI.class > A > INS {
+    background-image: url("class.gif");
+    background-position: 0 0;
+}
+
+#navTree LI.global > A > INS {
+    background-image: url("global.png");
+    background-position: 0 0;
+}
+
+#navTree LI > UL > LI.extension > A > INS {
+    background-image: url("extension.png") !important;
+    background-position: 0 0;
+}

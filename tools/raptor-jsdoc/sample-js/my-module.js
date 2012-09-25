@@ -16,8 +16,14 @@
 
 raptor.define("my-module", function() {
     return {
+        /**
+         * Hello Description
+         * 
+         * @param  {String} name The name of the person to say hello to
+         * @return {String} The output message
+         */
         hello: function(name) {
-            
+            return "Hello " + name + "!";
         }
     };
 });

@@ -1,0 +1,9 @@
+{
+    "type": "raptor-module",
+    "name": "shjs",
+    "includes": [
+        {"path": "shjs.js"},
+        {"path": "sh_javascript_dom.js"},
+        {"path": "sh_style.css"}
+    ]
+}

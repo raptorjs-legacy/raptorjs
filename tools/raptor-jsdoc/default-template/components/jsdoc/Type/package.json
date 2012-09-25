@@ -1,0 +1,7 @@
+{
+    "includes": [
+        {"module": "widgets"},
+        "TypeWidget.js",
+        "Type.css"
+    ]
+}

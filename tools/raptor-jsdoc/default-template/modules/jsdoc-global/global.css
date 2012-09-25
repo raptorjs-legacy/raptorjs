@@ -6,3 +6,44 @@ body {
     color: #555555;
     background-color: #ffffff;
 }
+
+PRE.syntaxHighlighting {
+    font-family: monospace;
+}
+
+pre.code {
+    background-color: #F9F9F9;
+    border: 1px dashed #CCCCCC;
+    color: navy;
+    display: block;
+    padding: 8px;
+}
+
+#nav {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 300px;
+    overflow-y: auto;
+    background-color: #EEE;
+    border-right: 1px solid silver;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    padding: 15px;
+}
+
+#main {
+    margin-left: 320px;
+}
+
+#footer {
+    padding-left: 320px;
+    padding-top: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    background-color: #F8F8F8;
+    height: 1200px;
+    text-align: right;
+}

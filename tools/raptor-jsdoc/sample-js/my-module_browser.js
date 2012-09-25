@@ -19,6 +19,14 @@
  */
 raptor.define("my-module", function() {
     return {
+        /**
+         * Description for helloBrowser.
+         *
+         *  See {@link my-module#hello}
+         * 
+         * @param  {String} name The name of the person to greet
+         * @return {String} The greeting  
+         */
         helloBrowser: function(name) {
             
         }

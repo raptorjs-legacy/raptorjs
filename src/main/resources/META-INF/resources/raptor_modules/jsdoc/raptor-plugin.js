@@ -4,172 +4,129 @@ raptor.define(
         "use strict";
         
         var Type = raptor.require("jsdoc.Type"),
-            resolveDefine = function(methodName, node, walker, isClass) {
-            
-                var name = null,
-                    args = node['arguments'],
-                    modifiers = null,
-                    def = null,
-                    type = null;
-                
-                args.forEach(function(arg, i) {
-                    if (arg.type === 'FunctionExpression') {
-                        def = arg;
-                    }
-                    else if (arg.type === 'Literal') {
-                        if (i !== 0) {
-                            modifiers = {
-                                superclass: arg.value
-                            };
-                        }
-                        else {
-                            name = arg.value;
-                        }
-                    }
-                    else if (arg.type === 'ObjectExpression') {
-                        var objectType = walker.resolveType(arg);
-                        
-                        if (modifiers || i === args.length-1) {
-                            def = objectType;
-                        }
-                        else {
-                            modifiers = objectType;    
-                        }
-                    }
-                });
-                
-                
-                if (!def) {
-                    this.logger().warn('Invalid args to "' + methodName + '". Definition argument not found. Args: ' + walker.argsToString(args));
-                }
-                
-                if (def.type === 'FunctionExpression') {
-                    var scope = walker.invokeFunctionExpression(def, {
-                        "raptor": walker.resolveVar("raptor")
-                    });
-                    
-                    type = scope.returnType;
-                    
-                    
-                    if (name) {
-                        /*
-                         * Register any anonymous classes
-                         */
-                        scope.forEachLocalVar(function(prop) {
-                            var varName = prop.name, 
-                                varType = prop.type;
-                            
-                            if (varType && varType !== scope.returnType && varType.isJavaScriptFunction() && varType.hasProperty("prototype")) {
-                                varType.setName(varName);
-                                varType.setAnonymous(true);
-                                walker.getSymbols().addSymbol(name + "." + varName, varType);
-                            }
-                        }, this);
-                    }
-                }
-                else if (def.type === 'ObjectExpression') {
-                    type = walker.resolveType(def);
-                }
-                
-                if (type) {
-                    type.label = name;
-                    
-                    if (node.comment) {
-                        //Attach the comment or the main node to the type
-                        type.raptorDefineComment = node.comment;
-                        
-                        if (node.comment.hasTag("extension")) {
-                            type.extension = node.comment.getTagValue("extension");
-                            name += "_" + type.extension;
-                        }
-                        
-                    }
-                    
-                    if (modifiers) {
-                        type.superclassName = modifiers.superclass;
-                        type.raptorModifiers = modifiers;
-                    }
-                        
-                    if (!type.isJavaScriptFunction() && isClass) {
-                        /*
-                         * The object being defined is a class defined using
-                         * raptor.defineClass, but the class definition object
-                         * is an object. We need to convert it to a
-                         * function type to make it clear that it is a 
-                         * class
-                         */
-                        var initProp = type.getProperty("init");
-                        
-                        var classType = initProp.type || new Type("function");
-                        if (initProp.comment) {
-                            classType.setComment(initProp.comment);
-                        }
-                        
-                        var protoType = new Type("object");
-                        classType.setProperty("prototype", protoType);
-                        type.forEachProperty(function(prop) {
-                            if (prop.name === 'init' && prop.type.isJavaScriptFunction()) {
-                                classType.setFunctionParamNames(prop.type.getFunctionParamNames());
-                            }
-                            else {
-                                protoType.setProperty(prop.name, prop.type);
-                            }
-                        });
-                        
-                        type = classType;
-                    }
-                     
-                    if (type.isJavaScriptFunction()) {
-                        if (!type.hasProperty("prototype")) {
-                            type.setProperty("prototype", new Type()); //Make it clear that this a class and not just a regular function
-                        }
-                    }
-                    type.setName(name);
-                    type.raptorDefineMethod = methodName;
-                    type.raptorType = type.isJavaScriptFunction() ? "class" : "module";
-                    
-                    if (name) {
-                        walker.getSymbols().addSymbol(name, type);
-                    } 
-                    
-                    
-                    if (type && !(type instanceof Type)) {
-                        throw raptor.createError(new Error('Invalid type being returned: ' + type));
-                    }
-                    
-                    //TODO: Handle enums and mixins
-                    
-                }
-                
-                return type;
-            }; /* end resolveDefine */
+            resolveDefine = require("./resolver-raptor.define.js"),
+            resolveExtend = require("./resolver-raptor.extend.js");
             
         return {
             load: function(env) {
                 
+                var createTypeForComment = function(comment) {
+                    var resolvedType;
+                    if (comment.hasTag("function")) {
+                        resolvedType = new Type("function");
+                        resolvedType.setComment(comment);
+                        var paramTags = comment.getTags("param");
+                        paramTags.forEach(function(paramTag) {
+                            resolvedType.addFunctionParam({name: paramTag.paramName});
+                        }, this);
+
+                        return resolvedType;
+                    }
+
+                    return null;
+                };
+
                 env.addHandlers({
-//                    "var": function(eventArgs) {
-//                        var comment = eventArgs.comment;
-//                        if (comment) {
-//                            var nameTag = comment.getTag("name");
-//                            
-//                            if (nameTag) {
-//                                eventArgs.symbols.addSymbol(nameTag.getValue(), eventArgs.type);    
-//                            }
-//                        }
-//                    },
-                    
-                    "VariableDeclarator": function(eventArgs) {
+                    "property": function(eventArgs) {
+
+                        var comment = eventArgs.comment;
+                        
+
+                        if (comment) {
+                            var resolvedType = createTypeForComment(comment);
+                            if (resolvedType) {
+                                eventArgs.setType(resolvedType);
+                            }
+                        }
+                    },
+
+                    "ReturnStatement": function(eventArgs) {
+
                         var comment = eventArgs.comment;
                         if (comment) {
                             var nameTag = comment.getTag("name");
                             
                             if (nameTag) {
-                                eventArgs.symbols.addSymbol(nameTag.getValue(), eventArgs.type);    
+                                if (!eventArgs.node.resolvedReturnType) {
+                                    
+                                }
+                                else {
+                                    eventArgs.symbols.addSymbol(nameTag.getValue(), eventArgs.node.resolvedReturnType);        
+                                }
+                            }
+                        }
+                    },
+
+
+
+                    "assignment": function(eventArgs) {
+                        var comment = eventArgs.comment;
+                        var resolvedType = eventArgs.type;
+                        
+                        if (comment) {
+
+                            if (!resolvedType) {
+                                resolvedType = createTypeForComment(comment);
+                                if (resolvedType) {
+                                    eventArgs.setType(resolvedType);
+                                }
+                            }
+                            
+                            if (resolvedType) {
+                                var nameTag = comment.getTag("name");
+                                resolvedType.setComment(comment);
+
+                                
+                                
+                                if (nameTag && !comment.hasTag("memberOf")) {
+
+                                    var name = nameTag.getValue();
+
+                                    /*
+                                     * The below code is a hack to correct the following;
+                                     * Old: locale.formatting.numbers-NumberFormatter
+                                     * New: locale.formatting.numbers.NumberFormatter
+                                     */
+                                    var lastDot = name.lastIndexOf('.');
+                                    if (lastDot != -1) {
+                                        var shortName = name.substring(lastDot+1);
+                                        if (shortName.charAt(0) === shortName.charAt(0).toLowerCase()) {
+                                            var dashIndex = shortName.indexOf('-')
+                                            if (dashIndex+1 < shortName.length && shortName.charAt(dashIndex+1) === shortName.charAt(dashIndex+1).toUpperCase()) {
+                                                shortName = shortName.replace(/\-/g, '.');
+                                                name = name.substring(0, lastDot+1) + shortName;
+                                            }
+                                        }
+                                    }
+
+                                    eventArgs.symbols.addSymbol(name, resolvedType);    
+                                }
+                            }
+                        }              
+                    },
+
+                    "JSDocComment": function(eventArgs) {
+                        var comment = eventArgs.node;
+                        var memberOfTag = comment.getTag("memberOf");
+                        var nameTag = comment.getTag("name");
+
+                        if (memberOfTag && nameTag) {
+                            
+
+                            var targetType = eventArgs.symbols.resolveSymbolType(memberOfTag.getValue());
+                            
+                            if (targetType) {
+                                var resolvedType = createTypeForComment(comment);
+                                if (resolvedType) {
+                                    targetType.setProperty({
+                                        name: nameTag.getValue(),
+                                        type: resolvedType,
+                                        comment: comment
+                                    });
+                                }
                             }
                         }
                     }
-                
                 
                 }, this);
                 
@@ -178,26 +135,34 @@ raptor.define(
                         "require": function(node, walker) {
                             var args = node['arguments'];
                             if (args && args.length === 1) {
-                                var nameArg = args[1];
+                                var nameArg = args[0];
                                 if (nameArg.type === 'Literal') {
                                     var name = nameArg.value;
-                                    var symbol = walker.resolveSymbol(name);
-                                    return symbol ? symbol.getType() : null;
+                                    var requiredType = walker.symbols.getSymbolType(name);
+                                    return requiredType;
                                 }
                             }
                         },
                         
                         "define": function(node, walker) {
-                            return resolveDefine.call(this, "raptor.define", node, walker);
+                            return resolveDefine("raptor.define", node, walker);
                         },
                         
                         "defineClass": function(node, walker) {
-                            return resolveDefine.call(this, "raptor.defineClass", node, walker, true);
+                            return resolveDefine("raptor.defineClass", node, walker, true);
                         },
                         
                         "defineModule": function(node, walker) {
-                            return resolveDefine.call(this, "raptor.defineModule", node, walker);
-                        }    
+                            return resolveDefine("raptor.defineModule", node, walker);
+                        },
+                        
+                        "extendCore": function(node, walker) {
+                            return resolveExtend("raptor.extendCore", node, walker);
+                        },
+                        
+                        "extend": function(node, walker) {
+                            return resolveExtend("raptor.extend", node, walker);
+                        }     
                     }
                 });
             }

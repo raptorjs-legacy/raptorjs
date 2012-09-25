@@ -3,7 +3,7 @@ require("raptor").createRaptor({
         loggers: {
             'ROOT': {level: 'WARN'},
             'oop-server': {level: 'WARN'},
-            "jsdoc": {level: "INFO"},
+            "jsdoc": {level: "DEBUG"},
             "raptor-jsdoc-app": {level: "INFO"},
             'resources': {level: 'WARN'}
         }
@@ -89,10 +89,14 @@ exports.run = function() {
         logger.info("Source directories: [" + sourceDirs.join(",") + ']');
         logger.info("Template: " + templateFile);
         console.log();
+
+        var currentFile = null;
+
         var env = jsdoc.createEnvironment();
         env.getSymbols().subscribe({
            'newSymbol': function(eventArgs) {
-               console.log('  NEW SYMBOL "' + eventArgs.name + '":\n    ' + eventArgs.type.toString("    "));
+                eventArgs.type.sourceFile = currentFile;
+                console.log('  NEW SYMBOL "' + eventArgs.name + '":\n    ' + eventArgs.type.toString("    "));
            } 
         });
         
@@ -101,7 +105,11 @@ exports.run = function() {
         sourceDirs.forEach(function(sourceDir) {
             logger.info('Loading symbols in directory "' + sourceDir + '"...');
             walker.walk(sourceDir, function(file) {
+                currentFile = file;
+                env.addFile(file, sourceDir);
+                
                 if (file.isFile()) {
+
                     if (file.getExtension() === 'js') {
                         console.log('\n==========================================================================\nLoading symbols in file "' + file + '"...');
                         jsdoc.loadSymbols(file, env);

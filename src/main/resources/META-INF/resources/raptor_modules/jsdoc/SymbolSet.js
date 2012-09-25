@@ -13,6 +13,8 @@ raptor.define(
     "jsdoc.SymbolSet",
     function(raptor) {
         "use strict";
+
+        var strings = raptor.require('strings');
         
         var SymbolSet = function() {
             this.symbols = {};
@@ -38,7 +40,16 @@ raptor.define(
                     name: name,
                     type: type
                 });
-                
+            },
+
+            filter: function(callback, thisObj) {
+                var entries = raptor.require('objects').entries(this.symbols);
+                entries.forEach(function(entry) {
+                    var result = callback.call(thisObj, entry.key, entry.value);
+                    if (result !== true) {
+                        delete this.symbols[entry.key];
+                    }
+                }, this)
             },
             
             toString: function() {
@@ -56,7 +67,48 @@ raptor.define(
             },
             
             getSymbolType: function(name) {
-                return this.symbols[name];
+                var type = this.symbols[name];
+                return type;
+            },
+            
+            resolveSymbolType: function(name) {
+                var lastHash = name.lastIndexOf("#");
+                var propName = null;
+                if (lastHash !== -1) {
+                    propName = name.substring(lastHash+1);
+                    name = name.substring(0, lastHash);
+                }
+
+                var type = null,
+                    suffixPropName = false;
+
+
+                var handleSuffix = function(suffix) {
+                    if (suffixPropName) {
+                        return;
+                    }
+                    var suffixToCheck = "." + suffix;
+
+                    if (strings.endsWith(name, suffixToCheck)) {
+                        suffixPropName = suffix;
+                        name = name.substring(0, name.length-suffixToCheck.length);
+                    }
+                };
+                
+                handleSuffix("prototype");
+                handleSuffix("this");
+
+                type = this.symbols[name];
+
+                if (type && suffixPropName) {
+                    type = type.getPropertyType(suffixPropName);
+                }
+
+                if (type && propName) {
+                    type = type.getPropertyType(propName);
+                }
+
+                return type;
             },
             
             toArray: function() {
