@@ -59,18 +59,19 @@ raptor.define(
             this.params = [];
             this.modifiers = [];
             this.context = context;
+            this.sections = [];
 
             this.anchorName = (anchorPrefix ? anchorPrefix + prop.name : prop.name);
             this.moreElId = null;
 
             this.permaLinkHref = "#" + this.anchorName;
             if (attrs.profile === 'development') {
-                this.permaLinkHref = './' + attrs.symbolName + '/index.html' + this.permaLinkHref;
+                this.permaLinkHref = './' + attrs.currentSymbolName + '/index.html' + this.permaLinkHref;
             }
             
             this._isMixin = prop.mixinSource != null;
 
-            var paramTagsByName = {};
+            
 
             var comment = prop.comment;
             if (!comment && prop.type && prop.type.hasComment()) {
@@ -81,23 +82,69 @@ raptor.define(
                 var summary = summarize(comment.getDescription());
                 this.shortDesc = summary.shortDesc;
                 this.remainingDesc = summary.remainingDesc;
-                this.moreElId = this.anchorName + "-more";
+                
+                var deprecatedTag = comment.getTag("deprecated");
+                if (deprecatedTag) {
+                    this.deprecated = true;
+                    this.sections.push({
+                        type: "deprecated",
+                        label: "Deprecated",
+                        message: deprecatedTag.getValue()
+                    });
+                    this.modifiers.push({
+                        type: "deprecated"
+                    });
+                }
+            }
 
+            if (this.isFunction()) {
+                var params = this.params = [];
+                
+                this._prop.type.forEachFunctionParam(function(param) {
+                    params.push(param);
+                }, this, this._prop.comment);
 
-                var paramTags = comment.getTags("param");
-                paramTags.forEach(function(paramTag) {
-                    paramTagsByName[paramTag.paramName] = paramTag;
-                });
+                if (params.length) {
+                    this.sections.push({
+                        type: "params",
+                        label: "Parameters",
+                        params: params
+                    });    
+                }
+            }
+
+            if (comment) {
+                var seeTags = comment.getTags('see');
+                if (seeTags.length) {
+                    this.sections.push({
+                        type: "see",
+                        label: "See",
+                        see: seeTags
+                    });     
+                }
             }
 
             
 
-            if (this.isFunction()) {
-
-                prop.type.forEachFunctionParam(function(param) {
-                    this.params.push(new ParamViewModel(param, paramTagsByName[param.name]));
-                }, this);
+            if (prop.borrowFrom) {
+                this.modifiers.push({
+                    type: "borrow",
+                    borrowFrom: prop.borrowFrom,
+                    borrowFromPropName: prop.borrowFromPropName
+                });
             }
+            
+            if (prop.mixinSource) {
+                this.modifiers.push({
+                    type: "mixin",
+                    mixinSource: prop.mixinSource
+                });
+            }
+
+            if (this.hasMore()) {
+                this.moreElId = this.anchorName + "-more";
+            }
+
         };
 
         PropertyViewModel.prototype = {
@@ -119,7 +166,7 @@ raptor.define(
             },
 
             hasMore: function() {
-                return this.remainingDesc != null;
+                return this.remainingDesc || this.sections.length > 0;
             },
 
             hasModifiers: function() {
@@ -168,27 +215,12 @@ raptor.define(
                          * Handle inheritance
                          */
                         propertyViewModel.modifiers.push({
-                                type: "inherits",
-                                inherits: sourceType.getName() || sourceType.getLabel()
-                            });
+                            type: "inherits",
+                            inherits: sourceType.getName() || sourceType.getLabel()
+                        });
                     }
                 }
 
-                if (prop.borrowFrom) {
-                    propertyViewModel.modifiers.push({
-                        type: "borrow",
-                        borrowFrom: prop.borrowFrom,
-                        borrowFromPropName: prop.borrowFromPropName
-                    });
-                }
-                
-                if (prop.mixinSource) {
-                    propertyViewModel.modifiers.push({
-                        type: "mixin",
-                        mixinSource: prop.mixinSource
-                    });
-                }
-                
                 this.propertiesByName[name] = propertyViewModel;
 
             },
@@ -271,10 +303,10 @@ raptor.define(
 
                 this._type.forEachProperty(function(prop) {
                     if (prop.type && prop.type.isJavaScriptFunction()) {
-                        this.staticMethods.addProperty(prop);
+                        this.staticMethods.addProperty(prop, this._type);
                     }
                     else if (prop.name !== 'prototype') {
-                        this.staticProperties.addProperty(prop);
+                        this.staticProperties.addProperty(prop, this._type);
                     }
                 }, this);
             },

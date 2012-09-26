@@ -94,7 +94,7 @@ $rload(function(raptor) {
          * @param trim {boolean} If true the string is trimmed, otherwise the string is not trimmed (optional, defualts to true)
          * @return {boolean} Returns true if the strings are equal, false otherwise
          * 
-         * @see #equals
+         * @see {@link #equals}
          * @static
          */
         notEquals: function(s1, s2, shouldTrim)

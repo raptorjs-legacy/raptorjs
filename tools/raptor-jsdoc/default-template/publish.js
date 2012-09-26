@@ -15,7 +15,7 @@ var Publisher = function(symbols, config, env) {
     this.profile = this.optimizer.getConfig().getParam("profile") || "production";
     this.baseUrl = this.config.baseUrl || "/api";
     jsdocUtil.context = this;
-    
+    this.autoCompleteSymbols = []
 };
 
 Publisher.prototype = {
@@ -126,15 +126,107 @@ Publisher.prototype = {
 
     },
 
+    _addAutoCompleteSymbols: function(type) {
+        var baseLabel = type.getLabelNoExt();
+        
+        var autoCompleteSymbols = this.autoCompleteSymbols;
+        var typeName = function(type, isProp) {
+            
+            var typeName = null;
+
+            if (isProp) {
+                if (type) {
+                    if (type.extension) {
+                        return "extension";
+                    }
+                    else {
+                        return type.isJavaScriptFunction() ? "function" : "property";
+                    }
+                }
+                else {
+                    return "property";
+                }
+            }
+            else {
+                if (!type) {
+                    return null;
+                }
+                else if (type.name === 'global') {
+                    return "global"
+                }
+                else if (type.raptorType || type.hasCommentTag("raptor")) {
+                    return "raptor-" + (type.raptorType || "module");
+                    
+                }
+                else if (type.hasCommentTag("class") || type.hasProperty("prototype")) {
+                    return "class";
+                }
+                else {
+                    return "object";
+                }
+            }
+            
+        };
+
+        var typeUrl = jsdocUtil.symbolUrl(type.getName());
+        if (typeUrl) {
+            autoCompleteSymbols.push({
+                type: typeName(type),
+                url: jsdocUtil.symbolUrl(type.getName()),
+                text: baseLabel + (type.extension ? " (" + type.extension + " Extension)" : "")
+            });
+        }
+        
+
+        var addProps = function(parentType, suffix) {
+            parentType.forEachProperty(function(prop) {
+                if (prop.name === 'prototype') {
+                    return;
+                }
+
+                var propUrl = typeName(prop.type, true);
+                if (propUrl) {
+                    autoCompleteSymbols.push({
+                        type: typeName(prop.type, true),
+                        url: jsdocUtil.symbolUrl(type.getName() + suffix + "#" + prop.name),
+                        text: baseLabel + suffix + "." + prop.name + (type.getExtension() ? " (" + type.getExtension() + " Extension)" : "")
+                    });
+                }
+                
+            }, this);
+        };
+
+        addProps(type, "");
+
+        var protoType = type.getPropertyType("prototype");
+        if (protoType) {
+            addProps(protoType, ".prototype");            
+        }
+
+        var instanceType = type.getInstanceType();
+        if (instanceType) {
+            addProps(instanceType, ".this");            
+        }
+
+        this.autoCompleteSymbols.sort(function(a, b) {
+            a = a.text;
+            b = b.text;
+            return a < b ? -1 : (a > b ? 1 : 0);
+        })
+    },
+
     publish: function() {
         
         this.symbols.forEachSymbol(function(name, type) {
             this._collectInstanceTypes(type);
             this._handleBorrows(type);
+            this._addAutoCompleteSymbols(type);
+
             if (type.getExtensionFor()) {
                 this._handleExtension(type);    
             }
         }, this);
+
 
         // this.symbols.filter(function(name, type) {
         //     if (type.extensionFor) {
@@ -144,9 +236,33 @@ Publisher.prototype = {
         //     return true;
         // });
 
+        
+        
+        this.writeAutocompleteSymbols();
         this.symbols.forEachSymbol(this.writeSymbolPage, this);
         this.env.forEachSourceFile(this.writeSourcePage, this);
+    },
+
+    calculateChecksum: function(code) {
+        var shasum = require('crypto').createHash('sha1');
+        shasum.update(code);
+        var checksum = shasum.digest('hex'),
+            checksumLength = 8;
         
+        if (checksumLength > 0 && checksum.length > checksumLength) {
+            checksum = checksum.substring(0, checksumLength);
+        }
+        
+        return checksum;
+    },
+
+    writeAutocompleteSymbols: function() {
+        var json = JSON.stringify(this.autoCompleteSymbols);
+        this.autocompleteSymbolsFilename = "autocomplete-symbols.js";
+        var outputFile = new File(this.outputDir, this.autocompleteSymbolsFilename );
+        console.log('Writing autocomplete symbols to "' + outputFile + '"...');
+        outputFile.writeFully("var autocompleteSymbols=" + json);
+
     },
     
     writeSymbolPage: function(symbolName, type) {

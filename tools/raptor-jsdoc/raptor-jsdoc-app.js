@@ -84,6 +84,7 @@ exports.run = function() {
         
         //Add the resources for the plugin to the resource search path
         raptor.require('resources').getSearchPath().addDir(templateFile.getParent());
+        raptor.require('resources').getSearchPath().addDir(outputDir);
         
         logger.info("Output directory: " + outputDir);
         logger.info("Source directories: [" + sourceDirs.join(",") + ']');

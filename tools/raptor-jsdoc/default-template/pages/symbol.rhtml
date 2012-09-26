@@ -2,7 +2,7 @@
     xmlns:jsdoc="jsdoc"
     xmlns:w="widgets"
     xmlns:optimizer="optimizer"
-    params="type,navHtml,optimizer,outputDir,symbols,symbolName">
+    params="type,navHtml,optimizer,outputDir,symbols,symbolName,autocompleteSymbolsUrl">
     
     
 
@@ -46,6 +46,8 @@
             <optimizer:slot name="body"/>
             
             <w:init-widgets/>
+
+            <script type="text/javascript" src="${autocompleteSymbolsUrl}"></script>
         </body>
     </body>
     

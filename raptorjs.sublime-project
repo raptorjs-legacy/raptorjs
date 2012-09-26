@@ -26,7 +26,7 @@
 			[
 				"bin/raptor-jsdoc",
 				"output-dir=${project_path}/docs/api",
-				"${project_path}/tools/raptor-jsdoc/sample-js/jsdoc-sample-json.js"
+				"${project_path}/tools/raptor-jsdoc/sample-js/jsdoc-sample-dev.js"
 			],
 			"name": "Raptor JSDoc (single file)",
 			"working_dir": "${project_path}"
@@ -72,6 +72,7 @@
 		[
 			"Raptor JSDoc",
 			"Raptor JSDoc (sample js)",
+			"Raptor JSDoc (single file)",
 			"Jasmine Tests",
 			"JSHint (RaptorJS)"
 		]

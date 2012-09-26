@@ -19,10 +19,31 @@ raptor.define(
             if (window.sh_highlightDocument) {
                 sh_highlightDocument();
             }
+
+            var hash = document.location.hash;
+            if (hash) {
+                var activeProperty = hash;
+                if (activeProperty.charAt(0) === '#') {
+                    activeProperty = activeProperty.substring(1);
+                }
+
+                this.expandProperty(activeProperty);
+            }
         };
         
         
         TypeWidget.prototype = {
+            expandProperty: function(propertyName) {
+                var moreSection = document.getElementById(propertyName + "-more");
+                var propertyEl = document.getElementById(propertyName);
+                if (propertyEl) {
+                    propertyEl = propertyEl.parentNode;
+                }
+                
+                $(moreSection).slideDown();
+                $(".expand-collapse-bar", propertyEl).addClass("expanded")
+            },
+
             toggleMore: function(linkEl, moreElId) {
                 $("#" + moreElId).slideToggle();
                 $(linkEl).toggleClass("expanded")

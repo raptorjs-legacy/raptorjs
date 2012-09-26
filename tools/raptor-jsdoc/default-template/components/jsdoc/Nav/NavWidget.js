@@ -29,6 +29,30 @@ raptor.define(
 
             }, 0);
 
+            var defaultSearchValue = "Search API docs";
+
+            $("#searchInput").focus(function() {
+                if ($(this).val() == defaultSearchValue) {
+                    $(this).val("");
+                }
+            }).blur(function() {
+                if ($(this).val() == "") {
+                    $(this).val(defaultSearchValue);
+                }
+            }).autocomplete(autocompleteSymbols, {
+              formatItem: function(item) {
+                return '<span class="ac-icon ac-icon-' + item.type + '"></span> ' + item.text;
+              },
+              formatResult: function(item) {
+                return item.text;
+              },
+              matchContains: true,
+              max: 50,
+              width: 500
+            }).result(function(event, item) {
+              location.href = item.url;
+            });
+
 
             
         };

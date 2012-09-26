@@ -5,7 +5,9 @@
         {"module": "jsTree/hotkeys"},
         {"module": "jsTree"},
         {"module": "jsTree/theme-classic"},
+        {"module": "jquery-autocomplete"},
         "NavWidget.js",
-        "Nav.css"
+        "Nav.css",
+        "/autocomplete-symbols.js"
     ]
 }

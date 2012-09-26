@@ -58,7 +58,7 @@ module.exports = function(methodName, node, walker) {
         }
         
         mixinType.extensionFor = extensionFor;
-        mixinType.label = extensionFor + " (" + mixinType.getExtension() + " Extension)";
+        mixinType.label = extensionFor; //The extension suffix will be added by the getLabel() method
         walker.getSymbols().addSymbol(extensionFor + "_" + comment.getTag("extension").getValue().replace(/ /g, '_'), mixinType);
     }
     

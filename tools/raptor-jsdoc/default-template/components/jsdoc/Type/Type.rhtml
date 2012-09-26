@@ -9,7 +9,7 @@
             ( 
             <c:for each="param in params" separator=", ">
                 <span class="param-type" c:if="param.type">
-                    <jsdoc:type-ref type="${param.getTypeName()}"/>
+                    <jsdoc:type-ref type="${param.type}"/>
                 </span> 
                 ${param.name}
             </c:for> 
@@ -17,7 +17,7 @@
     </c:def>
 
     <c:def function="renderProperty(prop)">
-        <div class="property property-${prop.type}">
+        <div class="property property-${prop.type}{?prop.deprecated; property-deprecated}">
             <h3 id="${prop.anchorName}">
                 <div class="mixin-icon" c:if="prop.isMixin()"/>
                 <span class="name" data-more-target="${prop.moreTarget}">${prop.getLabel()}</span>
@@ -74,6 +74,9 @@
                                 mixin from 
                                 <jsdoc:type-ref type="${modifier.mixinSource}"/> 
                             </c:else-if>
+                            <c:else-if test="modifier.type === 'deprecated'">
+                                deprecated
+                            </c:else-if>
                         </span>
                     </c:if>
                     <a href="${prop.permaLinkHref}" class="property-link"><i/></a>
@@ -88,6 +91,42 @@
                 <div class="padding">
                     <div c:if="prop.remainingDesc">
                         <jsdoc:desc value="${prop.remainingDesc}"/>
+                    </div>
+                    <div class="sections" c:if="notEmpty(prop.sections)">
+                        <div c:for="section in prop.sections" class="section">
+                            <h4>${section.label}</h4>
+                            <div class="bd">
+                                <c:choose>
+                                    <c:when test="section.type === 'params'">
+                                        <ul>
+                                            <li c:for="param in section.params" class="param">
+                                                <span class="param-name">${param.name}</span>
+                                                <c:if test="param.type">
+                                                    : <jsdoc:type-ref type="${param.type}"/> 
+                                                </c:if>
+                                                <span class="param-desc" c:if="param.desc">
+                                                    - <jsdoc:desc value="${param.desc}"/>
+                                                </span>
+                                            </li>
+                                        </ul>
+
+                                        <jsdoc:desc value="${section.message}"/>
+                                    </c:when>
+                                    <c:when test="section.type === 'deprecated'">
+                                        <jsdoc:desc value="${section.message}"/>
+                                    </c:when>
+                                    <c:when test="section.type === 'see'">
+                                        <ul>
+                                            <li c:for="see in section.see" class="see">
+                                                <jsdoc:desc value="${see.getValue()}"/>
+                                            </li>
+                                        </ul>
+
+                                        <jsdoc:desc value="${section.message}"/>
+                                    </c:when>
+                                </c:choose>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,7 +167,7 @@
                 ${entity:nbsp}
                 ${entity:nbsp}
                 <button id="collapseAll" type="button" id="collapseAll">
-                    <div class="expand-collapse-icon expanded"></div>
+                    <div class="expand-collapse-icon"></div>
                     Collapse all
                 </button>
         </div>

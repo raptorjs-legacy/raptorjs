@@ -41,16 +41,16 @@ raptor.define(
                 return tag ? tag.getValue() : null;
             },
             
-            getLabel: function() {
-                var label = (this.hasCommentTag("label") ? this.getCommentTagValue("label") : null) || this.label;
-                if (!label) {
-                    label = this.name;
-                    if (this.getExtension()) {
-                        label += " (" + this.getExtension() + " Extension)";
-                    }
+            getLabel: function(includeExt) {
+                var label = (this.hasCommentTag("label") ? this.getCommentTagValue("label") : null) || this.label || this.name;
+                if (includeExt !== false && this.getExtension()) {
+                    label += " (" + this.getExtension() + " Extension)";
                 }
-                
                 return label;
+            },
+
+            getLabelNoExt: function(includeExt) {
+                return this.getLabel(false);
             },
             
             getShortLabel: function() {
@@ -88,19 +88,42 @@ raptor.define(
                 this.functionParamsByName[name] = param;
             },
 
-            forEachFunctionParam: function(callback, thisObj) {
+            forEachFunctionParam: function(callback, thisObj, comment) {
                 if (!this.functionParamNames) {
                     return;
                 }
 
+                var paramTagsByName = {};
+
+                if (comment) {
+
+                    var paramTags = comment.getTags("param");
+                    paramTags.forEach(function(paramTag) {
+                        paramTagsByName[paramTag.paramName] = paramTag;
+                    });    
+                }
+                
                 this.functionParamNames.forEach(function(paramName) {
-                    var param = this.functionParamsByName[paramName];
+                    var param = raptor.extend({}, this.functionParamsByName[paramName]);
+                    var paramTag = paramTagsByName[paramName];
+                    if (paramTag) {
+                        param.desc = paramTag.paramDesc;
+                        param.type = paramTag.paramType || param.type;
+                    }
                     callback.call(thisObj, param);
                 }, this)
             },
 
             getFunctionParamNames: function() {
                 return this.functionParamNames;
+            },
+
+            forEachFunctionParamName: function(callback, thisObj) {
+                if (!this.functionParamNames) {
+                    return;
+                }
+
+                this.functionParamNames.forEach(callback, thisObj);
             },
             
             getExtension: function() {
@@ -408,6 +431,10 @@ raptor.define(
             
             getExtensionFor: function() {
                 return this.hasCommentTag("extensionFor") ? this.getCommentTagValue("extensionFor") : this.extensionFor;
+            },
+
+            setLabel: function(label) {
+                this.label = label;
             }
             
             

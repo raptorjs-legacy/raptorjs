@@ -36,3 +36,39 @@
     background-image: url("extension.png") !important;
     background-position: 0 0;
 }
+
+#search-form > .body > INPUT {
+    width: 90%;
+}
+
+/* Autocomplete formatting */
+.ac-icon {
+    display: block;
+    float: left;
+    height: 16px;
+    margin-right: 10px;
+    width: 16px;
+}
+.ac-icon-module, .ac-icon-raptor-module {
+    background-image: url("module.png");
+}
+.ac-icon-class, .ac-icon-raptor-class {
+    background-image: url("class.gif");
+}
+.ac-icon-extension {
+    background-image: url("extension.png");
+}
+.ac-icon-mixin {
+    background-image: url("mixin.png");
+}
+.ac-icon-function {
+    background-image: url("function.png");
+}
+
+.ac-icon-property {
+    background-image: url("property.png");
+}
+
+.ac-icon-object {
+    background-image: url("object.png");
+}

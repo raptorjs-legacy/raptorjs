@@ -1,0 +1,8 @@
+{
+    "type": "raptor-module",
+    "name": "jquery-autocomplete",
+    "includes": [
+        {"path": "jquery.autocomplete.js"},
+        {"path": "jquery.autocomplete.css"}
+    ]
+}

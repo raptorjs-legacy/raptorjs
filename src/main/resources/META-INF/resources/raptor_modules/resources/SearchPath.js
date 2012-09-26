@@ -62,6 +62,9 @@ $rload(function(raptor) {
             },
 
             addDir: function(path) {
+                if (path instanceof raptor.require('files').File) {
+                    path = path.getAbsolutePath();
+                }
                 this.addEntry(new DirSearchPathEntry(path));
             },
             

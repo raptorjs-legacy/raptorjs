@@ -5,6 +5,7 @@ var logger = raptor.require('logging').logger('resolver-raptor.define');
 module.exports = function(methodName, node, walker, isClass) {
             
     var name = null,
+        label = null,
         args = node['arguments'],
         modifiers = null,
         def = null,
@@ -29,7 +30,8 @@ module.exports = function(methodName, node, walker, isClass) {
                 };
             }
             else {
-                name = arg.value;
+                name = label = arg.value;
+
                 if (extension) {
                     name += "_" + extension;
                 }
@@ -71,7 +73,9 @@ module.exports = function(methodName, node, walker, isClass) {
                 if (varType && varType !== scope.returnType && varType.isJavaScriptFunction() && !varType.raptorName && varType.hasProperty("prototype")) {
                     var innerSymbolName = name + "." + varName;
                     if (!walker.getSymbols().hasSymbol(innerSymbolName)) {
-                        varType.setName(varName);
+                        varType.setName(innerSymbolName);
+                        varType.setLabel(label + "." + varName);
+                        varType.extension = extension;
                         varType.setAnonymous(true);
                         walker.getSymbols().addSymbol(innerSymbolName, varType);    
                     }
@@ -85,8 +89,7 @@ module.exports = function(methodName, node, walker, isClass) {
     }
     
     if (type) {
-        type.label = name;
-
+        type.label = label;
         
         if (node.comment) {
             //Attach the comment or the main node to the type
@@ -98,10 +101,6 @@ module.exports = function(methodName, node, walker, isClass) {
             
         }
 
-        if (type.extension) {
-            type.label += " (" + type.extension + " Extension)";
-        }
-        
         if (modifiers) {
             type.superclassName = modifiers.superclass;
             type.raptorModifiers = modifiers;

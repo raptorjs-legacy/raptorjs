@@ -3,6 +3,12 @@
     params="navContent">
     
     <div w:widget="components.jsdoc.Nav.NavWidget" class="nav jstree-classic" style="visibility: hidden;">
+        <div id="search-form">
+            <div class="body">
+                <input type="text" id="searchInput" size="20" value="Search API docs" autocomplete="off" class="ac_input"/>
+            </div>
+        </div>
+    
         <div id="navTree" class="jstree-no-dots">
             ${xml:navContent}
         </div>

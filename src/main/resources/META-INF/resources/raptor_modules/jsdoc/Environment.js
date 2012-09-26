@@ -11,7 +11,9 @@ raptor.define(
         var Environment = function(symbols) {
             this.symbols = symbols || new SymbolSet();
             this.handlers = raptor.require("listeners").createObservable();
-            this.global = new Type("object", "Global");
+            this.global = new Type("object", "global");
+            this.global.setLabel("Global");
+            
             this.symbols.addSymbol("global", this.global);
             this.tagTypes = {};
             this.files = {};

@@ -1,7 +1,6 @@
 <c:template xmlns:c="core"
     params="rootNode">
-    Nav Content
-    
+        
     <c:def function="tree(parentNode)">
         <ul>
             <li c:for="childNode in parentNode.children" id="${childNode.liElId}" class="${childNode.liClass}">

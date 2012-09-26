@@ -9,6 +9,51 @@ raptor.define(
         
         return {
             context: null,
+
+            typeName: function(type) {
+                if (!type) {
+                    return null;
+                }
+
+                var typeName = null;
+
+                if (type.name === 'global') {
+                    typeName = "global"
+                }
+                else if (type.raptorType || type.hasCommentTag("raptor")) {
+                    typeName = "raptor-" + (type.raptorType || "module");
+                    
+                }
+                else if (type.hasCommentTag("class")) {
+                    typeName = "class";
+                }
+                else if (type.isJavaScriptFunction()) {
+                    typeName = type.hasProperty("prototype") ? "class" : "function";
+                }
+                else {
+                    typeName = type.getJavaScriptType();
+                }
+
+                return typeName;   
+                
+            },
+
+            autocompleteSymbolsUrl: function() {
+                var context = this.context;
+                
+                if (!context) {
+                    throw raptor.createError(new Error('"context" argument not set for context'));
+                }
+
+                var profile = context.profile;
+                
+                if (profile === "production") {
+                    return context.baseUrl + '/' + context.autocompleteSymbolsFilename;
+                }
+                else {
+                    href = '.' + '/' + context.autocompleteSymbolsFilename;
+                }
+            },
             
             symbolDir: function(symbolName) {
                 var context = this.context;

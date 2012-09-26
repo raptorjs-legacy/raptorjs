@@ -9,6 +9,7 @@ raptor.define(
             this.children = [];
             this.name = props.name;
             this.label = props.label;
+            
             this.href = props.href;
             this.type = props.type;
             this.childNodesByName = {};

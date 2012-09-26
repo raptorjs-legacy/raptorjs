@@ -17,7 +17,7 @@
 /**
  * @extension Node
  */
-raptor.define("js-minifier", function() {
+raptor.define("dev", function() {
     "use strict";
     
     var parser = require("uglify-js").parser;

@@ -237,7 +237,7 @@ raptor.define('pubsub', function(raptor) {
          * 
          * @param name {String} The name of the messaging channel.
          * 
-         * @returns {pubsub-Channel} The messaging channel with the specified name.
+         * @returns {pubsub.Channel} The messaging channel with the specified name.
          */
         channel: function(name) {
             var channel = channels[name];
@@ -251,7 +251,7 @@ raptor.define('pubsub', function(raptor) {
         /**
          * Returns the global messaging channel.
          * 
-         * @returns {pubsub-Channel} The "global channel
+         * @returns {pubsub.Channel} The "global channel
          */
         global: function() {
             return this.channel("global");
@@ -322,7 +322,7 @@ raptor.define('pubsub', function(raptor) {
          * 
          * @returns {listeners.ObservableListenerHandle} A handle to remove the subscriber(s)
          * 
-         * @see pubsub-Channel#subscribe
+         * @see {@link pubsub.Channel#subscribe}
          */
         subscribe: function(topic, callback, thisObj) {
             var global = this.global();

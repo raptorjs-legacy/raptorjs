@@ -24,8 +24,9 @@ pre.code {
     left: 0px;
     top: 0px;
     bottom: 0px;
-    width: 300px;
+    width: 280px;
     overflow-y: auto;
+    overflow-x: auto;
     background-color: #EEE;
     border-right: 1px solid silver;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
@@ -35,11 +36,11 @@ pre.code {
 }
 
 #main {
-    margin-left: 320px;
+    margin-left: 300px;
 }
 
 #footer {
-    padding-left: 320px;
+    padding-left: 300px;
     padding-top: 10px;
     padding-right: 10px;
     margin-top: 10px;

@@ -131,23 +131,6 @@ raptor.defineMixin(
              * Returns the DOM element ID corresponding to the provided
              * widget element ID. 
              * 
-             * <p>
-             * Widget element IDs are generated at render
-             * time using the following EL expression:<br>
-             * <code>${widget.elId(widgetElId)}</code>
-             * <p>
-             * If the <code>widgetElId</code> parameter is not called then
-             * the ID of the root element is returned.
-             * Root widget element IDs are generated at render
-             * time using the following EL expression:<br>
-             * <html>${widget.elId()}</html>
-             * 
-             * <p>
-             * The DOM element ID is resolved by prefixing the provided
-             * widget element ID with the unique ID of the widget
-             * to produce a unique element ID for the element belonging
-             * to this widget.
-             * 
              * @param {string} widgetElId The widget element ID.
              * @returns {string} The DOM element ID corresponding tothe provided widget element ID
              */
@@ -157,24 +140,10 @@ raptor.defineMixin(
             
             /**
              * Returns the root element ID for the widget. 
-             * 
-             * The ID will only be valid if a root element was associated with the widget
-             * by using the following EL expression in the JSP template
-             * for the widget:
-             * <code>${widget.elId}</code>
-             * 
-             * <p>
-             * For example:
-             * <html>
-             * <r:widget ...>
-             *     <div id="${widget.elId}>Hello World</div>
-             * </r:widget>
-             * </html>
-             * 
-             * @param widgetElId
+             *
              * @returns
              */
-            getRootElId: function(widgetElId) {
+            getRootElId: function() {
                 return this.getElId();
             },
     
@@ -190,19 +159,6 @@ raptor.defineMixin(
             
             /**
              * Returns the root DOM element for a widget (or null if not found).
-             * 
-             * <p>
-             * The root element should be associated with a widget by using the following
-             * EL expression in an HTML template:
-             * <code>${widget.elId}</code>
-             * 
-             * <p>
-             * For example:
-             * <html>
-             * <r:widget ...>
-             *     <div id="${widget.elId}>Hello World</div>
-             * </r:widget>
-             * </html>
              * 
              * @returns {DOMElement} The root DOM element for the widget
              */
@@ -237,14 +193,14 @@ raptor.defineMixin(
             
             /**
              * 
-             * @deprecated Use {@Link widgets$Widget#getWidget} instead
+             * @deprecated Use {@Link widgets.Widget#getWidget} instead
              */
             getChild: function(nestedWidgetId) {
                 return this.getWidget(nestedWidgetId);
             },
             
             /**
-             * @deprecated Use {@Link widgets$Widget#getWidgets} instead
+             * @deprecated Use {@Link widgets.Widget#getWidgets} instead
              */
             getChildren: function(nestedWidgetId) {
                 return this.getWidget(nestedWidgetId);
@@ -264,14 +220,16 @@ raptor.defineMixin(
              * 
              * Returns the parent widget instance for this widget.
              * 
-             * @returns {widgets$Widget} The parent widget for this widget or null if this widget does not have a parent.
+             * @returns {widgets.Widget} The parent widget for this widget or null if this widget does not have a parent.
+             *
+             * @deprecated Do not use this method
              */
             getParent: function() {
                 return this._parentWidget;
             },
             
             /**
-             * @deprecated Use getChild instead
+             * @deprecated Use getWidget instead
              * 
              * @param nestedWidgetId
              * @returns
@@ -281,7 +239,7 @@ raptor.defineMixin(
             },
             
             /**
-             * @deprecated Use getChildren instead
+             * @deprecated Use getWidgets instead
              * @param childWidgetsId
              * @returns
              */
@@ -334,7 +292,7 @@ raptor.defineMixin(
             /**
              * Sends a notification to subscribers using the provided name and arguments.
              * 
-             * This method is slightly different from the {@Link widgets$Widget#publish}
+             * This method is slightly different from the {@Link widgets.Widget#publish}
              * in that the variable arguments will be passed directly to the subscribers.
              * <b>This method will be removed in the future.</b> 
              * 
@@ -342,22 +300,22 @@ raptor.defineMixin(
              * @name notify
              * @param name {String} The message name
              * @param ...args {Object} A variable set of arguments
-             * @memberOf widgets$Widget
+             * @memberOf widgets.Widget
              * 
-             * @deprecated Use {@Link widgets$Widget#publish} instead
+             * @deprecated Use {@Link widgets.Widget#publish} instead
              */
             
             /**
              * Subscribes to one or more events. 
              * 
-             * This method has been deprecated and is a synonym for the {@Link widgets$Widget#subscribe} method
+             * This method has been deprecated and is a synonym for the {@Link widgets.Widget#subscribe} method
              * to maintain backwards compatibility.
              * <b>This method will be removed in the future.</b>
              * 
              * @function
              * @name on
-             * @memberOf widgets$Widget
-             * @deprecated Use {@Link widgets$Widget#subscribe} instead
+             * @memberOf widgets.Widget
+             * @deprecated Use {@Link widgets.Widget#subscribe} instead
              */
             
             
