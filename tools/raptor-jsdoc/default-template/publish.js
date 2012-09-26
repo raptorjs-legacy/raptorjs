@@ -181,6 +181,7 @@ Publisher.prototype = {
         var outputFile = jsdocUtil.sourceOutputFile(source.file);
         this.currentOutputDir = outputFile.getParent();
         this.currentOutputFile = outputFile;
+        this.currentSourcePath = source.relativePath;
 
         console.log('Writing source file for "' + source.relativePath + '" to ' + outputFile + "...");
         
@@ -188,7 +189,8 @@ Publisher.prototype = {
 
         var ext = source.file.getExtension();
         var modes = {
-            'js': "sh_javascript_dom"
+            'js': "sh_javascript_dom",
+            'json': "sh_javascript_dom"
         };
 
         var html = templating.renderToString("pages/source", {
@@ -205,6 +207,7 @@ Publisher.prototype = {
         
         this.currentOutputDir = null;
         this.currentOutputFile = null;
+        this.currentSourcePath = null;
     }
 };
 

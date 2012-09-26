@@ -153,9 +153,13 @@ raptor.define(
                         },
                         
                         "defineModule": function(node, walker) {
-                            return resolveDefine("raptor.defineModule", node, walker);
+                            return resolveDefine("raptor.define", node, walker);
                         },
                         
+                        "defineMixin": function(node, walker) {
+                            return resolveDefine("raptor.defineMixin", node, walker);
+                        },
+
                         "extendCore": function(node, walker) {
                             return resolveExtend("raptor.extendCore", node, walker);
                         },

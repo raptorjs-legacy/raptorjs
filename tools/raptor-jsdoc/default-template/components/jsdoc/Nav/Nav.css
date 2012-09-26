@@ -7,6 +7,11 @@
     background-position: 0 0;
 }
 
+#navTree LI.package > A > INS {
+    background-image: url("package.png");
+    background-position: 0 0;
+}
+
 #navTree LI.raptor-module > A > INS, #navTree LI.module > A > INS {
     background-image: url("module.png");
     background-position: 0 0;
@@ -14,6 +19,11 @@
 
 #navTree LI.raptor-class > A > INS, #navTree LI.class > A > INS {
     background-image: url("class.gif");
+    background-position: 0 0;
+}
+
+#navTree LI.raptor-mixin > A > INS, #navTree LI.mixin > A > INS {
+    background-image: url("mixin.png");
     background-position: 0 0;
 }
 

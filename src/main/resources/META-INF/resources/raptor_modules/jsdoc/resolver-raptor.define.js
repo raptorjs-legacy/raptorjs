@@ -8,7 +8,15 @@ module.exports = function(methodName, node, walker, isClass) {
         args = node['arguments'],
         modifiers = null,
         def = null,
-        type = null;
+        type = null,
+        extension = null;
+    
+    if (node.comment) {
+        if (node.comment.hasTag("extension")) {
+            extension = node.comment.getTagValue("extension");
+        }
+        
+    }
     
     args.forEach(function(arg, i) {
         if (arg.type === 'FunctionExpression') {
@@ -22,6 +30,9 @@ module.exports = function(methodName, node, walker, isClass) {
             }
             else {
                 name = arg.value;
+                if (extension) {
+                    name += "_" + extension;
+                }
             }
         }
         else if (arg.type === 'ObjectExpression') {
@@ -81,9 +92,8 @@ module.exports = function(methodName, node, walker, isClass) {
             //Attach the comment or the main node to the type
             type.raptorDefineComment = node.comment;
             
-            if (node.comment.hasTag("extension")) {
-                type.extension = node.comment.getTagValue("extension");
-                name += "_" + type.extension;
+            if (extension) {
+                type.extension = extension;
             }
             
         }
@@ -150,7 +160,7 @@ module.exports = function(methodName, node, walker, isClass) {
         type.setName(name);
         type.raptorName = name;
         type.raptorDefineMethod = methodName;
-        type.raptorType = type.isJavaScriptFunction() ? "class" : "module";
+        type.raptorType = methodName === 'raptor.defineMixin' ? "mixin" : type.isJavaScriptFunction() ? "class" : "module";
         
         if (name) {
             walker.getSymbols().addSymbol(name, type);

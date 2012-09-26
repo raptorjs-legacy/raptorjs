@@ -159,6 +159,10 @@
     var global = this;
     
     if (!global.JSON) {
+        /**
+         * Standards compatible JSON Object
+         * @name ecma.JSON
+         */
         global.JSON = {};
     }
     
@@ -346,6 +350,15 @@
 // If the JSON object does not yet have a stringify method, give it one.
 
     if (typeof JSON.stringify !== 'function') {
+        /**
+         * @function
+         * @memberOf ecma.JSON
+         * @name stringify
+         * 
+         * @param value {object}
+         * @param replacer
+         * @param space
+         */
         JSON.stringify = function (value, replacer, space) {
 
 // The stringify method takes a value and an optional replacer, and an optional
@@ -393,6 +406,14 @@
 // If the JSON object does not yet have a parse method, give it one.
 
     if (typeof JSON.parse !== 'function') {
+        /**
+         * @function
+         * @memberOf ecma.JSON
+         * @name parse
+         * 
+         * @param text
+         * @param reviver
+         */
         JSON.parse = function (text, reviver) {
 
 // The parse method takes a text and an optional reviver function, and returns

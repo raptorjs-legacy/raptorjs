@@ -2,24 +2,31 @@ raptor.define(
     "components.jsdoc.Nav.NavTag",
     function(raptor) {
         
-        var jsdocUtil = raptor.require("jsdoc-util");
+        var jsdocUtil = raptor.require("jsdoc-util"),
+            strings = raptor.require('strings');
         
-        var Node = function(name, label, href, type) {
+        var Node = function(props) {
             this.children = [];
-            this.name = name;
-            this.label = label;
-            this.href = href;
-            this.type = type;
+            this.name = props.name;
+            this.label = props.label;
+            this.href = props.href;
+            this.type = props.type;
             this.childNodesByName = {};
 
+            var name = props.name;
+            var type = props.type;
+            var nodeType = props.nodeType;
              
             if (name) {
-                this.liElId = "nav_" + name.replace(/\./g, '_');
+                this.liElId = "nav_" + name.replace(/^\//, '').replace(/[\.\/]/g, '_');
                 if (name === 'global') {
                     this.liClass = "global";
                 }
-                else if (!type) {
+                else if (nodeType === 'folder') {
                     this.liClass = "folder";
+                }
+                else if (nodeType === 'package') {
+                    this.liClass = "package";
                 }
                 else if (type.raptorType || type.hasCommentTag("raptor")) {
                     this.liClass = "raptor-" + (type.raptorType || "module");
@@ -51,14 +58,19 @@ raptor.define(
             templating = raptor.require('templating'),
             nameRegExp = /[\.\/]([^\.\/]*)$/,
             sortOrders = {
-                "global": 1,
-                "extension": 2,
-                "raptor-module": 3,
-                "module": 3,
-                "folder": 3,
-                "object": 4,
-                "raptor-class": 4,
-                "class": 4
+                "package": 5,
+                "extension": 10,
+                "raptor-module": 20,
+                "module": 20,
+                "folder": 20,
+                "object": 40,
+                "raptor-class": 40,
+                "class": 40,
+                "raptor-mixin": 40,
+                "mixin": 40,
+                "raptor-enum": 40,
+                "enum": 40,
+                "global": 50
             },
             getParentName = function(name, type) {
                 if (type.extensionFor) {
@@ -97,6 +109,15 @@ raptor.define(
                 });
             },
 
+            addChildNode = function(parentNode, props) {
+                var childNode = new Node(props); 
+                nodesByName[props.name] = childNode;
+                parentNode.childNodesByName[props.shortName] = childNode;
+                parentNode.children.push(childNode);
+                childNode.parentNode = parentNode;
+                return childNode;
+            },
+
             getOrCreateNode = function(rootNode, name) {
                 if (!name) {
                     return rootNode;
@@ -111,11 +132,14 @@ raptor.define(
 
                     var childNode = currentNode.childNodesByName[part];
                     if (!childNode) {
-                        childNode = new Node(currentParts.join("."), part, "javascript:;" + part, null); 
-                        nodesByName[currentParts.join(".")] = childNode;
-                        currentNode.childNodesByName[part] = childNode;
-                        currentNode.children.push(childNode);
-                        childNode.parentNode = currentNode;
+                        childNode = addChildNode(currentNode, {
+                            name: currentParts.join("."),
+                            shortName: part,
+                            label: part,
+                            href: "#",
+                            nodeType: "folder",
+                            type: null
+                        });
                     }
                     currentNode = childNode;
                 }, this);
@@ -126,7 +150,7 @@ raptor.define(
 
             buildTree = function(symbols, context) {
                 
-                var rootNode = new Node();
+                var rootNode = new Node({});
                 rootNode.root = true;
                 
                 var symbolNames = symbols.getSymbolNames();
@@ -143,12 +167,37 @@ raptor.define(
                     var parentNode = getOrCreateNode(rootNode, parentName);
                     var label = type.extensionFor ? type.getExtension() + " Extension" : type.getShortLabel();
                     
-                    var node = new Node(name, label, href, type);
-                    nodesByName[name] = node;
-                    node.parentNode = parentNode;
-                    parentNode.childNodesByName[type.getShortName()] = node;
-                    parentNode.children.push(node);
+                    addChildNode(parentNode, {
+                            name: name,
+                            shortName: type.getShortName(),
+                            label: label,
+                            href: href,
+                            nodeType: null,
+                            type: type
+                        });
                 }, this);
+
+                jsdocUtil.context.env.forEachSourceFile(function(source) {
+                    var file = source.file;
+                    if (file.isFile() && strings.endsWith(file.getName(), "package.json")) {
+                        var relativeDir = source.relativeDir;
+                        //Convert the relative path into a tree node path
+                        
+                        var treePath = relativeDir.replace(/^\//g, '').replace(/\//g, '.');
+                        var parentNode = getOrCreateNode(rootNode, treePath);
+
+                        addChildNode(parentNode, {
+                            name: source.relativePath,
+                            shortName: file.getName(),
+                            label: file.getName(),
+                            href: jsdocUtil.sourceLink(file).href,
+                            nodeType: "package",
+                            type: null
+                        });
+                    }
+                    
+                }, this);
+
 
                 sortChildren(rootNode);
                 
@@ -164,7 +213,7 @@ raptor.define(
             
             process: function(input, context) {
                 var symbols = jsdocUtil.context.symbols;
-                var symbolName = jsdocUtil.context.currentSymbolName;
+                var nodeName = jsdocUtil.context.currentSymbolName || jsdocUtil.context.currentSourcePath;
                 
                 if (!symbols) {
                     throw raptor.createError(new Error("Symbols are required"));
@@ -181,19 +230,21 @@ raptor.define(
                 
                 var widgetConfig = {};
                 
-                if (symbolName != null) {
-                    var activeNode = nodesByName[symbolName],
+                if (nodeName != null) {
+                    var activeNode = nodesByName[nodeName],
                         initiallyOpenId;
 
-                    if (activeNode.children.length) {
-                        initiallyOpenId = activeNode.liElId;
-                    }
-                    else if (activeNode.parentNode) {
-                        initiallyOpenId = activeNode.parentNode.liElId;
-                    }
+                    if (activeNode) {
+                        if (activeNode.children.length) {
+                            initiallyOpenId = activeNode.liElId;
+                        }
+                        else if (activeNode.parentNode) {
+                            initiallyOpenId = activeNode.parentNode.liElId;
+                        }
 
-                    widgetConfig.initiallyOpenId = initiallyOpenId;
-                    widgetConfig.activeElId = activeNode.liElId;
+                        widgetConfig.initiallyOpenId = initiallyOpenId;
+                        widgetConfig.activeElId = activeNode.liElId;
+                    }
                 }
                 
                 templating.render("components/jsdoc/Nav", {

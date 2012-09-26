@@ -18,12 +18,12 @@
     "extensions": {
         "logging.console": {
             "includes": [
-	            {"module": "strings"},
-	            {"module": "objects"},
-	            {"path": "ConsoleLogger.js"},
-	            {"path": "logging.js"},
-	            {"path": "LogHelper.js"}
-	        ] 
+                {"module": "strings"},
+                {"module": "objects"},
+                {"path": "ConsoleLogger.js"},
+                {"path": "logging.js"},
+                {"path": "LogHelper.js"}
+            ] 
         }
     }
         

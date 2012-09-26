@@ -31,12 +31,12 @@
         },
         {
             "name": "browser",
-            "includes": [		        
-		        {"module": "listeners"},
-		        {"module": "pubsub"},
-		        {"path": "widgets_browser.js"},
-		        {"path": "Widget.js"}
-		    ]    
+            "includes": [                
+                {"module": "listeners"},
+                {"module": "pubsub"},
+                {"path": "widgets_browser.js"},
+                {"path": "Widget.js"}
+            ]    
         },
         {
             "name": "jquery",

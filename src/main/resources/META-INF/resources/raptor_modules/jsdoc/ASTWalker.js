@@ -497,6 +497,10 @@ raptor.define(
                     this.walk(node.alternate);
                 }
             },
+
+            walk_UnaryExpression: function(node) {
+                this.walk(node.argument);
+            },
             
             walk_WhileStatement: function(node) {
                 this.walk(node.test);

@@ -15,7 +15,7 @@
  */
 
 /**
- * @raptorExtension Rhino
+ * @extension Rhino
  */
 raptor.defineClass(
     "xml.sax.SaxParser",

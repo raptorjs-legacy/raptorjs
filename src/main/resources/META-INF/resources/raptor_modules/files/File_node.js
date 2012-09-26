@@ -22,7 +22,11 @@ $rload(function(raptor) {
         existsSync = function(path) {
             return nodeFS.existsSync ? nodeFS.existsSync(path) : nodePath.existsSync(path);
         };
-        
+    /**
+     * @name files.File
+     * @extension Node
+     * @anonymous
+     */
     var File = function(path) {
         if (arguments.length === 1) {
             if (!path) {

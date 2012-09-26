@@ -31,7 +31,8 @@ raptor.define(
                     file: file,
                     path: file.getAbsolutePath(),
                     sourceDir: sourceDir,
-                    relativePath: file.getAbsolutePath().substring(sourceDir.getAbsolutePath().length)
+                    relativePath: file.getAbsolutePath().substring(sourceDir.getAbsolutePath().length),
+                    relativeDir: file.getParent().substring(sourceDir.getAbsolutePath().length)
                 };
             },
 

@@ -8,6 +8,13 @@ raptor.define(
                     initially_open: config.initiallyOpenId ? [config.initiallyOpenId] : []
                 },
                 "plugins" : ["html_data","crrm"]
+            }).on("click", "a", function (event, data) {
+                console.error("CLICK", this, this.parentNode);
+                if ($(this).attr("href").charAt(0) === '#') {
+                    $("#navTree").jstree("toggle_node", $(this.parentNode));
+                    event.preventDefault();     
+                }
+                
             });
 
 
@@ -16,7 +23,6 @@ raptor.define(
             var rootEl = this.getEl();
             setTimeout(function() {
                 rootEl.style.visibility = "visible";
-                console.error(config.activeElId);
                 if (config.activeElId) {
                     $("#" + config.activeElId).addClass("active");
                 }

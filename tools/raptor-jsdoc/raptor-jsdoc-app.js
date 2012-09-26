@@ -3,7 +3,7 @@ require("raptor").createRaptor({
         loggers: {
             'ROOT': {level: 'WARN'},
             'oop-server': {level: 'WARN'},
-            "jsdoc": {level: "DEBUG"},
+            "jsdoc": {level: "INFO"},
             "raptor-jsdoc-app": {level: "INFO"},
             'resources': {level: 'WARN'}
         }

@@ -23,20 +23,20 @@
         "taglibs/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
         "taglibs/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
     },
-	
-	"raptor-include-types": {
-	    "js": {"class": "packager.Include_js", "path": "/packager/Include_js.js"},
-	    "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
-	    "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
-	    "less": {"class": "packager.Include_less", "path": "/packager/Include_less.js"},
-	    "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
-	    "4cc": {"class": "packager.Include_4cc", "path": "/packager/Include_4cc.js"},
-	    "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
-	    "package": {"class": "packager.Include_package", "path": "/packager/Include_package.js"},
-	    "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
-	    "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
-	    "resource": {"class": "packager.Include_resource", "path": "/packager/Include_resource.js"},
-	    "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},
-	    "loader-metadata": {"class": "packager.Include_loader-metadata", "path": "/packager/Include_loader-metadata.js"} 
-	}
+    
+    "raptor-include-types": {
+        "js": {"class": "packager.Include_js", "path": "/packager/Include_js.js"},
+        "css": {"class": "packager.Include_css", "path": "/packager/Include_css.js"},
+        "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
+        "less": {"class": "packager.Include_less", "path": "/packager/Include_less.js"},
+        "dust": {"class": "packager.Include_dust", "path": "/packager/Include_dust.js"},
+        "4cc": {"class": "packager.Include_4cc", "path": "/packager/Include_4cc.js"},
+        "module": {"class": "packager.Include_module", "path": "/packager/Include_module.js"},
+        "package": {"class": "packager.Include_package", "path": "/packager/Include_package.js"},
+        "rhtml": {"class": "packager.Include_rhtml", "path": "/packager/Include_rhtml.js"},
+        "rtld": {"class": "packager.Include_rtld", "path": "/packager/Include_rtld.js"},
+        "resource": {"class": "packager.Include_resource", "path": "/packager/Include_resource.js"},
+        "init-raptor": {"class": "packager.Include_init-raptor", "path": "/packager/Include_init-raptor.js"},
+        "loader-metadata": {"class": "packager.Include_loader-metadata", "path": "/packager/Include_loader-metadata.js"} 
+    }
 }

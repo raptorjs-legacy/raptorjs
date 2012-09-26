@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * @extension Node
+ */
 raptor.defineClass(
     "xml.sax.SaxParser",
     "xml.sax.BaseSaxParser",
