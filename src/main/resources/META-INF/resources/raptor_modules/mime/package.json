@@ -1,0 +1,25 @@
+{
+    "type": "raptor-module",
+    "name": "mime",
+    "version": "1.0",
+    "description": "Mime lookup library",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "includes": [
+        {"path": "mime.js"}
+    ],
+    
+    "extensions": [
+        {
+            "name": "node",
+            "includes": [
+                {"path": "mime_node.js"}
+            ]
+        }
+    ]
+}
