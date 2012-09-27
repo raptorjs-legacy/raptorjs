@@ -67,7 +67,7 @@ raptor.defineClass(
                             return;
                         }
                         
-                        template.write(raptor.require('json.stringify').stringify(resource.readFully()));
+                        template.write(raptor.require('json.stringify').stringify(resource.readAsString()));
                     }
                 }
                 else {

@@ -9,7 +9,11 @@ raptor.define(
         
         return {
             context: null,
-
+            getProp: function(name) {
+                var config = this.context.config;
+                return config[name] || this.context[name];
+            },
+            
             typeName: function(type) {
                 if (!type) {
                     return null;

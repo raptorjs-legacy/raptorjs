@@ -1,0 +1,12 @@
+<c:template xmlns:c="core"
+    xmlns:jsdoc="jsdoc"
+    params="">
+    
+    <jsdoc:prop name="version" var="version"/>
+    <jsdoc:prop name="title" default="API Docs" var="title"/>
+    
+    <div class="header">
+        <h1>${title} <span class="version" c:if="version">${version}</span></h1>
+    </div>
+                
+</c:template>

@@ -37,7 +37,7 @@ raptor.define(
             },
             
             getCode: function(context) {
-                return this.getResource(context).readFully();
+                return this.getResource(context).readAsString("UTF-8");
             },
            
             getResourcePath: function() {
@@ -55,7 +55,7 @@ raptor.define(
             load: function(context) {
                 var resource = this.getResource(context);
                 var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
-                var compiled = dust.compile(resource.readFully(),dirs.join('.'));
+                var compiled = dust.compile(resource.readAsString("UTF-8"),dirs.join('.'));
                 __rhinoHelpers.console.log(compiled);
                 dust.loadSource(compiled);
             }

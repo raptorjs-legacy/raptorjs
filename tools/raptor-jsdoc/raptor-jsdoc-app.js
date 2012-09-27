@@ -45,9 +45,21 @@ var files = raptor.require('files'),
     config = parseArgs(process.argv.slice(2));
     
 
-var outputDir = config['output-dir'] || config['out'] || flies.resolvePath(__dirname, 'api');
-var src = config['dir'] || config['source-dir'] || config['source'];
+var outputDir = config['output-dir'] || config['out'] || files.joinPaths(__dirname, 'api');
+var src = config['dir'] || config['source-dir'] || config['source'] || config['src'];
 var templateFile = config['template'];
+var clean = config['clean'] || config['clean-dir'];
+
+if (clean) {
+    clean.split(/[;,:]/).forEach(function(cleanPath) {
+        var cleanDir = resolveFile(cleanPath);
+        logger.info('Deleting directory "' + cleanDir + '"...');
+        if (cleanDir.exists()) {
+            cleanDir.remove();    
+        }
+    }, this);
+}
+
 
 outputDir = config['outputDir'] = resolveFile(outputDir);
 
@@ -63,6 +75,17 @@ if (templateFile.isDirectory()) {
 }
 
 config.templateDir = templateFile.getParentFile();
+
+var propsPaths = config['props'];
+if (propsPaths) {
+    propsPaths.split(/[;,:]/).forEach(function(path) {
+        var propsFile = resolveFile(path);
+        if (propsFile.exists()) {
+            var props = eval('(' + propsFile.readAsString() + ')');
+            raptor.extend(config, props);
+        }
+    }, this); 
+}
 
 
 exports.run = function() {
@@ -121,6 +144,8 @@ exports.run = function() {
         });
         
         require(templateFile.getAbsolutePath()).publish(env.getSymbols(), config, env);
+        
+        console.log('DONE. API documentation successfully written to "' + outputDir + '"');
     }
     catch(e) {
         logger.error("Unable to generate jsdocs: Exception: " + e, e);

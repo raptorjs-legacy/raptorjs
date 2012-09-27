@@ -51,11 +51,36 @@ $rload(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFully: function(path, encoding) {
-            if (encoding == null) encoding = "UTF-8";
-            return nodeFs.readFileSync(path, encoding);
+        readAsString: function(path, encoding) {
+            var file = new (this.File)(path);
+            return file.readAsString(encoding);
         },
         
+        writeAsString: function(path, data, encoding) {
+            var file = new (this.File)(path);
+            return file.writeAsString(data, encoding);
+        },
+        
+        readAsBinary: function(path) {
+            var file = new (this.File)(path);
+            return file.readAsBinary();
+        },
+        
+        writeAsBinary: function(path, data) {
+            var file = new (this.File)(path);
+            return file.writeAsBinary(data);
+        },
+
+        readFully: function(path, encoding) {
+            var file = new (this.File)(path);
+            return file.readFully(encoding);
+        },
+        
+        writeFully: function(path, data, encoding) {
+            var file = new (this.File)(path);
+            return file.writeFully(data, encoding);
+        },
+
         /**
          * 
          */
@@ -82,10 +107,6 @@ $rload(function(raptor) {
         listFilenames: function(dirPath, callback, thisObj) {
             var files = nodeFs.readdirSync(dirPath);
             return files;
-        },
-        
-        writeFully: function(path, data, encoding) {
-            nodeFs.writeFileSync(path, data, encoding || "UTF-8");
         },
         
         resolvePath: function(from, to) {

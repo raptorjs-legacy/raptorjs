@@ -58,7 +58,7 @@ raptor.define(
                     if (!taglibResource.exists()) {
                         throw raptor.createError(new Error('Resource with path "' + this.path + '" not found in package at path "' + this.getManifest().getPackageResource().getSystemPath() + '"'));
                     }
-                    return '$rset("resource","' + taglibResource.getPath() + '",' + JSON.stringify(taglibResource.readFully()) + ');';
+                    return '$rset("resource","' + taglibResource.getPath() + '",' + JSON.stringify(taglibResource.readAsString("UTF-8")) + ');';
                 }
                 else {
                     this.invalidInclude();

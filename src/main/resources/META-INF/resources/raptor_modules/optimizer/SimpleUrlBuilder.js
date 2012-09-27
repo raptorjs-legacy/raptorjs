@@ -9,6 +9,7 @@ raptor.defineClass(
             this.prefix = config.prefix;
             this.scriptsPrefix = config.scriptsPrefix;
             this.styleSheetsPrefix = config.styleSheetsPrefix;
+            this.resourcesDir = config.resourcesDir;
             this.scriptsDir = config.scriptsDir;
             this.styleSheetsDir = config.styleSheetsDir;
             this.baseDir = null;
@@ -23,13 +24,16 @@ raptor.defineClass(
                     return require('path').relative(this.baseDir, bundle.sourceResource.getSystemPath());
                 }
                 
-                return this.getPrefix(bundle) + this.getBundleFilename(bundle);
+                return this.getPrefix(bundle.getContentType()) + this.getBundleFilename(bundle);
             },
             
             setBaseDir: function(baseDir) {
                 this.baseDir = baseDir;
             },
             
+            buildResourceUrl: function(filename, contentType) {
+                return this.getPrefix(contentType) + filename;
+            },
             
             getBundleFilename: function(bundle) {
                 var checksum = bundle.getChecksum();
@@ -43,28 +47,22 @@ raptor.defineClass(
             },
             
             getFileExtension: function(contentType) {
-                if (contentType === 'application/javascript') {
-                    return 'js';
-                }
-                else if (contentType === 'text/css') {
-                    return 'css';
-                }
-                else {
-                    throw raptor.createError(new Error("Unsupported content type: " + contentType));
-                }
+                return raptor.require('mime').extension(contentType);
             },
             
-            getPrefix: function(bundle) {
-                var prefix;
+            getPrefix: function(contentType) {
+                var prefix,
+                    isStyleSheet = contentType === 'text/css',
+                    isJavaScript = contentType === 'application/javascript';
                 
-                if (bundle.isJavaScript()) {
+                if (isJavaScript) {
                     prefix = this.scriptsPrefix || this.prefix;
                 }
-                else if (bundle.isStyleSheet()) {
+                else if (isStyleSheet) {
                     prefix = this.styleSheetsPrefix || this.prefix;
                 }
                 else {
-                    throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                    prefix = this.prefix;
                 }
                 
                 
@@ -73,14 +71,14 @@ raptor.defineClass(
                         fromPath;
                     
                     if (this.baseDir) {
-                        if (bundle.isJavaScript()) {
+                        if (isJavaScript) {
                             toPath = this.scriptsDir;
                         }
-                        else if (bundle.isStyleSheet()) {
+                        else if (isStyleSheet) {
                             toPath = this.styleSheetsDir;
                         }
                         else {
-                            throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
+                            toPath = this.resourcesDir;
                         }
                         
                         fromPath = this.baseDir;

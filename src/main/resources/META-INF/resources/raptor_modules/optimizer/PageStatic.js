@@ -33,7 +33,7 @@ raptor.defineClass(
                 var config = this.config,
                     HtmlInjector = raptor.require('optimizer.HtmlInjector');
                 
-                var pageHtml = this.getViewFile().readFully();
+                var pageHtml = this.getViewFile().readAsString("UTF-8");
                 var injector = new HtmlInjector(pageHtml, config.isKeepHtmlMarkersEnabled());
                 raptor.forEachEntry(pageHtmlBySlot, function(slot, html) {
                     injector.inject(slot, html);

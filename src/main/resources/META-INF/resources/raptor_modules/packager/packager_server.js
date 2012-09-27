@@ -170,7 +170,7 @@ $rload(function(raptor) {
             var manifest = packageManifests[packageResource.getSystemPath()];
             if (manifest === undefined)
             {
-                var packageJson = packageResource.readFully(),
+                var packageJson = packageResource.readAsString("UTF-8"),
                     loadedManifest;
                 try
                 {

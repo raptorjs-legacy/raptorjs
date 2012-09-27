@@ -7,9 +7,6 @@
  * Licensed same as jquery - under the terms of either the MIT License or the GPL Version 2 License
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
- *
- * $Date: 2011-02-09 01:17:14 +0200 (ср, 09 февр 2011) $
- * $Revision: 236 $
  */
 
 /*jslint browser: true, onevar: true, undef: true, bitwise: true, strict: true */

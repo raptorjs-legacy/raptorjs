@@ -6,16 +6,8 @@
 			[
 				"bin/raptor-jsdoc",
 				"output-dir=${project_path}/docs/api",
-				"${project_path}/tools/raptor-jsdoc/sample-js"
-			],
-			"name": "Raptor JSDoc (sample js)",
-			"working_dir": "${project_path}"
-		},
-		{
-			"cmd":
-			[
-				"bin/raptor-jsdoc",
-				"output-dir=${project_path}/docs/api",
+				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
+				"clean=${project_path}/api",
 				"${project_path}/src/main/resources/META-INF/resources/raptor_modules"
 			],
 			"name": "Raptor JSDoc",
@@ -26,6 +18,35 @@
 			[
 				"bin/raptor-jsdoc",
 				"output-dir=${project_path}/docs/api",
+				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
+				"clean=${project_path}/api",
+				"profile=production",
+				"publish=true",
+				"${project_path}/src/main/resources/META-INF/resources/raptor_modules"
+			],
+			"name": "Raptor JSDoc (production)",
+			"working_dir": "${project_path}"
+		},
+		{
+			"cmd":
+			[
+				"bin/raptor-jsdoc",
+				"output-dir=${project_path}/docs/api",
+				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
+				"clean=${project_path}/api",
+				"${project_path}/tools/raptor-jsdoc/sample-js"
+			],
+			"name": "Raptor JSDoc (sample js)",
+			"working_dir": "${project_path}"
+		},
+		
+		{
+			"cmd":
+			[
+				"bin/raptor-jsdoc",
+				"output-dir=${project_path}/docs/api",
+				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
+				"clean=${project_path}/api",
 				"${project_path}/tools/raptor-jsdoc/sample-js/jsdoc-sample-dev.js"
 			],
 			"name": "Raptor JSDoc (single file)",
@@ -71,6 +92,7 @@
 		"build_switcher_systems":
 		[
 			"Raptor JSDoc",
+			"Raptor JSDoc (production)",
 			"Raptor JSDoc (sample js)",
 			"Raptor JSDoc (single file)",
 			"Jasmine Tests",

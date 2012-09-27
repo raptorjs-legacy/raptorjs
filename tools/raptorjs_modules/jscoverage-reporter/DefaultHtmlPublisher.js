@@ -8,7 +8,7 @@ raptor.defineClass('jscoverage-reporter.DefaultHtmlPublisher', function() {
         if (!resource.exists()) {
             throw new Error("Resource not found: " + resourcePath);
         }
-        source = resource.readFully();
+        source = resource.readAsString();
         
         dust.compile(name, source);
     };

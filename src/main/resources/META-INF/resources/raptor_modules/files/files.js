@@ -43,7 +43,7 @@ $rload(function(raptor) {
          * @param path
          * @param encoding
          */
-        readFully: function(path, encoding) {
+        readAsString: function(path, encoding) {
             throw new Error('Not Implemented');
         },
         

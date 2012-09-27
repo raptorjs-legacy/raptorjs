@@ -9,7 +9,7 @@ raptor.define(
             filter: function(code, contentType, include, bundle) {
                 if (contentType === 'application/javascript') {
                     var minified = raptor.require("js-minifier").minify(code);
-                    if (minified.length && !strings.endsWith(minified, ";") && !strings.endsWith(minified, "}")) {
+                    if (minified.length && !strings.endsWith(minified, ";")) {
                         minified += ";";
                     }
                     return minified;

@@ -135,7 +135,7 @@ var compileAndLoad = function(templatePath, invalid) {
                 throw new Error('Template not found at path "' + path + '"');
             }
             
-            var src = resource.readFully();
+            var src = resource.readAsString();
             var compiledSrc = templateCompiler.compile(src, resource);
             console.log('\n==================================\nCompiled source (' + templatePath + '):\n----------------------------------\n', compiledSrc, "\n----------------------------------\n");
             

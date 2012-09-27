@@ -1,0 +1,11 @@
+<raptor-taglib>
+
+    <tag name="prop" handler-class="components.jsdoc.Prop.PropTag">
+        <transformer-class>components.jsdoc.Prop.PropTagTransformer</transformer-class>
+    
+        <attribute name="name" type="string"/>
+        <attribute name="default" type="string"/>
+        <attribute name="var" type="string"/>
+    </tag>
+    
+</raptor-taglib>

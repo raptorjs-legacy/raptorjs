@@ -165,6 +165,14 @@ raptor.defineClass(
                 return urlBuilder.buildBundleUrl(bundle, checksum);
             },
             
+            getResourceUrl: function(filename, contentType) {
+                var urlBuilder = this.getUrlBuilder();
+                if (!urlBuilder) {
+                    throw raptor.createError(new Error("URL builder not set."));
+                }
+                return urlBuilder.buildResourceUrl(filename, contentType);
+            },
+
             applyFilter: function(code, contentType, include, bundle) {
     
                 forEach(this.filters, function(filter) {
@@ -189,7 +197,7 @@ raptor.defineClass(
                         filterThisObj = filter;
                     }
                         
-                    output = filterFunc.call(filterThisObj, code, contentType, include, bundle);
+                    output = filterFunc.call(filterThisObj, code, contentType, include, bundle, this.context);
                     
                     if (output) {
                         code = output;
@@ -244,7 +252,7 @@ raptor.defineClass(
                 throw raptor.createError(new Error("writeIncludeHtml() not implemented"));
             },
 
-            writeResource: function(filename, code, addChecksum) {
+            writeResource: function(resource, contentType, addChecksum) {
                 throw raptor.createError(new Error("writeResource() not implemented"));
             },
             

@@ -21,7 +21,7 @@ var logger = raptor.require('logging').logger("demo");
 try
 {
     var templateResource = raptor.require("resources").findResource("/demo.rhtml");
-    var templateSrc = templateResource.readFully();
+    var templateSrc = templateResource.readAsString();
     var compiler = raptor.require("templating.compiler").createCompiler({templateName: "demo"});
     var compiledSrc = compiler.compile(templateSrc, "/demo.rhtml");
     console.log(compiledSrc);

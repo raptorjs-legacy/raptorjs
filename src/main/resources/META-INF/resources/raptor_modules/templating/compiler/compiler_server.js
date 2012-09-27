@@ -41,7 +41,7 @@ raptor.extend(
                 if (!resource.exists()) {
                     throw raptor.createError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
-                var src = resource.readFully(src);
+                var src = resource.readAsString(src);
                 return this.compile(src, resource.getSystemPath(), options);
             },
             
@@ -66,7 +66,7 @@ raptor.extend(
                 
                 
                 
-                this.compileAndLoad(resource.readFully(), resource, options);
+                this.compileAndLoad(resource.readAsString(), resource, options);
                 
                 if (watchingEnabled && resource.isFileResource()) {
                     raptor.require('file-watcher').watch(
@@ -75,7 +75,7 @@ raptor.extend(
                             this.logger().info('Template modified at path "' + resource.getSystemPath() + '". Reloading template...');
                             try
                             {
-                                this.compileAndLoad(resource.readFully(), resource.getSystemPath(), options);    
+                                this.compileAndLoad(resource.readAsString(), resource.getSystemPath(), options);    
                             }
                             catch(e) {
                                 this.logger().warn('Unable to re-compile modified template at path "' + resource.getSystemPath() + '". Exception: ' + e, e);
@@ -105,7 +105,7 @@ raptor.extend(
                                 loadedTaglibPaths[key] = true;
                                 
                                 var rtldResource = manifest.resolveResource(rtldPath),
-                                    taglibXml = rtldResource.readFully();
+                                    taglibXml = rtldResource.readAsString();
                             
                                 this.loadTaglibXml(taglibXml, rtldResource.getSystemPath());    
                             }

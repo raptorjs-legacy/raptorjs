@@ -95,7 +95,7 @@ raptor.define(
                 
                 
                 if (source instanceof File) {
-                    source = source.readFully();
+                    source = source.readAsString("UTF-8");
                 }
                 
                 if (this.logger().isDebugEnabled()) {

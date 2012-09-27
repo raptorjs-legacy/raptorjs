@@ -417,7 +417,7 @@ raptor.defineClass(
                                         throw raptor.createError(new Error('Imported taglib with path "' + path + '" not found in taglib at path "' + filePath + '"'));
                                     }
                                     
-                                    importedXmlSource = taglibResource.readFully();
+                                    importedXmlSource = taglibResource.readAsString();
                                     
                                     objectMapper.read(
                                             importedXmlSource, 

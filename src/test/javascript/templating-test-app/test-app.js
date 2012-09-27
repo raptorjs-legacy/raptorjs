@@ -23,13 +23,13 @@ var files = raptor.require('files'),
         return useAnsi ? str : '';
     },
     readTemplate = function(path) {
-        return files.readFully(files.joinPaths(templatesPath, path));
+        return files.readAsString(files.joinPaths(templatesPath, path));
     },
     readData = function() {
-        return eval("(" + files.readFully(jsonPath) + ")");
+        return eval("(" + files.readAsString(jsonPath) + ")");
     },
     readOptions = function() {
-        return eval("(" + files.readFully(optionsJsonPath) + ")");
+        return eval("(" + files.readAsString(optionsJsonPath) + ")");
     },
     readAndCompile = function(clear) {
         try {
@@ -51,7 +51,7 @@ var files = raptor.require('files'),
             eval(compiledSrc);
             var htmlOutput = templating.renderToString("test", readData());
             console.log(ansi("\033[0;1;33m") + htmlOutput);
-            files.writeFully(outputHtmlPath, htmlOutput);
+            files.writeAsString(outputHtmlPath, htmlOutput);
         }
         catch(e) {
             console.log(ansi('\033[31m'));

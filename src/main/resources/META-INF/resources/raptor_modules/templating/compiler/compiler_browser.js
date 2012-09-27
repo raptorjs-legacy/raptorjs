@@ -41,7 +41,7 @@ raptor.extend(
                 raptor.forEach(taglibPaths, function(path) {
                     var resource = raptor.require('resources').findResource(path);
                     if (resource && resource.exists()) {
-                        this.loadTaglibXml(resource.readFully(), resource.getPath());    
+                        this.loadTaglibXml(resource.readAsString(), resource.getPath());    
                     }
                     
                 }, this);

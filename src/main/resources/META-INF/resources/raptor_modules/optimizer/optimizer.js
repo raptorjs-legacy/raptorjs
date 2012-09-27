@@ -53,7 +53,7 @@ raptor.define(
                 }
                 
                 var Config = raptor.require('optimizer.Config');
-                var configXml = configFile.readFully();
+                var configXml = configFile.readAsString("UTF-8");
                 var config = new Config(params);
                 config.setConfigResource(raptor.require('resources').createFileResource(configFile));
                 config.parseXml(configXml, configFile.getAbsolutePath());

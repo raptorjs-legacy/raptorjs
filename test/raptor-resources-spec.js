@@ -13,12 +13,12 @@ describe('resources module', function() {
         var resourceB = resourceA.resolve('b.txt');
         var resourceMissing = resourceA.resolve('missing.txt');
         
-        expect(resourceA.readFully()).toEqual("a");
-        expect(resourceB.readFully()).toEqual("b");
+        expect(resourceA.readAsString()).toEqual("a");
+        expect(resourceB.readAsString()).toEqual("b");
         expect(resourceMissing.exists()).toEqual(false);
         
-        expect(resourceA.getParent().resolve('b.txt').readFully()).toEqual("b");
-        expect(resourceA.getParent().resolve('../resource-search-path/b.txt').readFully()).toEqual("b");
-        expect(resourceA.getParent().getParent().resolve('resource-search-path/b.txt').readFully()).toEqual("b");
+        expect(resourceA.getParent().resolve('b.txt').readAsString()).toEqual("b");
+        expect(resourceA.getParent().resolve('../resource-search-path/b.txt').readAsString()).toEqual("b");
+        expect(resourceA.getParent().getParent().resolve('resource-search-path/b.txt').readAsString()).toEqual("b");
     });
 });

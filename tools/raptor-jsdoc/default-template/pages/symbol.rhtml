@@ -9,6 +9,8 @@
     <optimizer:page name="type" output-dir="${outputDir}" optimizer="optimizer">
         <includes>
             <module name="jsdoc-global"/>
+            <module name="components/jsdoc/Header"/>
+            <module name="components/jsdoc/Footer"/>
             <module name="components/jsdoc/Desc"/>
             <module name="components/jsdoc/Nav"/>
             <module name="components/jsdoc/Type"/>
@@ -34,7 +36,10 @@
             </div>
             
             <div id="main">
-                <jsdoc:type type="type"/>
+                <jsdoc:header/>
+                <div id="mainContent">
+                    <jsdoc:type type="type"/>
+                </div>
             </div>
 
             <div id="footer">

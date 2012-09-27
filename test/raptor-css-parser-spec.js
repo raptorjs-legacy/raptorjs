@@ -6,7 +6,7 @@ var logger = raptor.require('logging').logger("raptor-css-parser-spec"),
         {
             var File = raptor.require('files').File;
             var cssFile = new File(__dirname, path);
-            var code = cssFile.readFully();
+            var code = cssFile.readAsString();
             var cssParser = raptor.require('css-parser');
             var urls = {};
             cssParser.findUrls(code, function(url, index, endIndex) {
@@ -25,7 +25,7 @@ var logger = raptor.require('logging').logger("raptor-css-parser-spec"),
         {
             var File = raptor.require('files').File;
             var cssFile = new File(__dirname, path);
-            var code = cssFile.readFully();
+            var code = cssFile.readAsString();
             var cssParser = raptor.require('css-parser');
             return cssParser.replaceUrls(code, callback, thisObj);
         }

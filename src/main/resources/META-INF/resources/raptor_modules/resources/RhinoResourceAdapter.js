@@ -34,8 +34,11 @@ $rload(function(raptor) {
                     return java.convertString(this.javaResource.getSystemPath());
                 },
                 
-                readFully: function() {
-                    return java.convertString(this.javaResource.readAsString());
+                readAsString: function(encoding) {
+                    if (!encoding) {
+                        encoding = "UTF-8";
+                    }
+                    return java.convertString(this.javaResource.readAsString(encoding));
                 },
                 
                 isDirectory: function() {

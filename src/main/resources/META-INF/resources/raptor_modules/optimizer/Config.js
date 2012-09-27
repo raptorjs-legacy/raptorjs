@@ -206,6 +206,10 @@ raptor.defineClass(
                 return this.cssUrlPrefix || this.resourceUrlPrefix;
             },
 
+            getResourcesOutputDir: function() {
+                return this.bundlesOutputDir || this.outputDir;
+            },
+
             getScriptsOutputDir: function() {
                 return this.scriptsOutputDir || this.bundlesOutputDir || this.outputDir;
             },
@@ -306,6 +310,10 @@ raptor.defineClass(
             
             isMinifyJsEnabled: function() {
                 return this.minifyJs === true;
+            },
+
+            isResolveCssUrlsEnabled: function() {
+                return this.resolveCssUrls === true;
             },
             
             enableProfile: function(profileName) {

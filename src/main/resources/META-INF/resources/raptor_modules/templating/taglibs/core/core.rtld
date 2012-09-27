@@ -375,6 +375,42 @@
         </attribute>
     </tag>
     
+    <tag>
+        
+        <name>var</name> 
+
+        <node-class>templating.taglibs.core.VarNode</node-class>
+
+        <attribute>
+            <name>name</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>value</name>
+            <type>expression</type>
+        </attribute>
+    </tag>
+    
+    <tag>
+        
+        <name>assign</name> 
+
+        <node-class>templating.taglibs.core.AssignNode</node-class>
+
+        <attribute>
+            <name>var</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+        
+        <attribute>
+            <name>value</name>
+            <type>expression</type>
+        </attribute>
+    </tag>
+    
     <text-transformer>
         <class-name>templating.taglibs.core.CoreTextTransformer</class-name>
     </text-transformer>

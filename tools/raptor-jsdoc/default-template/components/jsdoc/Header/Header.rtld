@@ -1,0 +1,6 @@
+<raptor-taglib>
+
+    <tag name="header" handler-class="components.jsdoc.Header.HeaderTag">
+    </tag>
+    
+</raptor-taglib>

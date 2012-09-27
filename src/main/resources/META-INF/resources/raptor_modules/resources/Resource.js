@@ -83,7 +83,7 @@ $rload(function(raptor) {
              * 
              * @returns
              */
-            readFully: function() {
+            readAsString: function(encoding) {
                 throw raptor.createError(new Error('Not Implemented'));
             },
             

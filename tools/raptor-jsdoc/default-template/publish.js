@@ -15,7 +15,7 @@ var Publisher = function(symbols, config, env) {
     this.profile = this.optimizer.getConfig().getParam("profile") || "production";
     this.baseUrl = this.config.baseUrl || "/api";
     jsdocUtil.context = this;
-    this.autoCompleteSymbols = []
+    this.autoCompleteSymbols = [];
 };
 
 Publisher.prototype = {
@@ -239,6 +239,7 @@ Publisher.prototype = {
         
         
         this.writeAutocompleteSymbols();
+        this.writeIndexPage();
         this.symbols.forEachSymbol(this.writeSymbolPage, this);
         this.env.forEachSourceFile(this.writeSourcePage, this);
     },
@@ -261,8 +262,27 @@ Publisher.prototype = {
         this.autocompleteSymbolsFilename = "autocomplete-symbols.js";
         var outputFile = new File(this.outputDir, this.autocompleteSymbolsFilename );
         console.log('Writing autocomplete symbols to "' + outputFile + '"...');
-        outputFile.writeFully("var autocompleteSymbols=" + json);
+        outputFile.writeAsString("var autocompleteSymbols=" + json);
 
+    },
+    
+    writeIndexPage: function() {
+        var context = this.createTemplateContext();
+        var outputFile = new File(this.outputDir, "index.html");
+        console.log('Writing index page to ' + outputFile + "...");
+     
+        this.currentOutputDir = outputFile.getParent();
+
+        var html = templating.renderToString("pages/index", {
+                optimizer: this.optimizerEngine,
+                outputDir: this.outputDir,
+                baseHref: this.profile === 'development' ? require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath()) : null
+            },
+            context);
+
+        outputFile.writeAsString(html);
+        
+        this.currentOutputDir = null;
     },
     
     writeSymbolPage: function(symbolName, type) {
@@ -282,7 +302,7 @@ Publisher.prototype = {
             },
             context);
 
-        outputFile.writeFully(html);
+        outputFile.writeAsString(html);
         
         this.currentOutputDir = null;
         this.currentSymbolName = null;
@@ -314,12 +334,12 @@ Publisher.prototype = {
                 optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
                 mode: modes[ext],
-                src: source.file.readFully(),
+                src: source.file.readAsString(),
                 baseHref: this.profile === 'development' ? require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath()) : null
             },
             context);
 
-        outputFile.writeFully(html);
+        outputFile.writeAsString(html);
         
         this.currentOutputDir = null;
         this.currentOutputFile = null;

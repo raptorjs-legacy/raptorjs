@@ -37,7 +37,7 @@ raptor.define(
             },
             
             getCode: function(context) {
-                return this.getResource(context).readFully();
+                return this.getResource(context).readAsString("UTF-8");
             },
            
             getResourcePath: function() {

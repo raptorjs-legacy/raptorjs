@@ -40,7 +40,7 @@ var File = raptor.require('files').File,
     		var CommentParser = raptor.require('jsdoc.CommentParser');
         	var env = createEnv();
         	var parser = new CommentParser(env);
-        	var comment = parser.parse(new File(dir, path).readFully());
+        	var comment = parser.parse(new File(dir, path).readAsString());
         	return comment;	
     	}
     	catch(e) {

@@ -64,10 +64,22 @@ $rload(function(raptor) {
                     return this.filePath;
                 },
                 
-                readFully: function() {
-                    return files.readFully(this.getFilePath());
+                readAsString: function(encoding) {
+                    return files.readAsString(this.getFilePath(), encoding);
                 },
                 
+                writeAsString: function(str, encoding) {
+                    files.writeFile(this.filePath, str, encoding);
+                },
+
+                readAsBinary: function() {
+                    return files.readAsBinary(this.getFilePath());
+                },
+                
+                writeAsBinary: function(data) {
+                    files.writeFile(this.filePath, data);
+                },
+
                 isDirectory: function() {
                     return files.isDirectory(this.filePath);
                 },
@@ -90,9 +102,7 @@ $rload(function(raptor) {
                     }, this);
                 },
                 
-                writeFully: function(str, encoding) {
-                    files.writeFile(this.filePath, str, encoding);
-                },
+                
                 
                 getFile: function() {
                     var File = files.File;

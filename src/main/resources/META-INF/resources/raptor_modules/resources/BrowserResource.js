@@ -11,7 +11,7 @@ raptor.define(
         };
         
         BrowserResource.prototype = {
-            readFully: function() {
+            readAsString: function() {
                 return this.contents;
             },
             

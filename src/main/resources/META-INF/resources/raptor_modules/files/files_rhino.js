@@ -54,9 +54,11 @@ $rload(function(raptor) {
          * @param encoding
          * @returns
          */
-        readFully: function(path, encoding) {
-            if (encoding == null) encoding = "UTF-8";
-            return __rhinoHelpers.getFiles().readFully(new JavaFile(path), encoding);
+        readAsString: function(path, encoding) {
+            if (!encoding) {
+                encoding = null;
+            }
+            return __rhinoHelpers.getFiles().readAsString(new JavaFile(path), encoding);
         },
         
         /**

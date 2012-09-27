@@ -71,7 +71,11 @@ raptor.defineClass(
                     throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
                 }
                 else {
-                    return manifest.resolveResource(path);                    
+                    var resource = manifest.resolveResource(path);
+                    if (!resource || !resource.exists()) {
+                        throw raptor.createError(new Error('Resource "' + path + '" not found for package ' + manifest.getSystemPath()));
+                    }
+                    return resource;
                 }
             },
             
@@ -113,7 +117,7 @@ raptor.defineClass(
                 if (this.getResource) {
                     var resource = this.getResource();
                     if (resource.exists()) {
-                        return resource.readFully();
+                        return resource.readAsString("UTF-8");
                     }
                     else {
                         throw raptor.createError(new Error('Unable to get code for include "' + this.toString() + '". Resource does not exist: ' + resource.getPath()));

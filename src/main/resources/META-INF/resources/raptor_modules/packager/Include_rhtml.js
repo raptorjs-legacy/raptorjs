@@ -38,7 +38,7 @@ raptor.define(
             
             load: function(context) {
                 var resource = this.getResource();
-                var xmlSource = resource.readFully();
+                var xmlSource = resource.readAsString("UTF-8");
                 raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
             },
             
@@ -53,7 +53,7 @@ raptor.define(
             
             getCode: function(context) {
                 var resource = this.getResource(context);
-                var xmlSource = resource.readFully();
+                var xmlSource = resource.readAsString("UTF-8");
                 var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
                 return rhtmlJs;
             },

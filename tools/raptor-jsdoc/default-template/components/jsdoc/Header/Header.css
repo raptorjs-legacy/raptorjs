@@ -1,0 +1,23 @@
+.header {
+    background-color: #50A8DC;
+    background-image: -moz-linear-gradient(center top , #61B0DF, #369BD7);
+    background-repeat: repeat-x;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
+    min-height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: white;
+}
+
+.header > H1 {
+    margin: 0;
+    font-size: 20px;
+    text-shadow: 1px 1px 4px #000000;
+}
+
+.header > H1 .version {
+    font-size: 16px;
+    margin-left: 5px;
+}

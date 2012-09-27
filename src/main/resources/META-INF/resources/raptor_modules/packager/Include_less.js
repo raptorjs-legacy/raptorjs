@@ -33,7 +33,7 @@ raptor.define(
                     resource = include.resolveResource(path, context);
                     if (resource.exists()) {
                         foundPath = resource.getSystemPath();
-                        lessSrc = resource.readFully();
+                        lessSrc = resource.readAsString("UTF-8");
                     }
                    
                     if (foundPath) {
@@ -90,7 +90,7 @@ raptor.define(
                 var Parser = require('less').Parser;
                 
                 var resource = this.getResource(context);
-                var lessSource = resource.readFully();
+                var lessSource = resource.readAsString("UTF-8");
 
                 
                 var result,

@@ -81,6 +81,10 @@ $rload(function(raptor) {
         },
         
         isDirectory: function() {
+            if (this.isSymbolicLink()) {
+                return this.readSymbolicLink().isDirectory();
+            }
+
             var stat = this._getStat();
             return stat && stat.isDirectory();
         },
@@ -101,6 +105,16 @@ $rload(function(raptor) {
         
         getName: function() {
             return nodePath.basename(this._path);
+        },
+        
+        getCanonicalFile: function() {
+            
+            if (this.isSymbolicLink()) {
+                return this.readSymbolicLink().getCanonicalFile();
+            }
+            else {
+                return this;
+            }
         },
 
         getNameWithoutExtension: function() {
@@ -124,12 +138,23 @@ $rload(function(raptor) {
         },
         
         readSymbolicLink: function() {
-            var linkPath = nodeFS.readLinkSync(this._path);
+            var linkPath = nodeFS.readlinkSync(this._path);
             var path = nodePath.resolve(this.getParent(), linkPath);
             return new File(path);
         },
         
         listFiles: function() {
+            var filenames = this.list();
+            var files = new Array(filenames.length);
+            
+            for (var i=0, len=filenames.length; i<len; i++) {
+                files[i] = new File(nodePath.join(this._path, filenames[i]));
+            }
+            
+            return files;
+        },
+        
+        list: function() {
             var path = this._path;
             
             if (!existsSync(path)) {
@@ -138,17 +163,11 @@ $rload(function(raptor) {
             
             
             if (this.isSymbolicLink()) {
-                return this.readSymbolicLink().listFiles();
+                return this.readSymbolicLink().list();
             }
             
             var filenames = nodeFS.readdirSync(this._path);
-            var files = new Array(filenames.length);
-            
-            for (var i=0, len=filenames.length; i<len; i++) {
-                files[i] = new File(nodePath.join(this._path, filenames[i]));
-            }
-            
-            return files;
+            return filenames;
         },
         
         forEachFile: function(callback, thisObj) {
@@ -180,7 +199,7 @@ $rload(function(raptor) {
                 missing[i].mkdir();
             }
         },
-        
+
         writeFully: function(str, encoding) {
             if (this.isSymbolicLink()) {
                 this.readSymbolicLink().writeFully(str, encoding);
@@ -189,7 +208,7 @@ $rload(function(raptor) {
             
             this.mkdirs();
             
-            nodeFS.writeFileSync(this.getAbsolutePath(), str, encoding || "UTF-8");
+            nodeFS.writeFileSync(this.getAbsolutePath(), str, encoding );
         },
         
         readFully: function(encoding) {
@@ -198,7 +217,23 @@ $rload(function(raptor) {
                 return;
             }
             
-            return nodeFS.readFileSync(this.getAbsolutePath(), encoding || "UTF-8");
+            return nodeFS.readFileSync(this.getAbsolutePath(), encoding);
+        },
+        
+        writeAsString: function(str, encoding) {
+            return this.writeFully(str, encoding || "UTF-8");
+        },
+        
+        readAsString: function(encoding) {
+            return this.readFully(encoding || "UTF-8");
+        },
+        
+        writeAsBinary: function(data) {
+            return this.writeFully(data, null);
+        },
+        
+        readAsBinary: function() {
+            return this.readFully(null);
         },
         
         remove: function() {

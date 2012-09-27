@@ -580,6 +580,11 @@ describe('templating module', function() {
         expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
     });
     
+    it("should allow for new variables to be created and assigned values", function() {
+        var output = compileAndRender("/test-templates/var.rhtml", {active: true});
+        expect(output).toEqual('<div>red</div><div>green</div><div>blue</div><div>orange</div><div>purple</div><div>yellow</div>');
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         

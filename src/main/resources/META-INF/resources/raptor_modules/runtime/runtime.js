@@ -42,7 +42,7 @@ $rload(function(raptor) {
             }
             else
             {
-                var source = resource.readFully();
+                var source = resource.readAsString("UTF-8");
                 this.evaluateString(source, resource.getSystemPath());
             }
         }

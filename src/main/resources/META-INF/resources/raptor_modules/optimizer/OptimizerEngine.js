@@ -121,10 +121,12 @@ raptor.defineClass(
                     writer = optimizer.createPageDependenciesFileWriter(config);
                 
                 var urlBuilder = optimizer.createSimpleUrlBuilder({
+                    resourcesDir: config.getResourcesOutputDir(),
                     scriptsDir: config.getScriptsOutputDir(),
                     styleSheetsDir: config.getCssOutputDir(),
                     scriptsPrefix: config.getScriptsUrlPrefix(),
-                    styleSheetsPrefix: config.getUrlPrefix() 
+                    styleSheetsPrefix: config.getUrlPrefix(),
+                    prefix: config.getUrlPrefix()
                 });
             
             
@@ -134,6 +136,10 @@ raptor.defineClass(
                 
                 if (config.isMinifyJsEnabled()) {
                     writer.addFilter(raptor.require("optimizer.MinifyJSFilter"));
+                }
+
+                if (config.isResolveCssUrlsEnabled()) {
+                    writer.addFilter(raptor.require("optimizer.ResolveCSSUrlsFilter"));
                 }
                 
                 raptor.forEach(config.getFilters(), function(filterDef) {
@@ -367,7 +373,7 @@ raptor.defineClass(
                     }
                     
                     this.logger().info('Writing page HTML includes for page "' + page.getName() + '" to "' + outputFile + '"...');
-                    outputFile.writeFully(code);
+                    outputFile.writeAsString(code);
                 }, this);
             },
             
@@ -398,7 +404,7 @@ raptor.defineClass(
                                     optimizer: _this
                                 });
                                 logger.info('Writing page "' + page.getName() + '" with injected dependencies to "' + outputFile + '"...');
-                                outputFile.writeFully(html);
+                                outputFile.writeAsString(html);
                             }
                             
                             

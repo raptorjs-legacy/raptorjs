@@ -129,7 +129,7 @@ raptor.defineClass(
                                     var path = resolvePath(value);
                                     
                                     if (raptor.require('files').exists(path)) {
-                                        var json = raptor.require('files').readFully(path);
+                                        var json = raptor.require('files').readAsString(path, "UTF-8");
                                         raptor.forEachEntry(JSON.parse(json), function(paramName, paramValue) {
                                             config.addParam(paramName, paramValue);
                                         });    
@@ -333,6 +333,10 @@ raptor.defineClass(
                         "minify-css": {
                             _type: "boolean",
                             _targetProp: "minifyCss"
+                        },
+                        "resolve-css-urls": {
+                            _type: "boolean",
+                            _targetProp: "resolveCssUrls"
                         },
                         "output-dir": {
                             _type: "string",

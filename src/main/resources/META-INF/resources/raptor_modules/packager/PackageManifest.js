@@ -187,7 +187,7 @@ $rload(function(raptor) {
         },
         
         getSystemPath: function() {
-            return this.packageResource.getSystemPath();
+            return this.packageResource ? this.packageResource.getSystemPath() : null;
         },
         
         getPath: function() {
@@ -219,10 +219,6 @@ $rload(function(raptor) {
         
         resolveResource: function(relPath) {
             var resource = raptor.require('resources').resolveResource(this.getPackageResource(), relPath);
-            if (!resource || !resource.exists()) {
-                var packagePath = this.getPackageResource() ? '"' + this.getPackageResource().getSystemPath() + '"' : '(no package)';
-                throw raptor.createError(new Error('Resource "' + relPath + '" not found for package ' + packagePath));
-            }
             return resource;
         },
         

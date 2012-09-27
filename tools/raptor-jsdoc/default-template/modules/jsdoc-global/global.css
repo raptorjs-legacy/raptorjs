@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    padding: 0p;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 18px;
@@ -36,7 +37,11 @@ pre.code {
 }
 
 #main {
-    margin-left: 300px;
+    margin-left: 280px;
+}
+
+#mainContent {
+    padding-left: 10px;
 }
 
 #footer {

@@ -44,7 +44,7 @@ raptor.defineClass(
                     return this.getConfig().getCssOutputDir();
                 }
                 else {
-                    throw raptor.createError(new Error("Unsupported content type: " + contentType));
+                    return this.getConfig().getResourcesOutputDir();
                 }
             },
             
@@ -65,7 +65,7 @@ raptor.defineClass(
             
             writeBundleFile: function(outputFile, code, checksum, bundle) {
                 this.logger().info('Writing bundle file to "' + outputFile.getAbsolutePath() + '"...');
-                outputFile.writeFully(code, "UTF-8");
+                outputFile.writeAsString(code, "UTF-8");
                 this.publish('bundleWritten', {
                     bundle: bundle,
                     file: outputFile,
@@ -79,22 +79,52 @@ raptor.defineClass(
                 this.writeBundleFile(path, bundleData.code, bundleData.checksum, bundle);    
             },
 
-            writeResource: function(filename, code, contentType, addChecksum) {
-                if (!filename || typeof filename !== 'string') {
-                    throw raptor.createError(new Error('"filename" argument is required'));
+            writeResource: function(resource, addChecksum) {
+                if (!resource) {
+                    throw raptor.createError(new Error('"resource" argument is required'));
                 }
 
-                var outputDir = this.getOutputDirForContentType(contentType);
+                if (typeof resource === 'string') {
+                    var resourcePath = resource;
+                    resource = raptor.require('resources').findResource(resourcePath);
+                    if (!resource || !resource.exists()) {
+                        throw raptor.createError(new Error('Resource not found with path "' + resourcePath + '"'));
+                    }
+                }
 
-                var outputFile = new File(outputDir, filename);
+                var data = resource.readAsBinary();
+                var filename = resource.getName();
+                
+                var contentType = raptor.require('mime').lookup(filename);
+
+                var outputDir = this.getOutputDirForContentType(),
+                    outputFile,
+                    checksum;
+
+                
                 if (addChecksum !== false) {
-                    var ext = outputFile.getExtension();
-                    var nameNoExt = outputFile.getNameWithoutExtension();
-                    var checksum = this.calculateChecksum(code);
-                    outputFile = new File(outputDir, nameNoExt + "_" + checksum + "." + ext);
+                    checksum = this.calculateChecksum(data);
+                    var lastDot = filename.lastIndexOf('.');
+                    if (lastDot !== -1) {
+                        var nameNoExt = filename.substring(0, lastDot);
+                        var ext = filename.substring(lastDot+1);
+                        filename = nameNoExt + "_" + checksum + "." + ext;
+                    }
+                    else {
+                        filename += "_" + checksum;
+                    }
                 }
 
-                outputFile.writeFully(code);
+                outputFile = new File(outputDir, filename);
+
+                outputFile.writeAsBinary(data);
+
+                return {
+                    file: outputFile,
+                    filename: filename,
+                    checksum: checksum,
+                    url: this.getResourceUrl(filename, contentType)
+                };
             }
         };
 

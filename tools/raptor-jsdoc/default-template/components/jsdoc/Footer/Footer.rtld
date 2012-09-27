@@ -1,0 +1,6 @@
+<raptor-taglib>
+
+    <tag name="footer" handler-class="components.jsdoc.Footer.FooterTag">
+    </tag>
+    
+</raptor-taglib>

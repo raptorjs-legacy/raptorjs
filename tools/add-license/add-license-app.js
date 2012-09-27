@@ -11,7 +11,7 @@ require("raptor").createRaptor({
 var files = raptor.require("files"),
     strings = raptor.require('strings');
 
-var licenseText = files.readFully(__dirname + "/LICENSE");
+var licenseText = files.readAsString(__dirname + "/LICENSE");
 
 var raptorJSModulesDir = files.joinPaths(__dirname, "../../src/main/resources/META-INF/resources/raptor_modules");
 var javaSrcDir = files.joinPaths(__dirname, "../../src/main/java");
@@ -27,11 +27,11 @@ var addLicense = function(srcDir, ext) {
             srcDir, 
             function(file) {
                 console.log("Processing " + file.getAbsolutePath() + "...");
-                var input = file.readFully();
+                var input = file.readAsString();
                 if (!strings.startsWith(input, licenseText)) {
                     count++;
-                    var output = licenseText + file.readFully();
-                    file.writeFully(output);
+                    var output = licenseText + file.readAsString();
+                    file.writeAsString(output);
                 }
                 else {
                     console.log("Skipping " + file.getAbsolutePath() + ". License already added");
