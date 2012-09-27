@@ -12,12 +12,34 @@
 }
 
 .header > H1 {
-    margin: 0;
+    margin: 0;  
+    font-size: 20px;
+}
+
+.header > H1 > .title {
     font-size: 20px;
     text-shadow: 1px 1px 4px #000000;
 }
 
-.header > H1 .version {
+.header > H1 > .version {
     font-size: 16px;
     margin-left: 5px;
+}
+
+.header > H1 > .powered-by {
+    float: right;
+    font-size: 16px;
+    line-height: 40px;
+    margin-right: 15px;
+    vertical-align: middle;
+    color: #F5F5F5;
+}
+
+.powered-by A {
+    color: #033C73;
+    text-decoration: none;
+}
+.powered-by a:hover {
+    color: #2071A1;
+    text-decoration: underline;
 }

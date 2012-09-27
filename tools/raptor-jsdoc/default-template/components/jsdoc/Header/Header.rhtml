@@ -6,7 +6,15 @@
     <jsdoc:prop name="title" default="API Docs" var="title"/>
     
     <div class="header">
-        <h1>${title} <span class="version" c:if="version">${version}</span></h1>
+        
+        <h1>
+            <span class="title">${title}</span>
+            <span class="version" c:if="version">${version}</span>
+        
+            <div class="powered-by">
+                Powered by <a href="http://raptorjs.org/">RaptorJS</a>
+            </div>
+        </h1>
     </div>
                 
 </c:template>
