@@ -36,7 +36,8 @@ raptor.define(
                         }
 
                         url += queryString;
-                        this.logger().warn("Resolved URL: ", inputUrl + ' --> ' + url);
+                        
+                        this.logger().debug("Resolved URL: ", inputUrl + ' --> ' + url);
 
                         return url;
                     }, this);
