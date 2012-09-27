@@ -2,7 +2,7 @@ raptor.define(
     "jsdoc.ParamTag",
     "jsdoc.Tag",
     function(raptor) {
-
+        "use strict";
 
         var typeRegExp = /^\s*\{([^\}]*)\}\s*/g,
             strings = raptor.require('strings');
@@ -33,7 +33,7 @@ raptor.define(
                     paramName = paramDesc;
                     paramDesc = "";
                 }
-            }
+            };
 
             extractType();
             extractName();

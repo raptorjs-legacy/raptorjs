@@ -2,18 +2,16 @@ var Type = raptor.require("jsdoc.Type");
 var logger = raptor.require('logging').logger('resolver-raptor.extend');
 
 module.exports = function(methodName, node, walker) {
-
+    "use strict";
+    
     var extensionFor = null,
         args = node['arguments'],
         comment = node.comment,
-        def = null,
         targetType = null,
-        sourceType = null,
-        mixinType = null,
-        symbolName;
+        mixinType = null;
 
     if (args.length !== 2) {
-        logger.debug('WARNING: Invalid number of arguments to "' + methodName + "'. Argument count: " + args.length)
+        logger.debug('WARNING: Invalid number of arguments to "' + methodName + "'. Argument count: " + args.length);
     }
     
     var nameNode = args[0];
@@ -63,4 +61,4 @@ module.exports = function(methodName, node, walker) {
     }
     
     return targetType;
-}
+};

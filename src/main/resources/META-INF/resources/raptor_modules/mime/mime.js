@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
+/**
+ * @name mime
+ * @raptor
+ */
 raptor.define("mime", {});

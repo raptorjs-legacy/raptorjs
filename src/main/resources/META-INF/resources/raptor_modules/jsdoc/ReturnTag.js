@@ -2,7 +2,7 @@ raptor.define(
     "jsdoc.ReturnTag",
     "jsdoc.Tag",
     function(raptor) {
-
+        "use strict";
 
         var typeRegExp = /^\s*\{([^\}]*)\}\s*/g;
 

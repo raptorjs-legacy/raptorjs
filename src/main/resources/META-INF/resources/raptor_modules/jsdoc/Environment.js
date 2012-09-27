@@ -27,7 +27,7 @@ raptor.define(
         
         Environment.prototype = {
             addFile: function(file, sourceDir) {
-                var sourceDir = sourceDir.isDirectory() ? sourceDir : sourceDir.getParentFile();
+                sourceDir = sourceDir.isDirectory() ? sourceDir : sourceDir.getParentFile();
                 
                 this.files[file.getAbsolutePath()] = {
                     file: file,

@@ -91,7 +91,8 @@ raptor.define(
                                     if (lastDot != -1) {
                                         var shortName = name.substring(lastDot+1);
                                         if (shortName.charAt(0) === shortName.charAt(0).toLowerCase()) {
-                                            var dashIndex = shortName.indexOf('-')
+                                            var dashIndex = shortName.indexOf('-');
+                                            
                                             if (dashIndex+1 < shortName.length && shortName.charAt(dashIndex+1) === shortName.charAt(dashIndex+1).toUpperCase()) {
                                                 shortName = shortName.replace(/\-/g, '.');
                                                 name = name.substring(0, lastDot+1) + shortName;

@@ -3,7 +3,8 @@ var Type = raptor.require("jsdoc.Type");
 var logger = raptor.require('logging').logger('resolver-raptor.define');
 
 module.exports = function(methodName, node, walker, isClass) {
-            
+    "use strict";
+    
     var name = null,
         label = null,
         args = node['arguments'],
@@ -175,4 +176,4 @@ module.exports = function(methodName, node, walker, isClass) {
     }
     
     return type;
-}
+};

@@ -39,8 +39,8 @@ raptor.defineClass(
                     this.addError('"name" attribute is required');
                 }
                 else if (!varNameRegExp.test(varName)) {
-                        varName = null;
-                        this.addError('Invalid variable name of "' + withVar.name + '" in "' + vars + '"');
+                    this.addError('Invalid variable name of "' + varName + '"');
+                    varName = null;
                 }
                 
                 

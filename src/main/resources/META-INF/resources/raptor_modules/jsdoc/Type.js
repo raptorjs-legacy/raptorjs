@@ -111,7 +111,7 @@ raptor.define(
                         param.type = paramTag.paramType || param.type;
                     }
                     callback.call(thisObj, param);
-                }, this)
+                }, this);
             },
 
             getFunctionParamNames: function() {

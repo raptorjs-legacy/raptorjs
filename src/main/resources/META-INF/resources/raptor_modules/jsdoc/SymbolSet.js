@@ -49,7 +49,7 @@ raptor.define(
                     if (result !== true) {
                         delete this.symbols[entry.key];
                     }
-                }, this)
+                }, this);
             },
             
             toString: function() {

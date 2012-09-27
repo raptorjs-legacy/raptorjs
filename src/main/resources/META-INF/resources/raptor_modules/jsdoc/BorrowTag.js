@@ -2,9 +2,7 @@ raptor.define(
     "jsdoc.BorrowTag",
     "jsdoc.Tag",
     function(raptor) {
-
-
-        
+        "use strict";
 
         var BorrowTag = function(name, value) {
             BorrowTag.superclass.constructor.call(this, "borrow", value);

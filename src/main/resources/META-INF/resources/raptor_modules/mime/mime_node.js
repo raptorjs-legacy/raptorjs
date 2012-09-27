@@ -18,7 +18,10 @@
  * @extension Node
  */
 raptor.extend("mime", function() {
-    var nodeMime = require('mime')
+    "use strict";
+
+    var nodeMime = require('mime');
+    
     return {
         lookup: function(path) {
             return nodeMime.lookup(path);
@@ -27,5 +30,5 @@ raptor.extend("mime", function() {
         extension: function(path) {
             return nodeMime.extension(path);
         }
-    }
+    };
 });
