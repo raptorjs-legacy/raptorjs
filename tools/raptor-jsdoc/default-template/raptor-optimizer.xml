@@ -67,6 +67,8 @@
             <module name="components/jsdoc/Nav"/>
             <module name="components/jsdoc/Type"/>
             <module name="components/jsdoc/TypeRef"/>
+            <module name="shjs"/>
+            <module name="jsTree"/>
         </bundle>
     </bundles>
     
