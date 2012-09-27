@@ -22,13 +22,13 @@ $rload(function(raptor) {
     
     /**
      * @class
-     * @name logging_Console$LogHelper
+     * @name logging.LogHelper
      */
     var LogHelper = function() {
         this.parts = [];
     };
 
-    LogHelper.prototype = /** @lends logging_Console$LogHelper.prototype */ {
+    LogHelper.prototype = /** @lends logging.LogHelper.prototype */ {
         
         /**
          * 
@@ -80,13 +80,13 @@ $rload(function(raptor) {
      */
     raptor.extendCore('logging', {
         /**
-         * @type logging_Console$LogHelper
+         * @type logging.LogHelper
          */
         LogHelper: LogHelper,
         
         /**
          * 
-         * @returns {logging_Console$LogHelper} A new log helper object
+         * @returns {logging.LogHelper} A new log helper object
          */
         createLogHelper: function() {            
             return new this.LogHelper();

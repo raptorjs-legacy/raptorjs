@@ -28,7 +28,7 @@ $rload(function (raptor) {
      * @borrows raptor.isArray as isArray
      * @borrows raptor.arrayFromArguments as fromArguments
      */
-    raptor.arrays = /** @lends arrays */ {
+    raptor.arrays = {
 
         forEach: raptor.forEach,
 

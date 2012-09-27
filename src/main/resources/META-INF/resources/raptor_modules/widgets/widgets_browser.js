@@ -34,7 +34,7 @@ raptor.extend('widgets', function(raptor, widgets) {
      * 
      * @class
      * @anonymous
-     * @name widgets-Document
+     * @name widgets.Document
      *  
      */
     var Document = function(widget) {
@@ -45,7 +45,7 @@ raptor.extend('widgets', function(raptor, widgets) {
     /**
      * 
      */
-    Document.prototype = /** @lends widgets-Document.prototype */ {
+    Document.prototype = /** @lends widgets.Document.prototype */ {
         /**
          * 
          * @param widget

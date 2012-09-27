@@ -22,10 +22,9 @@ $rload(function(raptor) {
 
     /**
      * @extension Node
-     * @extensionFor amd
      * @raptor
      */
-    raptor.amd = /** @lends listeners */ {
+    raptor.amd = {
                   
         createDefine: function(nodeRequire) {
             return global.raptorCreateDefine(nodeRequire);

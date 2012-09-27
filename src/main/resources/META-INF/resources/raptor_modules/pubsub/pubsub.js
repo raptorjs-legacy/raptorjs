@@ -108,7 +108,7 @@ raptor.define('pubsub', function(raptor) {
      * @class
      * @anonymous
      * @name pubsub-Message
-     * @augments listeners-Message
+     * @augments listeners.Message
      * 
      * @param topic {String} The topic name of the message
      * @param props {Object} An object with properties that should be applied to the newly created message 
@@ -218,7 +218,7 @@ raptor.define('pubsub', function(raptor) {
              * @param callback {Function} The callback function
              * @param thisObj {Object} The "this" object to use for the callback function
              * 
-             * @returns {listeners-ObservableListenerHandle} A handle to remove the subscriber(s)
+             * @returns {listeners.ObservableListenerHandle} A handle to remove the subscriber(s)
              */
             subscribe: function(topic, callback, thisObj) {
                 return this.observable.subscribe(topic, callback, thisObj);
@@ -320,7 +320,7 @@ raptor.define('pubsub', function(raptor) {
          * @param callback {Function} The callback function
          * @param thisObj {Object} The "this" object to use for the callback function
          * 
-         * @returns {listeners-ObservableListenerHandle} A handle to remove the subscriber(s)
+         * @returns {listeners.ObservableListenerHandle} A handle to remove the subscriber(s)
          * 
          * @see pubsub-Channel#subscribe
          */

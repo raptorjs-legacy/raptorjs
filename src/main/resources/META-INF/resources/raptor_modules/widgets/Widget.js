@@ -18,8 +18,8 @@
  * Mixins applied to the prototypes of all widget instances
  * @mixin
  * 
- * @borrows listeners-Observable#publish as #publish
- * @borrows listeners-Observable#subscribe as #subscribe
+ * @borrows listeners.Observable#publish as #publish
+ * @borrows listeners.Observable#subscribe as #subscribe
  */
 raptor.defineMixin(
     'widgets.Widget',

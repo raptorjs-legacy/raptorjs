@@ -84,7 +84,7 @@ $rload(function(raptor) {
      * 
      * @class
      * @anonymous
-     * @name listeners-Message
+     * @name listeners.Message
      * 
      * @param name {String} The name of the message
      * @param props {Object} An object with properties that should be applied to the newly created message 
@@ -94,7 +94,7 @@ $rload(function(raptor) {
         this.data = data;
     };
     
-    Message.prototype = /** @lends listeners-Message.prototype */ {
+    Message.prototype = /** @lends listeners.Message.prototype */ {
         /**
          * Return the message name.
          * 
@@ -115,7 +115,7 @@ $rload(function(raptor) {
     };
     
     /**
-     * @name listeners-Listeners
+     * @name listeners.Listeners
      * @anonymous
      * @class
      */
@@ -124,13 +124,13 @@ $rload(function(raptor) {
         this._onEmpty = EMPTY_FUNC;
     };
     
-    Listeners.prototype = /** @lends listeners-Listeners.prototype */ {
+    Listeners.prototype = /** @lends listeners.Listeners.prototype */ {
         /**
          * 
          * @param callback
          * @param thisObj
          * @param autoRemove
-         * @returns {listeners-ListenerHandle} A listener handle
+         * @returns {listeners.ListenerHandle} A listener handle
          */
         add: function(callback, thisObj, autoRemove) {
             var listener = {
@@ -148,10 +148,10 @@ $rload(function(raptor) {
             _this._listeners.push(listener);
                         
             /**
-             * @name listeners-ListenerHandle
+             * @name listeners.ListenerHandle
              * @class
              */
-            var handle = /** @lends listeners-ListenerHandle.prototype */{
+            var handle = /** @lends listeners.ListenerHandle.prototype */{
                 /**
                  * @returns {void}
                  */
@@ -161,12 +161,17 @@ $rload(function(raptor) {
                  * Removes the added listener
                  * 
                  * @function
-                 * @memberOf listeners-ListenerHandle.prototype
+                 * @memberOf listeners.ListenerHandle.prototype
                  * @name unsubscribe
                  * 
                  * 
                  */
             };
+            
+            /**
+             * Removes the added listener
+             * @function
+             */
             handle.unsubscribe = handle.remove;
             
             if (thisObj) {
@@ -232,13 +237,13 @@ $rload(function(raptor) {
     /**
      * @class
      * @anonymous
-     * @name listeners-Observable
+     * @name listeners.Observable
      */
     var Observable = function() {
         this._byName = {};
     };
     
-    Observable.prototype = /**@lends listeners-Observable.prototype */ {
+    Observable.prototype = /**@lends listeners.Observable.prototype */ {
         __observable: true,
         
         /**
@@ -275,7 +280,7 @@ $rload(function(raptor) {
          * @param callback {Function} The callback function
          * @param thisObj
          * @param autoRemove
-         * @returns {listeners-ObservableListenerHandle} A handle to remove the added listeners or select listeners
+         * @returns {listeners.ObservableListenerHandle} A handle to remove the added listeners or select listeners
          */
         subscribe: function(name, callback, thisObj, autoRemove) {
             var _this = this,
@@ -297,9 +302,9 @@ $rload(function(raptor) {
                 /**
                  * @class
                  * @anonymous
-                 * @name listeners-ObservableListenerHandle
+                 * @name listeners.ObservableListenerHandle
                  */
-                handle = /**@lends listeners-ObservableListenerHandle.prototype */ {
+                handle = /**@lends listeners.ObservableListenerHandle.prototype */ {
                     
                     /**
                      * @function
@@ -311,7 +316,7 @@ $rload(function(raptor) {
                     /**
                      * @function
                      * @name remove
-                     * @memberOf listeners-ObservableListenerHandle.prototype
+                     * @memberOf listeners.ObservableListenerHandle.prototype
                      * 
                      * @param type
                      * @returns
@@ -322,7 +327,7 @@ $rload(function(raptor) {
                     /**
                      * @function
                      * @name removeAll
-                     * @memberOf listeners-ObservableListenerHandle.prototype
+                     * @memberOf listeners.ObservableListenerHandle.prototype
                      * @returns
                      * @deprecated
                      */
@@ -363,7 +368,7 @@ $rload(function(raptor) {
          * someObj.publish('myMessage', 'Hello World!', 'John Doe');
          * </js>
          * 
-         * @param name {String|listeners-Message} The message name or a Message object that has the message name and args as properties.
+         * @param name {String|listeners.Message} The message name or a Message object that has the message name and args as properties.
          * @param props {Object|Array} Properties to apply to the published message object
          */
         publish: function(name, message) {
@@ -415,7 +420,7 @@ $rload(function(raptor) {
      */
     return (raptor.listeners = listeners = /** @lends listeners */ {
         /**
-         * @type listeners-Message
+         * @type listeners.Message
          * 
          */
         Message: Message,
@@ -423,7 +428,7 @@ $rload(function(raptor) {
         /**
          * Creates a new listener list and returns it.
          * 
-         * @returns {listeners-Listeners} The newly created {@link listeners-Listeners} object.
+         * @returns {listeners.Listeners} The newly created {@link listeners.Listeners} object.
          */
         createListeners: function() {
             return new Listeners();
@@ -434,7 +439,7 @@ $rload(function(raptor) {
          * 
          * @param allowedMessages {Array<String>} An array of messages that are allowed (more can be added later using {@Link .registerMessages}). Optional
          * 
-         * @returns {listeners-Observable} The newly created {@link listeners-Observable} object.
+         * @returns {listeners.Observable} The newly created {@link listeners.Observable} object.
          */
         createObservable: function(allowedMessages, createFunctions) {
             var o = new Observable();
@@ -446,10 +451,10 @@ $rload(function(raptor) {
         
         /**
          * 
-         * Makes an existing object/class observable by extending the target with the required methods and properties from the {@link listeners-Observable} class.
+         * Makes an existing object/class observable by extending the target with the required methods and properties from the {@link listeners.Observable} class.
          * <ul>
-         * <li>{@link listeners-Observable#subscribe}</li>
-         * <li>{@link listeners-Observable#publish}</li>
+         * <li>{@link listeners.Observable#subscribe}</li>
+         * <li>{@link listeners.Observable#publish}</li>
          * </ul>
          * 
          * <p>

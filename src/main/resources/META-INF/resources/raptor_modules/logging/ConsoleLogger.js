@@ -28,7 +28,7 @@ $rload(function(raptor) {
      * @param {number} level The log level
      * @param {string} loggerName The logger name
      * 
-     * @name logging_Console-ConsoleLogger
+     * @name logging.ConsoleLogger
      */
     var ConsoleLogger = function(level, loggerName) {
         this._loggerName = loggerName;
@@ -36,7 +36,7 @@ $rload(function(raptor) {
     };
 
     
-    ConsoleLogger.prototype = /** @lends logging_Console-ConsoleLogger.prototype */ {
+    ConsoleLogger.prototype = /** @lends logging.ConsoleLogger.prototype */ {
         
         /**
          * 
@@ -220,7 +220,7 @@ $rload(function(raptor) {
     raptor.extendCore('logging', {
         
         /**
-         * @type logging_Console-ConsoleLogger
+         * @type logging.ConsoleLogger
          */
         ConsoleLogger: ConsoleLogger
     });

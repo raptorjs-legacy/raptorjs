@@ -126,7 +126,7 @@ raptor.define('loader', function(raptor) {
      * 
      * @class
      * @anonymous
-     * @name loader-Transaction
+     * @name loader.Transaction
      * 
      * @param loader {loader} The loader module that started this transaction 
      */
@@ -203,7 +203,7 @@ raptor.define('loader', function(raptor) {
                 /**
                  * 
                  * @param userCallback
-                 * @returns {loader-Transaction} Returns itself
+                 * @returns {loader.Transaction} Returns itself
                  */
                 execute: function(userCallback) {
                     started = 1;
