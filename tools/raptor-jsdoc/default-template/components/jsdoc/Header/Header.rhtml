@@ -1,6 +1,6 @@
 <c:template xmlns:c="core"
     xmlns:jsdoc="jsdoc"
-    params="">
+    params="indexUrl">
     
     <jsdoc:prop name="version" var="version"/>
     <jsdoc:prop name="title" default="API Docs" var="title"/>
@@ -8,7 +8,7 @@
     <div class="header">
         
         <h1>
-            <span class="title">${title}</span>
+            <a href="$indexUrl"><span class="title">${title}</span></a>
             <span class="version" c:if="version">${version}</span>
         
             <div class="powered-by">

@@ -43,7 +43,6 @@ var files = raptor.require('files'),
         return config;
     },
     config = parseArgs(process.argv.slice(2));
-    
 
 var outputDir = config['output-dir'] || config['out'] || files.joinPaths(__dirname, 'api');
 var src = config['dir'] || config['source-dir'] || config['source'] || config['src'];

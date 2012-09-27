@@ -45,6 +45,7 @@ raptor.define(
                         packageManifest = raptor.require('packager').createPackageManifest(templateResource, packageManifest);
                     }
                     
+                    
                     page = optimizerEngine.registerPage({
                         pageKey: pageKey,
                         name: input.name,

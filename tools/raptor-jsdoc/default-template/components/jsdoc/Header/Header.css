@@ -16,7 +16,13 @@
     font-size: 20px;
 }
 
-.header > H1 > .title {
+.header > H1 > A {
+    text-decoration: none;
+    color: white;
+}
+
+.header > H1 > A > .title {
+    color: white;
     font-size: 20px;
     text-shadow: 1px 1px 4px #000000;
 }

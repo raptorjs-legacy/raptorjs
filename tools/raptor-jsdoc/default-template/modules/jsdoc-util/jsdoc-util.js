@@ -13,6 +13,14 @@ raptor.define(
                 var config = this.context.config;
                 return config[name] || this.context[name];
             },
+
+            shouldAppendFilename: function() {
+                var config = this.context.config;
+                if (!config) {
+                    return true;
+                }
+                return config['include-filename'] !== false && config['include-filename'] !== "false";
+            },
             
             typeName: function(type) {
                 if (!type) {
@@ -42,23 +50,6 @@ raptor.define(
                 
             },
 
-            autocompleteSymbolsUrl: function() {
-                var context = this.context;
-                
-                if (!context) {
-                    throw raptor.createError(new Error('"context" argument not set for context'));
-                }
-
-                var profile = context.profile;
-                
-                if (profile === "production") {
-                    return context.baseUrl + '/' + context.autocompleteSymbolsFilename;
-                }
-                else {
-                    href = '.' + '/' + context.autocompleteSymbolsFilename;
-                }
-            },
-            
             symbolDir: function(symbolName) {
                 var context = this.context;
                 if (!this.context) {
@@ -95,21 +86,16 @@ raptor.define(
                 }
                 var relativePath = file.getAbsolutePath().substring(sourceDir.getAbsolutePath().length);
                 var label = relativePath;
-                relativePath += '.html'
-                var sourceOutputDir = new File(context.outputDir, "source");
-                var href;
-                var profile = context.profile;
                 
-                if (profile === "production") {
-                    href = context.baseUrl + '/source' + relativePath;
-                }
-                else {
-                    href = '.' + '/source' + relativePath;
+                var sourceOutputDir = new File(context.outputDir, "source");
+                var href = '.' + '/source' + relativePath + '/';
+                if (this.shouldAppendFilename()) {
+                    href += 'index.html'
                 }
                 
                 return {
                     href: href,
-                    outputFile: new File(sourceOutputDir, relativePath),
+                    outputFile: new File(sourceOutputDir, relativePath + '/index.html'),
                     label: label
                 };
             },
@@ -200,18 +186,12 @@ raptor.define(
                     if (propName) {
                         label += "." + (suffixPropName ? suffixPropName + "." + propName : propName);    
                     }
-                    
-
-                    var profile = context.profile;
-                    
-                    
-
-                    if (profile === "production") {
-                        href = context.baseUrl + "/" + targetSymbolName + "/";
+ 
+                    href = './' + targetSymbolName + "/";
+                    if (this.shouldAppendFilename()) {
+                        href += 'index.html'
                     }
-                    else {
-                        href = './' + targetSymbolName + "/index.html";
-                    }
+
 
                     if (propName) {
                         href += "#" + (suffixPropName ? suffixPropName + "." + propName : propName);
@@ -227,6 +207,14 @@ raptor.define(
                         label: targetSymbolName
                     };
                 }                
+            },
+
+            indexUrl: function() {
+                var href = './';
+                if (this.shouldAppendFilename()) {
+                    href += 'index.html'
+                }
+                return href;
             },
 
             symbolUrl: function(targetSymbolName) {

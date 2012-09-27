@@ -32,7 +32,7 @@ raptor.defineClass(
             },
             
             buildResourceUrl: function(filename, contentType) {
-                return this.getPrefix(contentType) + filename;
+                return filename;
             },
             
             getBundleFilename: function(bundle) {
@@ -64,7 +64,6 @@ raptor.defineClass(
                 else {
                     prefix = this.prefix;
                 }
-                
                 
                 if (!prefix) {
                     var toPath,

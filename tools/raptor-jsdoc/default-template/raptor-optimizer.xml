@@ -1,6 +1,6 @@
 <optimizer-config>    
     <params>
-        <profile>development</profile>
+        <profile>production</profile>
         <publish>false</publish>
     </params>
 
@@ -24,19 +24,17 @@
     </profile>
     
     <profile name="production">
+
         <checksums-enabled>true</checksums-enabled>
         <enabled-extensions>jquery,browser,production</enabled-extensions>
         <bundling-enabled>true</bundling-enabled>
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
-        <resource-url-prefix>/api/static/</resource-url-prefix>
         <minify-js>true</minify-js>
         <resolve-css-urls>true</resolve-css-urls>
         <raptor-config>{}</raptor-config>
         <watch-config-enabled>false</watch-config-enabled>
     </profile>
     
-    
-
 <!--     <echo message=""/> -->
 <!--     <echo message="Profile: ${profile}"/> -->
 <!--     <echo message="Single page: ${singlePage}"/> -->

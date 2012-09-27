@@ -276,7 +276,7 @@ Publisher.prototype = {
         var html = templating.renderToString("pages/index", {
                 optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
-                baseHref: this.profile === 'development' ? require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath()) : null
+                baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
             context);
 
@@ -298,7 +298,7 @@ Publisher.prototype = {
                 type: type,
                 optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
-                baseHref: this.profile === 'development' ? require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath()) : null
+                baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
             context);
 
@@ -335,7 +335,7 @@ Publisher.prototype = {
                 outputDir: this.outputDir,
                 mode: modes[ext],
                 src: source.file.readAsString(),
-                baseHref: this.profile === 'development' ? require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath()) : null
+                baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
             context);
 
