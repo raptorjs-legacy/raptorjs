@@ -51,6 +51,11 @@
  * Required reading: http://javascriptweblog.wordpress.com/2011/12/05/extending-javascript-natives/
  */
 
+var call = Function.prototype.call;
+var prototypeOfArray = Array.prototype;
+var prototypeOfObject = Object.prototype;
+var slice = prototypeOfArray.slice;
+
 //
 // Function
 // ========
@@ -179,10 +184,7 @@ if (!Function.prototype.bind) {
 // dereference that costs universally.
 // _Please note: Shortcuts are defined after `Function.prototype.bind` as we
 // us it in defining shortcuts.
-var call = Function.prototype.call;
-var prototypeOfArray = Array.prototype;
-var prototypeOfObject = Object.prototype;
-var slice = prototypeOfArray.slice;
+
 // Having a toString local variable name breaks in Opera so use _toString.
 var _toString = call.bind(prototypeOfObject.toString);
 var owns = call.bind(prototypeOfObject.hasOwnProperty);

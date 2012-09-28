@@ -56,7 +56,6 @@ raptor.define(
                 var resource = this.getResource(context);
                 var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
                 var compiled = dust.compile(resource.readAsString("UTF-8"),dirs.join('.'));
-                __rhinoHelpers.console.log(compiled);
                 dust.loadSource(compiled);
             }
             
