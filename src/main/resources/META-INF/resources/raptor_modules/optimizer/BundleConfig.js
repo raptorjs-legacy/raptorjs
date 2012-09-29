@@ -1,15 +1,15 @@
 raptor.defineClass(
-    'optimizer.BundleDef',
+    'optimizer.BundleConfig',
     function(raptor) {
         "use strict";
         
-        var BundleDef = function() {
+        var BundleConfig = function() {
             this.name = null;
             this.includes = [];
-            this.bundleSetsByName = {};
+            this.enabled = true;
         };
 
-        BundleDef.prototype = {
+        BundleConfig.prototype = {
             addInclude: function(include) {
                 this.includes.push(include);
             },
@@ -17,9 +17,9 @@ raptor.defineClass(
                 raptor.forEach(this.includes, callback, thisObj);
             },
             toString: function() {
-                return "[BundleDef name=" + this.name + ", includes=[" + this.includes.join(",") + "]]";
+                return "[BundleConfig name=" + this.name + ", includes=[" + this.includes.join(",") + "]]";
             }
         };
         
-        return BundleDef;
+        return BundleConfig;
     });

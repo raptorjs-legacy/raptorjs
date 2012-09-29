@@ -1,12 +1,13 @@
 raptor.define(
-    'templating.taglibs.optimizer.EnableExtensionTag',
+    'templating.taglibs.optimizer.DisableExtensionTag',
     function(raptor) {
         "use strict";
         
+        var optimizer = raptor.require('optimizer');
+        
         return {
             process: function(input, context) {
-                var optimizer = raptor.require('optimizer');
-                optimizer.enableExtensionForContext(context, input.name);
+                optimizer.disableExtensionForContext(context, input.name);
             }
         };
     });

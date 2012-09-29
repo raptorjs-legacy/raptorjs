@@ -3,8 +3,8 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var BundleDef = raptor.require('optimizer.BundleDef'),
-            BundleSetDef = raptor.require('optimizer.BundleSetDef'),
+        var BundleConfig = raptor.require('optimizer.BundleConfig'),
+            BundleSetConfig = raptor.require('optimizer.BundleSetConfig'),
             PageConfig = raptor.require('optimizer.PageConfig'),
             strings = raptor.require('strings'),
             files = raptor.require('files'),
@@ -46,7 +46,8 @@ raptor.defineClass(
         ConfigXmlParser.prototype = {
             
             parse: function(xml, configFilePath, config) {
-                var configDir = new File(configFilePath).getParent();
+                var configDir = new File(configFilePath).getParent(),
+                    outputDir = null;
                 
                 var resolvePath = function(path) {
                     if (!path) {
@@ -73,42 +74,54 @@ raptor.defineClass(
                     bundlesHandler = {
                         _type: "object",
                         _begin: function() {
-                            var bundleSetDef = new BundleSetDef();
-                            return bundleSetDef;
+                            var bundleSetConfig = new BundleSetConfig(config);
+                            return bundleSetConfig;
                         },
-                        _end: function(bundleSetDef, parent) {
-                            parent.addBundleSetDef(bundleSetDef);
+                        _end: function(bundleSetConfig, parent) {
+                            parent.addBundleSetConfig(bundleSetConfig);
                         },
-                        "@name": {},
+                        "@name": {
+                            _type: "string",
+                            _targetProp: "name"
+                        },
                         "@ref": {
-                            _targetProp: "bundlesRef"
+                            _type: "string",
+                            _targetProp: "ref"
                         },
                         "<bundles>": {
-                            _begin: function(bundleSetDef) {
+                            _begin: function(bundleSetConfig) {
                                 return {};
                                 
                             },
-                            _end: function(child, bundleSetDef) {
+                            _end: function(child, bundleSetConfig) {
                                 if (!child.ref) {
                                     throw raptor.createError(new Error('The "ref" attribute is required for nested <bundles> element'));
                                 }
-                                bundleSetDef.addChild(child);
+                                bundleSetConfig.addChild(child);
                             },
                             "@ref": {
                                 _required: true,
                                 _targetProp: "bundlesRef"
+                            },
+                            
+                            "@enabled": {
+                                _type: "boolean"
                             }
                         },
                         "<bundle>": {
                             _type: "object",
-                            _begin: function(bundleSetDef) {
-                                var bundle = new BundleDef();
-                                bundleSetDef.addChild(bundle);
+                            _begin: function(bundleSetConfig) {
+                                var bundle = new BundleConfig();
+                                bundleSetConfig.addChild(bundle);
                                 return bundle;
                             },
                             
                             "@name": {
                                 _type: "string"
+                            },
+                            
+                            "@enabled": {
+                                _type: "boolean"
                             },
                             
                             "<*>": includeHandler
@@ -140,111 +153,6 @@ raptor.defineClass(
                                 _type: "string",
                                 _set: function(params, name, value) {
                                     config.addParam(name, value);
-                                }
-                            }
-                        },
-                        
-                        "resource-search-path": {
-                            "<dir>": {
-                                _type: "object",
-                                _begin: function() {
-                                    return {};
-                                },
-                                _end: function(entry) {
-                                    var dirPath = entry.path;
-                                    if (!dirPath) {
-                                        throw raptor.createError(new Error('"path" is required for directory resource search path entry'));
-                                    }
-                                    dirPath = resolvePath(dirPath);
-                                    if (!raptor.require('resources').getSearchPath().hasDir(dirPath)) {
-                                        raptor.require('resources').getSearchPath().addDir(dirPath);    
-                                    }
-                                },
-                                "@path": {
-                                    _type: "string"
-                                }
-                            }
-                        },
-
-                        "page-search-path": {
-                            "@reset": {
-                                _type: "boolean",
-                                _set: function(parent, name, value) {
-                                    config.clearPageSearchPath();
-                                }
-                            },
-                            "<dir>": {
-                                _type: "object",
-                                _begin: function() {
-                                    return {};
-                                },
-                                _end: function(entry) {
-                                    var dirPath = entry.path;
-                                    if (!dirPath) {
-                                        throw raptor.createError(new Error('"path" is required for directory page search path entry'));
-                                    }
-                                    dirPath = resolvePath(dirPath);
-                                    config.addPageSearchDir(dirPath, entry.basePath, entry.recursive !== false);
-                                },
-                                "@path": {
-                                    _type: "string"
-                                },
-                                "@base-path": {
-                                    _type: "string",
-                                    _set: function(parent, name, value) {
-                                        
-                                        parent.basePath = resolvePath(value);
-                                    }
-                                },
-                                "@recursive": {
-                                    _type: "boolean"
-                                }
-                            }
-                        },
-                        "watch-files-enabled": {
-                            _type: "boolean"
-                        },
-                        "watch-pages-enabled": {
-                            _type: "boolean"
-                        },
-                        "watch-includes-enabled": {
-                            _type: "boolean"
-                        }, 
-                        
-                        "watch-config-enabled": {
-                            _type: "boolean"
-                        }, 
-                        
-                        "watch-packages-enabled": {
-                            _type: "boolean"
-                        }, 
-                        
-                        "watch": {
-                            _type: "object",
-                            _begin: function() {
-                                return [];
-                            },
-                            _end: function(watchConfigs) {
-                                config.addWatchConfigs(watchConfigs);
-                            },
-                            "<dir>": {
-                                _type: "object",
-                                _begin: function() {
-                                    return {
-                                        type: "dir"
-                                    };
-                                },
-                                _end: function(watchConfig, watchConfigs) {
-                                    watchConfigs.push(watchConfig);
-                                },
-                                "path": {
-                                    _type: "string"
-                                },
-                                "recursive": {
-                                    _type: "boolean"
-                                },
-                                "filenamePatterns": {
-                                    _type: "string"
                                 }
                             }
                         },
@@ -287,30 +195,6 @@ raptor.defineClass(
                             }
                         },
                         
-                        "clean-output-dirs": {
-                            _type: "boolean",
-                            _targetProp: "cleanOutputDirs"
-                        },
-                        "<clean-dirs>": {
-                            "<dir>": {
-                                _type: "object",
-                                _begin: function() {
-                                    return {};
-                                },
-                                _end: function(entry) {
-                                    var dirPath = entry.path;
-                                    if (!dirPath) {
-                                        throw raptor.createError(new Error('"path" is required for directory page search path entry'));
-                                    }
-                                    dirPath = resolvePath(dirPath);
-                                    config.addCleanDir(dirPath);
-                                },
-                                "@path": {
-                                    _type: "string"
-                                }
-                            }
-                        },
-                        
                         "<filter>": {
                             _type: "object",
                             _begin: function() {
@@ -340,95 +224,18 @@ raptor.defineClass(
                         },
                         "output-dir": {
                             _type: "string",
-                            _targetProp: "outputDir"
-                        },
-                        "bundles-output-dir": {
-                            _type: "string",
-                            _targetProp: "bundlesOutputDir"
-                        },
-                        "js-output-dir": {
-                            _type: "string",
-                            _targetProp: "scriptsOutputDir"
-                        },
-                        "css-output-dir": {
-                            _type: "string",
-                            _targetProp: "cssOutputDir"
-                        },
-                        
-                        "<write-rendered-pages>": {
-                            _type: "object",
-                            _begin: function() {
-                                return {};
-                            },
-                            _end: function(writeRenderedPages) {
-                                if (writeRenderedPages.enabled !== false) {
-                                    config.setWriteRenderedPagesEnabled(true);
-                                    config.setRenderedPagesOutputDir(resolvePath(writeRenderedPages.outputDir));
-                                }
-                            },
-                            
-                            "enabled": {
-                                _type: "boolean"
-                            },
-                            "output-dir": {
-                                _type: "string"
+                            _targetProp: "outputDir",
+                            _set: function(config, name, value) {
+                                
+                                outputDir = value;
+                                
+                                config.outputDir = resolvePath(value);
                             }
                         },
                         
-                        "<write-page-slots-html>": {
-                            _type: "object",
-                            _begin: function() {
-                                return {};
-                            },
-                            _end: function(writePageSlotsHtml) {
-                                if (writePageSlotsHtml.enabled !== false) {
-                                    config.setWritePageSlotsHtmlEnabled(true);
-                                    config.setPageSlotsHtmlOutputDir(resolvePath(writePageSlotsHtml.outputDir));
-                                }
-                            },
-                            
-                            "enabled": {
-                                _type: "boolean"
-                            },
-                            "output-dir": {
-                                _type: "string"
-                            }
-                        },
-                        
-                        "inject-html-includes": {
-                            _type: "object",
-                            _begin: function() {
-                                return config;
-                            },
-                            "enabled": {
-                                _type: "boolean",
-                                _targetProp: "injectHtmlIncludesEnabled"    
-                            },
-                            "keep-html-markers": {
-                                _type: "boolean",
-                                _targetProp: "keepHtmlMarkers"
-                            },
-
-                            "modify-pages": {
-                                _type: "boolean",
-                                _targetProp: "modifyPages"
-                            },
-                            
-                            "page-output-dir": {
-                                _type: "string",
-                                _targetProp: "renderedPagesOutputDir"
-                            }
-                        },
-                        
-                        "resource-url-prefix": {
+                        "url-prefix": {
                             _type: "string",
-                            _targetProp: "resourceUrlPrefix"
-                        },
-                        "js-url-prefix": {
-                            _type: "string"
-                        },
-                        "css-url-prefix": {
-                            _type: "string"
+                            _targetProp: "urlPrefix"
                         },
                         "enabled-extensions": {
                             _type: "string",
@@ -439,10 +246,7 @@ raptor.defineClass(
                                 });
                             }
                         },
-                        
-                        "<output-dir>": {
-                            _type: "string"
-                        },
+ 
                         "<bundles>": bundlesHandler, //End "bundles"
                         
                         "raptor-config": {
@@ -455,42 +259,25 @@ raptor.defineClass(
                             "<page>": {
                                 _type: "object",
                                 _begin: function() {
-                                    var pageConfig = new PageConfig();
-                                    return pageConfig;
+                                    return new PageConfig();
                                 },
                                 
                                 _end: function(pageConfig) {
-                                    
-                                    if (pageConfig.htmlPath) {
-                                        pageConfig.htmlPath = resolvePath(pageConfig.htmlPath);    
+                                    if (!pageConfig.name) {
+                                        throw raptor.createError(new Error('The "name" attribute is required for page definitions'));
                                     }
-                                    
-                                    if (pageConfig.packagePath) {
-                                        pageConfig.packageFile = new File(resolvePath(pageConfig.packagePath));    
+                                    if (this.bundleSetConfig) {
+                                        if (!this.bundleSetConfig.name && !this.bundleSetConfig.ref) {
+                                            this.bundleSetConfig.name = pageConfig.name;
+                                        }
                                     }
-                                    
-                                    config.registerPage(pageConfig);
-                                    
+                                    config.registerPageConfig(pageConfig);
                                 },
-                                
-                                "html-path": {
-                                    _type: "string",
-                                    _targetProp: "htmlPath"
-                                },
-                                
+
                                 "@name": {
                                 },
                                 
-                                "<bundles>": bundlesHandler,
-                                
-                                "<includes>": {
-                                    _type: "object",
-                                    _begin: function(page) {
-                                        return page; //Use the page as the parent for the includes
-                                    },
-                                    
-                                    "<*>": includeHandler
-                                }
+                                "<bundles>": bundlesHandler
                             } //End <page>
                         } //End "<pages>"
                        
@@ -569,18 +356,26 @@ raptor.defineClass(
                     xml,
                     configFilePath);
                 
+                if (!config.outputDir) {
+                    outputDir = "static";
+                    config.outputDir = resolvePath(outputDir);
+                }
                 
+                if (!config.urlPrefix) {
+                    var urlPrefix = outputDir;
+                    
+                    
+                    if (!strings.startsWith(urlPrefix,'/')) {
+                        urlPrefix = "/" + urlPrefix;
+                    }
+                    
+                    if (!strings.endsWith(urlPrefix,'/')) {
+                        urlPrefix += "/";
+                    }
+                    
+                    config.urlPrefix = urlPrefix;
+                }
                 
-                
-                ["bundlesOutputDir",
-                 "scriptsOutputDir",
-                 "cssOutputDir",
-                 "bundlesOutputDir",
-                 "renderedPagesOutputDir"].forEach(function(dir) {
-                     if (config[dir]) {
-                         config[dir] = resolvePath(config[dir]);
-                     }
-                 });  
                 
             }
         };

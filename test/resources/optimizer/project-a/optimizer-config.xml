@@ -2,20 +2,6 @@
     
     
     <raptor-config>{raptor: true}</raptor-config>
-    
-    <resource-search-path>
-        <dir path="modules"/>
-    </resource-search-path>
-    
-    <pages>
-        <page name="page1">
-            <includes>
-                <module name="module-a" recursive="true"/>
-                <module name="module-b" recursive="true"/>
-            </includes>
-        </page>
-    </pages>
-   
-    <bundles-output-dir>dist</bundles-output-dir>
+    <output-dir>dist</output-dir>
     
 </optimizer-config>

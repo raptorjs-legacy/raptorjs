@@ -1,11 +1,9 @@
 raptor.defineClass(
-    "optimizer.BundleSet",
+    "optimizer.BundleMappings",
     function(raptor) {
         "use strict";
         
         var packager = raptor.require('packager'), 
-            forEach = raptor.forEach,
-            forEachEntry = raptor.forEachEntry,
             indent = function(level) {
                 var str = "";
                 for (var i=0; i<level; i++) {
@@ -18,49 +16,25 @@ raptor.defineClass(
                     str = " " + str;
                 }
                 return str;
-            },
-            getIncludeKey = function(include) {
-                include = packager.createInclude(include);
-                var slot = include.getSlot();
-                if (!slot) {
-                    slot = "body";
-                }
-                return slot + "/" + include.getKey();
             };
         
-        var BundleSet = function(bundles, options) {
-            
-            
-            if (bundles instanceof BundleSet) {
-                this.parentBundleSet = bundles;
-                options = {
-                    enabledExtensions: bundles.enabledExtensions
-                };
-                
-                bundles = null;
-            }
-            
-            if (!options) {
-                options = {};
-            }
-            
-            
-            this.enabledExtensions = options.enabledExtensions;
+        var BundleMappings = function(enabledExtensions) {
+            this.enabledExtensions = enabledExtensions;
             this.includeToBundleMapping = {};
             this.bundlesByKey = {};
-            
-            forEach(bundles, function(bundle) {
-                this.addBundle(bundle);
-            }, this);
         };
         
-        BundleSet.prototype = {
+        BundleMappings.prototype = {
 
+            setParentBundleMappings: function(parentBundleMappings) {
+                this.parentBundleMappings = parentBundleMappings;
+            },
+            
             getBundleForInclude: function(include) {
                 var key = include.getKey();
                 var bundle =  this.includeToBundleMapping[key];
-                if (!bundle && this.parentBundleSet) {
-                    bundle = this.parentBundleSet.getBundleForInclude(include);
+                if (!bundle && this.parentBundleMappings) {
+                    bundle = this.parentBundleMappings.getBundleForInclude(include);
                 }
                 return bundle;
             },
@@ -69,14 +43,11 @@ raptor.defineClass(
                 return this.enabledExtensions;
             },
             
-            addBundle: function(bundle) {
+            addIncludesToBundle: function(includes, targetBundleName) {
                 var optimizer = raptor.require('optimizer');
-                
-                var includes = bundle.getIncludes();
                 
                 optimizer.forEachInclude({
                     includes: includes,
-                    recursive: false,
                     enabledExtensions: this.enabledExtensions,
                     handlePackage: function(manifest, context) {
 
@@ -85,11 +56,11 @@ raptor.defineClass(
                         }
                         
                         if (context.recursive === true || context.depth === 0) {
-                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Adding includes for package "' + manifest.getPath() + '"');
+                            this.logger().info(leftPad(targetBundleName) + ": " + indent(context.depth) + 'Adding includes for package "' + manifest.getPath() + '"');
                             return true; //Recurse into the package
                         }
                         else {
-                            this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + "***Skipping nested package " + manifest.getPath() + ' for package "' + context.parentPackage.getPath() + '"');
+                            this.logger().info(leftPad(targetBundleName) + ": " + indent(context.depth) + "***Skipping nested package " + manifest.getPath() + ' for package "' + context.parentPackage.getPath() + '"');
                             return false;
                         }
                     },
@@ -102,8 +73,8 @@ raptor.defineClass(
                             return;
                         }
                         
-                        this.addIncludeToBundle(include, bundle.name);
-                        this.logger().info(leftPad(bundle.name, 30) + ": " + indent(context.depth) + 'Added "' + include.toString() + '"');
+                        this.addIncludeToBundle(include, targetBundleName);
+                        this.logger().info(leftPad(targetBundleName, 30) + ": " + indent(context.depth) + 'Added "' + include.toString() + '"');
                         
                     },
                     thisObj: this
@@ -112,6 +83,7 @@ raptor.defineClass(
             
             addIncludeToBundle: function(include, targetBundleName) {
                 include = packager.createInclude(include);
+                var Bundle = raptor.require('optimizer.Bundle');
                 
                 if (include.isPackageInclude()) {
                     throw raptor.createError(new Error("Illegal argument. Include cannot be a package include. Include: " + include.toString()));
@@ -125,7 +97,7 @@ raptor.defineClass(
                 var bundleKey = includeSlot + "/" + include.getContentType() + "/" + targetBundleName;
                 var targetBundle = this.bundlesByKey[bundleKey];
                 if (!targetBundle) {
-                    targetBundle = raptor.require('optimizer').createBundle(targetBundleName);
+                    targetBundle = new Bundle(targetBundleName);
                     targetBundle.setSlot(includeSlot);
                     targetBundle.setContentType(include.getContentType());
                     this.bundlesByKey[bundleKey] = targetBundle;
@@ -141,5 +113,5 @@ raptor.defineClass(
             }
         };
         
-        return BundleSet;
+        return BundleMappings;
     });

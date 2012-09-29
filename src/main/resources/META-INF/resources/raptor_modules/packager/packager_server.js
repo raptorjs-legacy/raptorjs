@@ -129,7 +129,11 @@ $rload(function(raptor) {
             delete packageManifests[manifest.getSystemPath()];
         },
         
-        createPackageManifest: function(packageResource, loadedManifest) {
+        isPackageManifest: function(o) {
+            return o instanceof this.PackageManifest;
+        },
+        
+        createPackageManifest: function(loadedManifest, packageResource) {
             var PackageManifest = this.PackageManifest;
             var manifest = new PackageManifest();
             if (packageResource) {
@@ -180,7 +184,7 @@ $rload(function(raptor) {
                     throw raptor.createError(new Error('Unable to parse module manifest at path "' + packageResource.getSystemPath() + '". Exception: ' + e + '\n\nJSON:\n' + packageJson), e);
                 }
                 
-                manifest = this.createPackageManifest(packageResource, loadedManifest);
+                manifest = this.createPackageManifest(loadedManifest, packageResource);
                 packageManifests[packageResource.getSystemPath()] = manifest;
             }
             return manifest;

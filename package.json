@@ -38,7 +38,6 @@
     "jshint": ">= 0.7.0"
   },
   "bin": {
-    "raptor-optimizer": "bin/raptor-optimizer",
     "raptor-jsdoc": "bin/raptor-jsdoc"
   },
   "main": "lib/raptor/raptor-node-main"

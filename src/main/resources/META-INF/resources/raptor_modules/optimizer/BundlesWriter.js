@@ -1,14 +1,14 @@
 raptor.defineClass(
-    "optimizer.PageDependenciesWriter",
+    "optimizer.BundlesWriter",
     function(raptor) {
         "use strict";
         
         var crypto = require('crypto'),
-            forEach = raptor.forEach;
+            forEach = raptor.forEach,
+            OptimizedPage = raptor.require('optimizer.OptimizedPage');
         
-        var PageDependenciesWriter = function(config) {
-            this.checksumLength = 8;
-            this.urlBuilder = null;
+        var BundlesWriter = function(config, urlBuilder) {
+            this.urlBuilder = urlBuilder;
             this.context = (this.config && this.config.context) || {};
             this.config = config;
             
@@ -16,10 +16,9 @@ raptor.defineClass(
                 this.filters = [];
             }
             this.context.writer = this;
-            this.context.urlBuilder = this;
         };
         
-        PageDependenciesWriter.prototype = {
+        BundlesWriter.prototype = {
             getConfig: function() {
                 return this.config;
             },
@@ -28,19 +27,14 @@ raptor.defineClass(
                 this.filters.push(filter);
             },
             
-            writePageDependencies: function(pageDependencies) {
+            writePageBundles: function(pageBundles, basePath) {
                 var loaderMetadata = {};
                 
                 if (!this.context) {
                     this.context = {};
                 }
                 
-                this.context.loaderMetadata = null;
-                this.enabledExtensions = pageDependencies.enabledExtensions;
-                
                 var _this = this,
-                    bundleChecksums = {},
-                    writtenFiles = {},
                     context = this.context,
                     writeBundle = function(bundle) {
                         if (bundle.inPlaceDeployment === true) {
@@ -72,7 +66,6 @@ raptor.defineClass(
                         
                         _this.writeBundle(bundle);
                         bundle.setWrittenToDisk(true);
-                        return bundle.getChecksum();
                     },
                     htmlBySlot = {},
                     addHtml = function(slot, html) {
@@ -84,10 +77,9 @@ raptor.defineClass(
                     };
                 
                 
-                if (pageDependencies.hasAsyncRequires()) {
-                    context.loaderMetadata = loaderMetadata = {};
+                if (pageBundles.hasAsyncRequires()) {
                     
-                    pageDependencies.forEachAsyncRequire(function(asyncRequire) {
+                    pageBundles.forEachAsyncRequire(function(asyncRequire) {
                         var entry = loaderMetadata[asyncRequire.getName()] = {
                             requires: [],
                             css: [],
@@ -100,12 +92,12 @@ raptor.defineClass(
                         }, this);
                         
                         forEach(asyncRequire.getBundles(), function(bundle) {
-                            var checksum = writeBundle(bundle);
+                            writeBundle(bundle);
                             if (bundle.isJavaScript()) {
-                                entry.js.push(this.getBundleUrl(bundle, checksum));
+                                entry.js.push(this.getBundleUrl(bundle, basePath));
                             }
                             else if (bundle.isStyleSheet()) {
-                                entry.css.push(this.getBundleUrl(bundle, checksum));
+                                entry.css.push(this.getBundleUrl(bundle, basePath));
                             }
                             else {
                                 throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));
@@ -128,13 +120,13 @@ raptor.defineClass(
                 }
                 
                 
-                pageDependencies.forEachPageBundle(function(bundle) {
-                    var checksum = writeBundle(bundle);
+                pageBundles.forEachBundle(function(bundle) {
                     if (bundle.isInline()) {
                         throw raptor.createError(new Error("Inline bundles not yet supported"));
                     }
                     else {
-                        addHtml(bundle.getSlot(), this.getBundleIncludeHtml(bundle, checksum));
+                        writeBundle(bundle);
+                        addHtml(bundle.getSlot(), this.getBundleIncludeHtml(bundle, basePath));
                     }
                 }, this);
                 
@@ -142,10 +134,11 @@ raptor.defineClass(
                     htmlBySlot[slot] = html.join('\n');
                 }, this);
                 
-                return htmlBySlot;
+                return new OptimizedPage(htmlBySlot, loaderMetadata);
             },
-            getBundleIncludeHtml: function(bundle, checksum) {
-                var url = this.getBundleUrl(bundle, checksum);
+            
+            getBundleIncludeHtml: function(bundle, basePath) {
+                var url = this.getBundleUrl(bundle, basePath);
                 if (bundle.isJavaScript()) {
                     return '<script type="text/javascript" src="' + url + '"></script>';
                 }
@@ -157,12 +150,12 @@ raptor.defineClass(
                 }
             },
             
-            getBundleUrl: function(bundle, checksum) {
+            getBundleUrl: function(bundle, basePath) {
                 var urlBuilder = this.getUrlBuilder();
                 if (!urlBuilder) {
                     throw raptor.createError(new Error("URL builder not set."));
                 }
-                return urlBuilder.buildBundleUrl(bundle, checksum);
+                return urlBuilder.buildBundleUrl(bundle, basePath);
             },
             
             getResourceUrl: function(filename, contentType) {
@@ -266,5 +259,5 @@ raptor.defineClass(
         };
 
         
-        return PageDependenciesWriter;
+        return BundlesWriter;
     });

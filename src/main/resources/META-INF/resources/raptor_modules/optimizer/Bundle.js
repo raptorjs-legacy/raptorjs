@@ -5,7 +5,6 @@ raptor.defineClass(
         
         var packager = raptor.packager,
             forEach = raptor.forEach,
-            forEachEntry = raptor.forEachEntry,
             crypto = require('crypto');
         
         var Bundle = function(name) {
@@ -82,7 +81,6 @@ raptor.defineClass(
             },
             
             calculateChecksum: function(code) {
-                
                 var shasum = crypto.createHash('sha1');
                 shasum.update(code || this.readCode());
                 return shasum.digest('hex');

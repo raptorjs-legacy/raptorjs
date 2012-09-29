@@ -46,7 +46,10 @@ raptor.define(
                         return manifest;
                     }
                 }, this);
-
+                
+                while(node.firstChild) {
+                    node.firstChild.detach();
+                }
                 return manifest;
             }
         };

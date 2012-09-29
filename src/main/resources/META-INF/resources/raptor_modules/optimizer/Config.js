@@ -3,53 +3,27 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var strings = raptor.require('strings');
+        var strings = raptor.require('strings'),
+            BundleMappings = raptor.require('optimizer.BundleMappings');
         
         var Config = function(params) {
             this.configResource = null;
-            this.outputDir = "dist";
+            this.outputDir = null;
             this.bundlingEnabled = true;
-            this.bundlesOutputDir = null;
-            this.scriptsOutputDir = null;
-            this.cssOutputDir = null;
             this.checksumsEnabled = true;
-            this.pageSlotsHtmlOutputDir = null;
-            this.renderedPagesOutputDir = null;
-            this.scriptsUrlPrefix = null;
-            this.cssUrlPrefix = null;
             this.enabledProfiles = {};
-            this.resourceUrlPrefix = null;
-            this.modifyPages = false;
+            this.urlPrefix = null;
             this.enabledExtensions = raptor.require('packager').createExtensionCollection();
             this.params = {};
             this.pages = [];
-            this.bundleSetDefsByName = {};
-            this.loadedBundleSets = {};
-            this.pageSearchPath = [];
-            this.keepHtmlMarkers = true;
-            this.cleanOutputDirs = false;
-            this.cleanDirs = [];
-            this.watchFilesEnabled = false;
-            this.watchPagesEnabled = false;
-            this.watchIncludesEnabled = false;
-            this.watchConfigEnabled = false;
-            this.watchPackagesEnabled = false;
-            this.watchTemplatesEnabled = false;
-            this.watchConfigs = [];
+            this.bundleSetConfigsByName = {};
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
-            this.injectHtmlIncludesEnabled = false;
-            this.writePageSlotsHtmlEnabled = false;
-            this.writeRenderedPagesEnabled = true;
-            this.pagesByName = {};
+            this.pageConfigsByName = {};
             this.checksumLength = 8;
             this.filters = [];
-            
-            this.pageClassNamesByExt = {
-                "html": "optimizer.PageStatic",
-                "xhtml": "optimizer.PageStatic",
-                "rhtml": "optimizer.PageRhtml"
-            };
+            this.bundlingEnabled = true;
+            this.raptorConfigJSON = '{}';
             
             if (params) {
                 raptor.extend(this.params, params);
@@ -57,29 +31,9 @@ raptor.defineClass(
         };
         
         Config.prototype = {
-            forEachCleanDir: function(callback, thisObj) {
-                this.cleanDirs.forEach(callback, thisObj);
-            },
-            
-            getPage: function(name) {
-                return this.pagesByName[name];
-            },
-            
-            findPages: function() {
-                var PageFileFinder = raptor.require('optimizer.PageFileFinder');
-                var pageFileFinder = new PageFileFinder();
-                
-                if (this.hasPageSearchPath()) {
-                    this.forEachPageSearchPathEntry(function(searchPathEntry) {
-                        if (searchPathEntry.type === 'dir') {
-                            if (!searchPathEntry.path) {
-                                throw raptor.createError(new Error("Path missing: " + JSON.stringify(searchPathEntry)));
-                            }
 
-                            pageFileFinder.findPages(searchPathEntry.path, searchPathEntry.basePath, searchPathEntry.recursive !== false, this);
-                        }
-                    }, this);
-                }
+            getPageConfig: function(name) {
+                return this.pageConfigsByName[name];
             },
             
             addFilter: function(filter) {
@@ -121,58 +75,22 @@ raptor.defineClass(
             
             getUrlForSourceFile: function(path) {
                 
-                var url;
-                
-                this.serverSourceMappings.forEach(function(mapping) {
+                for (var i=0, len=this.serverSourceMappings.length; i<len; i++) {
                     if (strings.startsWith(path, mapping.baseDir)) {
                         var relativePath = path.substring(mapping.baseDir.length);
-                        url = mapping.baseUrl + relativePath;
-                        return false;
+                        return mapping.baseUrl + relativePath;
                     }
-                    return true; //Keep going
-                });
-                
-                return url;
-            },
-            
-            isWatchPagesEnabled: function() {
-                return this.watchPagesEnabled || this.watchFilesEnabled;
-            },
-            
-            isWatchIncludesEnabled: function() {
-                return this.watchIncludesEnabled || this.watchFilesEnabled;
-            },
-            
-            isWatchConfigEnabled: function() {
-                return this.watchConfigEnabled || this.watchFilesEnabled;
-            },
-            
-            isWatchPackagesEnabled: function() {
-                return this.watchPackagesEnabled || this.watchFilesEnabled;
-            },
-            
-            isWatchTemplatesEnabled: function() {
-                return this.watchTemplatesEnabled || this.watchFilesEnabled;
-            },
-            
-            addWatchConfigs: function(watchConfigs) {
-                if (!watchConfigs || !watchConfigs.length) {
-                    return;
                 }
                 
-                this.watchConfigs = this.watchConfigs.concat(watchConfigs);
-            },
-            
-            getWatchConfigs: function() {
-                return this.watchConfigs;
-            },
-            
-            addCleanDir: function(path) {
-                this.cleanDirs.push(path);
+                return null;
             },
             
             getParam: function(name) {
                 return this.params[name];
+            },
+            
+            getParams: function() {
+                return this.params;
             },
             
             addParam: function(name, value) {
@@ -182,72 +100,36 @@ raptor.defineClass(
                 this.params[name] = value;
             },
             
-            addPageSearchDir: function(path, basePath, recursive) {
-                this.pageSearchPath.push({type: "dir", path: path, basePath: basePath, recursive: recursive !== false});
-            },
-            
-            clearPageSearchPath: function() {
-                this.pageSearchPath = [];
-            },
-            
-            hasPageSearchPath: function() {
-                return this.pageSearchPath.length > 0;
-            },
-            
-            forEachPageSearchPathEntry: function(callback, thisObj) {
-                raptor.forEach(this.pageSearchPath, callback, thisObj);
-            },
-            
-            getScriptsUrlPrefix: function() {
-                return this.scriptsUrlPrefix || this.resourceUrlPrefix;
-            },
-            
             getUrlPrefix: function() {
-                return this.cssUrlPrefix || this.resourceUrlPrefix;
+                return this.urlPrefix;
             },
 
-            getResourcesOutputDir: function() {
-                return this.bundlesOutputDir || this.outputDir;
-            },
-
-            getScriptsOutputDir: function() {
-                return this.scriptsOutputDir || this.bundlesOutputDir || this.outputDir;
+            getOutputDir: function() {
+                return this.outputDir;
             },
             
-            getCssOutputDir: function() {
-                return this.cssOutputDir || this.bundlesOutputDir || this.outputDir;
-            },
-            
-            getHtmlOutputDir: function() {
-                return this.pageSlotsHtmlOutputDir || this.outputDir;
-            },
-            
-            setPageSlotsHtmlOutputDir: function(pageSlotsHtmlOutputDir) {
-                this.pageSlotsHtmlOutputDir = pageSlotsHtmlOutputDir;
-            },
-            
-            addBundleSetDef: function(bundleSetDef) {
-                var BundleSetDef = raptor.require('optimizer.BundleSetDef');
+            addBundleSetConfig: function(bundleSetConfig) {
+                var BundleSetConfig = raptor.require('optimizer.BundleSetConfig');
                 
-                if (!(bundleSetDef instanceof BundleSetDef)) {
-                    bundleSetDef = new BundleSetDef(bundleSetDef);
+                if (!(bundleSetConfig instanceof BundleSetConfig)) {
+                    bundleSetConfig = new BundleSetConfig(bundleSetConfig);
                 }
                 
-                if (!bundleSetDef.name) {
-                    bundleSetDef.name = "default";
+                if (!bundleSetConfig.name) {
+                    bundleSetConfig.name = "default";
                 }
                 
-                if (this.bundleSetDefsByName[bundleSetDef.name]) {
-                    throw raptor.createError(new Error('Bundles with name "' + bundleSetDef.name + '" defined multiple times'));
+                if (this.bundleSetConfigsByName[bundleSetConfig.name]) {
+                    throw raptor.createError(new Error('Bundles with name "' + bundleSetConfig.name + '" defined multiple times'));
                 }
                 
-                this.bundleSetDefsByName[bundleSetDef.name] = bundleSetDef;
+                this.bundleSetConfigsByName[bundleSetConfig.name] = bundleSetConfig;
                 
-                return bundleSetDef;
+                return bundleSetConfig;
             },
             
-            getBundleSetDef: function(name) {
-                return this.bundleSetDefsByName[name];
+            getBundleSetConfig: function(name) {
+                return this.bundleSetConfigsByName[name];
             },
 
             enableExtension: function(name) {
@@ -257,55 +139,6 @@ raptor.defineClass(
             
             getEnabledExtensions: function() {
                 return this.enabledExtensions;
-            },
-            
-            isInjectHtmlIncludesEnabled: function() {
-                return this.injectHtmlIncludesEnabled === true;
-            },
-            
-            isWritePageSlotsHtmlEnabled: function(writePageSlotsHtmlEnabled) {
-                return this.writePageSlotsHtmlEnabled === true;
-            },
-            
-            setWritePageSlotsHtmlEnabled: function(writePageSlotsHtmlEnabled) {
-                this.writePageSlotsHtmlEnabled = writePageSlotsHtmlEnabled;
-            },
-            
-            
-            isWriteRenderedPagesEnabled: function(writeRenderedPagesEnabled) {
-                return this.writeRenderedPagesEnabled === true;
-            },
-            
-            setWriteRenderedPagesEnabled: function(writeRenderedPagesEnabled) {
-                this.writeRenderedPagesEnabled = writeRenderedPagesEnabled;
-            },
-            
-            isModifyPagesEnabled: function() {
-                return this.modifyPages === true;
-            },
-            
-            isKeepHtmlMarkersEnabled: function() {
-                return this.keepHtmlMarkers === true;
-            },
-            
-            getRenderedPagesOutputDir: function() {
-                return this.renderedPagesOutputDir;
-            },
-            
-            setRenderedPagesOutputDir: function(renderedPagesOutputDir) {
-                this.renderedPagesOutputDir = renderedPagesOutputDir;
-            },
-            
-            getPageViewFileExtensions: function() {
-                return Object.keys(this.pageClassNamesByExt);
-            },
-            
-            isPageViewFileExtension: function(ext) {
-                return this.pageClassNamesByExt.hasOwnProperty(ext);
-            },
-            
-            hasPages: function() {
-                return this.pages.length !== 0;
             },
             
             isMinifyJsEnabled: function() {
@@ -338,43 +171,11 @@ raptor.defineClass(
                 return this.enabledProfiles[profileName] === true;
             },
             
-            registerPage: function(pageConfig) {
-                var pageClassName,
-                    viewFile = pageConfig.viewFile;
-                
-                if (viewFile) {
-                    pageClassName = this.pageClassNamesByExt[viewFile.getExtension()];
-                    
-                    if (!pageClassName) {
-                        pageClassName = "optimizer.PageStatic";
-                    }
+            registerPageConfig: function(pageConfig) {
+                if (!pageConfig.name) {
+                    throw raptor.createError(new Error('name is required for page'));
                 }
-                else {
-                    pageClassName = "optimizer.Page";
-                }
-                
-                if (pageConfig.packageFile) {
-                    pageConfig.packageResource = raptor.require("resources").createFileResource(pageConfig.packageFile);
-                }
-                
-                if (pageConfig.includes) {
-                    pageConfig.packageManifest = raptor.require('packager').createPackageManifest(pageConfig.packageResource || this.getConfigResource());
-                    pageConfig.packageManifest.setIncludes(pageConfig.includes);
-                }
-                else if (pageConfig.packageResource) {
-                    pageConfig.packageManifest = raptor.require('packager').getPackageManifest(pageConfig.packageResource);
-                }
-                
-                if (!pageConfig.packageManifest) {
-                    throw raptor.createError(new Error("A packageManifest property is required for a page config. Alternatively, a packageResource or packageFile property can be provided."));
-                }
-                
-                var PageClass = raptor.require(pageClassName);
-                var page = new PageClass(pageConfig);
-                this.pages.push(page);
-                this.pagesByName[page.getKey()] = page;
-                
-                return page;
+                this.pageConfigsByName[pageConfig.name] = pageConfig;
             },
             
             setConfigResource: function(configResource) {
@@ -389,64 +190,48 @@ raptor.defineClass(
                 return this.checksumLength;
             },
             
-            forEachPage: function(callback, thisObj) {
-                raptor.forEach(this.pages, callback, thisObj);
+            getRaptorConfigJSON: function() {
+                return this.raptorConfigJSON;
             },
             
-            createBundleSet: function(bundleSetDef, enabledExtensions) {
-                var BundleSetDef = raptor.require('optimizer.BundleSetDef'),
-                    BundleDef = raptor.require('optimizer.BundleDef');
+            createBundleMappings: function(bundleSetConfig, enabledExtensions) {
+                var BundleSetConfig = raptor.require('optimizer.BundleSetConfig'),
+                    BundleConfig = raptor.require('optimizer.BundleConfig'),
+                    bundleMappings = new BundleMappings(enabledExtensions);
+                
                 var config = this,
-                    bundles = [],
-                    foundBundleToIndex = {},
                     addBundles = function(o) {
-                        if (o.bundlesRef) {
-                            var referencedBundleSetDef = config.getBundleSetDef(o.bundlesRef);
-                            if (!referencedBundleSetDef) {
-                                throw raptor.createError(new Error('Bundles not found with name "' + o.bundlesRef + '"'));
-                            }
-                            addBundles(referencedBundleSetDef);
+                        if (o.enabled === false) {
                             return;
                         }
-                        else if (o instanceof BundleDef) {
+                        
+                        if (o.ref) {
+                            var referencedBundleSetConfig = config.getBundleSetConfig(o.ref);
+                            if (!referencedBundleSetConfig) {
+                                throw raptor.createError(new Error('Bundles not found with name "' + o.ref + '"'));
+                            }
+                            addBundles(referencedBundleSetConfig);
+                            return;
+                        }
+                        else if (o instanceof BundleConfig) {
                             var bundleName = o.name;
                             
                             if (!bundleName) {
                                 throw raptor.createError(new Error("Illegal state. Bundle name is required"));
                             }
                             if (config.checksumsEnabled === false) {
-                                bundleName = bundleSetDef.name + "-" + bundleName; //Prefix the bundle name with the bundle set name to keep the bundle names unique
+                                bundleName = bundleSetConfig.name + "-" + bundleName; //Prefix the bundle name with the bundle set name to keep the bundle names unique
                             }
                             
-                            var bundle = raptor.require('optimizer').createBundle(bundleName);
-                            o.forEachInclude(function(include) {
-                                bundle.addInclude(include);
-                            });
-                            
-                            if (foundBundleToIndex[bundleName]) {
-                                foundBundleToIndex[bundleName] = bundle; 
-                            }
-                            else {
-                                foundBundleToIndex[bundleName] = bundles.length;
-                                bundles.push(bundle);
-                            }
+                            bundleMappings.addIncludesToBundle(o.includes, bundleName);
                         }
-                        else if (o instanceof BundleSetDef) {
+                        else if (o instanceof BundleSetConfig) {
                             o.forEachChild(addBundles);
                         }
                     };
                     
-                if (this.bundlingEnabled !== false) {
-                    addBundles(bundleSetDef);    
-                }
-                
-                var bundleSet = raptor.require('optimizer').createBundleSet(
-                        bundles,
-                        {
-                            enabledExtensions: enabledExtensions
-                        });
-                
-                return bundleSet;
+                addBundles(bundleSetConfig);
+                return bundleMappings;
             },
                 
             

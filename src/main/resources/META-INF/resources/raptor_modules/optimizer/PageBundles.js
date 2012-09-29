@@ -1,10 +1,11 @@
 raptor.defineClass(
-    "optimizer.PageDependencies",
+    "optimizer.PageBundles",
     function(raptor) {
         "use strict";
         
         var forEachEntry = raptor.forEachEntry,
-            forEach = raptor.forEach;
+            forEach = raptor.forEach,
+            BundleMappings = raptor.require('optimizer.BundleMappings');
         
         var AsyncRequire = function(name) {
             this.name = name;
@@ -60,39 +61,36 @@ raptor.defineClass(
             }
         };
         
-        var PageDependencies = function(config) {
-
-            this.pageName = config.pageName.replace(/^[^A-Za-z0-9_\-\.]*/g, '');
-            this.includes = config.includes || [];
-            this.bundlingEnabled = config.bundlingEnabled !== false;
-            this.config = config;
+        /**
+         * 
+         */
+        var PageBundles = function(config) {
             
-            /*
-             * We must create a new bundle set that has as its parent the provided bundle set so that 
-             * we don't modify the provided bundle set.
-             */
-            this.bundleSet = raptor.require('optimizer').createBundleSet(config.bundleSet /*parent bundle set*/);
+            
+            
+            this.pageName = config.pageName;
+            this.pageBundleName = config.pageName.replace(/^[^A-Za-z0-9_\-\.]*/g, '');
+            this.inPlaceDeploymentEnabled = config.inPlaceDeploymentEnabled === true;
+            this.bundlingEnabled = config.bundlingEnabled !== false;
+            this.sourceUrlResolver = config.sourceUrlResolver;
             this.enabledExtensions = config.enabledExtensions;
+            this.sourceUrlResolver = config.sourceUrlResolver;
+            this.packageManifest = config.packageManifest;
+            this.bundleMappings = new BundleMappings(this.enabledExtensions);
+            this.bundleMappings.setParentBundleMappings(config.bundleMappings);
 
             this.pageBundleLookup = {};
             this.bundlesBySlot = {};
             this.bundleCount = 0;
             this.asyncRequiresByName = {};
-                        
-            this.packageManifests = [];
-            this.foundPackagePaths = {};
-            
-            this.packageManifest = config.packageManifest;
-            
             this._build();
         };
         
-        PageDependencies.prototype = {
+        PageBundles.prototype = {
              
             _build: function() {
                 var optimizer = raptor.require('optimizer'),
-                    bundleSet = this.bundleSet,
-                    config = this.config,
+                    bundleMappings = this.bundleMappings,
                     asyncPackages = [];
                     
                 optimizer.forEachInclude({
@@ -101,19 +99,13 @@ raptor.defineClass(
                     recursive: true, //We want to make sure every single include is part of a bundle
                     enabledExtensions: this.enabledExtensions,
                     handlePackage: function(manifest, context) {
-                        
-                        if (!this.foundPackagePaths[manifest.getKey()]) {
-                            this.foundPackagePaths[manifest.getKey()] = true;
-                            this.packageManifests.push(manifest);
-                        }
-                        
                         if (context.async === true) {
                             asyncPackages.push(manifest); //We'll handle async includes later
                         }
                     },
                     handleInclude: function(include, context) {
 
-                        var bundle = bundleSet.getBundleForInclude(include);
+                        var bundle = bundleMappings.getBundleForInclude(include);
                         
                         if (!bundle) {
                             
@@ -121,16 +113,16 @@ raptor.defineClass(
                             
                             if (!this.bundlingEnabled) {
                                 //Create a bundle with a single include for each include
-                                if (config.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
+                                if (this.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
                                     
                                     var sourceUrl;
                                     
-                                    if (this.config.sourceUrlResolver) {
-                                        sourceUrl = this.config.sourceUrlResolver(sourceResource.getSystemPath());
+                                    if (this.sourceUrlResolver) {
+                                        sourceUrl = this.sourceUrlResolver(sourceResource.getSystemPath());
                                     }
                                     
-                                    if (!this.config.sourceUrlResolver || sourceUrl) {
-                                        bundle = bundleSet.addIncludeToBundle(include, sourceResource.getSystemPath());
+                                    if (!this.sourceUrlResolver || sourceUrl) {
+                                        bundle = bundleMappings.addIncludeToBundle(include, sourceResource.getSystemPath());
                                         if (sourceUrl) {
                                             bundle.url = sourceUrl;    
                                         }
@@ -140,7 +132,7 @@ raptor.defineClass(
                                 }
                                 
                                 if (!bundle) {
-                                    bundle = bundleSet.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
+                                    bundle = bundleMappings.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
                                     bundle.sourceResource = sourceResource;
                                     bundle.includeSlotInUrl = false;
                                     if (!sourceResource) {
@@ -151,7 +143,7 @@ raptor.defineClass(
                             
                             if (!bundle) {
                                 //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                bundle = bundleSet.addIncludeToBundle(include, this.pageName + (context.async ? "-async" : ""));
+                                bundle = bundleMappings.addIncludeToBundle(include, this.pageBundleName + (context.async ? "-async" : ""));
                             }
                             
                         }
@@ -218,7 +210,7 @@ raptor.defineClass(
                     },
                     handleInclude: function(include, context) {
 
-                        var bundle = bundleSet.getBundleForInclude(include),
+                        var bundle = bundleMappings.getBundleForInclude(include),
                             bundleKey = bundle.getKey();
                         if (!this.pageBundleLookup[bundleKey]) { //Check if this async include is part of a page bundle
                             //This bundle is an asynchronous only bundle
@@ -239,21 +231,21 @@ raptor.defineClass(
                 
             },
             
-            getBundleSet: function() {
-                return this.bundleSet;
+            getBundleMappings: function() {
+                return this.bundleMappings;
             },
             
-            forEachPageBundle: function(callback, thisObj) {
+            forEachBundle: function(callback, thisObj) {
                 forEachEntry(this.bundlesBySlot, function(slot, bundlesByContentType) {
                     
                     //Loop over CSS bundles first
                     forEach(bundlesByContentType.css, function(bundle) {
-                        callback.call(thisObj, bundle);    
+                        callback.call(thisObj, bundle, slot, "text/css");    
                     });
                     
                     //Followed by JS bundles for this slot
                     forEach(bundlesByContentType.js, function(bundle) {
-                        callback.call(thisObj, bundle);    
+                        callback.call(thisObj, bundle, slot, "application/javascript");    
                     });
                     
                 }, this);
@@ -273,10 +265,6 @@ raptor.defineClass(
                 return this.bundleCount;
             },
             
-            getPageName: function() {
-                return this.pageName;
-            },
-            
             getPackageManifests: function() {
                 return this.packageManifests;
             },
@@ -286,5 +274,5 @@ raptor.defineClass(
             }
         };
         
-        return PageDependencies;
+        return PageBundles;
     });

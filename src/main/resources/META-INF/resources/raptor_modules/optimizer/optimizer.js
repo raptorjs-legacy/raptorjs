@@ -5,90 +5,50 @@ raptor.define(
         
         var forEach = raptor.forEach,
             File = raptor.require('files').File,
-            packager = raptor.require('packager'),
-            Bundle = raptor.require("optimizer.Bundle"),
-            BundleSet = raptor.require("optimizer.BundleSet"),
-            PageDependencies = raptor.require("optimizer.PageDependencies"),
-            fileWatcher = raptor.require('file-watcher');
+            packager = raptor.require('packager');
             
         return {
+            pageOptimizer: null,
             
+            configure: function(config, params) {
+                var pageOptimizer = this.createPageOptimizer(config, params);
+                this.pageOptimizer = pageOptimizer;
+            },
             
-            createOptimizer: function(config, params) {
-                var configXmlPath = null;
-                
-                if (typeof config === 'string' || config instanceof File) {
-                    configXmlPath = config;
+            createPageOptimizer: function(config, params) {
+                if (typeof config === 'string' || config instanceof File || raptor.require('resources.Resource')) {
                     config = this.loadConfigXml(config, params);
                 }
                 
-                var OptimizerEngine = raptor.require('optimizer.OptimizerEngine');
-                var optimizerEngine = new OptimizerEngine(config);
-                var logger = this.logger();
-                
-                if (config.isWatchConfigEnabled() && configXmlPath) {
-                    fileWatcher.watch(configXmlPath, function(eventArgs) {
-                        logger.info("Optimizer configuration file modified: " + configXmlPath);
-                        try
-                        {
-                            config = this.createConfig(configXmlPath, params);
-                            if (!config.isWatchConfigEnabled()) {
-                                eventArgs.closeWatcher();
-                            }
-                            optimizerEngine.reloadConfig(config);    
-                        }
-                        catch(e) {
-                            logger.error('Unable to reload optimizier configuration file at path "' + configXmlPath + '". Exception: ' + e, e);
-                        }
-                        
-                    }, this);
-                }
-                
-                return optimizerEngine;
+                var PageOptimizer = raptor.require('optimizer.PageOptimizer');
+                var pageOptimizer = new PageOptimizer(config);
+                return pageOptimizer;
             },
             
             loadConfigXml: function(configFile, params) {
+                var Config = raptor.require('optimizer.Config');
+                var Resource = raptor.require('resources.Resource');
+                
+                var config = new Config(params);
+                var configXml;
+                
                 if (typeof configFile === 'string') {
                     configFile = new File(configFile);
                 }
                 
-                var Config = raptor.require('optimizer.Config');
-                var configXml = configFile.readAsString("UTF-8");
-                var config = new Config(params);
-                config.setConfigResource(raptor.require('resources').createFileResource(configFile));
+                if (configFile instanceof File) {
+                    configXml = configFile.readAsString("UTF-8");
+                    config.setConfigResource(raptor.require('resources').createFileResource(configFile));
+                }
+                else if (configFile instanceof Resource) {
+                    configXml = configFile.readAsString("UTF-8");
+                    config.setConfigResource(configFile);
+                }
+
                 config.parseXml(configXml, configFile.getAbsolutePath());
-                config.findPages();
                 return config;
             },
-            
-            createPage: function(pageConfig) {
-                var Page = raptor.require("optimizer.Page");
-                return new Page(pageConfig);
-            },
-            
-            createPageDependencies: function(config) {
-                return new PageDependencies(config);
-            },
-            
-            createBundle: function(name) {
-                return new Bundle(name);
-            },
-            
-            createBundleSet: function(bundles, options) {
-                return new BundleSet(bundles, options);
-            },
-            
-            createPageDependenciesFileWriter: function(config) {
-                var PageDependenciesFileWriter = raptor.require("optimizer.PageDependenciesFileWriter");
-                return new PageDependenciesFileWriter(config);
-            },
-            
-            createSimpleUrlBuilder: function(config) {
-                var SimpleUrlBuilder = raptor.require("optimizer.SimpleUrlBuilder");
-                return new SimpleUrlBuilder(config);
-            },
-            
-            
+
             
             forEachInclude: function(options) {
     
@@ -180,50 +140,23 @@ raptor.define(
                 }
             },
             
-            setOptimizerForContext: function(context, optimizer) {
-                context.getAttributes().optimizer = optimizer;
-            },
-            
-            getOptimizerFromContext: function(context) {
-                return context.getAttributes().optimizer;
-            },
-            
-            getPageFromContext: function(context) {
-                return context.getAttributes().optimizerPage;
-            },
-            
-            setPageForContext: function(context, optimizerPage) {
-                context.getAttributes().optimizerPage = optimizerPage;
-            },
-            
-            _getExtensionsForContext: function(context) {
+            enableExtensionForContext: function(context, extension) {
                 var extensions = context.getAttributes().optimizerExtensions;
                 if (!extensions) {
                     extensions = packager.createExtensionCollection();
-                    var page = this.getPageFromContext(context);
-                    if (page) {
-                        extensions.addAll(page.getEnabledExtensions());    
-                    }
-                    var optimizer = this.getOptimizerFromContext(context);
-                    if (optimizer) {
-                        extensions.addAll(optimizer.getEnabledExtensions());
-                    }
                 }
-                
-                return extensions;
-            },
-            
-            enableExtensionForContext: function(context, extension) {
-                var extensions = this._getExtensionsForContext(context);
                 extensions.add(extension);
             },
             
             disableExtensionForContext: function(context, extension) {
-                var extensions = this._getExtensionsForContext(context);
-                extensions.remove(extension);
+                var extensions = context.getAttributes().optimizerExtensions;
+                if (extensions) {
+                    extensions.remove(extension);    
+                }
+                
             },
             
-            getEnabledExtensionsFromContext: function(context) {
+            getEnabledExtensionsForContext: function(context) {
                 return context.getAttributes().optimizerExtensions;
             }
         }; //end return

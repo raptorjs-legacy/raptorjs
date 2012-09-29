@@ -4,44 +4,22 @@ raptor.defineClass(
         "use strict";
         
         var PageConfig = function() {
-            this.includes = [];
             this.name = null;
-            this.bundleSetDef = null;
-            this.enabledExtensions = null;
-            this.htmlPath = null;
-            this.packagePath = null;
-            this.packageManifest = null;
+            this.bundleSetConfig = null;
         };
 
         PageConfig.prototype = {
-            enableExtension: function(name) {
-                if (!this.enabledExtensions) {
-                    this.enabledExtensions = raptor.require('packager').createExtensionCollection();
-                }
-                this.enabledExtensions.add(name);
+
+            getBundleSetConfig: function() {
+                return this.bundleSetConfig;
             },
             
-            getHtmlPath: function() {
-                return this.htmlPath;
-            },
-            
-            addInclude: function(include) {
-                this.includes.push(include);
-            },
-            
-            getBundleSetDef: function() {
-                return this.bundleSetDef;
-            },
-            
-            getEnabledExtensions: function() {
-                return this.enabledExtensions || this.config.getEnabledExtensions();
-            },
-            
-            addBundleSetDef: function(bundleSetDef) {
-                if (this.bundleSetDef) {
+            addBundleSetConfig: function(bundleSetConfig) {
+                if (this.bundleSetConfig) {
                     throw raptor.createError(new Error('Page "' + this.name + '" already has bundles defined"'));
                 }
-                this.bundleSetDef = bundleSetDef;
+                
+                this.bundleSetConfig = bundleSetConfig;
             },
             toString: function() {
                 return "[PageConfig name=" + this.name + "]";

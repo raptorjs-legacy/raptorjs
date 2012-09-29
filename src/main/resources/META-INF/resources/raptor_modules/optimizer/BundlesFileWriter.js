@@ -1,6 +1,6 @@
 raptor.defineClass(
-    "optimizer.PageDependenciesFileWriter",
-    "optimizer.PageDependenciesWriter",
+    "optimizer.BundlesFileWriter",
+    "optimizer.BundlesWriter",
     function(raptor) {
         "use strict";
         
@@ -8,12 +8,12 @@ raptor.defineClass(
             File = files.File,
             listeners = raptor.require('listeners');
         
-        var PageDependenciesFileWriter = function(config) {
-            PageDependenciesFileWriter.superclass.constructor.call(this, config);
-            listeners.makeObservable(this, PageDependenciesFileWriter.prototype, ['bundleWritten']);
+        var BundlesFileWriter = function(config, urlBuilder) {
+            BundlesFileWriter.superclass.constructor.call(this, config, urlBuilder);
+            listeners.makeObservable(this, BundlesFileWriter.prototype, ['bundleWritten']);
         };
         
-        PageDependenciesFileWriter.prototype = {
+        BundlesFileWriter.prototype = {
             
             getFileExtension: function(contentType) {
                 if (contentType === 'application/javascript') {
@@ -32,28 +32,18 @@ raptor.defineClass(
             },
             
             getBundleOutputDir: function(bundle) {
-                return this.getOutputDirForContentType(bundle.getContentType());
+                return this.getOutputDir();
             },
 
-            getOutputDirForContentType: function(contentType) {
-                
-                if (contentType === 'application/javascript') {
-                    return this.getConfig().getScriptsOutputDir();
-                }
-                else if (contentType === 'text/css') {
-                    return this.getConfig().getCssOutputDir();
-                }
-                else {
-                    return this.getConfig().getResourcesOutputDir();
-                }
+            getOutputDir: function() {
+                return this.getConfig().getOutputDir();
             },
             
             writeBundle: function(bundle) {
                 var outputDir = this.getBundleOutputDir(bundle),
-                    outputPath = files.joinPaths(outputDir, this.getBundleFilename(bundle)),
                     _this = this;
                 
-                var outputFile = new File(outputPath);
+                var outputFile = new File(outputDir, this.getBundleFilename(bundle));
                 
                 if (bundle.sourceResource && outputFile.exists() && outputFile.lastModified() > bundle.sourceResource.getFile().lastModified()) {
                     _this.logger().info('Bundle "' + outputFile.getAbsolutePath() + '" written to disk is up-to-date. Skipping...');
@@ -97,7 +87,7 @@ raptor.defineClass(
                 
                 var contentType = raptor.require('mime').lookup(filename);
 
-                var outputDir = this.getOutputDirForContentType(),
+                var outputDir = this.getOutputDir(),
                     outputFile,
                     checksum;
 
@@ -129,5 +119,5 @@ raptor.defineClass(
         };
 
         
-        return PageDependenciesFileWriter;
+        return BundlesFileWriter;
     });
