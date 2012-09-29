@@ -2,9 +2,9 @@
     xmlns:jsdoc="jsdoc"
     xmlns:w="widgets"
     xmlns:optimizer="optimizer"
-    params="path,src,mode,outputDir,optimizer">
+    params="path,src,mode,outputDir">
 
-    <optimizer:page name="type" output-dir="${outputDir}" optimizer="optimizer">
+    <optimizer:page name="type" base-path="${outputDir}">
         <includes>
             <module name="jsdoc-global"/>
             <module name="components/jsdoc/Header"/>

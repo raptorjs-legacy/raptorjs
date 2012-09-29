@@ -3,6 +3,7 @@ raptor.define(
     function(raptor) {
         "use strict";
         var packager = raptor.require('packager'),
+            File = raptor.require('files').File,
             resources = raptor.require('resources'),
             optimizer = raptor.require('optimizer');
         
@@ -31,6 +32,10 @@ raptor.define(
                         }
                         enabledExtensions = packager.createExtensionCollection(enabledExtensions);
                     }
+                }
+                
+                if (basePath instanceof File) {
+                    basePath = basePath.getAbsolutePath();
                 }
                 
                 var contextEnabledExtensions = optimizer.getEnabledExtensionsForContext(context);

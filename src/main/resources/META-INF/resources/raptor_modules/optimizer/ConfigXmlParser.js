@@ -357,24 +357,14 @@ raptor.defineClass(
                     configFilePath);
                 
                 if (!config.outputDir) {
-                    outputDir = "static";
-                    config.outputDir = resolvePath(outputDir);
+                    config.outputDir = resolvePath("static");
+                    
+                    if (!config.urlPrefix) {
+                        config.urlPrefix = "/static/";
+                    }
                 }
                 
-                if (!config.urlPrefix) {
-                    var urlPrefix = outputDir;
-                    
-                    
-                    if (!strings.startsWith(urlPrefix,'/')) {
-                        urlPrefix = "/" + urlPrefix;
-                    }
-                    
-                    if (!strings.endsWith(urlPrefix,'/')) {
-                        urlPrefix += "/";
-                    }
-                    
-                    config.urlPrefix = urlPrefix;
-                }
+                
                 
                 
             }

@@ -113,7 +113,7 @@ raptor.defineClass(
                     file: outputFile,
                     filename: filename,
                     checksum: checksum,
-                    url: this.getResourceUrl(filename, contentType)
+                    url: this.getResourceUrl(filename)
                 };
             }
         };

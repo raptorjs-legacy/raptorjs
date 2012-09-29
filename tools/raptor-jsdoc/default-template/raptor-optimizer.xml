@@ -32,20 +32,9 @@
         <minify-js>true</minify-js>
         <resolve-css-urls>true</resolve-css-urls>
         <raptor-config>{}</raptor-config>
-        <watch-config-enabled>false</watch-config-enabled>
     </profile>
     
-<!--     <echo message=""/> -->
-<!--     <echo message="Profile: ${profile}"/> -->
-<!--     <echo message="Single page: ${singlePage}"/> -->
-<!--     <echo message="Publish?: ${publish}"/> -->
-<!--     <echo message=""/> -->
-
-    <clean-dirs>
-        <dir path="${outputDir}/static"/>
-    </clean-dirs>
-
-    <bundles-output-dir>${outputDir}/static</bundles-output-dir>
+    <output-dir>${outputDir}/static</output-dir>
 
     <bundles name="default">
         <bundle name="jquery">

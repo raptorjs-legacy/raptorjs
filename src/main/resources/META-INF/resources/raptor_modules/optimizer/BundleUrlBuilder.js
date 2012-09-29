@@ -20,6 +20,9 @@ raptor.define(
              * @returns {String} The generated URL
              */
             buildBundleUrl: function(bundle, basePath) {
+                
+                console.error('BundleUrlBuilder: ', this.urlPrefix, '------', this.outputDir, '----', basePath);
+                
                 if (bundle.url) {
                     return bundle.url;
                 }
@@ -31,6 +34,10 @@ raptor.define(
                 }
                 
                 return this.getPrefix(basePath) + this.getBundleFilename(bundle);
+            },
+            
+            buildResourceUrl: function(filename, basePath) {
+                return this.getPrefix(basePath) + filename;
             },
 
             /**

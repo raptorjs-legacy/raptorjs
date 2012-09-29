@@ -158,12 +158,12 @@ raptor.defineClass(
                 return urlBuilder.buildBundleUrl(bundle, basePath);
             },
             
-            getResourceUrl: function(filename, contentType) {
+            getResourceUrl: function(filename, basePath) {
                 var urlBuilder = this.getUrlBuilder();
                 if (!urlBuilder) {
                     throw raptor.createError(new Error("URL builder not set."));
                 }
-                return urlBuilder.buildResourceUrl(filename, contentType);
+                return urlBuilder.buildResourceUrl(filename, basePath);
             },
 
             applyFilter: function(code, contentType, include, bundle) {

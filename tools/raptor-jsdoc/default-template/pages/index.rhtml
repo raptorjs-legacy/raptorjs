@@ -2,11 +2,11 @@
     xmlns:jsdoc="jsdoc"
     xmlns:w="widgets"
     xmlns:optimizer="optimizer"
-    params="type,navHtml,optimizer,outputDir,symbols,symbolName,autocompleteSymbolsUrl">
+    params="type,navHtml,outputDir,symbols,symbolName,autocompleteSymbolsUrl">
     
     
 
-    <optimizer:page name="type" output-dir="${outputDir}" optimizer="optimizer">
+    <optimizer:page name="type" base-path="${outputDir}">
         <includes>
             <module name="jsdoc-global"/>
             <module name="components/jsdoc/Header"/>
