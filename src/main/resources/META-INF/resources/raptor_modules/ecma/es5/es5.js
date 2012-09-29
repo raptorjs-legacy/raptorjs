@@ -39,7 +39,7 @@
 //})
 
 (function () {
-    
+
 /*jshint evil: true, strict: false, regexp: false */
 
 /**
@@ -50,6 +50,39 @@
  * ES5 Spec: http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf
  * Required reading: http://javascriptweblog.wordpress.com/2011/12/05/extending-javascript-natives/
  */
+
+//
+// Util
+// ======
+//
+
+// ES5 9.4
+// http://es5.github.com/#x9.4
+// http://jsperf.com/to-integer
+var toInteger = function (n) {
+    n = +n;
+    if (n !== n) { // isNaN
+        n = 0;
+    } else if (n !== 0 && n !== (1/0) && n !== -(1/0)) {
+        n = (n > 0 || -1) * Math.floor(Math.abs(n));
+    }
+    return n;
+};
+
+var prepareString = "a"[0] != "a";
+    // ES5 9.9
+    // http://es5.github.com/#x9.9
+var toObject = function (o) {
+    if (o == null) { // this matches both null and undefined
+        throw new TypeError("can't convert "+o+" to object");
+    }
+    // If the implementation doesn't support by-index access of
+    // string characters (ex. IE < 9), split the string
+    if (prepareString && typeof o == "string" && o) {
+        return o.split("");
+    }
+    return Object(o);
+};
 
 var call = Function.prototype.call;
 var prototypeOfArray = Array.prototype;
@@ -1079,36 +1112,4 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
-//
-// Util
-// ======
-//
-
-// ES5 9.4
-// http://es5.github.com/#x9.4
-// http://jsperf.com/to-integer
-var toInteger = function (n) {
-    n = +n;
-    if (n !== n) { // isNaN
-        n = 0;
-    } else if (n !== 0 && n !== (1/0) && n !== -(1/0)) {
-        n = (n > 0 || -1) * Math.floor(Math.abs(n));
-    }
-    return n;
-};
-
-var prepareString = "a"[0] != "a";
-    // ES5 9.9
-    // http://es5.github.com/#x9.9
-var toObject = function (o) {
-    if (o == null) { // this matches both null and undefined
-        throw new TypeError("can't convert "+o+" to object");
-    }
-    // If the implementation doesn't support by-index access of
-    // string characters (ex. IE < 9), split the string
-    if (prepareString && typeof o == "string" && o) {
-        return o.split("");
-    }
-    return Object(o);
-};
 }());
