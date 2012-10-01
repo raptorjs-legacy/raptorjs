@@ -18,3 +18,4 @@ MANIFEST.MF
 /node_modules/**
 /npm-debug.log
 /node_modules
+/raptorjs.sublime-workspace
