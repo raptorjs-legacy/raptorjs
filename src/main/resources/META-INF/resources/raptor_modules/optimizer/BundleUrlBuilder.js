@@ -20,17 +20,14 @@ raptor.define(
              * @returns {String} The generated URL
              */
             buildBundleUrl: function(bundle, basePath) {
-                
-                console.error('BundleUrlBuilder: ', this.urlPrefix, '------', this.outputDir, '----', basePath);
-                
                 if (bundle.url) {
                     return bundle.url;
                 }
                 else if (bundle.inPlaceDeployment === true && bundle.sourceResource) {
-                    if (!baseDir) {
+                    if (!basePath) {
                         throw raptor.createError(new Error("A base path is required for in-place deployment"));
                     }
-                    return require('path').relative(baseDir, bundle.sourceResource.getSystemPath());
+                    return require('path').relative(basePath, bundle.sourceResource.getSystemPath());
                 }
                 
                 return this.getPrefix(basePath) + this.getBundleFilename(bundle);
