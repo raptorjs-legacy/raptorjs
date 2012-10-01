@@ -1,6 +1,0 @@
-#!/usr/bin/env node
-
-if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'test';
-var path = require('path');
-var fs   = require('fs');
-require(path.join(__dirname,'../tools/raptor-optimizer/raptor-optimizer-app.js')).run();
