@@ -6,7 +6,8 @@ raptor.defineClass(
         var packager = raptor.require('packager'),
             Cache = raptor.require('optimizer.Cache'),
             BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter'),
-            BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder');
+            BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder'),
+            File = raptor.require('files').File;
         
         var PageOptimizer = function(config) {
             this.config = config;
@@ -62,10 +63,20 @@ raptor.defineClass(
                         packageManifest = packager.getPackageManifest(packageResource);
                     }
                     else {
-                        includes = options.includes;
-                        if (includes) {
-                            packageManifest = packager.createPackageManifest();
-                            packageManifest.setIncludes(includes);
+                        var packageFile = options.packageFile;
+                        if (packageFile) {
+                            if (typeof packageFile === 'string') {
+                                packageFile = new File(packageFile);
+                            }
+                            packageResource = raptor.require('resources').createFileResource(packageFile);
+                            packageManifest = packager.getPackageManifest(packageResource);
+                        }
+                        else {
+                            includes = options.includes;
+                            if (includes) {
+                                packageManifest = packager.createPackageManifest();
+                                packageManifest.setIncludes(includes);
+                            }
                         }
                     }
                 }
