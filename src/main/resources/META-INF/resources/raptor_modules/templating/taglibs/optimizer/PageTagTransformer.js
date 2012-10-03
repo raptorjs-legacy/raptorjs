@@ -34,6 +34,14 @@ raptor.define(
                                 };
 
                                 includesChild.forEachAttributeAnyNS(function(attr) {
+                                    var value = attr.value;
+                                    if (value === 'true') {
+                                        value = true;
+                                    }
+                                    else if (value === 'false') {
+                                        value = false;
+                                    }
+                                    
                                     if (!attr.uri) {
                                         include[attr.localName] = attr.value;
                                     }
