@@ -143,7 +143,7 @@ raptor.defineClass(
                     return '<script type="text/javascript" src="' + url + '"></script>';
                 }
                 else if (bundle.isStyleSheet()) {
-                    return '<link rel="stylesheet" type="text/css" href="' + url + '" />';
+                    return '<link rel="stylesheet" type="text/css" href="' + url + '">';
                 }
                 else {
                     throw raptor.createError(new Error("Invalid bundle content type: " + bundle.getContentType()));

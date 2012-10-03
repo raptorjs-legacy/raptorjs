@@ -678,7 +678,7 @@ describe('optimizer module', function() {
     it("should allow for optimizing a page without a configuration file", function() {
         
         raptor.require('optimizer').configureDefault();
-        
+
         var bundles = {},
             File = raptor.require('files').File;
 
@@ -700,7 +700,7 @@ describe('optimizer module', function() {
 
             expect(Object.keys(optimizedPage.getHtmlBySlot()).length).toEqual(2);
             expect(optimizedPage.getHtmlBySlot()['body']).toEqual("<script type=\"text/javascript\" src=\"/static/page1-body-d14bc332.js\"></script>");
-            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-head-4b176a91.css\" />");
+            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-head-4b176a91.css\">");
 
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires[0]).toEqual("test.optimizer.nestedB");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires.length).toEqual(1);
