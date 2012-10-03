@@ -35,6 +35,10 @@ raptor.defineClass(
             getPageConfig: function(name) {
                 return this.pageConfigsByName[name];
             },
+
+            setUrlPrefix: function(urlPrefix) {
+                this.urlPrefix = urlPrefix;
+            },
             
             addFilter: function(filter) {
                 if (typeof filter === 'string') {

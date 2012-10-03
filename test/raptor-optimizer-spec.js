@@ -674,4 +674,62 @@ describe('optimizer module', function() {
         var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
         expect(output.indexOf('<script')).toNotEqual(-1);
     });
+
+    it("should allow for optimizing a page without a configuration file", function() {
+        
+        raptor.require('optimizer').configureDefault();
+        
+        var bundles = {},
+            File = raptor.require('files').File;
+
+        var oldWriteBundleFile = raptor.require('optimizer').pageOptimizer.writer.writeBundleFile;
+        try {
+            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = function(outputPath, code) {
+                var file = new File(outputPath);
+                var filename = file.getName();
+                bundles[filename] = code;
+                logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+            };
+
+            var optimizedPage = raptor.require('optimizer').optimizePage({
+                name: "page1",
+                packageFile: raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json')
+            });
+            console.error(raptor.require('debug').prettyPrint(bundles));
+            console.error(raptor.require('debug').prettyPrint(optimizedPage));
+
+            expect(Object.keys(optimizedPage.getHtmlBySlot()).length).toEqual(2);
+            expect(optimizedPage.getHtmlBySlot()['body']).toEqual("<script type=\"text/javascript\" src=\"/static/page1-body-d14bc332.js\"></script>");
+            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-head-4b176a91.css\" />");
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires[0]).toEqual("test.optimizer.nestedB");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js.length).toEqual(1);
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].hasOwnProperty('requires')).toEqual(false);
+
+            expect(Object.keys(optimizedPage.getLoaderMetadata()).length).toEqual(2);
+
+            expect(Object.keys(bundles).length).toEqual(4);
+            expect(bundles["page1-async-body-c17b7d9b.js"]).toEqual("nestedB_js\nnestedA_js");
+            expect(bundles["page1-async-head-1929e414.css"]).toEqual("nestedB_css\nnestedA_css");
+            expect(bundles["page1-body-d14bc332.js"]).toEqual("moduleA\nmixedA_js\nmixedB_js\nasyncA_js");
+            expect(bundles["page1-head-4b176a91.css"]).toEqual("mixedA_css\nmixedB_css\nasyncA_css");
+        }
+        finally {
+            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = oldWriteBundleFile;
+        }
+        
+        
+    });
 });

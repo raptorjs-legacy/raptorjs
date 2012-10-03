@@ -4,11 +4,28 @@ raptor.define(
         "use strict";
         
         var forEach = raptor.forEach,
-            File = raptor.require('files').File,
-            packager = raptor.require('packager');
-            
-        return {
+            files = raptor.require('files'),
+            File = files.File,
+            packager = raptor.require('packager'),
+            Config = raptor.require('optimizer.Config'),
+            PageOptimizer = raptor.require('optimizer.PageOptimizer');
+        
+        
+        var defaultConfig = new Config();
+        defaultConfig.setOutputDir(new File(raptor.require('process').cwd(), 'static'));
+        defaultConfig.setUrlPrefix('/static/');
+
+        var optimizer = {
+            defaultConfig: defaultConfig,
             pageOptimizer: null,
+
+            optimizePage: function(options) {
+                return this.pageOptimizer.optimizePage(options);
+            },
+
+            configureDefault: function() {
+                this.pageOptimizer = new PageOptimizer(defaultConfig);
+            },
             
             configure: function(config, params) {
                 var pageOptimizer = this.createPageOptimizer(config, params);
@@ -16,9 +33,15 @@ raptor.define(
             },
             
             createPageOptimizer: function(config, params) {
-                if (typeof config === 'string' || config instanceof File || raptor.require('resources.Resource')) {
-                    config = this.loadConfigXml(config, params);
+                if (!config) {
+                    config = defaultConfig;
                 }
+                else {
+                    if (typeof config === 'string' || config instanceof File || raptor.require('resources.Resource')) {
+                        config = this.loadConfigXml(config, params);
+                    }    
+                }
+                
                 
                 var PageOptimizer = raptor.require('optimizer.PageOptimizer');
                 var pageOptimizer = new PageOptimizer(config);
@@ -159,5 +182,9 @@ raptor.define(
             getEnabledExtensionsForContext: function(context) {
                 return context.getAttributes().optimizerExtensions;
             }
-        }; //end return
+        }; //end optimizer
+
+        optimizer.configureDefault();
+
+        return optimizer;
     });
