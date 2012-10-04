@@ -47,6 +47,25 @@ raptor.define('templating', function(raptor) {
             return helper;
         },
         /**
+         * Helper function to return the singleton instance of a tag handler
+         * 
+         * @param name {String} The class name of the tag handler
+         * @returns {Object} The tag handler singleton instance.
+         */
+        _getHandler = function(name) {
+            var Handler = raptor.require(name), //Load the handler class
+                instance;
+            
+            if (Handler.process) {
+                instance = Handler;
+            }
+            else if (!(instance = Handler.instance)) { //See if an instance has already been created
+                instance = Handler.instance = new Handler(); //If not, create and store a new instance
+            }
+            
+            return instance; //Return the handler instance
+        },
+        /**
          * Helper function to check if an object is "empty". Different types of objects are handled differently:
          * 1) null/undefined: Null and undefined objects are considered empty
          * 2) String: The string is trimmed (starting and trailing whitespace is removed) and if the resulting string is an empty string then it is considered empty
@@ -199,8 +218,10 @@ raptor.define('templating', function(raptor) {
             return new Context(writer || new StringBuilder()); //Create a new context using the writer provided
         },
         
+        getHandler: _getHandler,
+        
         /**
-         * 
+         * Helper functions (with short names for minification reasons)
          */
         helpers: {
             
@@ -214,25 +235,7 @@ raptor.define('templating', function(raptor) {
              */
             h: _getFunction,
             
-            /**
-             * Helper function to return the singleton instance of a tag handler
-             * 
-             * @param name The class name of the tag handler
-             * @returns {Object} The tag handler singleton instance.
-             */
-            t: function(name) {
-                var Handler = raptor.require(name), //Load the handler class
-                    instance;
-                
-                if (Handler.process) {
-                    instance = Handler;
-                }
-                else if (!(instance = Handler.instance)) { //See if an instance has already been created
-                    instance = Handler.instance = new Handler(); //If not, create and store a new instance
-                }
-                
-                return instance; //Return the handler instance
-            },
+            t: _getHandler,
             
             /**
              * forEach helper function
