@@ -92,7 +92,9 @@ raptor.defineClass(
                     return config.getUrlForSourceFile(path);
                 } : null;
                 
-                var bundleMappings = this.getBundleMappingsCached(bundleSetConfig, enabledExtensions);
+                var bundleMappings = config.isBundlingEnabled() ? 
+                        this.getBundleMappingsCached(bundleSetConfig, enabledExtensions) : //Only load the bundle mappings if bundling is enabled
+                        null;
                 
                 var pageBundles = new PageBundles({
                     pageName: pageName,

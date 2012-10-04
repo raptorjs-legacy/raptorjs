@@ -77,7 +77,9 @@ raptor.defineClass(
             this.sourceUrlResolver = config.sourceUrlResolver;
             this.packageManifest = config.packageManifest;
             this.bundleMappings = new BundleMappings(this.enabledExtensions);
-            this.bundleMappings.setParentBundleMappings(config.bundleMappings);
+            if (config.bundleMappings) {
+                this.bundleMappings.setParentBundleMappings(config.bundleMappings);    
+            }
 
             this.pageBundleLookup = {};
             this.bundlesBySlot = {};
