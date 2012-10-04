@@ -135,7 +135,7 @@ describe('strings module', function() {
     it('should allow complex comments to be parsed', function() {
         var comment = parseComment('resources/jsdoc/comment-complex.js');
         expect(comment.getTags("param").length).toEqual(3);
-        expect(comment.getTags("returns").length).toEqual(1);
+        expect(comment.getTags("return").length).toEqual(1);
         expect(comment.getTags("param")[2].getValue()).toEqual("factory A factory function that returns either the class constructory function (with prototype) or just the prototype");
         expect(comment.getDescription()).toEqual("Defines a class. This is identical to identical to \"define\" except that it supports a short-hand notation for classes\n\nMultiple signatures supported:\n<ul>\n<li>defineClass(name, modifiers, factory)\n<li>defineClass(name, superclassName, factory)\n<li>defineClass(name, factory)\n<li>defineClass(modifiers, factory)\n<li>defineClass(factory)\n</ul>\n\nSupported modifiers:\n<ul>\n<li>superclass: The name of the super class\n<li>mixins: An array of names of mixins\n</ul>\n\nIn addition, the \"modifiers\" parameter can be a string that specifies the name of the superclass\n\n<h2>Examples: Class with prototype</h2>\n<js>\nraptor.defineClass(\n    'some.namespace.MyClass',\n    function() {\n        return {\n            init: function() {\n                //Constructor \n            },\n            \n            //Prototype methods:\n            someMethod: function() { ... }\n        }\n    });\n</js>");
     });
