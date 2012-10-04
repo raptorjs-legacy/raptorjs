@@ -29,7 +29,14 @@ $rload(function(raptor) {
      * The ExtensionCollection class is used to maintain a set
      * of extensions and provides methods for adding
      * extension names and checking if an extension
-     * is an enabled. 
+     * is an enabled. It also exposes a <code>getKey()</code>
+     * method that can be used to return a String
+     * key that uniquely identifies the set of
+     * enabled extensions.
+     *
+     * @name packager.ExtensionCollection
+     * @raptor
+     * @anonymous
      */
     var ExtensionCollection = function(extensions) {
         this.extensionsLookup = {};
