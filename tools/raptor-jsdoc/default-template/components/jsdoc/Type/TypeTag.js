@@ -95,6 +95,8 @@ raptor.define(
                         type: "deprecated"
                     });
                 }
+                
+                
             }
 
             if (this.isFunction()) {
@@ -109,6 +111,23 @@ raptor.define(
                         type: "params",
                         label: "Parameters",
                         params: params
+                    });    
+                }
+                
+                
+            }
+            
+            if (comment) {
+                var returnTag = comment.getTag("return");
+                if (returnTag) {
+                    this.returnType = returnTag.returnType;
+                    this.returnDesc = returnTag.returnDesc;
+                    
+                    this.sections.push({
+                        type: "returns",
+                        label: "Returns",
+                        returnType: returnTag.returnType,
+                        returnDesc: returnTag.returnDesc
                     });    
                 }
             }
@@ -347,7 +366,7 @@ raptor.define(
             toString: function() {
                 return "[TypeViewModel " + this.name + "]";
             }
-        }
+        };
 
         var TypeTag = function(config) {
             

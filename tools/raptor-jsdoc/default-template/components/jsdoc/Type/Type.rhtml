@@ -26,8 +26,7 @@
                     <span class="params">
                         <c:invoke function="renderParams" params="${prop.params}"/>
                     </span>
-                    <c:if test="prop.returnType">
-                        :
+                    <c:if test="prop.returnType"> : 
                         <span class="return-type">
                             <jsdoc:type-ref type="${prop.returnType}"/>
                         </span>
@@ -123,6 +122,17 @@
                                         </ul>
 
                                         <jsdoc:desc value="${section.message}"/>
+                                    </c:when>
+                                    <c:when test="section.type === 'returns'">
+                                        <ul>
+                                            <li c:for="see in section.see" class="see">
+                                                <jsdoc:desc value="${see.getValue()}"/>
+                                            </li>
+                                        </ul>
+                                        <span class="return-type" c:if="section.returnType">
+                                            <jsdoc:type-ref type="${section.returnType}"/> :
+                                        </span> 
+                                        <jsdoc:desc value="${section.returnDesc}" c:if="section.returnDesc"/>
                                     </c:when>
                                 </c:choose>
                             </div>
