@@ -101,7 +101,13 @@ Publisher.prototype = {
         }
 
         var targetType = null;
+        var sourceType = type;
         if (extendsTarget.isJavaScriptFunction()) {
+            sourceType = type.getPropertyType("prototype");
+            if (!sourceType) {
+                return;
+            }
+            
             targetType = extendsTarget.getPropertyType("prototype");
             if (!targetType) {
                 targetType = new Type("object");
@@ -115,7 +121,7 @@ Publisher.prototype = {
             targetType = extendsTarget;
         }
 
-        type.forEachProperty(function(mixinSourceProp) {
+        sourceType.forEachProperty(function(mixinSourceProp) {
             var mixinTargetProp = raptor.extend({}, mixinSourceProp);
             mixinTargetProp.mixinSource = type;
             mixinTargetProp.label = mixinSourceProp.name;
