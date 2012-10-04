@@ -42,7 +42,7 @@ module.exports = function(methodName, node, walker, isClass) {
             var objectType = walker.resolveType(arg);
             
             if (modifiers || i === args.length-1) {
-                def = objectType;
+                type = objectType;
             }
             else {
                 modifiers = objectType;    
@@ -85,9 +85,7 @@ module.exports = function(methodName, node, walker, isClass) {
             }, this);
         }
     }
-    else if (def.type === 'ObjectExpression') {
-        type = walker.resolveType(def);
-    }
+
     
     if (type) {
         type.label = label;

@@ -12,6 +12,7 @@
     ],
     
     "includes": [
+        {"path": "js-minifier.js"}
     ],
     
     "extensions": {
