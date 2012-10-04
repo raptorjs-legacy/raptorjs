@@ -164,7 +164,7 @@ $rload(function(raptor) {
                 proto,          //The prototype for the class (CLASS and ENUM types only)
                 targetType = def[TYPE_IDX],             //The output type (either CLASS, MODULE, ENUM or MIXIN)
                 targetTypeName, //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
-                modifiers = def[MODIFIERS_IDX],   //Modifiers for the object being defined
+                modifiers = def[MODIFIERS_IDX] || {},   //Modifiers for the object being defined
                 superClassName,
                 mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
                 factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
@@ -195,7 +195,7 @@ $rload(function(raptor) {
                 type = function() {}; //Enum values were provided, but a constructor function is not required
             }
             else {
-                throw createError(new Error(name + ' invalid'));
+                throw createError(new Error(name + ' missing definition'));
             }
             
             clazz = mixinsTarget = type;
