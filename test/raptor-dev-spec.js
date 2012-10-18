@@ -11,6 +11,11 @@ describe('development spec', function() {
         createRaptor();
     });
 
+    xit("should allow a doctype tag", function() {
+        var output = compileAndRender("/test-templates/doctype.rhtml", {});
+        expect(output).toEqual("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><!DOCTYPE html><html><head><title>DOCTYPE Test</title></head><body></body></html>");
+    });
+
     xit("should handle XML escaping correctly", function() {
         var output = compileAndRender("/test-templates/xml-escaping.rhtml", {name: "<Patrick>", welcome: '<span>Welcome</span>'});
         console.error(JSON.stringify(output));

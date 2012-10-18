@@ -18,6 +18,25 @@
     
     <tag>
         
+        <name>html</name> 
+        <uri></uri> <!-- Register attributes supported by all tags in all namespaces -->
+        
+        <attribute name="doctype" type="string"/>
+        
+        <!-- Compiler that applies to all tags as well -->
+        <transformer>
+            <class-name>templating.taglibs.html.HtmlTagTransformer</class-name>
+        </transformer>
+    </tag>
+
+    <tag>
+        <name>doctype</name>
+        <attribute name="value" type="custom"/>
+        <node-class>templating.taglibs.html.DocTypeNode</node-class>
+    </tag>
+    
+    <tag>
+        
         <name>*</name> 
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
         

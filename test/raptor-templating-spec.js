@@ -598,6 +598,11 @@ describe('templating module', function() {
         expect(output).toEqual("<span>Welcome</span> &lt;Patrick><div title=\"&lt;span&gt;Welcome&lt;/span&gt; &lt;hello&gt;\" data-name=\"&lt;Patrick&gt;\"></div><div data-attr=\"Hello &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr=\"&lt;Hello&gt; &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr2=\"Hello &lt;John&gt; &lt;hello&gt;\">Hello &lt;John>© &lt;hello> <START></div>");
     });
     
+    it("should allow for a doctype tag and a doctype attribute", function() {
+        var output = compileAndRender("/test-templates/doctype.rhtml", {});
+        expect(output).toEqual("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><!DOCTYPE html><html><head><title>DOCTYPE Test</title></head><body></body></html>");
+    });
+
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
