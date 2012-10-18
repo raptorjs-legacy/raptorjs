@@ -19,7 +19,10 @@ raptor.defineClass(
     'templating.compiler.Node',
     function() {
         "use strict";
-        
+
+        var escapeXmlAttr = raptor.require('xml.utils').escapeXmlAttr,
+            EscapeXmlContext = raptor.require('templating.compiler.EscapeXmlContext');
+
         var WriteNode = function(props) {
             WriteNode.superclass.constructor.call(this, 'write');
             
@@ -41,8 +44,17 @@ raptor.defineClass(
                     escapeXml = this.getProperty("escape-xml") !== false;
                 }
                 
+                if (escapeXml === true) {
+                    if (this.getEscapeXmlContext() === EscapeXmlContext.Attribute) {
+                        expression = template.getStaticHelperFunction("escapeXmlAttr", "xa") + "(" + expression + ")";
+                    }
+                    else {
+                        expression = template.getStaticHelperFunction("escapeXml", "x") + "(" + expression + ")";
+                    }
+                }
+
                 if (expression) {
-                    template.write(expression, {escapeXml: escapeXml});
+                    template.write(expression);
                 }
             },
             

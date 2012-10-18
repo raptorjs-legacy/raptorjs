@@ -190,32 +190,25 @@ raptor.defineClass(
                     this.callback = callback;
                     this.callbackThisObj = callbackThisObj;
                     
-                    this.text = '';
+                    this.prevText = null;
+                    this.prevEscapeXml = null;
                 },
                 
-                _invokeCallback: function(name, arg) {
+                _invokeCallback: function(name, value, escapeXml) {
                     if (!this.callback[name]) {
-                        throw raptor.createError(new Error(name + " not allowed: " + arg));
+                        throw raptor.createError(new Error(name + " not allowed: " + value));
                     }
                     
-                    this.callback[name].call(this.callbackThisObj, arg);
+                    this.callback[name].call(this.callbackThisObj, value, escapeXml);
                 },
                 
                 _endText: function() {
-                    if (this.text) {
-                        this._invokeCallback("text", this.text);
-                        this.text = '';
-                    }
-                },
-                
-                add: function(type, value) {
-                    if (type === 'text') {
-                        this.addText(value);
-                    }
-                    else {
-                        this._endText();
-                        this._invokeCallback(type, value);    
-                    }
+                    if (this.prevText !== null) {
+                        this._invokeCallback("text", this.prevText, this.prevEscapeXml);
+                        this.prevText = null;
+                        this.prevEscapeXml = null;
+                    } 
+                    
                 },
                 
                 /**
@@ -223,24 +216,44 @@ raptor.defineClass(
                  * @param newText
                  * @returns
                  */
-                addText: function(newText) {
-                    this.text += newText;
+                addXmlText: function(xmlText) {
+                    this.addText(xmlText, false);
+                },
+
+                /**
+                 * 
+                 * @param newText
+                 * @returns
+                 */
+                addText: function(text, escapeXml) {
+                    
+                    if (this.prevText !== null && this.prevEscapeXml === escapeXml) {
+                        this.prevText += text;
+                    }
+                    else {
+                        this._endText();
+                        this.prevText = text;
+                        this.prevEscapeXml = escapeXml;
+                    }                    
                 },
                 
+                addXmlExpression: function(expression, escapeXml) {
+                    this.addExpression(expression, false);
+                },
+
                 /**
                  * 
                  * @param expression
                  * @returns
                  */
-                addExpression: function(expression) {
+                addExpression: function(expression, escapeXml) {
                     this._endText();
-                    
                     
                     if (!(expression instanceof Expression)) {
                         expression = new Expression(expression);
                     }
 
-                    this._invokeCallback("expression", expression);
+                    this._invokeCallback("expression", expression, escapeXml !== false);
                 },
                 
                 /**
@@ -250,6 +263,7 @@ raptor.defineClass(
                  */
                 addScriptlet: function(scriptlet) {
                     this._endText();
+                    
                     this._invokeCallback("scriptlet", scriptlet);
                 }
             };
@@ -371,8 +385,8 @@ raptor.defineClass(
                 endRegExp.lastIndex = expressionStart; //Start searching from where the expression begins
                 
                 var depth = 0;
-                
                 var foundStrings = [];
+                var handler;
                 
                 while((endMatches = endRegExp.exec(str))) {
                     if (endMatches[0] === '{') {
@@ -411,7 +425,7 @@ raptor.defineClass(
                     expression = str.substring(expressionStart, endMatches.index);
                     
                     
-                    var handler;
+                    handler = null;
                     
                     if (startToken === "${") {
                         var firstColon = expression.indexOf(":"),
@@ -484,24 +498,21 @@ raptor.defineClass(
                 helper.addText(str.substring(textStart, str.length));
             }
             
-            //console.log("Loop ended");
             helper._endText();
         };
         
         ExpressionParser.custom = {
             "xml": function(expression, helper) {
-                expression = new Expression(expression);
-                expression.escapeXml = false;
-                helper.addExpression(expression);
+                helper.addXmlExpression(new Expression(expression));
             },
             "entity": function(expression, helper) {
-                helper.addText("&" + expression + ";");
+                helper.addXmlText("&" + expression + ";");
             },
             "startTag": function(expression, helper) {
-                helper.addText("<" + expression + ">");
+                helper.addXmlText("<" + expression + ">");
             },
             "endTag": function(expression, helper) {
-                helper.addText("</" + expression + ">");
+                helper.addXmlText("</" + expression + ">");
             },
             "newline": function(expression, helper) {
                 helper.addText("\n");

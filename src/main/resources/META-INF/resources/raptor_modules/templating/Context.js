@@ -184,7 +184,7 @@ raptor.defineClass(
                 return this;
             },
             
-            attr: function(name, value) {
+            attr: function(name, value, escapeXml) {
                 if (value === null) {
                     value = '';
                 }
@@ -192,7 +192,7 @@ raptor.defineClass(
                     return this;
                 }
                 else {
-                    value = '="' + escapeXmlAttr(value) + '"';
+                    value = '="' + (escapeXml === false ? value : escapeXmlAttr(value)) + '"';
                 }
                 
                 this.write(' ' + name + value);
@@ -205,7 +205,7 @@ raptor.defineClass(
              * @param attrs
              */
             attrs: function(attrs) {
-                if (arguments.length === 2) {
+                if (arguments.length !== 1) {
                     this.attr.apply(this, arguments);
                 }
                 else if (attrs) {

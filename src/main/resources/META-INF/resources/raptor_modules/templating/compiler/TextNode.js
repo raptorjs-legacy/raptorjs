@@ -20,16 +20,62 @@ raptor.defineClass(
     function() {
         "use strict";
         
-        var strings = raptor.require('strings');
+        var escapeXml = raptor.require('xml.utils').escapeXml,
+            escapeXmlAttr = raptor.require('xml.utils').escapeXmlAttr,
+            EscapeXmlContext = raptor.require('templating.compiler.EscapeXmlContext');
         
-        var TextNode = function(text) {
+        var TextNode = function(text, escapeXml) {
             TextNode.superclass.constructor.call(this, 'text');
             this.text = text;
+            this.escapeXml = escapeXml !== false;
         };
         
         TextNode.prototype = {
+                
+            normalizeText: function() {
+                var normalizedText = this.getEscapedText(),
+                    curChild = this.nextSibling,
+                    nodeToRemove;
+                
+                while(curChild && curChild.isTextNode()) {
+                    normalizedText += curChild.getEscapedText();
+                    nodeToRemove = curChild;
+                    curChild = curChild.nextSibling;
+                    nodeToRemove.detach(); 
+                }
+                
+                this.setText(normalizedText);
+                this.escapeXml = false; //Make sure the text is not re-escaped
+            },
+            
+            getEscapedText: function() {
+                var text = this.getText();
+                var parentNode = this.parentNode;
+                var shouldEscapeXml = this.escapeXml !== false && parentNode && parentNode.isEscapeXmlBodyText() !== false;
+                if (shouldEscapeXml) {
+                    if (this.getEscapeXmlContext() === EscapeXmlContext.Attribute) {
+                        return escapeXmlAttr(text);
+                    }
+                    else {
+                        return escapeXml(text);
+                    }
+                }
+                else {
+                    return text;
+                }
+            },
+                
             doGenerateCode: function(template) {
-                var text = this.text;
+                /*
+                 * After all of the transformation of the tree we
+                 * might have ended up with multiple text nodes
+                 * as siblings. We want to normalize adjacent
+                 * text nodes so that whitespace removal rules
+                 * will be correct
+                 */
+                this.normalizeText();
+                
+                var text = this.getText();
                 if (text) {
                     var preserveWhitespace = this.isPreserveWhitespace();
                     
@@ -49,7 +95,6 @@ raptor.defineClass(
                         }
                         
                         text = text.replace(/\s+/g, " ");
-                        
                         
                         if (this.isWordWrapEnabled() && text.length > 80) {
                             
@@ -99,6 +144,14 @@ raptor.defineClass(
                 return false;
             },
             
+            setEscapeXml: function(escapeXml) {
+                this.escapeXml = escapeXml;
+            },
+
+            isEscapeXml: function() {
+                return this.escapeXml;
+            },
+
             toString: function() {
                 var text = this.text && this.text.length > 25 ? this.text.substring(0, 25) + '...' : this.text;
                 text = text.replace(/[\n]/g, '\\n');

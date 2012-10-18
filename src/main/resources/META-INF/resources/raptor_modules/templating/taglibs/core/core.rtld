@@ -373,6 +373,11 @@
             <name>uri</name>
             <type>string</type>
         </attribute>
+
+        <attribute>
+            <name>prefix</name>
+            <type>string</type>
+        </attribute>
     </tag>
     
     <tag>

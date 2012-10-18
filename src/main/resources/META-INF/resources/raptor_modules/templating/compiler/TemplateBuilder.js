@@ -171,6 +171,9 @@ raptor.defineClass(
                             if (typeof arg === 'string') {
                                 this._code.append(arg);
                             }
+                            else if (typeof arg === 'boolean') {
+                                this._code.append(arg ? 'true' : 'false');
+                            }
                             else if (typeof arg === 'function') {
                                 arg();
                             }
@@ -342,9 +345,15 @@ raptor.defineClass(
                 return this;
             },
             
-            attr: function(name, valueExpression) {
+            attr: function(name, valueExpression, escapeXml) {
                 if (!this.hasErrors()) {
-                    this.contextMethodCall("a", stringify(name), valueExpression);    
+                    if (escapeXml === false) {
+                        this.contextMethodCall("a", stringify(name), valueExpression, false);
+                    }
+                    else {
+                        this.contextMethodCall("a", stringify(name), valueExpression);
+                    }
+                    
                 }
     
                 return this;
@@ -376,7 +385,7 @@ raptor.defineClass(
             
             write: function(expression, options) {
                 if (!this.hasErrors()) {
-                    
+
                     if (options) {
                         if (options.escapeXml) {
                             expression = this.getStaticHelperFunction("escapeXml", "x") + "(" + expression + ")";
@@ -386,7 +395,7 @@ raptor.defineClass(
                         }
                     }
                     
-                    this.writer.write(expression, options);
+                    this.writer.write(expression);
                 }
     
                 return this;

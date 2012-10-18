@@ -10,6 +10,17 @@ describe('development spec', function() {
     before(function() {
         createRaptor();
     });
+
+    xit("should handle XML escaping correctly", function() {
+        var output = compileAndRender("/test-templates/xml-escaping.rhtml", {name: "<Patrick>", welcome: '<span>Welcome</span>'});
+        console.error(JSON.stringify(output));
+        expect(output).toEqual('');
+    });
+    
+    xit("should allow entity expressions", function() {
+        var output = compileAndRender("/test-templates/entities.rhtml", {});
+        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div> <div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
+    });
     
     xit("should allow for nested attributes", function() {
         var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});

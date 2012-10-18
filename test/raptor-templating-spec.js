@@ -156,8 +156,14 @@ describe('templating module', function() {
         expect(getExpression(0)).toEqual("{}");
 
         parse("${entity:lt}DIV${entity:gt}\n    ${startTag:div}Hello${endTag:div}");
-        expect(parts.length).toEqual(1);
-        expect(getText(0)).toEqual('&lt;DIV&gt;\n    <div>Hello</div>');
+        expect(parts.length).toEqual(7);
+        expect(getText(0)).toEqual('&lt;');
+        expect(getText(1)).toEqual('DIV');
+        expect(getText(2)).toEqual('&gt;');
+        expect(getText(3)).toEqual('\n    ');
+        expect(getText(4)).toEqual('<div>');
+        expect(getText(5)).toEqual('Hello');
+        expect(getText(6)).toEqual('</div>');
         
         parse('AAAA \\${1} BBBB \\\\${1} CCCC \\${1} DDDD \\\\${1}');
         expect(parts.length).toEqual(4);
@@ -299,7 +305,7 @@ describe('templating module', function() {
 
     it("should allow entity expressions", function() {
         var output = compileAndRender("/test-templates/entities.rhtml", {});
-        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div> <div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
+        expect(output).toEqual('<div data-attr="Hello &lt;John&gt; &lt;hello&gt;" data-nested-attr="Hello &lt;John&gt; &lt;hello&gt;" data-nested-attr2="Hello &lt;John&gt; &lt;hello&gt;">Hello &lt;John>© &lt;hello> <START></div>');
     });
     
     it("should allow escaped expressions", function() {
@@ -512,7 +518,7 @@ describe('templating module', function() {
     it("should allow CDATA inside templates", function() {
 
         var output = compileAndRender("/test-templates/cdata.rhtml", {name: "World"});
-        expect(output).toEqual('<hello>');        
+        expect(output).toEqual('&lt;hello>');        
     });
     
     it("should allow type conversion", function() {
@@ -585,10 +591,18 @@ describe('templating module', function() {
         expect(output).toEqual('<div>red</div><div>green</div><div>blue</div><div>orange</div><div>purple</div><div>yellow</div>');
     });
     
+    
+    it("should handle XML escaping correctly", function() {
+        var output = compileAndRender("/test-templates/xml-escaping.rhtml", {name: "<Patrick>", welcome: '<span>Welcome</span>'});
+        //console.error(JSON.stringify(output));
+        expect(output).toEqual("<span>Welcome</span> &lt;Patrick><div title=\"&lt;span&gt;Welcome&lt;/span&gt; &lt;hello&gt;\" data-name=\"&lt;Patrick&gt;\"></div><div data-attr=\"Hello &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr=\"&lt;Hello&gt; &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr2=\"Hello &lt;John&gt; &lt;hello&gt;\">Hello &lt;John>© &lt;hello> <START></div>");
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
         var output = compileAndRender("/test-templates/widgets.rhtml", {});
+        console.error(JSON.stringify(output));
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
     });
 });

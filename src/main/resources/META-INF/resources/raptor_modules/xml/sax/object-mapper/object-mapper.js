@@ -178,6 +178,15 @@ raptor.define(
                     rootObject,
                     saxParser = this.saxParser;
                 
+                var handleCharacters = function(text) {
+                    if (_this.skipping === true) {
+                        return;
+                    }
+                    
+                    var context = _this.getCurrentContext();
+                    context.text = context.text ? context.text + text : text;
+                };
+                
                 saxParser.on({
                     error: function (e) {
                         _this.error(e);
@@ -253,12 +262,11 @@ raptor.define(
                     },
     
                     characters: function (text) {
-                        if (_this.skipping === true) {
-                            return;
-                        }
-                        
-                        var context = _this.getCurrentContext();
-                        context.text = context.text ? context.text + text : text;
+                        handleCharacters(text);
+                    },
+                    
+                    cdata: function (text) {
+                        handleCharacters(text);
                     },
     
                     endElement: function () {

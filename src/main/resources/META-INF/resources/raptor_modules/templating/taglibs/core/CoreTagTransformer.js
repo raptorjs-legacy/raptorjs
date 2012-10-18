@@ -339,6 +339,7 @@ raptor.defineClass(
                 var attrName = node.getAttribute("name");
                 var attrValue = node.getAttribute("value");
                 var attrUri = node.getAttribute("uri") || '';
+                var attrPrefix = node.getAttribute("prefix") || '';
                 
                 if (parentNode.hasAttributeNS(attrUri, attrName)) {
                     node.addError(node.toString() + ' tag adds duplicate attribute with name "' + attrName + '"' + (attrUri ? ' and URI "' + attrUri + '"' : ''));
@@ -348,7 +349,7 @@ raptor.defineClass(
                 node.removeAttribute("name");
                 node.removeAttribute("value");
                 node.removeAttribute("uri");
-                
+                node.removeAttribute("prefix");
                 
                 if (node.hasAttributesAnyNS()) {
                     //There shouldn't be any other attributes...
@@ -361,13 +362,16 @@ raptor.defineClass(
                 
                 node.detach(); //Remove the node out of the tree
                 
+                
+                
                 compiler.transformTree(node, template);
                 
                 if (hasValue) {                    
-                    parentNode.setAttributeNS(attrUri, attrName, attrValue);
+                    parentNode.setAttributeNS(attrUri, attrName, attrValue, attrPrefix);
                 }
                 else {
-                    parentNode.setAttributeNS(attrUri, attrName, node.getBodyContentExpression(template));
+                    node.setEscapeXmlContext(raptor.require('templating.compiler.EscapeXmlContext').Attribute); //Escape body text and expressions as attributes
+                    parentNode.setAttributeNS(attrUri, attrName, node.getBodyContentExpression(template), attrPrefix, false /* Don't escape...pre-escaped*/);
                 }
             }
         };

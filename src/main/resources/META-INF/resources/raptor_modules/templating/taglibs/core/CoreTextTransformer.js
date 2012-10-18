@@ -36,12 +36,12 @@ raptor.defineClass(
                 ExpressionParser.parse(
                     node.text, 
                     {
-                        text: function(text) {
-                            parts.push({text: text});
+                        text: function(text, escapeXml) {
+                            parts.push({text: text, escapeXml: escapeXml});
                         },
                         
-                        expression: function(expression) {
-                            parts.push({expression: expression});
+                        expression: function(expression, escapeXml) {
+                            parts.push({expression: expression, escapeXml: escapeXml});
                         },
                         
                         scriptlet: function(scriptlet) {
@@ -52,39 +52,41 @@ raptor.defineClass(
                         }
                     }, 
                     this);
-                
+
                 if (parts.length > 0) {
                     var startIndex = 0;
                     
                     if (parts[0].text) {
-                        node.text = parts[0].text; //Update this text node to match first text part and we'll add the remaining
+                        node.setText(parts[0].text); //Update this text node to match first text part and we'll add the remaining
+                        node.setEscapeXml(parts[0].escapeXml !== false);
                         startIndex = 1;
                     }
                     else {
                         node.text = ''; //The first part is an expression so we'll just zero out this text node
                         startIndex = 0;
                     }
+
                     
                     var newNodes = [];
                     
-                    for (var i=startIndex; i<parts.length; i++) {
-                        
-                        var part = parts[i], 
-                            newNode = null;
+                    for (var i=startIndex, part, newNode; i<parts.length; i++) {
+                        part = parts[i];
+                        newNode = null;
                         
                         
                         if (part.hasOwnProperty('text')) {
-                            newNode = new TextNode(part.text);
+                            newNode = new TextNode(part.text, part.escapeXml !== false);
                             newNode.setTransformerApplied(this); //We shouldn't reprocess the new text node
                         }
                         else if (part.hasOwnProperty('expression')) {
-                            newNode = new WriteNode({expression: part.expression, escapeXml: part.expression.escapeXml !== false});
+                            newNode = new WriteNode({expression: part.expression, escapeXml: part.escapeXml !== false});
                         }
                         else if (part.hasOwnProperty('scriptlet')) {
                             newNode = new ScriptletNode(part.scriptlet);
                         }
                         
                         if (newNode) {
+                            newNode.setPosition(node.getPosition());
                             newNodes.push(newNode);
                         }
                     }
