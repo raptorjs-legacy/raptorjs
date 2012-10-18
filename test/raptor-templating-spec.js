@@ -595,7 +595,7 @@ describe('templating module', function() {
     it("should handle XML escaping correctly", function() {
         var output = compileAndRender("/test-templates/xml-escaping.rhtml", {name: "<Patrick>", welcome: '<span>Welcome</span>'});
         //console.error(JSON.stringify(output));
-        expect(output).toEqual("<span>Welcome</span> &lt;Patrick><div title=\"&lt;span&gt;Welcome&lt;/span&gt; &lt;hello&gt;\" data-name=\"&lt;Patrick&gt;\"></div><div data-attr=\"Hello &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr=\"&lt;Hello&gt; &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr2=\"Hello &lt;John&gt; &lt;hello&gt;\">Hello &lt;John>© &lt;hello> <START></div>");
+        expect(output).toEqual("<span>Welcome</span><span>Welcome</span><span>Welcome</span> &lt;Patrick><div title=\"&lt;span&gt;Welcome&lt;/span&gt; &lt;hello&gt;\" data-name=\"&lt;Patrick&gt;\"></div><div data-attr=\"Hello &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr=\"&lt;Hello&gt; &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr2=\"Hello &lt;John&gt; &lt;hello&gt;\">Hello &lt;John>© &lt;hello> <START></div>");
     });
     
     it("should allow for a doctype tag and a doctype attribute", function() {

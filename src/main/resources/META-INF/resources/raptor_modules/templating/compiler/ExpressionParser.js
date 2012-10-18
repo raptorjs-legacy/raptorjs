@@ -27,9 +27,11 @@ raptor.defineClass(
             endingTokens = {
 //                "{": "}",
                 "${": "}",
+                "$!{": "}",
                 "{%": "%}",
                 "{?": "}",
-                "$": null
+                "$": null,
+                "$!": null
             },
             createStartRegExpStr = function(starts) {
                 var parts = [];
@@ -42,11 +44,10 @@ raptor.defineClass(
 
                 return parts.join("|");
             },
-            startRegExpStr = createStartRegExpStr(["{%", "${", "$", "{?"]),
+            startRegExpStr = createStartRegExpStr(["{%", "${", "$!{", "$!", "$", "{?"]),
             createStartRegExp = function() {
                 return new RegExp(startRegExpStr, "g");
             },
-            variableRegExp = /^([_a-zA-Z]\w*)/g,
             getLine = function(str, pos) {
                 var lines = str.split("\n");
                 var index = 0;
@@ -359,6 +360,7 @@ raptor.defineClass(
                 
                 var endToken = endingTokens[startToken]; //Look up the end token
                 if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
+                    var variableRegExp = /^([_a-zA-Z]\w*)/g
                     variableRegExp.lastIndex = 0;
                     var variableMatches = variableRegExp.exec(str.substring(expressionStart)); //Find the variable name that follows the starting "$" token
                     
@@ -370,7 +372,13 @@ raptor.defineClass(
                     }
                     
                     var varName = variableMatches[1];
-                    helper.addExpression(varName); //Add the variable as an expression
+                    if (startToken === '$!') {
+                        helper.addXmlExpression(varName); //Add the variable as an expression
+                    }
+                    else {
+                        helper.addExpression(varName); //Add the variable as an expression    
+                    }
+                    
                     startRegExp.lastIndex = textStart = expressionStart = expressionStart + varName.length;
                     
                     continue outer;
@@ -451,7 +459,7 @@ raptor.defineClass(
                         }
                         else {
                             
-                            if (foundStrings.length) {
+                            if (foundStrings.length > 0) {
                                 for (var i=foundStrings.length-1; i>=0; i--) {
                                     var foundString = foundStrings[i];
                                     
@@ -478,7 +486,14 @@ raptor.defineClass(
                                     }
                                 }
                             }
-                            helper.addExpression(expression);
+
+                            if (startToken === '$!{') {
+                                helper.addXmlExpression(expression);
+                            }
+                            else {
+                                helper.addExpression(expression);   
+                            }
+                            
                         }
                         
                     }

@@ -2,7 +2,10 @@
     xmlns:c="http://raptorjs.org/templates/core"
     params="name,welcome">
     
-    ${xml:welcome} $name
+    $!welcome
+    $!{welcome}
+    ${xml:welcome} 
+    $name
     
     <div title="$welcome &lt;hello&gt;" data-name="$name"/>
 
