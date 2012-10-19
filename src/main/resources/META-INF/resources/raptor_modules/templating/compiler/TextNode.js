@@ -67,30 +67,26 @@ raptor.defineClass(
                 
             trim: function() {
                 var text = this.getText();
-                if (text) {
-                    var preserveWhitespace = this.isPreserveWhitespace();
-                    
-                    if (!preserveWhitespace) {
-                        
-                        if (!this.previousSibling) {
-                            //First child
-                            text = text.replace(/^(\n|&#10;)\s*/g, "");  
-                        }
-                        if (!this.nextSibling) {
-                            //Last child
-                            text = text.replace(/(\n|&#10;)\s*$/g, ""); 
-                        }
-                        
-                        if (/^\n\s*$/.test(text)) { //Whitespace between elements
-                            text = '';
-                        }
-                        
-                        text = text.replace(/\s+/g, " ");
-                    }
+                if (!text || this.isPreserveWhitespace()) {
+                    return;
                 }
 
+                if (!this.previousSibling) {
+                    //First child
+                    text = text.replace(/^(\n|&#10;)\s*/g, "");  
+                }
+                if (!this.nextSibling) {
+                    //Last child
+                    text = text.replace(/(\n|&#10;)\s*$/g, ""); 
+                }
+                
+                if (/^\n\s*$/.test(text)) { //Whitespace between elements
+                    text = '';
+                }
+                
+                text = text.replace(/\s+/g, " ");
+
                 if (this.isWordWrapEnabled() && text.length > 80) {
-                    
                     var start=0,
                         end;
                     
@@ -115,6 +111,8 @@ raptor.defineClass(
                         
                     }
                 }
+            
+                
                 this.setText(text);
             },
 
