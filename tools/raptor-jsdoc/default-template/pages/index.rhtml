@@ -1,4 +1,5 @@
 <c:template xmlns:c="core"
+    xmlns:html="html"
     xmlns:jsdoc="jsdoc"
     xmlns:w="widgets"
     xmlns:optimizer="optimizer"
@@ -19,8 +20,7 @@
         </includes>
     </optimizer:page>
     
-    <![CDATA[<!doctype html>]]>
-    <html>
+    <html html:doctype="html">
         <head>
             <base href="${data.baseHref}" c:if="data.baseHref"/>
             <title>RaptorJS API</title>
