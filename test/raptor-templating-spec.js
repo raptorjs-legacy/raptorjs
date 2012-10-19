@@ -583,7 +583,7 @@ describe('templating module', function() {
     
     it("should allow for nested attributes", function() {
         var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});
-        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div><div title=" red!  green!  blue! "></div>');
     });
     
     it("should allow for new variables to be created and assigned values", function() {

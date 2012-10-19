@@ -65,6 +65,60 @@ raptor.defineClass(
                 }
             },
                 
+            trim: function() {
+                var text = this.getText();
+                if (text) {
+                    var preserveWhitespace = this.isPreserveWhitespace();
+                    
+                    if (!preserveWhitespace) {
+                        
+                        if (!this.previousSibling) {
+                            //First child
+                            text = text.replace(/^(\n|&#10;)\s*/g, "");  
+                        }
+                        if (!this.nextSibling) {
+                            //Last child
+                            text = text.replace(/(\n|&#10;)\s*$/g, ""); 
+                        }
+                        
+                        if (/^\n\s*$/.test(text)) { //Whitespace between elements
+                            text = '';
+                        }
+                        
+                        text = text.replace(/\s+/g, " ");
+                    }
+                }
+
+                if (this.isWordWrapEnabled() && text.length > 80) {
+                    
+                    var start=0,
+                        end;
+                    
+                    while (start < text.length) {
+                        end = Math.min(start+80, text.length);
+                        
+                        var lastSpace = text.substring(start, end).lastIndexOf(' ');
+                        if (lastSpace != -1) {
+                            lastSpace = lastSpace + start; //Adjust offset into original string
+                        }
+                        else {
+                            lastSpace = text.indexOf(' ', end); //No space before the 80 column mark... search for the first space after to break on
+                        }
+                        
+                        if (lastSpace != -1) {
+                            text = text.substring(0, lastSpace) + "\n" + text.substring(lastSpace+1);
+                            start = lastSpace + 1;
+                        }
+                        else {
+                            break;
+                        }
+                        
+                    }
+                }
+                this.setText(text);
+            },
+
+
             doGenerateCode: function(template) {
                 /*
                  * After all of the transformation of the tree we
@@ -74,56 +128,10 @@ raptor.defineClass(
                  * will be correct
                  */
                 this.normalizeText();
-                
+                this.trim();
+
                 var text = this.getText();
                 if (text) {
-                    var preserveWhitespace = this.isPreserveWhitespace();
-                    
-                    if (!preserveWhitespace) {
-                        
-                        if (!this.previousSibling) {
-                            //First child
-                            text = text.replace(/^\n\s*/g, "");  
-                        }
-                        if (!this.nextSibling) {
-                            //Last child
-                            text = text.replace(/\n\s*$/g, ""); 
-                        }
-                        
-                        if (/^\n\s*$/.test(text)) { //Whitespace between elements
-                            text = '';
-                        }
-                        
-                        text = text.replace(/\s+/g, " ");
-                        
-                        if (this.isWordWrapEnabled() && text.length > 80) {
-                            
-                            var start=0,
-                                end;
-                            
-                            while (start < text.length) {
-                                end = Math.min(start+80, text.length);
-                                
-                                var lastSpace = text.substring(start, end).lastIndexOf(' ');
-                                if (lastSpace != -1) {
-                                    lastSpace = lastSpace + start; //Adjust offset into original string
-                                }
-                                else {
-                                    lastSpace = text.indexOf(' ', end); //No space before the 80 column mark... search for the first space after to break on
-                                }
-                                
-                                if (lastSpace != -1) {
-                                    text = text.substring(0, lastSpace) + "\n" + text.substring(lastSpace+1);
-                                    start = lastSpace + 1;
-                                }
-                                else {
-                                    break;
-                                }
-                                
-                            }
-                        }
-                    }
-
                     template.text(text);
                 }
             },

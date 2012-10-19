@@ -11,6 +11,11 @@ describe('development spec', function() {
         createRaptor();
     });
 
+    xit("should allow for nested attributes", function() {
+        var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
+    });
+
     xit("should allow a doctype tag", function() {
         var output = compileAndRender("/test-templates/doctype.rhtml", {});
         expect(output).toEqual("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><!DOCTYPE html><html><head><title>DOCTYPE Test</title></head><body></body></html>");
