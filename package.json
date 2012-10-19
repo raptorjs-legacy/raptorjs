@@ -29,7 +29,8 @@
     "xmldom": ">= 0.1",
     "dustjs-linkedin": "~1.0.0",
     "mime": "~1.2.7",
-    "sax": "~0.4.2"
+    "sax": "~0.4.2",
+    "esprima": "~0.9.9"
   },
   "devDependencies": {
     "jasmine-node": ">= 0.1.0",
