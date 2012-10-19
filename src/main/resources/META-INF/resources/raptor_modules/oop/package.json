@@ -20,7 +20,7 @@
             "includes": [
                 {"module": "objects"},
                 {"module": "arrays"},
-                {"module": "packager"},
+                {"module": "packaging"},
                 {"path": "oop_server.js"}
             ]
         },

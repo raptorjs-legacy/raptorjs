@@ -20,9 +20,9 @@ $rload(function(raptor) {
     /**
      * @extension Rhino
      */
-    raptor.extendCore('packager', {
+    raptor.extendCore('packaging', {
         rhinoCreateExtensions: function(javaExtensionSet) {
-            var extensions = new raptor.packager.ExtensionCollection();
+            var extensions = new raptor.packaging.ExtensionCollection();
             if (javaExtensionSet) {
                 var javaIterator = javaExtensionSet.iterator();
                 while(javaIterator.hasNext())

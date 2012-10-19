@@ -24,7 +24,7 @@ raptor.extend(
         
         var resources = raptor.require('resources'),
             json = raptor.require('json'),
-            packager = raptor.require("packager"),
+            packaging = raptor.require("packaging"),
             discoveryComplete = false,
             searchPathListenerHandler = null,
             watchingEnabled = false,
@@ -96,7 +96,7 @@ raptor.extend(
                 discoveryComplete = true;
                 this.clearTaglibs();
                 
-                packager.forEachTopLevelPackageManifest(function(manifest) {
+                packaging.forEachTopLevelPackageManifest(function(manifest) {
                     var taglibs = manifest['raptor-taglibs'];
                     if (taglibs) {
                         raptor.forEach(taglibs, function(rtldPath) {

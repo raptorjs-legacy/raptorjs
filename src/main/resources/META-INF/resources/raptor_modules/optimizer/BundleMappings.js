@@ -3,7 +3,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var packager = raptor.require('packager'), 
+        var packaging = raptor.require('packaging'), 
             indent = function(level) {
                 var str = "";
                 for (var i=0; i<level; i++) {
@@ -82,7 +82,7 @@ raptor.defineClass(
             },
             
             addIncludeToBundle: function(include, targetBundleName) {
-                include = packager.createInclude(include);
+                include = packaging.createInclude(include);
                 var Bundle = raptor.require('optimizer.Bundle');
                 
                 if (include.isPackageInclude()) {

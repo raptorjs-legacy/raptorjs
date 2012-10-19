@@ -5,7 +5,7 @@
   "keywords": [
     "modules",
     "loader",
-    "packager"
+    "packaging"
   ],
   "scripts": {
     "test": "node_modules/.bin/jasmine-node --verbose test/ && node_modules/.bin/jshint lib/raptor/raptor_modules"

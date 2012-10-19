@@ -15,8 +15,8 @@
  */
 
 raptor.define(
-    "packager.Include_module",
-    "packager.Include",
+    "packaging.Include_module",
+    "packaging.Include",
     function(raptor) {
         "use strict";
         
@@ -45,7 +45,7 @@ raptor.define(
                 context.setLoaded(moduleName);
                 
                 var newManifest = raptor.oop.getModuleManifest(moduleName);
-                raptor.packager.load(newManifest);
+                raptor.packaging.load(newManifest);
             },
 
             getManifest: function() {

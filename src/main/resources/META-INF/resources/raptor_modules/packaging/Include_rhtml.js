@@ -15,47 +15,47 @@
  */
 
 raptor.define(
-    "packager.Include_rtld",
-    "packager.Include_resource",
+    "packaging.Include_rhtml",
+    "packaging.Include",
     function(raptor) {
         "use strict";
-
-        var Include_rtld = function() {
-            Include_rtld.superclass.constructor.apply(this, arguments);
-            
+        
+        var Include_rhtml = function() {
+            Include_rhtml.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_rtld.prototype = {
-            
-            invalidInclude: function() {
-                throw raptor.createError(new Error('Invalid taglib include of "rtld" found in package at path "' + this.getParentManifestSystemPath() + '"'));
-            },
-            
+        Include_rhtml.prototype = {
             getKey: function() {
-                if (this.path) {
-                    return "rtld:" + this.resolvePathKey(this.path);
-                }
-                else {
-                    this.invalidInclude();
-                }
+                return "rhtml:" + this.resolvePathKey(this.path);
             },
-
+            
+            toString: function(include) {
+                return this.getResource().getPath();
+            },
+            
+            load: function(context) {
+                var resource = this.getResource();
+                var xmlSource = resource.readAsString("UTF-8");
+                raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
+            },
+            
             getContentType: function() {
                 return "application/javascript";
             },
             
+                        
             getResourcePath: function() {
                 return this.path;
             },
             
             getCode: function(context) {
-                
-                var resourceCode = Include_rtld.superclass.getCode.apply(this, arguments);
-                var taglibResource = this.getResource(context);
-                return resourceCode + '$radd("rtld","' + taglibResource.getPath() + '");';
+                var resource = this.getResource(context);
+                var xmlSource = resource.readAsString("UTF-8");
+                var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
+                return rhtmlJs;
             },
             
             isCompiled: function() {
@@ -63,5 +63,5 @@ raptor.define(
             }
         };
         
-        return Include_rtld;
+        return Include_rhtml;
     });

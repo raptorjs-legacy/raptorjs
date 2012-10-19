@@ -3,7 +3,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var packager = raptor.require('packager'),
+        var packaging = raptor.require('packaging'),
             Cache = raptor.require('optimizer.Cache'),
             BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter'),
             BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder'),
@@ -42,7 +42,7 @@ raptor.defineClass(
                 var PageBundles = raptor.require('optimizer.PageBundles'),
                     pageName = options.name,
                     config = this.config,
-                    enabledExtensions = packager.createExtensionCollection(options.enabledExtensions);
+                    enabledExtensions = packaging.createExtensionCollection(options.enabledExtensions);
                 
                 if (!pageName) {
                     throw raptor.createError(new Error('"pageName" property is required'));
@@ -60,7 +60,7 @@ raptor.defineClass(
                 if (!packageManifest) {
                     var packageResource = options.packageResource;
                     if (packageResource) {
-                        packageManifest = packager.getPackageManifest(packageResource);
+                        packageManifest = packaging.getPackageManifest(packageResource);
                     }
                     else {
                         var packageFile = options.packageFile;
@@ -69,18 +69,18 @@ raptor.defineClass(
                                 packageFile = new File(packageFile);
                             }
                             packageResource = raptor.require('resources').createFileResource(packageFile);
-                            packageManifest = packager.getPackageManifest(packageResource);
+                            packageManifest = packaging.getPackageManifest(packageResource);
                         }
                         else {
                             includes = options.includes;
                             if (includes) {
-                                packageManifest = packager.createPackageManifest();
+                                packageManifest = packaging.createPackageManifest();
                                 packageManifest.setIncludes(includes);
                             }
                         }
                     }
                 }
-                else if (!packager.isPackageManifest(packageManifest)) {
+                else if (!packaging.isPackageManifest(packageManifest)) {
                     throw raptor.createError(new Error("Invalid package manifest: " + packageManifest));
                 }
                 

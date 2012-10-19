@@ -2,7 +2,7 @@ raptor.define(
     'templating.taglibs.optimizer.PageTag',
     function(raptor) {
         "use strict";
-        var packager = raptor.require('packager'),
+        var packaging = raptor.require('packaging'),
             File = raptor.require('files').File,
             resources = raptor.require('resources'),
             optimizer = raptor.require('optimizer');
@@ -26,11 +26,11 @@ raptor.define(
                 var basePath = input['base-path'];
                 var enabledExtensions = input['enabled-extensions'];
                 if (enabledExtensions) {
-                    if (!packager.isExtensionCollection(enabledExtensions)) {
+                    if (!packaging.isExtensionCollection(enabledExtensions)) {
                         if (typeof enabledExtensions === 'string') {
                             enabledExtensions = enabledExtensions.split(/\s*,\s*/);
                         }
-                        enabledExtensions = packager.createExtensionCollection(enabledExtensions);
+                        enabledExtensions = packaging.createExtensionCollection(enabledExtensions);
                     }
                 }
                 
@@ -62,7 +62,7 @@ raptor.define(
 
                     if (packageManifest) {
                         var templateResource = resources.findResource(input.templatePath); //All paths will be resolved relative to this resource
-                        packageManifest = packager.createPackageManifest(packageManifest, templateResource);
+                        packageManifest = packaging.createPackageManifest(packageManifest, templateResource);
                     }
                     else if (packagePath) {
                         packageResource = resources.findResource(input.templatePath).resolve(packagePath);

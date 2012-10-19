@@ -15,53 +15,44 @@
  */
 
 raptor.define(
-    "packager.Include_rhtml",
-    "packager.Include",
-    function(raptor) {
+    "packaging.Include_css",
+    "packaging.Include",
+    function() {
         "use strict";
         
-        var Include_rhtml = function() {
-            Include_rhtml.superclass.constructor.apply(this, arguments);
+        var Include_css = function() {
+            Include_css.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_rhtml.prototype = {
+        Include_css.prototype = {
+            
             getKey: function() {
-                return "rhtml:" + this.resolvePathKey(this.path);
+                return "css:" + this.resolvePathKey(this.path);
             },
             
-            toString: function(include) {
+            toString: function() {
                 return this.getResource().getPath();
             },
             
-            load: function(context) {
-                var resource = this.getResource();
-                var xmlSource = resource.readAsString("UTF-8");
-                raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
+            getCode: function(context) {
+                return this.getResource(context).readAsString("UTF-8");
             },
             
-            getContentType: function() {
-                return "application/javascript";
-            },
-            
-                        
             getResourcePath: function() {
                 return this.path;
             },
             
-            getCode: function(context) {
-                var resource = this.getResource(context);
-                var xmlSource = resource.readAsString("UTF-8");
-                var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
-                return rhtmlJs;
+            getContentType: function() {
+                return "text/css";
             },
             
-            isCompiled: function() {
+            isInPlaceDeploymentAllowed: function() {
                 return true;
             }
         };
         
-        return Include_rhtml;
+        return Include_css;
     });

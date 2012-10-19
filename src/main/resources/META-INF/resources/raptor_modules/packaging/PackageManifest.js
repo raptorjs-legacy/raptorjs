@@ -18,13 +18,13 @@ $rload(function(raptor) {
     "use strict";
     
     /**
-     * @parent packager_Server
+     * @parent packaging_Server
      */
     
     var forEach = raptor.forEach,
         forEachEntry = raptor.forEachEntry,
-        packager = raptor.packager,
-        ExtensionCollection = raptor.packager.ExtensionCollection,
+        packaging = raptor.packaging,
+        ExtensionCollection = raptor.packaging.ExtensionCollection,
         nextId = 0;
 
     var createInclude = function(includeConfig, manifest) {
@@ -76,7 +76,7 @@ $rload(function(raptor) {
                 }
             }
             
-            var IncludeClass = packager.getIncludeClass(includeConfig.type);
+            var IncludeClass = packaging.getIncludeClass(includeConfig.type);
 
             var include = new IncludeClass();
             
@@ -223,7 +223,7 @@ $rload(function(raptor) {
         },
         
         load: function() {
-            raptor.require('packager').load(this);
+            raptor.require('packaging').load(this);
         },
         
         /**
@@ -251,7 +251,7 @@ $rload(function(raptor) {
             }
             var enabledExtensions = options.enabledExtensions;
             if (enabledExtensions === undefined) {
-                enabledExtensions = raptor.require('packager').getEnabledExtensions();
+                enabledExtensions = raptor.require('packaging').getEnabledExtensions();
             }
             else {
                 if (!(enabledExtensions instanceof ExtensionCollection)) {
@@ -326,6 +326,6 @@ $rload(function(raptor) {
         }
     };
     
-    raptor.packager.PackageManifest = PackageManifest; 
-    raptor.packager.createInclude = createInclude;
+    raptor.packaging.PackageManifest = PackageManifest; 
+    raptor.packaging.createInclude = createInclude;
 });

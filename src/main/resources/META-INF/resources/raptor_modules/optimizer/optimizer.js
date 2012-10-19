@@ -28,7 +28,7 @@ raptor.define(
         var forEach = raptor.forEach,
             files = raptor.require('files'),
             File = files.File,
-            packager = raptor.require('packager'),
+            packaging = raptor.require('packaging'),
             Config = raptor.require('optimizer.Config'),
             PageOptimizer = raptor.require('optimizer.PageOptimizer');
         
@@ -55,8 +55,8 @@ raptor.define(
              * <ul>
              *     <li><b>name</b> {String}: The name of the page. This property is used to determine the name for page bundles and it is also used for any page-specific configuration options. [REQUIRED]
              *     <li><b>basePath</b> {String}: A directory name used to generate relative URLs to resource bundles. The base path will typically be the output directory for the page. This option is ignored if the optimizer is configured to use a URL prefix.
-             *     <li><b>enabledExtensions</b> {Array|Object|{@link packager.PackageExtension}}: A collection of extensions that should be enabled when generating the optimized page bundles
-             *     <li><b>packageManifest</b> {{@link packager.PackageManifest}|{@link resources.Resource}|{@link files.File}|String}: A package manifest for the page that describes the page dependencies
+             *     <li><b>enabledExtensions</b> {Array|Object|{@link packaging.PackageExtension}}: A collection of extensions that should be enabled when generating the optimized page bundles
+             *     <li><b>packageManifest</b> {{@link packaging.PackageManifest}|{@link resources.Resource}|{@link files.File}|String}: A package manifest for the page that describes the page dependencies
              * </ul>
              * 
              * @param  {options} options Information about the page being optimized (see above for supported options)
@@ -215,7 +215,7 @@ raptor.define(
                 };
                 
                 forEach(options.includes, function(include) {
-                    include = packager.createInclude(include);
+                    include = packaging.createInclude(include);
                     
                     handleInclude.call(
                         this, 
@@ -249,7 +249,7 @@ raptor.define(
                 }
                 var extensions = context.optimizerExtensions;
                 if (!extensions) {
-                    extensions = packager.createExtensionCollection();
+                    extensions = packaging.createExtensionCollection();
                 }
                 extensions.add(extension);
             },
@@ -279,7 +279,7 @@ raptor.define(
              * Returns the set of enabled extensions associated with the provided context.
              * 
              * @param context {Object}
-             * @returns {packager.ExtensionCollection} The set of enabled extensions.
+             * @returns {packaging.ExtensionCollection} The set of enabled extensions.
              * 
              * @see {@link optimizer#enableExtensionForContext}
              * @see {@link optimizer#disableExtensionForContext}

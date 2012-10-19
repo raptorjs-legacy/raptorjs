@@ -15,8 +15,8 @@
  */
 
 raptor.define(
-    "packager.Include_package",
-    "packager.Include",
+    "packaging.Include_package",
+    "packaging.Include",
     function(raptor) {
         "use strict";
         
@@ -41,11 +41,11 @@ raptor.define(
                     console.error("Invalid package include: ", this);
                     throw raptor.createError("Invalid package include");
                 }
-                raptor.packager.load(this.path);
+                raptor.packaging.load(this.path);
             },
 
             getManifest: function() {
-                var manifest = raptor.packager.getPackageManifest(this.path);
+                var manifest = raptor.packaging.getPackageManifest(this.path);
                 if (!manifest) {
                     throw raptor.createError(new Error('Package manifest not found at path "' + this.path + '"'));    
                 }

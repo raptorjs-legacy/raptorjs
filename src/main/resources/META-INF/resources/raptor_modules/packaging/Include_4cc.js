@@ -15,8 +15,8 @@
  */
 
 raptor.define(
-    "packager.Include_4cc",
-    "packager.Include",
+    "packaging.Include_4cc",
+    "packaging.Include",
     function(raptor) {
         "use strict";
         

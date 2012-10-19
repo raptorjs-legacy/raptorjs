@@ -15,7 +15,7 @@
  */
 
 raptor.defineClass(
-    "packager.Include",
+    "packaging.Include",
     function(raptor) {
         "use strict";
         

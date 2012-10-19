@@ -18,7 +18,7 @@ $rload(function(raptor) {
     "use strict";
     
     /**
-     * @parent packager_Server
+     * @parent packaging_Server
      */
     
     var forEach = raptor.forEach,
@@ -34,7 +34,7 @@ $rload(function(raptor) {
      * key that uniquely identifies the set of
      * enabled extensions.
      *
-     * @name packager.ExtensionCollection
+     * @name packaging.ExtensionCollection
      * @raptor
      * @anonymous
      */
@@ -79,7 +79,7 @@ $rload(function(raptor) {
          * supports an array of extension names, as well as an
          * object map with extension names as property names.
          * 
-         * @param extensions {Array|Object|packager.ExtensionCollection}
+         * @param extensions {Array|Object|packaging.ExtensionCollection}
          */
         addAll: function(extensions) {
             if (!extensions) {

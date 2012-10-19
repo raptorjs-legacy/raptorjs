@@ -15,8 +15,8 @@
  */
 
 raptor.define(
-    "packager.Include_less",
-    "packager.Include",
+    "packaging.Include_less",
+    "packaging.Include",
     function(raptor) {
         "use strict";
         

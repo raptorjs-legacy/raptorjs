@@ -19,7 +19,7 @@ $rload(function(raptor) {
     
     var arrays = raptor.arrays,
         forEachEntry = raptor.forEachEntry,
-        logger = raptor.logging.logger('packager-server'),
+        logger = raptor.logging.logger('packaging-server'),
         packageManifests = {},
         enabledExtensions = null,
         includeClasses = {},
@@ -36,9 +36,9 @@ $rload(function(raptor) {
     /**
      * @namespace
      * @raptor
-     * @name packager
+     * @name packaging
      */
-    raptor.packager = {
+    raptor.packaging = {
         ExtensionCollection: raptor.ExtensionCollection,
         
         createExtensionCollection: function(enabledExtensions) {
@@ -53,7 +53,7 @@ $rload(function(raptor) {
         
         config: raptor.config.create({
             "enabledExtensions": {
-                value: raptor.getModuleConfig('packager').enabledExtensions,
+                value: raptor.getModuleConfig('packaging').enabledExtensions,
                 onChange: function(value) {
                     arrays.forEach(value, function(ext) {
                         getEnabledExtensions().add(ext);
@@ -72,7 +72,7 @@ $rload(function(raptor) {
         
         /**
          * 
-         * @param resourcePath {String|packager-PackageManifest}
+         * @param resourcePath {String|packaging-PackageManifest}
          */
         load: function(resourcePath) {
             this.PackageLoader.instance.load(resourcePath, {enabledExtensions: getEnabledExtensions()});

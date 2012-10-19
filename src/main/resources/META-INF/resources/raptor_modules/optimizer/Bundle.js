@@ -3,7 +3,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var packager = raptor.packager,
+        var packaging = raptor.packaging,
             forEach = raptor.forEach,
             crypto = require('crypto');
         
@@ -25,7 +25,7 @@ raptor.defineClass(
             
             addInclude: function(include) {
             
-                this.includes.push(packager.createInclude(include));
+                this.includes.push(packaging.createInclude(include));
             },
             
             getIncludes: function() {

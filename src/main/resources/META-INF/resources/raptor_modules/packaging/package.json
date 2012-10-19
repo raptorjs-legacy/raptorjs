@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "packager",
+    "name": "packaging",
     "version": "1.0",
     "description": "Object oriented programming support for JavaScript",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -18,14 +18,14 @@
     "extensions": {
         "server": {
             "includes": [
-                {"path": "packager_server.js"},
+                {"path": "packaging_server.js"},
                 {"path": "ExtensionCollection.js"},
                 {"path": "PackageManifest.js"}
             ]
         },
         "rhino": {
             "includes": [
-                {"path": "packager_rhino.js"}
+                {"path": "packaging_rhino.js"}
             ]
         }
     }

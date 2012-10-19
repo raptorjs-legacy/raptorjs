@@ -15,40 +15,51 @@
  */
 
 raptor.define(
-    "packager.Include_loader-metadata",
-    "packager.Include",
+    "packaging.Include_dust",
+    "packaging.Include",
     function(raptor) {
         "use strict";
-        
-        var Include_loader_metadata = function() {
-            Include_loader_metadata.superclass.constructor.apply(this, arguments);
+                
+        var Include_dust = function() {
+            Include_dust.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
+            });
         };
         
-        Include_loader_metadata.prototype = {
-            
+        Include_dust.prototype = {
             getKey: function() {
-                return "loader-metadata";
+                return "dust:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
-                return "[loader-metadata]";
+                return this.getResource().getPath();
             },
             
             getCode: function(context) {
-                var loaderMetadata = context && context.loaderMetadata;
-                if (loaderMetadata) {
-                    return "$rloaderMeta=" + JSON.stringify(loaderMetadata) + ";";
-                }
+                return this.getResource(context).readAsString("UTF-8");
             },
-            
+           
             getResourcePath: function() {
-                return null;
+                return this.path;
             },
             
             getContentType: function() {
                 return "application/javascript";
+            },
+            
+            isInPlaceDeploymentAllowed: function() {
+                return true;
+            },
+            
+            load: function(context) {
+                var resource = this.getResource(context);
+                var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
+                var compiled = dust.compile(resource.readAsString("UTF-8"),dirs.join('.'));
+                dust.loadSource(compiled);
             }
+            
         };
-
-        return Include_loader_metadata;
+        
+        return Include_dust;
     });

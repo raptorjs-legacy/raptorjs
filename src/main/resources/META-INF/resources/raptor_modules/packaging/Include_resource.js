@@ -15,8 +15,8 @@
  */
 
 raptor.define(
-    "packager.Include_resource",
-    "packager.Include",
+    "packaging.Include_resource",
+    "packaging.Include",
     function(raptor) {
         "use strict";
 

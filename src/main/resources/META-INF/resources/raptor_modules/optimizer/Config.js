@@ -13,7 +13,7 @@ raptor.defineClass(
             this.checksumsEnabled = true;
             this.enabledProfiles = {};
             this.urlPrefix = null;
-            this.enabledExtensions = raptor.require('packager').createExtensionCollection();
+            this.enabledExtensions = raptor.require('packaging').createExtensionCollection();
             this.params = {};
             this.pages = [];
             this.bundleSetConfigsByName = {};

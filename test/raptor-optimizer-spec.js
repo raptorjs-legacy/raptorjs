@@ -9,11 +9,11 @@ describe('optimizer module', function() {
         compileAndRender = helpers.templating.compileAndRender,
         testOptimizer = function(config) {
         
-            var enabledExtensions = raptor.require('packager').createExtensionCollection(config.enabledExtensions);
+            var enabledExtensions = raptor.require('packaging').createExtensionCollection(config.enabledExtensions);
             var optimizer = raptor.require("optimizer");
             var pageIncludes = config.pageIncludes;
             
-            var packageManifest = raptor.require('packager').createPackageManifest();
+            var packageManifest = raptor.require('packaging').createPackageManifest();
             packageManifest.setIncludes(pageIncludes);
 
             logger.debug("--------------------");

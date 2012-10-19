@@ -15,22 +15,22 @@
  */
 
 raptor.define(
-    "packager.Include_css",
-    "packager.Include",
-    function() {
+    "packaging.Include_js",
+    "packaging.Include",
+    function(raptor) {
         "use strict";
         
-        var Include_css = function() {
-            Include_css.superclass.constructor.apply(this, arguments);
+        var Include_js = function() {
+            Include_js.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_css.prototype = {
+        Include_js.prototype = {
             
             getKey: function() {
-                return "css:" + this.resolvePathKey(this.path);
+                return "js:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
@@ -46,7 +46,7 @@ raptor.define(
             },
             
             getContentType: function() {
-                return "text/css";
+                return "application/javascript";
             },
             
             isInPlaceDeploymentAllowed: function() {
@@ -54,5 +54,5 @@ raptor.define(
             }
         };
         
-        return Include_css;
+        return Include_js;        
     });

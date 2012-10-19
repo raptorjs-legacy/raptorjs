@@ -17,7 +17,7 @@
 $rload(function(raptor) {
     "use strict";
     
-    var packager = raptor.packager,
+    var packaging = raptor.packaging,
         runtime = raptor.runtime,
         loaded = {};
     
@@ -28,12 +28,12 @@ $rload(function(raptor) {
     PackageLoader.prototype = {
         /**
          * 
-         * @param resourcePath {String|packager-PackageManifest}
+         * @param resourcePath {String|packaging-PackageManifest}
          */
         load: function(resourcePath, options) {
             var manifest = resourcePath._isPackageManifest ? 
                     resourcePath :
-                    packager.getPackageManifest(resourcePath),
+                    packaging.getPackageManifest(resourcePath),
                 path = manifest.getPackageResource().getSystemPath(),
                 enabledExtensions = options.enabledExtensions;
             
@@ -71,8 +71,8 @@ $rload(function(raptor) {
         }
     };
     
-    packager.PackageLoader = PackageLoader;
+    packaging.PackageLoader = PackageLoader;
     
-    packager.PackageLoader.instance = new PackageLoader();
+    packaging.PackageLoader.instance = new PackageLoader();
 });
 
