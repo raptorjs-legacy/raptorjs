@@ -33,7 +33,8 @@
         {"path": "ElementNode.js"},
         {"path": "TextNode.js"},
         {"path": "ParseTreeBuilder.js"},
-        {"path": "TaglibXmlLoader.js"}
+        {"path": "TaglibXmlLoader.js"},
+        {"path": "EscapeXmlContext.js"}
     ],
     
     "extensions": [
