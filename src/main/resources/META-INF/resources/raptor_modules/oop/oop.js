@@ -696,7 +696,7 @@ raptor.defineEnum(
          * @param asyncCallback {Object|Function} A success/error callback function or an object with callback functions for some or all of the the supported events. The following events are supported: asyncStart, success, error, asyncComplete, complete - (<b>NOTE:</b> Should only be used with module loading)
          * @param thisObj {Object} The "this" object for the callback function(s) - (<b>NOTE:</b> Should only be used with module loading)  
          * @param ignoreMissing {Boolean} If true then an Error will not be thrown if the requested object is not found.
-         * @returns {Object|loader-Transaction} For synchronous module/class/mixin/enum loading, a reference to the requested class/module/mixin/enum is returned. For asynchronous module loading, the transaction is returned. 
+         * @returns {Object|loader.Transaction} For synchronous module/class/mixin/enum loading, a reference to the requested class/module/mixin/enum is returned. For asynchronous module loading, the transaction is returned. 
          */
         require: _require,
 

@@ -83,7 +83,7 @@ raptor.extend('loader', function(raptor) {
          * @param callback {Function|Object} Either a success/error callback function or an object with event callbacks. Supported events: asyncStart, success, error, asyncComplete, complete
          * @param thisObj The "this" object to use for the callback functions
          * 
-         * @returns {loader-Transaction} The transaction for the asynchronous loading of the require(s)
+         * @returns {loader.Transaction} The transaction for the asynchronous loading of the require(s)
          */
         require: function(requires, callback, thisObj) {
             var userSuccessFunc, //A reference to the user's success callback (if provided)
