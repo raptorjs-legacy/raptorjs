@@ -1,9 +1,0 @@
-{
-    name: "Frank",
-    count: 30,
-    colors: ["Red", "Green", "Blue"],
-    myAttrs: {
-        class: "my-class",
-        style: "border: 1px solid Black"
-    }
-}
