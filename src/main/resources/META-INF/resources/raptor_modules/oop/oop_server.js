@@ -22,7 +22,7 @@ $rload(function(raptor) {
         getModuleDirPath = function(name) {
             return '/' + name.replace(/\./g, '/');
         },
-        findMissingModuleResource = function(name) {
+        resolveModuleResource = function(name) {
             var resources = raptor.resources;
             
             var resourcePath = '/' + name.replace(/\./g, '/') + '.js';
@@ -55,7 +55,7 @@ $rload(function(raptor) {
                 return undefined;                
             }
         },
-        findMissingModulePackage = function(name, manifest) {
+        resolveModulePackage = function(name, manifest) {
             if (!manifest) {
                 manifest = oop.getModuleManifest(name);
             }
@@ -147,12 +147,12 @@ $rload(function(raptor) {
          * @param name
          * @returns
          */
-        _find: function(name) {
+        _resolve: function(name) {
             this._doDiscovery();
             
-            var o = findMissingModuleResource(name);
+            var o = resolveModuleResource(name);
             if (o === undefined) {
-                o = findMissingModulePackage(name);
+                o = resolveModulePackage(name);
             }
             return o;
         },

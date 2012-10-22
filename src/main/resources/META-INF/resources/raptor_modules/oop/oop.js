@@ -716,8 +716,8 @@ raptor.defineEnum(
                     //We found a definition, just build the object based on that definition
                     loaded = _build(name, def);
                 }
-                else if (find && oop._find) { //Otherwise, try to find
-                    loaded =  oop._find(name);
+                else if (find && oop._resolve) { //Otherwise, try to resolve the object
+                    loaded =  oop._resolve(name);
                 }
             }
             return (loadedLookup[name] = loaded || null);
