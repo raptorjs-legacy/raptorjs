@@ -64,10 +64,7 @@ raptor.define(
             this.anchorName = (anchorPrefix ? anchorPrefix + prop.name : prop.name);
             this.moreElId = null;
 
-            this.permaLinkHref = "#" + this.anchorName;
-            if (attrs.profile === 'development') {
-                this.permaLinkHref = './' + attrs.currentSymbolName + '/index.html' + this.permaLinkHref;
-            }
+            this.permaLinkHref = jsdocUtil.symbolUrl(attrs.currentSymbolName) + "#" + this.anchorName;
             
             this._isMixin = prop.mixinSource != null;
 
@@ -288,6 +285,7 @@ raptor.define(
                 this.desc = comment.getDescription();
             }
             
+            this.permaLinkHref = jsdocUtil.symbolUrl(this.name);
 
             this.staticMethods = new PropertiesViewModel(this, context);
             this.staticProperties = new PropertiesViewModel(this, context);
@@ -301,8 +299,6 @@ raptor.define(
             this.ctorProperties = new PropertiesViewModel(this, context);
 
             if (this.isClass()) {
-                var ctorName = type.getShortName();
-
                 this.ctorProperties.addProperty({
                     ctor: true,
                     name: type.getShortName(),
