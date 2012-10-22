@@ -33,9 +33,11 @@ public class PackageManifestJSONLoader {
         
         InputStream in = resource.getResourceAsStream();
         try
-        {
-        	PackageManifest manifest = this.load(in);
+        {   
+        	PackageManifest manifest = new PackageManifest();
         	manifest.setResource(resource);
+        	this.load(manifest, in);
+        	
             return manifest;
         }
         catch(Exception e) {
@@ -43,11 +45,10 @@ public class PackageManifestJSONLoader {
         }
     }
     
-    public PackageManifest load(InputStream in) throws JsonProcessingException, IOException {
-    	PackageManifest manifest = new PackageManifest();
+    public void load(PackageManifest manifest, InputStream in) throws JsonProcessingException, IOException {
+
     	ObjectNode root = (ObjectNode)mapper.readTree(in);
         deserializeRoot(manifest, root);
-    	return manifest;
     }
     
     private void deserializeRoot(PackageManifest manifest, ObjectNode root) {
@@ -112,7 +113,7 @@ public class PackageManifestJSONLoader {
     private void deserializeExtension(PackageManifest manifest, Extension extension, ObjectNode node) {
         TextNode conditionNode = (TextNode) node.get("condition");
         if (conditionNode != null) {
-            Condition condition = new Condition(conditionNode.getValueAsText(), manifest.getPackagePath() + "/" + extension.getName());
+            Condition condition = new Condition(conditionNode.getValueAsText(), manifest.getPackagePath() != null ? manifest.getPackagePath() + "/" + extension.getName() : null);
             extension.setCondition(condition);
         }
         

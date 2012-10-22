@@ -3,14 +3,19 @@ package org.raptorjs.resources.packaging.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.junit.Test;
+import org.raptorjs.resources.FileResource;
+import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.packaging.ContentType;
+import org.raptorjs.resources.packaging.Extension;
 import org.raptorjs.resources.packaging.Include;
+import org.raptorjs.resources.packaging.IncludeCSS;
 import org.raptorjs.resources.packaging.IncludeFactory;
 import org.raptorjs.resources.packaging.IncludeJS;
 import org.raptorjs.resources.packaging.IncludeOptions;
@@ -19,27 +24,6 @@ import org.raptorjs.resources.packaging.PackageManifestJSONLoader;
 import org.raptorjs.resources.packaging.ResourceIncluderContext;
 
 public class PackageManifestJSONLoaderTest {
-	
-	@Test
-	public void testManifestLoaderOld() throws JsonProcessingException, IOException {
-		IncludeFactory includeFactory = new IncludeFactory();
-		includeFactory.registerIncludeType("js", IncludeJSTest.class);
-		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
-		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/old-package.json");
-		PackageManifest manifest = loader.load(in);
-		this._testOldNew(manifest);
-	}
-	
-	@Test
-	public void testManifestLoaderNew1() throws JsonProcessingException, IOException {
-		IncludeFactory includeFactory = new IncludeFactory();
-		includeFactory.registerIncludeType("js", IncludeJSTest.class);
-		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
-		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/new1-package.json");
-		PackageManifest manifest = loader.load(in);
-		this._testOldNew(manifest);
-	}
-	
 	private void _testOldNew(PackageManifest manifest) {
 		List<Include> includes = manifest.getIncludes();
 		assertNotNull(includes);
@@ -55,7 +39,95 @@ public class PackageManifestJSONLoaderTest {
 		assertEquals(js1.getContentType(), ContentType.JS);
 	}
 	
+	@Test
+	public void testManifestLoaderOld() throws JsonProcessingException, IOException {
+		IncludeFactory includeFactory = new IncludeFactory();
+		includeFactory.registerIncludeType("js", IncludeJSTest.class);
+		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
+		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/old-package.json");
+		PackageManifest manifest = new PackageManifest();
+		loader.load(manifest, in);
+		this._testOldNew(manifest);
+	}
+	
+	@Test
+	public void testManifestLoaderNew1() throws JsonProcessingException, IOException {
+		IncludeFactory includeFactory = new IncludeFactory();
+		includeFactory.registerIncludeType("js", IncludeJSTest.class);
+		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
+		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/new1-package.json");
+		PackageManifest manifest = new PackageManifest();
+		loader.load(manifest, in);
+		this._testOldNew(manifest);
+	}
+	
+	@Test
+	public void testTableWebPackage() throws JsonProcessingException, IOException {
+		IncludeFactory includeFactory = new IncludeFactory();
+		includeFactory.registerIncludeType("js", IncludeJSTest.class);
+		includeFactory.registerIncludeType("4cc", Include4ccTest.class);
+		includeFactory.registerIncludeType("less", IncludeLessTest.class);
+		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
+		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/tablet-web-package.json");
+		Resource resource = new FileResource(".", null, new File("."));
+		PackageManifest manifest = new PackageManifest();
+		manifest.setResource(resource);
+		loader.load(manifest, in);
+		List<Extension> extensions = manifest.getExtensions();
+		assertEquals(extensions.size(), 1);
+	}
+	
+	
+	
 	public static class IncludeJSTest extends IncludeJS {
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected void doInclude(IncludeOptions includeOptions,
+				ResourceIncluderContext context) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void doIncludeAsync(IncludeOptions includeOptions,
+				ResourceIncluderContext context) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	public static class IncludeLessTest extends IncludeCSS {
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected void doInclude(IncludeOptions includeOptions,
+				ResourceIncluderContext context) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void doIncludeAsync(IncludeOptions includeOptions,
+				ResourceIncluderContext context) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	public static class Include4ccTest extends IncludeJS {
 
 		@Override
 		public String toString() {

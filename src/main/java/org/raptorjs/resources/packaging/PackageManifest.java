@@ -106,7 +106,7 @@ public class PackageManifest {
 
 
     public String getPackagePath() {
-        return this.resource.getPath();
+        return this.resource != null ? this.resource.getPath() : null;
     }
 
     @Override

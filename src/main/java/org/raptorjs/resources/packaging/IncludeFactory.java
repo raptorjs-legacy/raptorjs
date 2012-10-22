@@ -12,7 +12,7 @@ public class IncludeFactory {
     
     public Include createInclude(String type, Map<String, Object> properties) {
         Class<? extends Include> includeClass = includeTypes.get(type);
-        if (type == null) {
+        if (includeClass == null) {
             throw new RuntimeException("Invalid include of type \"" + type + "\" (properties=" + properties + ")");
         }
         Include include;
