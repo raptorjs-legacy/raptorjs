@@ -11,15 +11,12 @@
         }
     ],
     
-    "raptor-module-mappings": {
-    },
+    "raptor": {
+        "taglibs": [
+            "/taglibs/test/test.rtld",
+            "widgets-test.rtld"
+        ]
+    }
     
-    "raptor-taglibs": [
-	    "/taglibs/test/test.rtld",
-	    "widgets-test.rtld"
-	],
-	
-	"raptor-templates": {
-	   "test/Tabs": "/taglibs/test/Tabs.rhtml"
-	}
+    
 }

@@ -11,32 +11,34 @@
         }
     ],
     
-    "raptor-taglibs": [
-        "/templating/taglibs/core/core.rtld",
-        "/templating/taglibs/html/html.rtld",
-        "/templating/taglibs/optimizer/optimizer.rtld",
-        "/templating/taglibs/widgets/widgets.rtld"
-    ],
-    
-    "raptor-module-mappings": {
-        "taglibs/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
-        "taglibs/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
-        "taglibs/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
-    },
-    
-    "raptor-include-types": {
-        "js": {"class": "packaging.Include_js", "path": "/packaging/Include_js.js"},
-        "css": {"class": "packaging.Include_css", "path": "/packaging/Include_css.js"},
-        "dust": {"class": "packaging.Include_dust", "path": "/packaging/Include_dust.js"},
-        "less": {"class": "packaging.Include_less", "path": "/packaging/Include_less.js"},
-        "dust": {"class": "packaging.Include_dust", "path": "/packaging/Include_dust.js"},
-        "4cc": {"class": "packaging.Include_4cc", "path": "/packaging/Include_4cc.js"},
-        "module": {"class": "packaging.Include_module", "path": "/packaging/Include_module.js"},
-        "package": {"class": "packaging.Include_package", "path": "/packaging/Include_package.js"},
-        "rhtml": {"class": "packaging.Include_rhtml", "path": "/packaging/Include_rhtml.js"},
-        "rtld": {"class": "packaging.Include_rtld", "path": "/packaging/Include_rtld.js"},
-        "resource": {"class": "packaging.Include_resource", "path": "/packaging/Include_resource.js"},
-        "init-raptor": {"class": "packaging.Include_init-raptor", "path": "/packaging/Include_init-raptor.js"},
-        "loader-metadata": {"class": "packaging.Include_loader-metadata", "path": "/packaging/Include_loader-metadata.js"} 
+    "raptor": {
+        "taglibs": [
+            "/templating/taglibs/core/core.rtld",
+            "/templating/taglibs/html/html.rtld",
+            "/templating/taglibs/optimizer/optimizer.rtld",
+            "/templating/taglibs/widgets/widgets.rtld"
+        ],
+        
+        "module-mappings": {
+            "taglibs/core/compile-time": "/templating/taglibs/core/compile-time-package.json",
+            "taglibs/html/compile-time": "/templating/taglibs/html/compile-time-package.json",
+            "taglibs/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
+        },
+        
+        "include-types": {
+            "js": {"class": "packaging.Include_js", "path": "/packaging/Include_js.js"},
+            "css": {"class": "packaging.Include_css", "path": "/packaging/Include_css.js"},
+            "dust": {"class": "packaging.Include_dust", "path": "/packaging/Include_dust.js"},
+            "less": {"class": "packaging.Include_less", "path": "/packaging/Include_less.js"},
+            "4cc": {"class": "packaging.Include_4cc", "path": "/packaging/Include_4cc.js"},
+            "module": {"class": "packaging.Include_module", "path": "/packaging/Include_module.js"},
+            "package": {"class": "packaging.Include_package", "path": "/packaging/Include_package.js"},
+            "rhtml": {"class": "packaging.Include_rhtml", "path": "/packaging/Include_rhtml.js"},
+            "rtld": {"class": "packaging.Include_rtld", "path": "/packaging/Include_rtld.js"},
+            "resource": {"class": "packaging.Include_resource", "path": "/packaging/Include_resource.js"},
+            "init-raptor": {"class": "packaging.Include_init-raptor", "path": "/packaging/Include_init-raptor.js"},
+            "loader-metadata": {"class": "packaging.Include_loader-metadata", "path": "/packaging/Include_loader-metadata.js"} 
+        }
     }
+    
 }

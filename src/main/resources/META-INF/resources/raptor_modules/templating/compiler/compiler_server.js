@@ -97,7 +97,7 @@ raptor.extend(
                 this.clearTaglibs();
                 
                 packaging.forEachTopLevelPackageManifest(function(manifest) {
-                    var taglibs = manifest['raptor-taglibs'];
+                    var taglibs = manifest.getRaptorProp('taglibs');
                     if (taglibs) {
                         raptor.forEach(taglibs, function(rtldPath) {
                             var key = manifest.getSystemPath() + ':' + rtldPath;

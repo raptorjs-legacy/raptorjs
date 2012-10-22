@@ -11,22 +11,24 @@
         }
     ],
     
-    "includes": [
-            
-    ],
-    
-    "extensions": {
-        "server": {
-            "includes": [
-                {"path": "packaging_server.js"},
-                {"path": "ExtensionCollection.js"},
-                {"path": "PackageManifest.js"}
-            ]
-        },
-        "rhino": {
-            "includes": [
-                {"path": "packaging_rhino.js"}
-            ]
+    "raptor": {
+        "includes": [
+                
+        ],
+        
+        "extensions": {
+            "server": {
+                "includes": [
+                    {"path": "packaging_server.js"},
+                    {"path": "ExtensionCollection.js"},
+                    {"path": "PackageManifest.js"}
+                ]
+            },
+            "rhino": {
+                "includes": [
+                    {"path": "packaging_rhino.js"}
+                ]
+            }
         }
     }
 }

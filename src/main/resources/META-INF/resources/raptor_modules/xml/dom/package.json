@@ -10,16 +10,17 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-    
-    "includes": [
-        {"path": "dom.js"}
-    ],
-    
-    "extensions": {
-        "jquery": {
-            "includes": [
-                {"path": "DomParser_jquery.js"}
-            ]
+    "raptor": {
+        "includes": [
+            {"path": "dom.js"}
+        ],
+        
+        "extensions": {
+            "jquery": {
+                "includes": [
+                    {"path": "DomParser_jquery.js"}
+                ]
+            }
         }
     }
 }

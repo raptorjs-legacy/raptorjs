@@ -10,17 +10,18 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-
-    "extensions": {
-        "browser": {
-            "includes": [
-                {"path": "console_browser.js"}
-            ]
-        },
-        "node": {
-            "includes": [
-                {"path": "console_node.js"}
-            ]
+    "raptor": {
+        "extensions": {
+            "browser": {
+                "includes": [
+                    {"path": "console_browser.js"}
+                ]
+            },
+            "node": {
+                "includes": [
+                    {"path": "console_node.js"}
+                ]
+            }
         }
     }
 }

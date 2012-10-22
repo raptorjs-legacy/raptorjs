@@ -1,8 +1,10 @@
 {
-    "includes": [
-        {"type": "js", "path": "WidgetsTagTransformer.js"},
-        {"type": "js", "path": "InitWidgetsTag.js"},
-        {"type": "js", "path": "WidgetTag.js"},
-        {"type": "rtld", "path": "widgets.rtld"}
-    ]
+    "raptor": {
+        "includes": [
+            {"type": "js", "path": "WidgetsTagTransformer.js"},
+            {"type": "js", "path": "InitWidgetsTag.js"},
+            {"type": "js", "path": "WidgetTag.js"},
+            {"type": "rtld", "path": "widgets.rtld"}
+        ]
+    }
 }

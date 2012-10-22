@@ -42,7 +42,7 @@ $rload(function(raptor) {
                 if (packageJsonResource != null && packageJsonResource.exists()) {
                     var packaging = raptor.packaging;
                     var packageManifest = packaging.getPackageManifest(packageJsonResource);
-                    var packageSearchPath = packageManifest['raptor-search-path'];
+                    var packageSearchPath = packageManifest.getRaptorProp('search-path');
                     if (packageSearchPath != null) {
                         raptor.forEach(packageSearchPath, function(searchPathConfig) {
                             if (searchPathConfig.dir) {

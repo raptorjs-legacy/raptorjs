@@ -11,12 +11,14 @@
         }
     ],
     
-    "includes": [
-        {"module": "bootstrap"},
-        {"module": "ecma.es5"},
-        {"module": "raptorBuilder"},
-        {"module": "logging"},
-        {"module": "errors"},
-        {"module": "oop"}
-    ]
+    "raptor": {
+        "includes": [
+            {"module": "bootstrap"},
+            {"module": "ecma.es5"},
+            {"module": "raptorBuilder"},
+            {"module": "logging"},
+            {"module": "errors"},
+            {"module": "oop"}
+        ]
+    }   
 }

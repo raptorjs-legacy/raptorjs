@@ -10,31 +10,32 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-    
-    "includes": [
-        {"module": "listeners"},
-        {"module": "xml.dom"},
-        {"path": "sax.js"},
-        {"path": "BaseSaxParser.js"}
-    ],
-    
-    "extensions": {
-        "node": {
-            "includes": [
-                {"path": "SaxParser_node.js"}
-            ]
-        },
-        "rhino": {
-            "includes": [
-                {"path": "SaxParser_rhino.js"}
-            ]
-        },
-        "jquery": {
-            "includes": [
-                {"module": "xml.dom"},
-                {"module": "xml.dom-to-sax"},
-                {"path": "SaxParserDOM.js"}
-            ]
+    "raptor": {
+        "includes": [
+            {"module": "listeners"},
+            {"module": "xml.dom"},
+            {"path": "sax.js"},
+            {"path": "BaseSaxParser.js"}
+        ],
+        
+        "extensions": {
+            "node": {
+                "includes": [
+                    {"path": "SaxParser_node.js"}
+                ]
+            },
+            "rhino": {
+                "includes": [
+                    {"path": "SaxParser_rhino.js"}
+                ]
+            },
+            "jquery": {
+                "includes": [
+                    {"module": "xml.dom"},
+                    {"module": "xml.dom-to-sax"},
+                    {"path": "SaxParserDOM.js"}
+                ]
+            }
         }
     }
 }

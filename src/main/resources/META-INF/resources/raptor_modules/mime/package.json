@@ -10,16 +10,18 @@
         }
     ],
     
-    "includes": [
-        {"path": "mime.js"}
-    ],
-    
-    "extensions": [
-        {
-            "name": "node",
-            "includes": [
-                {"path": "mime_node.js"}
-            ]
-        }
-    ]
+    "raptor": {
+        "includes": [
+            {"path": "mime.js"}
+        ],
+        
+        "extensions": [
+            {
+                "name": "node",
+                "includes": [
+                    {"path": "mime_node.js"}
+                ]
+            }
+        ]
+    }
 }

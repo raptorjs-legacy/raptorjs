@@ -10,8 +10,9 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-    
-    "includes": [
-        {"path": "arrays.js"}
-    ]
+    "raptor": {
+        "includes": [
+            {"path": "arrays.js"}
+        ]
+    }
 }

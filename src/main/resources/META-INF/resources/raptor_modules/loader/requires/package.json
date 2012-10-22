@@ -11,16 +11,18 @@
         }
     ],
 
-    "includes": [
-        
-    ],
+    "raptor": {
+        "includes": [
             
-    "extensions": {
-        "browser": {
-            "includes": [
-                {"module": "loader"},
-                {"path": "requires.js"}
-            ]
+        ],
+                
+        "extensions": {
+            "browser": {
+                "includes": [
+                    {"module": "loader"},
+                    {"path": "requires.js"}
+                ]
+            }
         }
     }
 }

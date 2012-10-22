@@ -9,11 +9,14 @@
         }
     ],
     
-    "raptor-search-path": [
-        {"dir": "modules"}
-    ],
+    "raptor": {
+        "search-path": [
+            {"dir": "modules"}
+        ],
+        
+        "taglibs": [
+            "taglibs/jsdoc/jsdoc.rtld"
+        ]
+    }
     
-    "raptor-taglibs": [
-        "taglibs/jsdoc/jsdoc.rtld"
-    ]
 }

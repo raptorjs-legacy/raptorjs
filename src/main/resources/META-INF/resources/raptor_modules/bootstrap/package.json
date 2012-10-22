@@ -11,13 +11,14 @@
         }
     ],
     
-    "extensions": [
-        {
-            "name": "browser",
-            "includes": [
-                "bootstrap_browser.js"
-            ]
-        }    
-    ]
-    
+    "raptor": {
+        "extensions": [
+            {
+                "name": "browser",
+                "includes": [
+                    "bootstrap_browser.js"
+                ]
+            }    
+        ]
+    }
 }

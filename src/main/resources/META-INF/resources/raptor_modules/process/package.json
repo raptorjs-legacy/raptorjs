@@ -11,18 +11,20 @@
         }
     ],
 
-    "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "process.js"}
-            ]
-        },
-        {
-            "name": "node",
-            "includes": [
-                {"path": "process_node.js"}
-            ]
-        }
-    ]
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "includes": [
+                    {"path": "process.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "includes": [
+                    {"path": "process_node.js"}
+                ]
+            }
+        ]
+    }
 }

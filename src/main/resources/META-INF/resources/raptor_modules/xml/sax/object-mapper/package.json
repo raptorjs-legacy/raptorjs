@@ -11,9 +11,12 @@
         }
     ],
     
-    "includes": [
-        {"module": "xml.sax"},
-        {"module": "arrays"},
-        {"path": "object-mapper.js"}
-    ]
+    "raptor": {
+    
+        "includes": [
+            {"module": "xml.sax"},
+            {"module": "arrays"},
+            {"path": "object-mapper.js"}
+        ]
+    }
 }

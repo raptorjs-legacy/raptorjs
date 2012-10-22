@@ -107,7 +107,7 @@ $rload(function(raptor) {
             discoveryComplete = true;
             
             raptor.require('packaging').forEachTopLevelPackageManifest(function(manifest) {
-                var manifestMappings = manifest["raptor-module-mappings"];
+                var manifestMappings = manifest.getRaptorProp("module-mappings");
                 
                 if (manifestMappings) {
                     addMappings(manifestMappings);

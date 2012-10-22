@@ -11,7 +11,10 @@
         }
     ],
     
-    "includes": [
-        {"path": "debug.js"}
-    ]
+    "raptor": {
+        "includes": [
+            {"path": "debug.js"}
+        ]
+    }
+    
 }

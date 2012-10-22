@@ -94,7 +94,7 @@ $rload(function(raptor) {
             discoveryComplete = true;
             
             this.forEachTopLevelPackageManifest(function(manifest) {
-                var manifestIncludeHandlers = manifest["raptor-include-types"];
+                var manifestIncludeHandlers = manifest.getRaptorProp("include-types");
                 
                 if (manifestIncludeHandlers) {
                     forEachEntry(manifestIncludeHandlers, function(type, handlerInfo) {
@@ -143,8 +143,17 @@ $rload(function(raptor) {
             if (loadedManifest) {
                 raptor.extend(manifest, loadedManifest);
                 
-                manifest.setIncludes(loadedManifest.includes);
-                manifest.setExtensions(loadedManifest.extensions);
+                if (loadedManifest.hasOwnProperty("raptor")) {
+                    var raptorObj = loadedManifest.raptor;
+                    if (raptorObj) {
+                        manifest.setIncludes(raptorObj.includes);
+                        manifest.setExtensions(raptorObj.extensions);   
+                    }
+                }
+                else {
+                    manifest.setIncludes(loadedManifest.includes);
+                    manifest.setExtensions(loadedManifest.extensions);
+                }
             }
             return manifest;
         },

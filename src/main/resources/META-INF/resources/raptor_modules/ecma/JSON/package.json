@@ -3,7 +3,10 @@
     "name": "ecma.json",
     "version": "1.0",
     "description": "ECMA-compatible JSON object",
-    "includes": [
-        {"path": "JSON.js"}        
-    ]
+    
+    "raptor": {
+        "includes": [
+            {"path": "JSON.js"}        
+        ]
+    }
 }

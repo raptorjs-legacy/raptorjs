@@ -1,5 +1,7 @@
 package org.raptorjs.resources.packaging;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -27,23 +30,41 @@ public class PackageManifestJSONLoader {
     
     
     public PackageManifest load(Resource resource) {
-        PackageManifest manifest = new PackageManifest();
-        manifest.setResource(resource);
         
-        try {
-            ObjectNode root = (ObjectNode)mapper.readTree(resource.getResourceAsStream());
-            deserializeRoot(manifest, root);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to parse JSON file at path '" + resource.getSystemPath() + "'. Exception: " + e, e);
+        InputStream in = resource.getResourceAsStream();
+        try
+        {
+        	PackageManifest manifest = this.load(in);
+        	manifest.setResource(resource);
+            return manifest;
         }
-        
-        return manifest;
+        catch(Exception e) {
+        	throw new RuntimeException("Unable to parse JSON file at path '" + resource.getSystemPath() + "'. Exception: " + e, e);
+        }
+    }
+    
+    public PackageManifest load(InputStream in) throws JsonProcessingException, IOException {
+    	PackageManifest manifest = new PackageManifest();
+    	ObjectNode root = (ObjectNode)mapper.readTree(in);
+        deserializeRoot(manifest, root);
+    	return manifest;
     }
     
     private void deserializeRoot(PackageManifest manifest, ObjectNode root) {
         manifest.setName(root.get("name") != null ? root.get("name").getValueAsText() : null);
-        ArrayNode includes = (ArrayNode) root.get("includes");
+        
+        if (root.has("raptor")) {
+        	ObjectNode raptorObj = (ObjectNode) root.get("raptor");
+        	deserializeRaptor(manifest, raptorObj);
+        }
+        else {
+        	deserializeRaptor(manifest, root);
+        }
+        
+    }
+    
+    private void deserializeRaptor(PackageManifest manifest, ObjectNode raptor) {
+    	ArrayNode includes = (ArrayNode) raptor.get("includes");
         if (includes != null) {
             for (int i=0; i<includes.size(); i++) {
                 JsonNode includeNode = includes.get(i);
@@ -53,7 +74,7 @@ public class PackageManifestJSONLoader {
             
         }
         
-        JsonNode extensionsNode = root.get("extensions");
+        JsonNode extensionsNode = raptor.get("extensions");
         if (extensionsNode != null) {
             if (extensionsNode.isArray()) {
                 ArrayNode extensionsArrayNode = (ArrayNode) extensionsNode;
@@ -86,7 +107,6 @@ public class PackageManifestJSONLoader {
                 throw new RuntimeException("Invalid extensions: " + extensionsNode);
             }
         }
-        
     }
     
     private void deserializeExtension(PackageManifest manifest, Extension extension, ObjectNode node) {

@@ -226,6 +226,11 @@ $rload(function(raptor) {
             raptor.require('packaging').load(this);
         },
         
+        getRaptorProp: function(name) {
+            var raptorObj = this.raptor;
+            return raptorObj ? raptorObj[name] : null;
+        },
+        
         /**
          * 
          * @param options

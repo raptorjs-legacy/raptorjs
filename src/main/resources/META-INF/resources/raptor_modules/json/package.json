@@ -10,35 +10,38 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-    "includes": [
-        {"path": "json.js"}
-    ],
-
-    "extensions": {
-        "jquery": {
-            "includes": [
-                {"path": "json_jquery.js"}
-            ]
-        },
-        "json.raptor": {
-            "includes": [
-                {"module": "json.parse"},
-                {"module": "json.stringify"},
-                {"path": "jsonParse_raptor.js"},
-                {"path": "jsonStringify_raptor.js"}
-            ]
-        },
-        "json.raptorStringify": {
-            "includes": [
-                {"module": "json.stringify"},
-                {"path": "jsonStringify_raptor.js"}
-            ]
-        },
-        "json.raptorParse": {
-            "includes": [
-                {"module": "json.parse"},
-                {"path": "jsonParse_raptor.js"}
-            ]
+    
+    "raptor": {
+        "includes": [
+            {"path": "json.js"}
+        ],
+    
+        "extensions": {
+            "jquery": {
+                "includes": [
+                    {"path": "json_jquery.js"}
+                ]
+            },
+            "json.raptor": {
+                "includes": [
+                    {"module": "json.parse"},
+                    {"module": "json.stringify"},
+                    {"path": "jsonParse_raptor.js"},
+                    {"path": "jsonStringify_raptor.js"}
+                ]
+            },
+            "json.raptorStringify": {
+                "includes": [
+                    {"module": "json.stringify"},
+                    {"path": "jsonStringify_raptor.js"}
+                ]
+            },
+            "json.raptorParse": {
+                "includes": [
+                    {"module": "json.parse"},
+                    {"path": "jsonParse_raptor.js"}
+                ]
+            }
         }
     }
 }
