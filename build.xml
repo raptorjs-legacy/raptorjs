@@ -49,7 +49,7 @@
         </copy>
     	
     	<copy todir="${dist.node-raptor.dir}">
-            <fileset dir="." includes="package.json"/>
+            <fileset dir="." includes="package.json README.md"/>
         </copy>
     		
         <!--
