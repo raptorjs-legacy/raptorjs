@@ -359,11 +359,21 @@ raptor.defineClass(
                     node.addError("Invalid attributes for tag " + node.toString() + ': ' + invalidAttrs.join(", "));
                     return;
                 }
+                //Cleanup whitespace between <c:attr> tags
+                if (node.previousSibling && node.previousSibling.isTextNode() && node.previousSibling.getText().trim() === '') {
+                    node.previousSibling.detach();
+                }
                 
+                if (node.nextSibling && node.nextSibling.isTextNode() && node.nextSibling.getText().trim() === '') {
+                    node.nextSibling.detach();
+                }
+                
+                if (node.nextSibling && node.nextSibling.isTextNode()) {
+                    node.nextSibling.setText(node.nextSibling.getText().replace(/^\n\s*/, ""));
+                }
+
                 node.detach(); //Remove the node out of the tree
-                
-                
-                
+
                 compiler.transformTree(node, template);
                 
                 if (hasValue) {                    

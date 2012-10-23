@@ -379,7 +379,7 @@ describe('templating module', function() {
     
     it("should allow for <c:def> functions", function() {
         var output = compileAndRender("/test-templates/def.rhtml", {});
-        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p><div class="section"><h1><a href="http://www.ebay.com/">ebay</a></h1><p>Visit eBay</p></div>');
+        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p><div class="section"><h1><a href="http://www.ebay.com/">ebay</a></h1><p><i>Visit eBay</i></p></div>');
     });
     
     it("should allow for <c:with> functions", function() {
@@ -414,7 +414,7 @@ describe('templating module', function() {
     
     it("should allow for includes", function() {
         var output = compileAndRender("/test-templates/include.rhtml", {});
-        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
+        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.<div class="nested"><h1>Hello Frank! You have 20 new messages.</h1><p>Have a <b>wonderful</b> day!</p></div>');
     });
     
     it("should allow for <c:invoke function... />", function() {

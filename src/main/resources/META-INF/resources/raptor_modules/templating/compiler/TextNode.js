@@ -21,7 +21,19 @@ raptor.defineClass(
         "use strict";
         
         var escapeXml = raptor.require('xml.utils').escapeXml,
-            escapeXmlAttr = raptor.require('xml.utils').escapeXmlAttr,
+            attrReplace = /[&<>\"\']/g,
+            replacements = {
+                '<': "&lt;",
+                '>': "&gt;",
+                '&': "&amp;",
+                '"': "&quot;",
+                "'": "&apos;"
+            },
+            escapeXmlAttr = function(str) {
+                return str.replace(attrReplace, function(match) {
+                    return replacements[match];
+                });
+            },
             EscapeXmlContext = raptor.require('templating.compiler.EscapeXmlContext');
         
         var TextNode = function(text, escapeXml) {
@@ -73,11 +85,11 @@ raptor.defineClass(
 
                 if (!this.previousSibling) {
                     //First child
-                    text = text.replace(/^(\n|&#10;)\s*/g, "");  
+                    text = text.replace(/^\n\s*/g, "");  
                 }
                 if (!this.nextSibling) {
                     //Last child
-                    text = text.replace(/(\n|&#10;)\s*$/g, ""); 
+                    text = text.replace(/\n\s*$/g, ""); 
                 }
                 
                 if (/^\n\s*$/.test(text)) { //Whitespace between elements

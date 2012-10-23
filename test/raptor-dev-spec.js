@@ -16,4 +16,9 @@ describe('development spec', function() {
         expect(output).toEqual('');
     });
 
+    xit("should allow for includes", function() {
+        var output = compileAndRender("/test-templates/include.rhtml", {});
+        expect(output).toEqual('');
+    });
+
 });

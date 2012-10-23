@@ -180,6 +180,9 @@ raptor.defineClass(
                             else if (arg instanceof Expression) {
                                 this._code.append(arg.toString());
                             }
+                            else if (arg) {
+                                this._code.append(arg.toString());
+                            }
                             else {
                                 throw raptor.createError(new Error('Illegal arg for method call "' +methodName + '": ' + arg.toString() + " (" + i +")"));
                             }

@@ -73,7 +73,7 @@ raptor.defineClass(
                             this.addError('Nested content provided when invoking macro "' + func + '" but defined macro does not support nested content.');
                         }
                         else {
-                            bodyArg = this.getBodyContentExpression(template);
+                            bodyArg = this.getBodyContentExpression(template, false);
                         }
                         
                     }

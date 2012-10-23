@@ -229,7 +229,7 @@ raptor.defineClass(
                 }
             },
             
-            getExpression: function(template, childrenOnly) {
+            getExpression: function(template, childrenOnly, escapeXml) {
                 if (!template) {
                     throw raptor.createError(new Error("template argument is required"));
                 }
@@ -238,7 +238,7 @@ raptor.defineClass(
                 return template.makeExpression({
                     toString: function() {
                         return template.captureCode(function() {
-                            template.code("context.captureString(function() {\n")
+                            template.code("context." + (escapeXml !== false ? "captureString" : "c") + "(function() {\n")
                                 .indent(function() {
                                     if (childrenOnly === true) {
                                         _this.generateCodeForChildren(template);
@@ -255,8 +255,8 @@ raptor.defineClass(
                 });
             },
             
-            getBodyContentExpression: function(template) {
-                return this.getExpression(template, true);
+            getBodyContentExpression: function(template, escapeXml) {
+                return this.getExpression(template, true, escapeXml);
             },
         
             isTransformerApplied: function(transformer) {
