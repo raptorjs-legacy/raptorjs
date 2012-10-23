@@ -379,7 +379,7 @@ describe('templating module', function() {
     
     it("should allow for <c:def> functions", function() {
         var output = compileAndRender("/test-templates/def.rhtml", {});
-        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p>');
+        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p><div class="section"><h1><a href="http://www.ebay.com/">ebay</a></h1><p>Visit eBay</p></div>');
     });
     
     it("should allow for <c:with> functions", function() {

@@ -56,7 +56,8 @@ raptor.defineClass(
                     }
                     
                     definedFunctions[name] = {
-                        params: params
+                        params: params,
+                        bodyParam: this.getProperty("body-param")
                     };
                 }
                 else {

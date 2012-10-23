@@ -301,6 +301,12 @@
             <type>custom</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
+
+        <attribute>
+            <name>body-param</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
         
     </tag>
     

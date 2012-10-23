@@ -35,10 +35,12 @@ raptor.defineClass(
                 
                 var func = this.getProperty("function"),
                     funcDef,
+                    bodyParam,
                     definedFunctions = template.getAttribute("core:definedFunctions");
                 
                 if (!func) {
                     this.addError('"function" attribute is required');
+                    return;
                 }
                 
                 if (func.indexOf('(') === -1) {
@@ -54,7 +56,7 @@ raptor.defineClass(
                     
                     if (funcDef) {
                         params = funcDef.params || [];
-
+                        bodyParam = funcDef.bodyParam;
                         /*
                          * Loop over the defined parameters to figure out the names of allowed parameters and add them to a lookup
                          */
@@ -63,7 +65,18 @@ raptor.defineClass(
                         }, this);
                         
                     }
+
+                    var bodyArg = null;
                     
+                    if (this.hasChildren()) {
+                        if (!funcDef || !funcDef.bodyParam) {
+                            this.addError('Nested content provided when invoking macro "' + func + '" but defined macro does not support nested content.');
+                        }
+                        else {
+                            bodyArg = this.getBodyContentExpression(template);
+                        }
+                        
+                    }
 
                     /*
                      * VALIDATION:
@@ -84,13 +97,19 @@ raptor.defineClass(
                      */
                     forEach(params, function(param) {
                         validParamsLookup[param] = true;
-                        var arg = this.getAttribute(param);
-                        if (arg == null) {
-                            argParts.push("undefined");
+                        if (param === bodyParam) {
+                            argParts.push(bodyArg ? bodyArg : "undefined");
                         }
                         else {
-                            argParts.push(this.getProperty(param));
+                            var arg = this.getAttribute(param);
+                            if (arg == null) {
+                                argParts.push("undefined");
+                            }
+                            else {
+                                argParts.push(this.getProperty(param));
+                            }
                         }
+                        
                     }, this);
                     
                     template.write(func + "(" + argParts.join(",") + ")");
