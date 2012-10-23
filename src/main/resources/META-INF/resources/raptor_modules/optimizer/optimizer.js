@@ -35,7 +35,7 @@ raptor.define(
         
         var defaultConfig = new Config();
         defaultConfig.setOutputDir(new File(raptor.require('process').cwd(), 'static'));
-        defaultConfig.setUrlPrefix('/static/');
+        defaultConfig.enableExtension("browser");
 
         var optimizer = {
             /**

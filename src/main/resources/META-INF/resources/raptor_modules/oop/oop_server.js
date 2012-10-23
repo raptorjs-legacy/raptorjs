@@ -208,7 +208,12 @@ $rload(function(raptor) {
                         }
                         
                     }
+
                 }
+            }
+
+            if (manifest) {
+                manifest.setName(name);    
             }
             
             return manifest;

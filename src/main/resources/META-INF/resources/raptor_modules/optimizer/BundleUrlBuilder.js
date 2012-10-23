@@ -85,12 +85,13 @@ raptor.define(
                 if (!prefix) {
                     if (basePath) {
                         
-                        var toPath = this.outputDir;
-                        var fromPath = basePath;
+                        var toPath = this.outputDir.toString();
+
+                        var fromPath = basePath.toString();
                         prefix = require('path').relative(fromPath, toPath) + '/';
                     }
                     else {
-                        prefix = "";
+                        prefix = "/static/";
                     }
                 }
                 

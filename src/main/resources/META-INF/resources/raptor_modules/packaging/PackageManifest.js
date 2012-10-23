@@ -210,6 +210,10 @@ $rload(function(raptor) {
         getName: function() {
             return this.name;
         },
+
+        setName: function(name) {
+            this.name = name;
+        },
         
         /**
          */

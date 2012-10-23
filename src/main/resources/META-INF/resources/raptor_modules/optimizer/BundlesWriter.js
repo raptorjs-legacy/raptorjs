@@ -34,6 +34,8 @@ raptor.defineClass(
                     this.context = {};
                 }
                 
+                this.context.loaderMetadata = loaderMetadata
+
                 var _this = this,
                     context = this.context,
                     writeBundle = function(bundle) {

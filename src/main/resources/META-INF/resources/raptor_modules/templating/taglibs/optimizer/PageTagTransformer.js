@@ -43,7 +43,7 @@ raptor.define(
                                     }
                                     
                                     if (!attr.uri) {
-                                        include[attr.localName] = attr.value;
+                                        include[attr.localName] = value;
                                     }
                                 }, this);
 
