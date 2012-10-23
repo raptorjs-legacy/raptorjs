@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "loader.requires",
+    "name": "loader.require",
     "version": "1.0",
     "description": "Adds support for asynchronously loading packages",
     "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
@@ -20,7 +20,8 @@
             "browser": {
                 "includes": [
                     {"module": "loader"},
-                    {"path": "requires.js"}
+                    {"type": "loader-metadata"},
+                    {"path": "require.js"}
                 ]
             }
         }

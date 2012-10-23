@@ -27,6 +27,12 @@
                     {"path": "loader_browser_jquery.js"}
                 ]
             },
+            "raptor": {
+                "condition": "!extensions.contains('jquery')",
+                "includes": [
+                    {"path": "loader_browser_raptor.js"}
+                ]
+            },
             "loader.requires": {
                 "includes": [
                     {"module": "loader.requires"}

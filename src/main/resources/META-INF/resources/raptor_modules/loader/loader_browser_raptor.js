@@ -15,11 +15,26 @@
  */
 
 /**
- * @extension jQuery
+ * @extension Raptor
  */
 raptor.extend('loader', function(raptor) {
     "use strict";
-    var extend = raptor.extend;
+    var extend = raptor.extend,
+        headEl,
+        createEl = function(tagName, attributes) {
+            var newEl = document.createElement(tagName);
+            if (attributes) {
+                extend(newEl, attributes);    
+            }
+            return newEl;
+        },
+        insertEl = function(el) {
+            if (headEl == null)
+            {
+                headEl = document.getElementsByTagName("head")[0];
+            }       
+            headEl.appendChild(el);
+        };
     
     return {
         /**
@@ -30,26 +45,61 @@ raptor.extend('loader', function(raptor) {
          * 
          * @protected
          */
-        includeJSImpl: function(src, callback) {
-            var _this = this;
+        includeJSImpl: function(src, callback, attributes) {
+
+            attributes = attributes || {};
             
-            $.ajax({
-                url: src,
-                dataType: "script",
-                crossDomain: true,
-                cache: true,
-                success: function(result) {
-                    _this.logger().debug('Downloaded: "' + src + '"');
-                    
-                    //Let the loader module know that the resource has included successfully
+            var complete = false,
+                _this = this;
+            
+            var success = function() {
+                if (complete == false)
+                {                    
+                    complete = true;
+                    _this.logger().debug('Downloaded "' + src + '"...');
                     callback.success();
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
+                }
+            }
+            
+            var error = function() {
+                if (complete == false)
+                {                    
+                    complete = true;
                     _this.logger().error('Failed: "' + src + '": ' + errorThrown);
                     //Let the loader module know that the resource was failed to be included
                     callback.error();
                 }
+            }
+            
+            extend(attributes, {
+                type: 'text/javascript',
+                src: src,
+                onreadystatechange: function () {
+                    if (el.readyState == 'complete' || el.readyState == 'loaded') {
+                        success();
+                    }
+                },
+
+                onload: success,
+                
+                onerror: error
             });
+            
+            var el = createEl(
+                    "script", 
+                    attributes);
+            
+            if (el.addEventListener)
+            {
+                try {
+                    el.addEventListener("load", function() {
+                        success();
+                    });
+                }
+                catch(e) {}
+            }
+
+            insertEl(el);
         },
         
         /**
@@ -68,7 +118,7 @@ raptor.extend('loader', function(raptor) {
             var complete = false,
                 _this = this;
             
-            var el = document.createElement('link');
+            var el = createEl('link');
             
             var cleanup = function() {
                 el.onload = null;
@@ -106,7 +156,7 @@ raptor.extend('loader', function(raptor) {
             };
             
             var error = function() {
-                _this.logger().error('Failed: "' + href + '"');
+                this.logger().error('Failed: "' + href + '"');
                 if (complete === false)
                 {                    
                     complete = true; 
@@ -142,10 +192,7 @@ raptor.extend('loader', function(raptor) {
             }
             
             el.onerror = error;      
-
-            $(function() {
-                $("head").append(el);
-            });
+            insertEl(el);
         }
     };
 });
