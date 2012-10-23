@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"type": "js", "path": "HtmlTagTransformer.js"},
             {"type": "js", "path": "DocTypeNode.js"},
             {"type": "rtld", "path": "html.rtld"}

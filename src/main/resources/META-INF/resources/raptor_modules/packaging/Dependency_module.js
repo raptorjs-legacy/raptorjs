@@ -15,49 +15,53 @@
  */
 
 raptor.define(
-    "packaging.Include_package",
-    "packaging.Include",
+    "packaging.Dependency_module",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
-        var Include_package = function() {
-            Include_package.superclass.constructor.apply(this, arguments);
-            this.addProperty("path", {
+        var Dependency_module = function() {
+            Dependency_module.superclass.constructor.apply(this, arguments);
+            this.addProperty("name", {
                 type: "string"
             });
         };
         
-        Include_package.prototype = {
+        Dependency_module.prototype = {
             getKey: function() {
-                return "package:" + this.path;
+                return "module:" + this.name;
             },
             
             toString: function() {
-                return "[package: " + this.path + "]";
+                return "[module: " + this.name + "]";
             },
             
             load: function(context) {
-                if (!this.path) {
-                    console.error("Invalid package include: ", this);
-                    throw raptor.createError("Invalid package include");
+                var moduleName = this.name;
+                
+                if (context.isLoaded(moduleName)) {
+                    return;
                 }
-                raptor.packaging.load(this.path);
+                context.setLoaded(moduleName);
+                
+                var newManifest = raptor.oop.getModuleManifest(moduleName);
+                raptor.packaging.load(newManifest);
             },
 
             getManifest: function() {
-                var manifest = raptor.packaging.getPackageManifest(this.path);
+                var manifest = raptor.oop.getModuleManifest(this.name);
                 if (!manifest) {
-                    throw raptor.createError(new Error('Package manifest not found at path "' + this.path + '"'));    
+                    throw raptor.createError(new Error('Package manifest not found for module "' + this.name + '"'));    
                 }
                 return manifest;
             },
             
-            isPackageInclude: function() {
+            isPackageDependency: function() {
                 return true;
             }
         };
 
-        return Include_package;
+        return Dependency_module;
     });
 
 

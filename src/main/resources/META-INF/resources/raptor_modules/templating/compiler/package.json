@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "resources"},
             {"module": "regexp"},
             {"module": "strings"},
@@ -41,19 +41,19 @@
         "extensions": [
             {   
                 "name": "server",
-                "includes": [
+                "dependencies": [
                     {"path": "compiler_server.js"}
                 ]
             },
             {   
                 "name": "rhino",
-                "includes": [
+                "dependencies": [
                     {"path": "compiler_rhino.js"}
                 ]
             },
             {   
                 "name": "browser",
-                "includes": [
+                "dependencies": [
                     {"path": "compiler_browser.js"}
                 ]
             }

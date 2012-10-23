@@ -3,7 +3,7 @@ package org.raptorjs.resources.packaging;
 
 
 
-public class IncludeModule extends IncludePackage {
+public class DependencyModule extends DependencyPackage {
 
     private String moduleName = null;
     
@@ -53,7 +53,7 @@ public class IncludeModule extends IncludePackage {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        IncludeModule other = (IncludeModule) obj;
+        DependencyModule other = (DependencyModule) obj;
         if (moduleName == null) {
             if (other.moduleName != null)
                 return false;

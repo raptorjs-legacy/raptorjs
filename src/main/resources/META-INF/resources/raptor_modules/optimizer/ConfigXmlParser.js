@@ -9,22 +9,22 @@ raptor.defineClass(
             strings = raptor.require('strings'),
             files = raptor.require('files'),
             File = files.File,
-            includeHandler = {
+            dependencyHandler = {
                 _type: "object",
                 _begin: function(parent, context) {
-                    var include = { 
+                    var dependency = { 
                             type: context.el.getLocalName(),
                             toString: function() { 
                                 return JSON.stringify(this);
                             }
                         };
-                    parent.addInclude(include);
-                    return include;
+                    parent.addDependency(dependency);
+                    return dependency;
                 },
                 
                 "@*": {
                     _type: "string",
-                    _set: function(include, name, value) {
+                    _set: function(dependency, name, value) {
                         if (value === 'true') {
                             value = true;
                         }
@@ -34,9 +34,9 @@ raptor.defineClass(
                         else if ("" + parseInt(value, 10) === value) {
                              value = parseInt(value, 10);
                         }
-                        include[name] = value;
+                        dependency[name] = value;
                     }
-                } //End include attribute
+                } //End dependency attribute
             };
         
         var ConfigXmlParser = function() {
@@ -124,7 +124,7 @@ raptor.defineClass(
                                 _type: "boolean"
                             },
                             
-                            "<*>": includeHandler
+                            "<*>": dependencyHandler
                         } //End "bundle"
                     },
                     optimizerConfigHandler = {

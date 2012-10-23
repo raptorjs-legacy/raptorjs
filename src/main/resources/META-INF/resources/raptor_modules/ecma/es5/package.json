@@ -7,7 +7,7 @@
         "extensions": [
             {
                 "name": "browser",
-                "includes": [
+                "dependencies": [
                     {"path": "es5.js"}
                 ]
             }

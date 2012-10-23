@@ -15,7 +15,7 @@
         "extensions": [
             {
                 "name": "browser",
-                "includes": [
+                "dependencies": [
                     "bootstrap_browser.js"
                 ]
             }    

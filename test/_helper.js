@@ -246,7 +246,7 @@ jsdomScripts = function(dependencies) {
         if (!manifest) {
             throw raptor.createError(new Error('Module not found for name "' + name + '"'));
         }
-        manifest.forEachInclude({
+        manifest.forEachDependency({
             callback: function(type, include) {
                 if (type === 'js') {
                     var resource = manifest.resolveResource(include.path);

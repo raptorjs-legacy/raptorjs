@@ -13,7 +13,7 @@
     "raptor": {
         "extensions": {
             "rhino": {
-                "includes": [
+                "dependencies": [
                     {"path": "java_rhino.js"}
                 ]
             }

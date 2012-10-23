@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "strings"},
             {"module": "listeners"},
             {"module": "xml.utils"},
@@ -23,13 +23,13 @@
         "extensions": [
             {
                 "name": "server",
-                "includes": [
+                "dependencies": [
                     {"path": "templating_server.js"}
                 ]
             },
             {
                 "name": "rhino",
-                "includes": [
+                "dependencies": [
                     {"path": "templating_rhino.js"}
                 ]
             }

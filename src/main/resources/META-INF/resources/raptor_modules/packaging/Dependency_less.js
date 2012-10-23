@@ -15,12 +15,12 @@
  */
 
 raptor.define(
-    "packaging.Include_less",
-    "packaging.Include",
+    "packaging.Dependency_less",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
-        var createLessImporter = function(include, context) {
+        var createLessImporter = function(dependency, context) {
                 var Parser = require('less').Parser;
                 
                 
@@ -30,7 +30,7 @@ raptor.define(
                         foundPath,
                         resource;
                     
-                    resource = include.resolveResource(path, context);
+                    resource = dependency.resolveResource(path, context);
                     if (resource.exists()) {
                         foundPath = resource.getSystemPath();
                         lessSrc = resource.readAsString("UTF-8");
@@ -61,19 +61,19 @@ raptor.define(
                 };
             }; //End createLessImporter
         
-        var Include_less = function() {
-            Include_less.superclass.constructor.apply(this, arguments);
+        var Dependency_less = function() {
+            Dependency_less.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_less.prototype = {
+        Dependency_less.prototype = {
             getKey: function() {
                 return "less:" + this.resolvePathKey(this.path);
             },
             
-            toString: function(include) {
+            toString: function(dependency) {
                 return this.getResource().getPath();
             },
             
@@ -141,5 +141,5 @@ raptor.define(
             }
         };
         
-        return Include_less;
+        return Dependency_less;
     });

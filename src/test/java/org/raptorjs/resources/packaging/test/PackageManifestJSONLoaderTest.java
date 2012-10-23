@@ -14,10 +14,10 @@ import org.raptorjs.resources.FileResource;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.packaging.ContentType;
 import org.raptorjs.resources.packaging.Extension;
-import org.raptorjs.resources.packaging.Include;
-import org.raptorjs.resources.packaging.IncludeCSS;
-import org.raptorjs.resources.packaging.IncludeFactory;
-import org.raptorjs.resources.packaging.IncludeJS;
+import org.raptorjs.resources.packaging.Dependency;
+import org.raptorjs.resources.packaging.DependencyCSS;
+import org.raptorjs.resources.packaging.DependencyFactory;
+import org.raptorjs.resources.packaging.DependencyJS;
 import org.raptorjs.resources.packaging.IncludeOptions;
 import org.raptorjs.resources.packaging.PackageManifest;
 import org.raptorjs.resources.packaging.PackageManifestJSONLoader;
@@ -25,7 +25,7 @@ import org.raptorjs.resources.packaging.ResourceIncluderContext;
 
 public class PackageManifestJSONLoaderTest {
 	private void _testOldNew(PackageManifest manifest) {
-		List<Include> includes = manifest.getIncludes();
+		List<Dependency> includes = manifest.getIncludes();
 		assertNotNull(includes);
 		assertEquals(includes.size(), 2);
 		IncludeJSTest js0 = (IncludeJSTest) includes.get(0);
@@ -41,7 +41,7 @@ public class PackageManifestJSONLoaderTest {
 	
 	@Test
 	public void testManifestLoaderOld() throws JsonProcessingException, IOException {
-		IncludeFactory includeFactory = new IncludeFactory();
+		DependencyFactory includeFactory = new DependencyFactory();
 		includeFactory.registerIncludeType("js", IncludeJSTest.class);
 		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
 		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/old-package.json");
@@ -52,7 +52,7 @@ public class PackageManifestJSONLoaderTest {
 	
 	@Test
 	public void testManifestLoaderNew1() throws JsonProcessingException, IOException {
-		IncludeFactory includeFactory = new IncludeFactory();
+		DependencyFactory includeFactory = new DependencyFactory();
 		includeFactory.registerIncludeType("js", IncludeJSTest.class);
 		PackageManifestJSONLoader loader = new PackageManifestJSONLoader(includeFactory);
 		InputStream in = PackageManifestJSONLoaderTest.class.getResourceAsStream("/packaging/test/new1-package.json");
@@ -63,7 +63,7 @@ public class PackageManifestJSONLoaderTest {
 	
 	@Test
 	public void testTableWebPackage() throws JsonProcessingException, IOException {
-		IncludeFactory includeFactory = new IncludeFactory();
+		DependencyFactory includeFactory = new DependencyFactory();
 		includeFactory.registerIncludeType("js", IncludeJSTest.class);
 		includeFactory.registerIncludeType("4cc", Include4ccTest.class);
 		includeFactory.registerIncludeType("less", IncludeLessTest.class);
@@ -79,7 +79,7 @@ public class PackageManifestJSONLoaderTest {
 	
 	
 	
-	public static class IncludeJSTest extends IncludeJS {
+	public static class IncludeJSTest extends DependencyJS {
 
 		@Override
 		public String toString() {
@@ -103,7 +103,7 @@ public class PackageManifestJSONLoaderTest {
 		
 	}
 	
-	public static class IncludeLessTest extends IncludeCSS {
+	public static class IncludeLessTest extends DependencyCSS {
 
 		@Override
 		public String toString() {
@@ -127,7 +127,7 @@ public class PackageManifestJSONLoaderTest {
 		
 	}
 	
-	public static class Include4ccTest extends IncludeJS {
+	public static class Include4ccTest extends DependencyJS {
 
 		@Override
 		public String toString() {

@@ -3,7 +3,7 @@ package org.raptorjs.resources.packaging;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.ResourceManager;
 
-public abstract class IncludeResource extends Include {
+public abstract class DependencyResource extends Dependency {
     private Resource resource = null;
     private boolean resourceResolved = false;
     private String path = null;
@@ -69,7 +69,7 @@ public abstract class IncludeResource extends Include {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        IncludeResource other = (IncludeResource) obj;
+        DependencyResource other = (DependencyResource) obj;
         if (getParentPackageManifest() == null) {
             if (other.getParentPackageManifest() != null)
                 return false;

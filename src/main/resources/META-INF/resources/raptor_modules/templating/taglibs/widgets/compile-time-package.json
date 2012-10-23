@@ -1,6 +1,6 @@
 {
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"type": "js", "path": "WidgetsTagTransformer.js"},
             {"type": "js", "path": "InitWidgetsTag.js"},
             {"type": "js", "path": "WidgetTag.js"},

@@ -3,19 +3,19 @@ package org.raptorjs.resources.packaging;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IncludeFactory {
-    private Map<String, Class<? extends Include>> includeTypes = new HashMap<String, Class<? extends Include>>();
+public class DependencyFactory {
+    private Map<String, Class<? extends Dependency>> includeTypes = new HashMap<String, Class<? extends Dependency>>();
     
-    public IncludeFactory() {
-        this.registerIncludeType("module", IncludeModule.class);
+    public DependencyFactory() {
+        this.registerIncludeType("module", DependencyModule.class);
     }
     
-    public Include createInclude(String type, Map<String, Object> properties) {
-        Class<? extends Include> includeClass = includeTypes.get(type);
+    public Dependency createInclude(String type, Map<String, Object> properties) {
+        Class<? extends Dependency> includeClass = includeTypes.get(type);
         if (includeClass == null) {
             throw new RuntimeException("Invalid include of type \"" + type + "\" (properties=" + properties + ")");
         }
-        Include include;
+        Dependency include;
         try {
             include = includeClass.newInstance();
         } catch (Exception e) {
@@ -38,12 +38,12 @@ public class IncludeFactory {
         
     }
     
-    public void registerIncludeType(String type, Class<? extends Include> includeClass) {
+    public void registerIncludeType(String type, Class<? extends Dependency> includeClass) {
         this.includeTypes.put(type, includeClass);
     }
     
-    public IncludeResource createResourceInclude(ContentType contentType, String path) {
-        IncludeResource resourceInclude = (IncludeResource)this.createInclude(contentType.getIncludeTypeName(), null);
+    public DependencyResource createResourceInclude(ContentType contentType, String path) {
+        DependencyResource resourceInclude = (DependencyResource)this.createInclude(contentType.getIncludeTypeName(), null);
         resourceInclude.setPath(path);
         return resourceInclude;
     }

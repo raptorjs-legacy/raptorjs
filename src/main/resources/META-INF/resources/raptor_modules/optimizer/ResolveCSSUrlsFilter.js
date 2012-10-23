@@ -8,7 +8,7 @@ raptor.define(
             resources = raptor.require('resources');
         
         return {
-            filter: function(code, contentType, include, bundle, context) {
+            filter: function(code, contentType, dependency, bundle, context) {
                 if (contentType === 'text/css') {
                     code = cssParser.replaceUrls(code, function(url) {
 
@@ -28,7 +28,7 @@ raptor.define(
                         }
 
 
-                        var resource = resources.resolveResource(include.getResource(), url);
+                        var resource = resources.resolveResource(dependency.getResource(), url);
                         if (resource && resource.exists()) {
                             //The image is a reference to a relative URL
                             var output = context.writer.writeResource(resource, contentType, true /* add checksum */);

@@ -14,7 +14,7 @@
         "extensions": [
             {
                 "name": "browser",
-                "includes": [
+                "dependencies": [
                     {"path": "resources.js"},
                     {"path": "Resource.js"},
                     {"path": "MissingResource.js"},

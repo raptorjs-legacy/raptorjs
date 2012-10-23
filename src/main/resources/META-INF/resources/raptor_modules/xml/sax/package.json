@@ -11,7 +11,7 @@
         }
     ],
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "listeners"},
             {"module": "xml.dom"},
             {"path": "sax.js"},
@@ -20,17 +20,17 @@
         
         "extensions": {
             "node": {
-                "includes": [
+                "dependencies": [
                     {"path": "SaxParser_node.js"}
                 ]
             },
             "rhino": {
-                "includes": [
+                "dependencies": [
                     {"path": "SaxParser_rhino.js"}
                 ]
             },
             "jquery": {
-                "includes": [
+                "dependencies": [
                     {"module": "xml.dom"},
                     {"module": "xml.dom-to-sax"},
                     {"path": "SaxParserDOM.js"}

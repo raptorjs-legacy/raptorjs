@@ -15,14 +15,14 @@
  */
 
 raptor.defineClass(
-    "packaging.Include",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
         var runtime = raptor.require('runtime');
         
 
-        var Include = function() {
+        var Dependency = function() {
             this.properties = {};
 
             this.addProperty("recursive", {
@@ -30,8 +30,8 @@ raptor.defineClass(
             });
         };
         
-        Include.prototype = {
-            __include: true,
+        Dependency.prototype = {
+            __dependency: true,
 
             addProperty: function(name, config) {
                 this.properties[name] = config;
@@ -68,7 +68,7 @@ raptor.defineClass(
                     manifest = this.getParentManifest();
             
                 if (relative && !manifest) {
-                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
+                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for dependency. Manifest not provided'));
                 }
                 else {
                     var resource = manifest.resolveResource(path);
@@ -84,7 +84,7 @@ raptor.defineClass(
                     manifest = this.getParentManifest();
                 
                 if (relative && !manifest) {
-                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for include. Manifest not provided'));
+                    throw raptor.createError(new Error("Unable to resolve path  '" + path + '" for dependency. Manifest not provided'));
                 }
                 else {
                     return path + ":" + (manifest ? ":" + manifest.getSystemPath() : "");                    
@@ -94,7 +94,7 @@ raptor.defineClass(
             load: function(context) {
                 var contentType = this.getContentType();
                 if (contentType != 'application/javascript') {
-                    throw raptor.createError(new Error('Unable to load include "' + this.toString() + '". Expected content type of "application/javascript". Actual content type: ' + contentType));
+                    throw raptor.createError(new Error('Unable to load dependency "' + this.toString() + '". Expected content type of "application/javascript". Actual content type: ' + contentType));
                 }
                 
                 var resource = this.getResource(),
@@ -110,7 +110,7 @@ raptor.defineClass(
             },
             
             getKey: function() {
-                throw raptor.createError(new Error("getKey() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getKey() not implemented for dependency: " + this.toString()));
             },
             
             getCode: function(context) {
@@ -120,18 +120,18 @@ raptor.defineClass(
                         return resource.readAsString("UTF-8");
                     }
                     else {
-                        throw raptor.createError(new Error('Unable to get code for include "' + this.toString() + '". Resource does not exist: ' + resource.getPath()));
+                        throw raptor.createError(new Error('Unable to get code for dependency "' + this.toString() + '". Resource does not exist: ' + resource.getPath()));
                     }
                 }
                 
-                throw raptor.createError(new Error("getCode() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getCode() not implemented for dependency: " + this.toString()));
             },
             
             getContentType: function() {
-                throw raptor.createError(new Error("getContentType() not implemented for include: " + this.toString()));
+                throw raptor.createError(new Error("getContentType() not implemented for dependency: " + this.toString()));
             },
             
-            isPackageInclude: function() {
+            isPackageDependency: function() {
                 return false;
             },
             
@@ -174,5 +174,5 @@ raptor.defineClass(
             }
         };
         
-        return Include;
+        return Dependency;
     });

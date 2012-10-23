@@ -72,10 +72,10 @@ raptor.defineClass(
                             packageManifest = packaging.getPackageManifest(packageResource);
                         }
                         else {
-                            includes = options.includes;
-                            if (includes) {
+                            dependencies = options.dependencies;
+                            if (dependencies) {
                                 packageManifest = packaging.createPackageManifest();
-                                packageManifest.setIncludes(includes);
+                                packageManifest.setDependencies(dependencies);
                             }
                         }
                     }
@@ -85,7 +85,7 @@ raptor.defineClass(
                 }
                 
                 if (!packageManifest) {
-                    throw raptor.createError(new Error("Package manifest for page not provided. One of the following properties is required:  packageManifest, packageResource, includes"));
+                    throw raptor.createError(new Error("Package manifest for page not provided. One of the following properties is required:  packageManifest, packageResource, dependencies"));
                 }
 
                 var sourceUrlResolver = config.hasServerSourceMappings() ? function(path) {

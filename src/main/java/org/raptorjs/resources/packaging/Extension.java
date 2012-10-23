@@ -8,16 +8,16 @@ import org.raptorjs.rhino.RaptorJSEnv;
 
 public class Extension {
     
-    public List<Include> includes = new ArrayList<Include>();
+    public List<Dependency> includes = new ArrayList<Dependency>();
     
     private Condition condition = null;
     private String name = null;
 
-    public List<Include> getIncludes() {
+    public List<Dependency> getIncludes() {
         return includes;
     }
 
-    public void addInclude(Include include) {
+    public void addInclude(Dependency include) {
         this.includes.add(include);
     }
     

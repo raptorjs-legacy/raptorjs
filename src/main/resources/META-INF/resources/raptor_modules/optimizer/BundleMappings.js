@@ -20,7 +20,7 @@ raptor.defineClass(
         
         var BundleMappings = function(enabledExtensions) {
             this.enabledExtensions = enabledExtensions;
-            this.includeToBundleMapping = {};
+            this.dependencyToBundleMapping = {};
             this.bundlesByKey = {};
         };
         
@@ -30,11 +30,11 @@ raptor.defineClass(
                 this.parentBundleMappings = parentBundleMappings;
             },
             
-            getBundleForInclude: function(include) {
-                var key = include.getKey();
-                var bundle =  this.includeToBundleMapping[key];
+            getBundleForDependency: function(dependency) {
+                var key = dependency.getKey();
+                var bundle =  this.dependencyToBundleMapping[key];
                 if (!bundle && this.parentBundleMappings) {
-                    bundle = this.parentBundleMappings.getBundleForInclude(include);
+                    bundle = this.parentBundleMappings.getBundleForDependency(dependency);
                 }
                 return bundle;
             },
@@ -43,20 +43,20 @@ raptor.defineClass(
                 return this.enabledExtensions;
             },
             
-            addIncludesToBundle: function(includes, targetBundleName) {
+            addDependenciesToBundle: function(dependencies, targetBundleName) {
                 var optimizer = raptor.require('optimizer');
                 
-                optimizer.forEachInclude({
-                    includes: includes,
+                optimizer.forEachDependency({
+                    dependencies: dependencies,
                     enabledExtensions: this.enabledExtensions,
                     handlePackage: function(manifest, context) {
 
                         if (context.async === true) {
-                            return false; //Ignore asynchronous includes since they should not be part of asynchronous bundles 
+                            return false; //Ignore asynchronous dependencies since they should not be part of asynchronous bundles 
                         }
                         
                         if (context.recursive === true || context.depth === 0) {
-                            this.logger().info(leftPad(targetBundleName) + ": " + indent(context.depth) + 'Adding includes for package "' + manifest.getPath() + '"');
+                            this.logger().info(leftPad(targetBundleName) + ": " + indent(context.depth) + 'Adding dependencies for package "' + manifest.getPath() + '"');
                             return true; //Recurse into the package
                         }
                         else {
@@ -64,49 +64,49 @@ raptor.defineClass(
                             return false;
                         }
                     },
-                    handleInclude: function(include, context) {
+                    handleDependency: function(dependency, context) {
                         if (context.async === true) {
                             throw raptor.createError(new Error("Illegal state. async should not be true"));
                         }
                         
-                        if (this.getBundleForInclude(include)) {
+                        if (this.getBundleForDependency(dependency)) {
                             return;
                         }
                         
-                        this.addIncludeToBundle(include, targetBundleName);
-                        this.logger().info(leftPad(targetBundleName, 30) + ": " + indent(context.depth) + 'Added "' + include.toString() + '"');
+                        this.addDependencyToBundle(dependency, targetBundleName);
+                        this.logger().info(leftPad(targetBundleName, 30) + ": " + indent(context.depth) + 'Added "' + dependency.toString() + '"');
                         
                     },
                     thisObj: this
                 });
             },
             
-            addIncludeToBundle: function(include, targetBundleName) {
-                include = packaging.createInclude(include);
+            addDependencyToBundle: function(dependency, targetBundleName) {
+                dependency = packaging.createDependency(dependency);
                 var Bundle = raptor.require('optimizer.Bundle');
                 
-                if (include.isPackageInclude()) {
-                    throw raptor.createError(new Error("Illegal argument. Include cannot be a package include. Include: " + include.toString()));
+                if (dependency.isPackageDependency()) {
+                    throw raptor.createError(new Error("Illegal argument. Dependency cannot be a package dependency. Dependency: " + dependency.toString()));
                 }
-                var includeSlot = include.getSlot();
-                if (!includeSlot) {
-                    includeSlot = "body";
+                var dependencySlot = dependency.getSlot();
+                if (!dependencySlot) {
+                    dependencySlot = "body";
                 }
                 
                 
-                var bundleKey = includeSlot + "/" + include.getContentType() + "/" + targetBundleName;
+                var bundleKey = dependencySlot + "/" + dependency.getContentType() + "/" + targetBundleName;
                 var targetBundle = this.bundlesByKey[bundleKey];
                 if (!targetBundle) {
                     targetBundle = new Bundle(targetBundleName);
-                    targetBundle.setSlot(includeSlot);
-                    targetBundle.setContentType(include.getContentType());
+                    targetBundle.setSlot(dependencySlot);
+                    targetBundle.setContentType(dependency.getContentType());
                     this.bundlesByKey[bundleKey] = targetBundle;
                 }
                 
-                this.includeToBundleMapping[include.getKey()] = targetBundle;
+                this.dependencyToBundleMapping[dependency.getKey()] = targetBundle;
                 
-                if (!include.isPackageInclude()) {
-                    targetBundle.addInclude(include);
+                if (!dependency.isPackageDependency()) {
+                    targetBundle.addDependency(dependency);
                 }
                 
                 return targetBundle;

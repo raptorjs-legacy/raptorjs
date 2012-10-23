@@ -20,20 +20,20 @@ raptor.define(
                 var manifest = null;
 
                 node.forEachChild(function(child) {
-                    if (child.tagName === 'includes') {
+                    if (child.tagName === 'dependencies' || child.tagName === 'includes') {
                         manifest = {};
 
-                        var includes;
+                        var dependencies;
 
-                        manifest.includes = includes = [];
+                        manifest.dependencies = dependencies = [];
 
-                        child.forEachChild(function(includesChild) {
-                            if (includesChild.isElementNode()) {
-                                var include = {
-                                    type: includesChild.tagName
+                        child.forEachChild(function(child) {
+                            if (child.isElementNode()) {
+                                var dependency = {
+                                    type: child.tagName
                                 };
 
-                                includesChild.forEachAttributeAnyNS(function(attr) {
+                                child.forEachAttributeAnyNS(function(attr) {
                                     var value = attr.value;
                                     if (value === 'true') {
                                         value = true;
@@ -43,11 +43,11 @@ raptor.define(
                                     }
                                     
                                     if (!attr.uri) {
-                                        include[attr.localName] = value;
+                                        dependency[attr.localName] = value;
                                     }
                                 }, this);
 
-                                includes.push(include);
+                                dependencies.push(dependency);
                             }
                         }, this);
 

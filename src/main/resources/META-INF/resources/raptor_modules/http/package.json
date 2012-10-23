@@ -13,7 +13,7 @@
     "raptor": {
         "extensions": {
             "rhino": {
-                "includes": [
+                "dependencies": [
                     {"path": "Request_rhino.js"},
                     {"path": "Response_rhino.js"},
                     {"path": "http.js"}

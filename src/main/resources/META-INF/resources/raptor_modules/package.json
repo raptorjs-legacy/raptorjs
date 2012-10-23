@@ -25,19 +25,19 @@
             "taglibs/widgets/compile-time": "/templating/taglibs/widgets/compile-time-package.json"
         },
         
-        "include-types": {
-            "js": {"class": "packaging.Include_js", "path": "/packaging/Include_js.js"},
-            "css": {"class": "packaging.Include_css", "path": "/packaging/Include_css.js"},
-            "dust": {"class": "packaging.Include_dust", "path": "/packaging/Include_dust.js"},
-            "less": {"class": "packaging.Include_less", "path": "/packaging/Include_less.js"},
-            "4cc": {"class": "packaging.Include_4cc", "path": "/packaging/Include_4cc.js"},
-            "module": {"class": "packaging.Include_module", "path": "/packaging/Include_module.js"},
-            "package": {"class": "packaging.Include_package", "path": "/packaging/Include_package.js"},
-            "rhtml": {"class": "packaging.Include_rhtml", "path": "/packaging/Include_rhtml.js"},
-            "rtld": {"class": "packaging.Include_rtld", "path": "/packaging/Include_rtld.js"},
-            "resource": {"class": "packaging.Include_resource", "path": "/packaging/Include_resource.js"},
-            "init-raptor": {"class": "packaging.Include_init-raptor", "path": "/packaging/Include_init-raptor.js"},
-            "loader-metadata": {"class": "packaging.Include_loader-metadata", "path": "/packaging/Include_loader-metadata.js"} 
+        "dependency-types": {
+            "js": {"class": "packaging.Dependency_js", "path": "/packaging/Dependency_js.js"},
+            "css": {"class": "packaging.Dependency_css", "path": "/packaging/Dependency_css.js"},
+            "dust": {"class": "packaging.Dependency_dust", "path": "/packaging/Dependency_dust.js"},
+            "less": {"class": "packaging.Dependency_less", "path": "/packaging/Dependency_less.js"},
+            "4cc": {"class": "packaging.Dependency_4cc", "path": "/packaging/Dependency_4cc.js"},
+            "module": {"class": "packaging.Dependency_module", "path": "/packaging/Dependency_module.js"},
+            "package": {"class": "packaging.Dependency_package", "path": "/packaging/Dependency_package.js"},
+            "rhtml": {"class": "packaging.Dependency_rhtml", "path": "/packaging/Dependency_rhtml.js"},
+            "rtld": {"class": "packaging.Dependency_rtld", "path": "/packaging/Dependency_rtld.js"},
+            "resource": {"class": "packaging.Dependency_resource", "path": "/packaging/Dependency_resource.js"},
+            "init-raptor": {"class": "packaging.Dependency_init-raptor", "path": "/packaging/Dependency_init-raptor.js"},
+            "loader-metadata": {"class": "packaging.Dependency_loader-metadata", "path": "/packaging/Dependency_loader-metadata.js"} 
         }
     }
     

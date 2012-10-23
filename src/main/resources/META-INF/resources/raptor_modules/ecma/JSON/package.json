@@ -5,7 +5,7 @@
     "description": "ECMA-compatible JSON object",
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "JSON.js"}        
         ]
     }

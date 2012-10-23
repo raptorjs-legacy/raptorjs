@@ -13,7 +13,7 @@
     
     "raptor": {
     
-        "includes": [
+        "dependencies": [
             {"module": "xml.sax"},
             {"module": "arrays"},
             {"path": "object-mapper.js"}

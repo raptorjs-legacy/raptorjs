@@ -1,6 +1,6 @@
 package org.raptorjs.resources.packaging;
 
-public abstract class IncludeCSS extends IncludeResource {
+public abstract class DependencyCSS extends DependencyResource {
 
     @Override
     public ContentType getContentType() {

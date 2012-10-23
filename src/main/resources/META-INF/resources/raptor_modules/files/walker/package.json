@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "DirWalker.js"},
             {"path": "walker.js"}
         ]

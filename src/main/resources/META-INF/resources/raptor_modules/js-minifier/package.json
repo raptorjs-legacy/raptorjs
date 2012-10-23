@@ -12,13 +12,13 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "js-minifier.js"}
         ],
         
         "extensions": {
             "node": {
-                "includes": [
+                "dependencies": [
                     {"path": "js-minifier_node.js"}
                 ]
             }

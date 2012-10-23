@@ -15,44 +15,40 @@
  */
 
 raptor.define(
-    "packaging.Include_css",
-    "packaging.Include",
-    function() {
+    "packaging.Dependency_loader-metadata",
+    "packaging.Dependency",
+    function(raptor) {
         "use strict";
         
-        var Include_css = function() {
-            Include_css.superclass.constructor.apply(this, arguments);
-            this.addProperty("path", {
-                type: "string"
-            });
+        var Dependency_loader_metadata = function() {
+            Dependency_loader_metadata.superclass.constructor.apply(this, arguments);
         };
         
-        Include_css.prototype = {
+        Dependency_loader_metadata.prototype = {
             
             getKey: function() {
-                return "css:" + this.resolvePathKey(this.path);
+                return "loader-metadata";
             },
             
             toString: function() {
-                return this.getResource().getPath();
+                return "[loader-metadata]";
             },
             
             getCode: function(context) {
-                return this.getResource(context).readAsString("UTF-8");
+                var loaderMetadata = context && context.loaderMetadata;
+                if (loaderMetadata) {
+                    return "$rloaderMeta=" + JSON.stringify(loaderMetadata) + ";";
+                }
             },
             
             getResourcePath: function() {
-                return this.path;
+                return null;
             },
             
             getContentType: function() {
-                return "text/css";
-            },
-            
-            isInPlaceDeploymentAllowed: function() {
-                return true;
+                return "application/javascript";
             }
         };
-        
-        return Include_css;
+
+        return Dependency_loader_metadata;
     });

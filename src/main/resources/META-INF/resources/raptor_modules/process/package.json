@@ -15,13 +15,13 @@
         "extensions": [
             {
                 "name": "server",
-                "includes": [
+                "dependencies": [
                     {"path": "process.js"}
                 ]
             },
             {
                 "name": "node",
-                "includes": [
+                "dependencies": [
                     {"path": "process_node.js"}
                 ]
             }

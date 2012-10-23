@@ -12,26 +12,26 @@
     ],
 
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "oop"},
             {"path": "widgets.js"}
         ],
         "extensions": [
             {
                 "name": "server",
-                "includes": [
+                "dependencies": [
                     {"path": "widgets_server.js"}
                 ]    
             },
             {
                 "name": "rhino",
-                "includes": [
+                "dependencies": [
                     {"path": "widgets_rhino.js"}
                 ]    
             },
             {
                 "name": "browser",
-                "includes": [                
+                "dependencies": [                
                     {"module": "listeners"},
                     {"module": "pubsub"},
                     {"path": "widgets_browser.js"},
@@ -40,7 +40,7 @@
             },
             {
                 "name": "jquery",
-                "includes": [
+                "dependencies": [
                     {"path": "widgets_jquery.js"},
                     {"path": "Widget_jquery.js"}
                 ]

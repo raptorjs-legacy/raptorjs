@@ -12,13 +12,13 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "oop.js"}        
         ],
         
         "extensions": {
             "server": {
-                "includes": [
+                "dependencies": [
                     {"module": "objects"},
                     {"module": "arrays"},
                     {"module": "packaging"},
@@ -26,7 +26,7 @@
                 ]
             },
             "rhino": {
-                "includes": [
+                "dependencies": [
                     {"path": "oop_rhino.js"}
                 ]
             }

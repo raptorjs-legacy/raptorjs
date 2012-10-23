@@ -15,51 +15,53 @@
  */
 
 raptor.define(
-    "packaging.Include_dust",
-    "packaging.Include",
+    "packaging.Dependency_rhtml",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
-                
-        var Include_dust = function() {
-            Include_dust.superclass.constructor.apply(this, arguments);
+        
+        var Dependency_rhtml = function() {
+            Dependency_rhtml.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_dust.prototype = {
+        Dependency_rhtml.prototype = {
             getKey: function() {
-                return "dust:" + this.resolvePathKey(this.path);
+                return "rhtml:" + this.resolvePathKey(this.path);
             },
             
-            toString: function() {
+            toString: function(dependency) {
                 return this.getResource().getPath();
             },
             
-            getCode: function(context) {
-                return this.getResource(context).readAsString("UTF-8");
-            },
-           
-            getResourcePath: function() {
-                return this.path;
+            load: function(context) {
+                var resource = this.getResource();
+                var xmlSource = resource.readAsString("UTF-8");
+                raptor.require("templating.compiler").compileAndLoad(xmlSource, resource.getSystemPath());
             },
             
             getContentType: function() {
                 return "application/javascript";
             },
             
-            isInPlaceDeploymentAllowed: function() {
-                return true;
+                        
+            getResourcePath: function() {
+                return this.path;
             },
             
-            load: function(context) {
+            getCode: function(context) {
                 var resource = this.getResource(context);
-                var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
-                var compiled = dust.compile(resource.readAsString("UTF-8"),dirs.join('.'));
-                dust.loadSource(compiled);
-            }
+                var xmlSource = resource.readAsString("UTF-8");
+                var rhtmlJs = raptor.require("templating.compiler").compile(xmlSource, resource.getSystemPath());
+                return rhtmlJs;
+            },
             
+            isCompiled: function() {
+                return true;
+            }
         };
         
-        return Include_dust;
+        return Dependency_rhtml;
     });

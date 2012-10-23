@@ -95,27 +95,27 @@ raptor.defineClass(
                     bundleMappings = this.bundleMappings,
                     asyncPackages = [];
                     
-                optimizer.forEachInclude({
-                    includes: this.includes,
+                optimizer.forEachDependency({
+                    dependencies: this.dependencies,
                     packages: this.packageManifest,
-                    recursive: true, //We want to make sure every single include is part of a bundle
+                    recursive: true, //We want to make sure every single dependency is part of a bundle
                     enabledExtensions: this.enabledExtensions,
                     handlePackage: function(manifest, context) {
                         if (context.async === true) {
-                            asyncPackages.push(manifest); //We'll handle async includes later
+                            asyncPackages.push(manifest); //We'll handle async dependencies later
                         }
                     },
-                    handleInclude: function(include, context) {
+                    handleDependency: function(dependency, context) {
 
-                        var bundle = bundleMappings.getBundleForInclude(include);
+                        var bundle = bundleMappings.getBundleForDependency(dependency);
                         
                         if (!bundle) {
                             
-                            var sourceResource = include.getResource();
+                            var sourceResource = dependency.getResource();
                             
                             if (!this.bundlingEnabled) {
-                                //Create a bundle with a single include for each include
-                                if (this.inPlaceDeploymentEnabled && include.isInPlaceDeploymentAllowed() && sourceResource) {
+                                //Create a bundle with a single dependency for each dependency
+                                if (this.inPlaceDeploymentEnabled && dependency.isInPlaceDeploymentAllowed() && sourceResource) {
                                     
                                     var sourceUrl;
                                     
@@ -124,7 +124,7 @@ raptor.defineClass(
                                     }
                                     
                                     if (!this.sourceUrlResolver || sourceUrl) {
-                                        bundle = bundleMappings.addIncludeToBundle(include, sourceResource.getSystemPath());
+                                        bundle = bundleMappings.addDependencyToBundle(dependency, sourceResource.getSystemPath());
                                         if (sourceUrl) {
                                             bundle.url = sourceUrl;    
                                         }
@@ -134,9 +134,9 @@ raptor.defineClass(
                                 }
                                 
                                 if (!bundle) {
-                                    bundle = bundleMappings.addIncludeToBundle(include, sourceResource ? sourceResource.getPath() : include.getKey());
+                                    bundle = bundleMappings.addDependencyToBundle(dependency, sourceResource ? sourceResource.getPath() : dependency.getKey());
                                     bundle.sourceResource = sourceResource;
-                                    bundle.includeSlotInUrl = false;
+                                    bundle.dependencySlotInUrl = false;
                                     if (!sourceResource) {
                                         bundle.requireChecksum = true;
                                     }
@@ -144,14 +144,14 @@ raptor.defineClass(
                             }
                             
                             if (!bundle) {
-                                //Make sure the include is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
-                                bundle = bundleMappings.addIncludeToBundle(include, this.pageBundleName + (context.async ? "-async" : ""));
+                                //Make sure the dependency is part of a bundle. If it not part of a preconfigured bundle then put it in a page-specific bundle
+                                bundle = bundleMappings.addDependencyToBundle(dependency, this.pageBundleName + (context.async ? "-async" : ""));
                             }
                             
                         }
                         
                         if (context.async === true) {
-                            return; //Don't add bundles associated with async includes to the page bundles (those bundles will be added to the async metadata)
+                            return; //Don't add bundles associated with async dependencies to the page bundles (those bundles will be added to the async metadata)
                         }
                         /*
                          * Add the bundle to a page slot if it has not already been added
@@ -196,7 +196,7 @@ raptor.defineClass(
                     };
                     
                 
-                optimizer.forEachInclude({
+                optimizer.forEachDependency({
                     packages: asyncPackages,
                     recursive: true, //We want to make sure we pull in all recursive dependencies for async bundles
                     enabledExtensions: this.enabledExtensions,
@@ -210,15 +210,15 @@ raptor.defineClass(
                         asyncRequire.addRequire(manifest.getName());
                         
                     },
-                    handleInclude: function(include, context) {
+                    handleDependency: function(dependency, context) {
 
-                        var bundle = bundleMappings.getBundleForInclude(include),
+                        var bundle = bundleMappings.getBundleForDependency(dependency),
                             bundleKey = bundle.getKey();
-                        if (!this.pageBundleLookup[bundleKey]) { //Check if this async include is part of a page bundle
+                        if (!this.pageBundleLookup[bundleKey]) { //Check if this async dependency is part of a page bundle
                             //This bundle is an asynchronous only bundle
                         
                             if (!context.parentPackage) {
-                                throw raptor.createError(new Error("Illegal state. Asynchronous include is not part of a package"));
+                                throw raptor.createError(new Error("Illegal state. Asynchronous dependency is not part of a package"));
                             }
                             
                             var asyncRequire = getAsyncRequire(context.parentPackage.getName());

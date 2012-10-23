@@ -9,7 +9,7 @@ raptor.defineClass(
         
         var Bundle = function(name) {
             this.name = name;
-            this.includes = [];
+            this.dependencies = [];
             this.slot = "body";
             this.contentType = null;
             this.writtenToDisk = false;
@@ -23,17 +23,17 @@ raptor.defineClass(
                 return false;
             },
             
-            addInclude: function(include) {
+            addDependency: function(dependency) {
             
-                this.includes.push(packaging.createInclude(include));
+                this.dependencies.push(packaging.createDependency(dependency));
             },
             
-            getIncludes: function() {
-                return this.includes;
+            getDependencies: function() {
+                return this.dependencies;
             },
             
-            hasIncludes: function() {
-                return this.includes.length !== 0;
+            hasDependencies: function() {
+                return this.dependencies.length !== 0;
             },
             
             getName: function() {
@@ -68,8 +68,8 @@ raptor.defineClass(
                 return this.contentType === 'text/css';
             },
             
-            forEachInclude: function(callback, thisObj) {
-                forEach(this.includes, callback, thisObj);
+            forEachDependency: function(callback, thisObj) {
+                forEach(this.dependencies, callback, thisObj);
             },
             
             getChecksum: function() {
@@ -88,8 +88,8 @@ raptor.defineClass(
             
             readCode: function(context) {
                 var output = [];
-                this.forEachInclude(function(include) {
-                    var code = include.getCode(context);
+                this.forEachDependency(function(dependency) {
+                    var code = dependency.getCode(context);
                     if (code) {
                         output.push(code);    
                     }

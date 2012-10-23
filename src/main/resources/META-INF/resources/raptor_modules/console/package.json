@@ -13,12 +13,12 @@
     "raptor": {
         "extensions": {
             "browser": {
-                "includes": [
+                "dependencies": [
                     {"path": "console_browser.js"}
                 ]
             },
             "node": {
-                "includes": [
+                "dependencies": [
                     {"path": "console_node.js"}
                 ]
             }

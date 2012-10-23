@@ -22,7 +22,7 @@ $rload(function(raptor) {
         logger = raptor.logging.logger('packaging-server'),
         packageManifests = {},
         enabledExtensions = null,
-        includeClasses = {},
+        dependencyClasses = {},
         discoveryComplete = false,
         searchPathListenerHandle = null,
         getEnabledExtensions = function() {
@@ -94,15 +94,15 @@ $rload(function(raptor) {
             discoveryComplete = true;
             
             this.forEachTopLevelPackageManifest(function(manifest) {
-                var manifestIncludeHandlers = manifest.getRaptorProp("include-types");
+                var manifestDependencyHandlers = manifest.getRaptorProp("dependency-types");
                 
-                if (manifestIncludeHandlers) {
-                    forEachEntry(manifestIncludeHandlers, function(type, handlerInfo) {
+                if (manifestDependencyHandlers) {
+                    forEachEntry(manifestDependencyHandlers, function(type, handlerInfo) {
                         if (handlerInfo.path) {
                             raptor.runtime.evaluateResource(handlerInfo.path);
                         }
-                        var Include = raptor.require(handlerInfo["class"]);
-                        this.registerIncludeClass(type, Include);
+                        var Dependency = raptor.require(handlerInfo["class"]);
+                        this.registerDependencyClass(type, Dependency);
                     }, this);
                 }
                 
@@ -111,18 +111,18 @@ $rload(function(raptor) {
             this._watchResourceSearchPath();
         },
         
-        registerIncludeClass: function(type, includeClass) {
-            includeClasses[type] = includeClass; 
+        registerDependencyClass: function(type, dependencyClass) {
+            dependencyClasses[type] = dependencyClass; 
         },
         
-        getIncludeClass: function(type) {
+        getDependencyClass: function(type) {
             this._doDiscovery();
             
-            var includeClass = includeClasses[type];
-            if (!includeClass) {
-                throw raptor.createError(new Error('Include class not found for include of type "' + type + '"'));
+            var dependencyClass = dependencyClasses[type];
+            if (!dependencyClass) {
+                throw raptor.createError(new Error('Dependency class not found for dependency of type "' + type + '"'));
             }
-            return includeClass;
+            return dependencyClass;
         },
         
         removePackageManifestFromCache: function(manifest) {
@@ -146,12 +146,12 @@ $rload(function(raptor) {
                 if (loadedManifest.hasOwnProperty("raptor")) {
                     var raptorObj = loadedManifest.raptor;
                     if (raptorObj) {
-                        manifest.setIncludes(raptorObj.includes);
+                        manifest.setDependencies(raptorObj.dependencies);
                         manifest.setExtensions(raptorObj.extensions);   
                     }
                 }
                 else {
-                    manifest.setIncludes(loadedManifest.includes);
+                    manifest.setDependencies(loadedManifest.includes || loadedManifest.dependencies);
                     manifest.setExtensions(loadedManifest.extensions);
                 }
             }

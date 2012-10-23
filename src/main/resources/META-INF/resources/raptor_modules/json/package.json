@@ -12,18 +12,18 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "json.js"}
         ],
     
         "extensions": {
             "jquery": {
-                "includes": [
+                "dependencies": [
                     {"path": "json_jquery.js"}
                 ]
             },
             "json.raptor": {
-                "includes": [
+                "dependencies": [
                     {"module": "json.parse"},
                     {"module": "json.stringify"},
                     {"path": "jsonParse_raptor.js"},
@@ -31,13 +31,13 @@
                 ]
             },
             "json.raptorStringify": {
-                "includes": [
+                "dependencies": [
                     {"module": "json.stringify"},
                     {"path": "jsonStringify_raptor.js"}
                 ]
             },
             "json.raptorParse": {
-                "includes": [
+                "dependencies": [
                     {"module": "json.parse"},
                     {"path": "jsonParse_raptor.js"}
                 ]

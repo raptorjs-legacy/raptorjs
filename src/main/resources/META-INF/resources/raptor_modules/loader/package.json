@@ -11,30 +11,30 @@
         }
     ],
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "listeners"},
             {"path": "loader.js"}
         ],
                 
         "extensions": {
             "browser": {
-                "includes": [
+                "dependencies": [
                     {"path": "loader_browser.js"}
                 ]
             },
             "jquery": {
-                "includes": [
+                "dependencies": [
                     {"path": "loader_browser_jquery.js"}
                 ]
             },
             "raptor": {
                 "condition": "!extensions.contains('jquery')",
-                "includes": [
+                "dependencies": [
                     {"path": "loader_browser_raptor.js"}
                 ]
             },
             "loader.requires": {
-                "includes": [
+                "dependencies": [
                     {"module": "loader.requires"}
                 ]
             }

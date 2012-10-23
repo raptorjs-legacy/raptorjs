@@ -11,13 +11,13 @@
         }
     ],
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "dom.js"}
         ],
         
         "extensions": {
             "jquery": {
-                "includes": [
+                "dependencies": [
                     {"path": "DomParser_jquery.js"}
                 ]
             }

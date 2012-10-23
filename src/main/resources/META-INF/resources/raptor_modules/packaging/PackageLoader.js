@@ -44,15 +44,15 @@ $rload(function(raptor) {
             
             loaded[path] = true;
             
-            manifest.forEachInclude({
-                callback: function(type, include) {
-                    if (include.isPackageInclude()) {
-                        include.load(this);
+            manifest.forEachDependency({
+                callback: function(type, dependency) {
+                    if (dependency.isPackageDependency()) {
+                        dependency.load(this);
                     }
                     else {
-                        var contentType = include.getContentType();
+                        var contentType = dependency.getContentType();
                         if (contentType === 'application/javascript') {
-                            include.load(this);
+                            dependency.load(this);
                         }    
                     }
                     

@@ -14,12 +14,12 @@
     "raptor": {
         "extensions": {
             "browser": {
-                "includes": [
+                "dependencies": [
                     {"path": "stacktraces_browser.js"}
                 ]
             },
             "node": {
-                "includes": [
+                "dependencies": [
                     {"path": "stacktraces_node.js"}
                 ]
             }

@@ -31,15 +31,15 @@ public class PackageManifest {
     private String name = null;
     private Resource resource = null;    
     private Map<String, Extension> extensionsByName = new HashMap<String, Extension>();
-    private List<Include> includes = new ArrayList<Include>();
+    private List<Dependency> dependencies = new ArrayList<Dependency>();
     private List<Extension> extensions = new ArrayList<Extension>();
     
     public PackageManifest() {
     }
     
-    public void addInclude(Include include) {
+    public void addDependency(Dependency dependency) {
 
-        this.includes.add(include);
+        this.dependencies.add(dependency);
     }
     
     public Extension getExtension(String name) {
@@ -59,8 +59,8 @@ public class PackageManifest {
     }
 
     
-    public List<Include> getIncludes() {
-        return this.includes;
+    public List<Dependency> getIncludes() {
+        return this.dependencies;
     }
     
     public List<Extension> getExtensions() {
@@ -86,7 +86,7 @@ public class PackageManifest {
 
     @Override
     public String toString() {
-        return "ModuleManifest [name=" + name + ", includes=" + this.includes + ", extensions=" + this.extensions + "]";
+        return "ModuleManifest [name=" + name + ", dependencies=" + this.dependencies + ", extensions=" + this.extensions + "]";
     }
     
     public Resource resolveResource(String path, ResourceManager resourceManager) {
@@ -96,7 +96,7 @@ public class PackageManifest {
         
         Resource resource = resourceManager.findResource(fullPath);
         if (resource == null) {
-            throw new RuntimeException("Include with path '" + path + "' (" + fullPath + ") not found for packge '" + this.getPackagePath() + "'.");
+            throw new RuntimeException("Dependency with path '" + path + "' (" + fullPath + ") not found for packge '" + this.getPackagePath() + "'.");
         }
         return resource;
     }

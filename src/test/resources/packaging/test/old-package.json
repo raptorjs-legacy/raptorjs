@@ -1,17 +1,15 @@
 {
     "type": "raptor-module",
     "name": "test/extensions",
-    "raptor": {
-        "includes": [
-            {"path": "Test.js"},
-            {"path": "extensions.js"}
-        ],
-        "extensions": {
-            "server": {
-                "includes": [
-                    {"path": "extensions_server.js"}
-                ]
-            }
+    "includes": [
+        {"path": "Test.js"},
+        {"path": "extensions.js"}
+    ],
+    "extensions": {
+        "server": {
+            "includes": [
+                {"path": "extensions_server.js"}
+            ]
         }
     }
 }

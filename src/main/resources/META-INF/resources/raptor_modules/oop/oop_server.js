@@ -73,7 +73,7 @@ $rload(function(raptor) {
         createModuleManifestForResource = function(resource) {
             var manifest = raptor.require('packaging').createPackageManifest();
             manifest.setPackageResource(resource);
-            manifest.setIncludes([{
+            manifest.setDependencies([{
                 path: resource.getName()
             }]);
 

@@ -14,12 +14,12 @@
     "raptor": {
         "extensions": {
             "server": {
-                "includes": [
+                "dependencies": [
                     {"path": "runtime.js"}
                 ]
             },
             "server_node": {
-                "includes": [
+                "dependencies": [
                     {"path": "runtime_node.js"}
                 ]
             }

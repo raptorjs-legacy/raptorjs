@@ -20,9 +20,9 @@ import org.raptorjs.resources.Resource;
 public class PackageManifestJSONLoader {
     
     private ObjectMapper mapper = new ObjectMapper();
-    private IncludeFactory includeFactory = null;
+    private DependencyFactory includeFactory = null;
     
-    public PackageManifestJSONLoader(IncludeFactory includeFactory) {
+    public PackageManifestJSONLoader(DependencyFactory includeFactory) {
         this.includeFactory = includeFactory;
    
         mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -66,11 +66,15 @@ public class PackageManifestJSONLoader {
     
     private void deserializeRaptor(PackageManifest manifest, ObjectNode raptor) {
     	ArrayNode includes = (ArrayNode) raptor.get("includes");
+    	if (includes == null) {
+    		includes = (ArrayNode) raptor.get("dependencies");
+    	}
+    	
         if (includes != null) {
             for (int i=0; i<includes.size(); i++) {
                 JsonNode includeNode = includes.get(i);
-                Include include = this.deserializeInclude(manifest, includeNode);
-                manifest.addInclude(include);
+                Dependency include = this.deserializeInclude(manifest, includeNode);
+                manifest.addDependency(include);
             }
             
         }
@@ -117,17 +121,21 @@ public class PackageManifestJSONLoader {
             extension.setCondition(condition);
         }
         
-        ArrayNode includes = (ArrayNode) node.get("includes");
-        if (includes != null) {
-            for (int i=0; i<includes.size(); i++) {
-                JsonNode includeNode = includes.get(i);
-                Include include = this.deserializeInclude(manifest, includeNode);
+        ArrayNode dependencies = (ArrayNode) node.get("includes");
+        if (dependencies == null) {
+    		dependencies = (ArrayNode) node.get("dependencies");
+    	}
+        
+        if (dependencies != null) {
+            for (int i=0; i<dependencies.size(); i++) {
+                JsonNode includeNode = dependencies.get(i);
+                Dependency include = this.deserializeInclude(manifest, includeNode);
                 extension.addInclude(include);
             }
         }
     }
     
-    private Include deserializeInclude(PackageManifest manifest, JsonNode node) {
+    private Dependency deserializeInclude(PackageManifest manifest, JsonNode node) {
         String type = null;
         Map<String, Object> props = new HashMap<String, Object>();
         
@@ -205,7 +213,7 @@ public class PackageManifestJSONLoader {
             props = Collections.emptyMap();
         }
         
-        Include include = this.includeFactory.createInclude(type, props);
+        Dependency include = this.includeFactory.createInclude(type, props);
         include.setParentPackageManifest(manifest);
         return include;
     }

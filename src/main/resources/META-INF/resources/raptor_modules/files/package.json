@@ -15,13 +15,13 @@
         "extensions": [
             {
                 "name": "server",
-                "includes": [
+                "dependencies": [
                     {"path": "files.js"}
                 ]
             },
             {
                 "name": "node",
-                "includes": [
+                "dependencies": [
                     {"path": "File_node.js"},
                     {"path": "files_node.js"}
                 ]

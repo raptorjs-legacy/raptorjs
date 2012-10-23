@@ -15,21 +15,22 @@
  */
 
 raptor.define(
-    "packaging.Include_4cc",
-    "packaging.Include",
+    "packaging.Dependency_js",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
-        var Include_4cc = function() {
-            Include_4cc.superclass.constructor.apply(this, arguments);
+        var Dependency_js = function() {
+            Dependency_js.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_4cc.prototype = {
+        Dependency_js.prototype = {
+            
             getKey: function() {
-                return "4cc:" + this.resolvePathKey(this.path);
+                return "js:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
@@ -39,23 +40,19 @@ raptor.define(
             getCode: function(context) {
                 return this.getResource(context).readAsString("UTF-8");
             },
-           
+            
             getResourcePath: function() {
                 return this.path;
             },
             
             getContentType: function() {
-                return "application/content";
+                return "application/javascript";
             },
             
             isInPlaceDeploymentAllowed: function() {
                 return true;
-            },
-            
-            load: function(context) {
             }
-            
         };
-
-        return Include_4cc;
+        
+        return Dependency_js;        
     });

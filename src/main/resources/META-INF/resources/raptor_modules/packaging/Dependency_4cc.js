@@ -15,44 +15,47 @@
  */
 
 raptor.define(
-    "packaging.Include_init-raptor",
-    "packaging.Include",
+    "packaging.Dependency_4cc",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
-        var loaded = {},
-            runtime = raptor.require('runtime');
-        
-        var Include_init_raptor = function() {
-            Include_init_raptor.superclass.constructor.apply(this, arguments);
-
-            this.addProperty("config", {
-                type: "object"
+        var Dependency_4cc = function() {
+            Dependency_4cc.superclass.constructor.apply(this, arguments);
+            this.addProperty("path", {
+                type: "string"
             });
         };
         
-        Include_init_raptor.prototype = {
+        Dependency_4cc.prototype = {
             getKey: function() {
-                return "init-raptor";
+                return "4cc:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
-                return "[init-raptor]";
-            },
-            
-            load: function(context) {
-                $rcreate(this.config);
-            },
-            
-            getContentType: function() {
-                return "application/javascript";
+                return this.getResource().getPath();
             },
             
             getCode: function(context) {
-                var config = this.config || context.raptorConfig || {};
-                return "$rcreate(" + (typeof config === 'string' ? config : JSON.stringify(config)) + ");";
+                return this.getResource(context).readAsString("UTF-8");
+            },
+           
+            getResourcePath: function() {
+                return this.path;
+            },
+            
+            getContentType: function() {
+                return "application/content";
+            },
+            
+            isInPlaceDeploymentAllowed: function() {
+                return true;
+            },
+            
+            load: function(context) {
             }
+            
         };
-        
-        return Include_init_raptor;
+
+        return Dependency_4cc;
     });

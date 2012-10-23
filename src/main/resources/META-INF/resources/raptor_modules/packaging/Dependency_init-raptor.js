@@ -15,40 +15,44 @@
  */
 
 raptor.define(
-    "packaging.Include_loader-metadata",
-    "packaging.Include",
+    "packaging.Dependency_init-raptor",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
         
-        var Include_loader_metadata = function() {
-            Include_loader_metadata.superclass.constructor.apply(this, arguments);
+        var loaded = {},
+            runtime = raptor.require('runtime');
+        
+        var Dependency_init_raptor = function() {
+            Dependency_init_raptor.superclass.constructor.apply(this, arguments);
+
+            this.addProperty("config", {
+                type: "object"
+            });
         };
         
-        Include_loader_metadata.prototype = {
-            
+        Dependency_init_raptor.prototype = {
             getKey: function() {
-                return "loader-metadata";
+                return "init-raptor";
             },
             
             toString: function() {
-                return "[loader-metadata]";
+                return "[init-raptor]";
             },
             
-            getCode: function(context) {
-                var loaderMetadata = context && context.loaderMetadata;
-                if (loaderMetadata) {
-                    return "$rloaderMeta=" + JSON.stringify(loaderMetadata) + ";";
-                }
-            },
-            
-            getResourcePath: function() {
-                return null;
+            load: function(context) {
+                $rcreate(this.config);
             },
             
             getContentType: function() {
                 return "application/javascript";
+            },
+            
+            getCode: function(context) {
+                var config = this.config || context.raptorConfig || {};
+                return "$rcreate(" + (typeof config === 'string' ? config : JSON.stringify(config)) + ");";
             }
         };
-
-        return Include_loader_metadata;
+        
+        return Dependency_init_raptor;
     });

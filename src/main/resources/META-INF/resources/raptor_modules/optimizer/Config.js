@@ -227,7 +227,7 @@ raptor.defineClass(
                                 bundleName = bundleSetConfig.name + "-" + bundleName; //Prefix the bundle name with the bundle set name to keep the bundle names unique
                             }
                             
-                            bundleMappings.addIncludesToBundle(o.includes, bundleName);
+                            bundleMappings.addDependenciesToBundle(o.dependencies, bundleName);
                         }
                         else if (o instanceof BundleSetConfig) {
                             o.forEachChild(addBundles);

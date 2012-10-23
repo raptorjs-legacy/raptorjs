@@ -7,7 +7,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "numbers.js"}
         ]
     }

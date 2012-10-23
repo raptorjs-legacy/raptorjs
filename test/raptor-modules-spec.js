@@ -44,7 +44,7 @@ describe('modules module', function() {
         
         var modules = {};
         
-        coreManifest.forEachInclude({
+        coreManifest.forEachDependency({
             callback: function(type, include) {
                 if (include.type === 'module') {
                     modules[include.name] = true;

@@ -15,22 +15,21 @@
  */
 
 raptor.define(
-    "packaging.Include_js",
-    "packaging.Include",
+    "packaging.Dependency_dust",
+    "packaging.Dependency",
     function(raptor) {
         "use strict";
-        
-        var Include_js = function() {
-            Include_js.superclass.constructor.apply(this, arguments);
+                
+        var Dependency_dust = function() {
+            Dependency_dust.superclass.constructor.apply(this, arguments);
             this.addProperty("path", {
                 type: "string"
             });
         };
         
-        Include_js.prototype = {
-            
+        Dependency_dust.prototype = {
             getKey: function() {
-                return "js:" + this.resolvePathKey(this.path);
+                return "dust:" + this.resolvePathKey(this.path);
             },
             
             toString: function() {
@@ -40,7 +39,7 @@ raptor.define(
             getCode: function(context) {
                 return this.getResource(context).readAsString("UTF-8");
             },
-            
+           
             getResourcePath: function() {
                 return this.path;
             },
@@ -51,8 +50,16 @@ raptor.define(
             
             isInPlaceDeploymentAllowed: function() {
                 return true;
+            },
+            
+            load: function(context) {
+                var resource = this.getResource(context);
+                var path = resource.getPath(),dirs = path.split(/[\/\.]/);dirs.shift();dirs.pop();
+                var compiled = dust.compile(resource.readAsString("UTF-8"),dirs.join('.'));
+                dust.loadSource(compiled);
             }
+            
         };
         
-        return Include_js;        
+        return Dependency_dust;
     });

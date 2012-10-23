@@ -3,7 +3,7 @@ package org.raptorjs.resources.packaging;
 import java.util.List;
 
 
-public abstract class IncludePackage extends Include {
+public abstract class DependencyPackage extends Dependency {
 
     private PackageManifest packageManifest = null;
     
@@ -18,11 +18,11 @@ public abstract class IncludePackage extends Include {
     @Override
     protected void doInclude(IncludeOptions includeOptions, ResourceIncluderContext context) {
         PackageManifest manifest = this.getPackageManifest(context);
-        List<Include> includes = manifest.getIncludes();
+        List<Dependency> includes = manifest.getIncludes();
         
         if (!context.isPackageExtensionIncluded(manifest, null)) {
             context.setPackageExtensionIncluded(manifest, null);
-            for (Include include : includes) {
+            for (Dependency include : includes) {
                 include.include(includeOptions, context);
             }    
         }
@@ -32,7 +32,7 @@ public abstract class IncludePackage extends Include {
             if (!context.isPackageExtensionIncluded(manifest, extension) && context.isExtensionEnabled(extension, includeOptions)) {
                 context.setPackageExtensionIncluded(manifest, extension);
                 
-                for (Include include : extension.getIncludes()) {
+                for (Dependency include : extension.getIncludes()) {
                     include.include(includeOptions, context);
                 }    
             }

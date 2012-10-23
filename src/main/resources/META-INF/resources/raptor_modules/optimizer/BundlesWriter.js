@@ -128,7 +128,7 @@ raptor.defineClass(
                     }
                     else {
                         writeBundle(bundle);
-                        addHtml(bundle.getSlot(), this.getBundleIncludeHtml(bundle, basePath));
+                        addHtml(bundle.getSlot(), this.getBundleDependencyHtml(bundle, basePath));
                     }
                 }, this);
                 
@@ -139,7 +139,7 @@ raptor.defineClass(
                 return new OptimizedPage(htmlBySlot, loaderMetadata);
             },
             
-            getBundleIncludeHtml: function(bundle, basePath) {
+            getBundleDependencyHtml: function(bundle, basePath) {
                 var url = this.getBundleUrl(bundle, basePath);
                 if (bundle.isJavaScript()) {
                     return '<script type="text/javascript" src="' + url + '"></script>';
@@ -168,7 +168,7 @@ raptor.defineClass(
                 return urlBuilder.buildResourceUrl(filename, basePath);
             },
 
-            applyFilter: function(code, contentType, include, bundle) {
+            applyFilter: function(code, contentType, dependency, bundle) {
     
                 forEach(this.filters, function(filter) {
                     var output,
@@ -192,7 +192,7 @@ raptor.defineClass(
                         filterThisObj = filter;
                     }
                         
-                    output = filterFunc.call(filterThisObj, code, contentType, include, bundle, this.context);
+                    output = filterFunc.call(filterThisObj, code, contentType, dependency, bundle, this.context);
                     
                     if (output) {
                         code = output;
@@ -205,10 +205,10 @@ raptor.defineClass(
             readBundle: function(bundle, context) {
                 var bundleCode = [];
                     
-                bundle.forEachInclude(function(include) {
-                    var code = include.getCode(context);
+                bundle.forEachDependency(function(dependency) {
+                    var code = dependency.getCode(context);
                     if (code) {
-                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), include, bundle));    
+                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), dependency, bundle));    
                     }
                 }, this);
                 
@@ -243,8 +243,8 @@ raptor.defineClass(
                 throw raptor.createError(new Error("writeBundle() not implemented"));
             },
             
-            writePageIncludeHtml: function(pageName, slot, html) {
-                throw raptor.createError(new Error("writeIncludeHtml() not implemented"));
+            writePageDependencyHtml: function(pageName, slot, html) {
+                throw raptor.createError(new Error("writeDependencyHtml() not implemented"));
             },
 
             writeResource: function(resource, contentType, addChecksum) {

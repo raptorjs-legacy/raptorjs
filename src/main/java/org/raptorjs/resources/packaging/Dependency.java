@@ -2,7 +2,7 @@ package org.raptorjs.resources.packaging;
 
 import java.util.Map;
 
-public abstract class Include {
+public abstract class Dependency {
     private String type = null;
     private boolean async = false;
     private PackageManifest parentPackageManifest = null;

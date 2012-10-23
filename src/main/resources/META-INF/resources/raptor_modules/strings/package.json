@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "strings.js"},
             {"path": "StringBuilder.js"}
         ]

@@ -27,25 +27,25 @@ $rload(function(raptor) {
         ExtensionCollection = raptor.packaging.ExtensionCollection,
         nextId = 0;
 
-    var createInclude = function(includeConfig, manifest) {
+    var createDependency = function(dependencyConfig, manifest) {
             
-            if (includeConfig.__include) {
-                return includeConfig;
+            if (dependencyConfig.__dependency) {
+                return dependencyConfig;
             }
             
             var lastDot,
                 path;
                 
-            if (typeof includeConfig === 'string') {
-                path = includeConfig;
+            if (typeof dependencyConfig === 'string') {
+                path = dependencyConfig;
                 lastDot = path.lastIndexOf('.');
                 if (lastDot !== -1) {
-                    includeConfig = {
-                            path: includeConfig
+                    dependencyConfig = {
+                            path: dependencyConfig
                         };    
                 }
                 else {
-                    includeConfig = {
+                    dependencyConfig = {
                             type: "module",
                             name: path
                         };
@@ -54,43 +54,43 @@ $rload(function(raptor) {
             }
             
             
-            if (!includeConfig.type) {
-                path = includeConfig.path;
+            if (!dependencyConfig.type) {
+                path = dependencyConfig.path;
                 if (path) {
                     lastDot = path.lastIndexOf('.');
                     if (lastDot !== -1) {
-                        includeConfig.type = path.substring(lastDot+1);
+                        dependencyConfig.type = path.substring(lastDot+1);
                     }
                 }
                 else {
-                    if (includeConfig.hasOwnProperty('module')) {
-                        includeConfig.type = "module";
-                        includeConfig.name = includeConfig.module;
-                        delete includeConfig.module;
+                    if (dependencyConfig.hasOwnProperty('module')) {
+                        dependencyConfig.type = "module";
+                        dependencyConfig.name = dependencyConfig.module;
+                        delete dependencyConfig.module;
                     }
-                    else if (includeConfig.hasOwnProperty('package')) {
-                        includeConfig.type = "package";
-                        includeConfig.path = includeConfig['package'];
-                        delete includeConfig['package'];
+                    else if (dependencyConfig.hasOwnProperty('package')) {
+                        dependencyConfig.type = "package";
+                        dependencyConfig.path = dependencyConfig['package'];
+                        delete dependencyConfig['package'];
                     }
                 }
             }
             
-            var IncludeClass = packaging.getIncludeClass(includeConfig.type);
+            var DependencyClass = packaging.getDependencyClass(dependencyConfig.type);
 
-            var include = new IncludeClass();
+            var dependency = new DependencyClass();
             
-            raptor.extend(include, includeConfig);
+            raptor.extend(dependency, dependencyConfig);
             
             if (manifest) {
-                include.setParentManifest(manifest);
+                dependency.setParentManifest(manifest);
             }
 
-            return include;
+            return dependency;
         };
    
     var PackageManifest = function() {
-        this.includes = [];
+        this.dependencies = [];
         this.extensions = [];
         this.packageResource = null;
         this._isPackageManifest = true;
@@ -103,16 +103,16 @@ $rload(function(raptor) {
             this.packageResource = packageResource;
         },
             
-        setIncludes: function(includes) {
-            if (!includes || includes.length === 0) {
-                this.includes = [];
+        setDependencies: function(dependencies) {
+            if (!dependencies || dependencies.length === 0) {
+                this.dependencies = [];
                 return;
             }
             
-            forEach(includes, function(include, i) {
-                includes[i] = createInclude(include, this); 
+            forEach(dependencies, function(dependency, i) {
+                dependencies[i] = createDependency(dependency, this); 
             }, this);
-            this.includes = includes;
+            this.dependencies = dependencies;
         },
         
         getKey: function() {
@@ -163,20 +163,22 @@ $rload(function(raptor) {
             }
             
             forEach(this.extensions, function(extension) {
-                forEach(extension.includes, function(include, i) {
-                    extension.includes[i] = createInclude(include, this);
+                var dependencies = extension.dependencies || extension.includes;
+                forEach(dependencies, function(dependency, i) {
+                    dependencies[i] = createDependency(dependency, this);
                 }, this);
                 
                 if (extension.condition) {
                     extension.condition = eval("(function(extensions) { return " + extension.condition + ";})");
                 }
+                extension.dependencies = dependencies;
             }, this);
             
             
         },
         
-        addInclude: function(includeDef) {
-            this.includes.push(createInclude(includeDef, this));
+        addDependency: function(dependencyDef) {
+            this.dependencies.push(createDependency(dependencyDef, this));
         },
         
         /**
@@ -240,7 +242,7 @@ $rload(function(raptor) {
          * @param options
          * @returns
          */
-        forEachInclude: function(options) {
+        forEachDependency: function(options) {
              
             if (typeof options === 'function') {
                 options = {
@@ -268,17 +270,17 @@ $rload(function(raptor) {
                 }
             }
 
-            var includeFilter = options.includeFilter,
+            var dependencyFilter = options.dependencyFilter,
                 callback = options.callback,
                 thisObj = options.thisObj,
-                _isExtensionIncluded = function(extensionName) {
+                _isExtensionDependencyd = function(extensionName) {
                     if (enabledExtensions) {
                         var extensionParts = extensionName.split(/[_\-,|]/),
                             i=0,
                             len = extensionParts.length;
                         for (; i<len; i++) {
                             if (extensionParts[i] === '') {
-                                continue; //Include extensions with an empty string
+                                continue; //Dependency extensions with an empty string
                             }
                             
                             if (!enabledExtensions.contains(extensionParts[i])) {
@@ -290,23 +292,23 @@ $rload(function(raptor) {
                 };
             
             
-            var _handleIncludes = function(includes, extension) {
-                forEach(includes, function(include) {
+            var _handleDependencies = function(dependencies, extension) {
+                forEach(dependencies, function(dependency) {
                     
-                    if (include.extension && !_isExtensionIncluded(include.extension)) {
+                    if (dependency.extension && !_isExtensionDependencyd(dependency.extension)) {
                         return;
                     }
                     
-                    if (includeFilter && !includeFilter.call(thisObj, include.type, include)) {
+                    if (dependencyFilter && !dependencyFilter.call(thisObj, dependency.type, dependency)) {
                         return;
                     }
                        
-                    callback.call(thisObj, include.type, include, extension);
+                    callback.call(thisObj, dependency.type, dependency, extension);
                 });
             };
             
-            if (this.includes) {
-                _handleIncludes(this.includes, null); //Only process the regular includes if they are not filtered out
+            if (this.dependencies) {
+                _handleDependencies(this.dependencies, null); //Only process the regular dependencies if they are not filtered out
             }
             
             if (this.extensions) {
@@ -324,11 +326,11 @@ $rload(function(raptor) {
                             return;
                         }
                     }
-                    else if (!_isExtensionIncluded(extensionName)) {
+                    else if (!_isExtensionDependencyd(extensionName)) {
                         return;
                     }
                     
-                    _handleIncludes(extensionDef.includes, extensionName);
+                    _handleDependencies(extensionDef.dependencies, extensionName);
 
                 }, this);
             }
@@ -336,5 +338,5 @@ $rload(function(raptor) {
     };
     
     raptor.packaging.PackageManifest = PackageManifest; 
-    raptor.packaging.createInclude = createInclude;
+    raptor.packaging.createDependency = createDependency;
 });

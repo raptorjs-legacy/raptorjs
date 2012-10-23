@@ -12,7 +12,7 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"module": "bootstrap"},
             {"module": "ecma.es5"},
             {"module": "raptorBuilder"},

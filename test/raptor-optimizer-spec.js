@@ -14,7 +14,7 @@ describe('optimizer module', function() {
             var pageIncludes = config.pageIncludes;
             
             var packageManifest = raptor.require('packaging').createPackageManifest();
-            packageManifest.setIncludes(pageIncludes);
+            packageManifest.setDependencies(pageIncludes);
 
             logger.debug("--------------------");
             logger.debug('Begin optimizer test for page "' + config.pageName + '":');
@@ -26,7 +26,7 @@ describe('optimizer module', function() {
             var bundleMappings = new BundleMappings(config.enabledExtensions);
             forEach(config.bundleSet, function(bundleConfig) {
                 var bundleName = bundleConfig.name;
-                bundleMappings.addIncludesToBundle(bundleConfig.includes, bundleName);
+                bundleMappings.addDependenciesToBundle(bundleConfig.includes, bundleName);
             });
             
             //Get the page dependencies
@@ -63,7 +63,7 @@ describe('optimizer module', function() {
                 
                 actualBundles.push(bundle);
                 logger.debug("Bundle for " + config.pageName + ":\n"+ bundleToString(bundle, "  "));
-                bundle.forEachInclude(function(include) {
+                bundle.forEachDependency(function(include) {
                     
                     var key = include.getKey();
                     if (includesByKey[key]) {
@@ -154,12 +154,12 @@ describe('optimizer module', function() {
             expect(duplicates).toEqualArray([]);
             
             forEach(config.expectedMappings, function(expected) {
-                optimizer.forEachInclude(
+                optimizer.forEachDependency(
                     expected.include,
                     config.enabledExtensions,
                     function(include) {
                         if (!include.isPackageInclude()) {
-                            var targetBundle = pageBundles.getBundleMappings().getBundleForInclude(include),
+                            var targetBundle = pageBundles.getBundleMappings().getBundleForDependency(include),
                                 targetBundleName = targetBundle ? targetBundle.getName() : undefined;
                                 
                             if (!targetBundleName && expected.toBundle) {

@@ -11,7 +11,7 @@
         }
     ],
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "errors.js"}
         ]
     }

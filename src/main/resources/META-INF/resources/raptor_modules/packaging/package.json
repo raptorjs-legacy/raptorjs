@@ -12,20 +12,20 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
                 
         ],
         
         "extensions": {
             "server": {
-                "includes": [
+                "dependencies": [
                     {"path": "packaging_server.js"},
                     {"path": "ExtensionCollection.js"},
                     {"path": "PackageManifest.js"}
                 ]
             },
             "rhino": {
-                "includes": [
+                "dependencies": [
                     {"path": "packaging_rhino.js"}
                 ]
             }

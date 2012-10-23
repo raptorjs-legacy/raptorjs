@@ -35,7 +35,8 @@ raptor.define(
                 startTagOnly: {
                     'img': true,
                     'br': true,
-                    'input': true
+                    'input': true,
+                    'meta': true
                 }
             };
         

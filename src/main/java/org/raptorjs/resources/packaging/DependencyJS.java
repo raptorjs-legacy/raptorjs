@@ -1,6 +1,6 @@
 package org.raptorjs.resources.packaging;
 
-public abstract class IncludeJS extends IncludeResource {
+public abstract class DependencyJS extends DependencyResource {
 
     @Override
     public ContentType getContentType() {

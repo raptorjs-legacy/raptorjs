@@ -1,7 +1,7 @@
 /**
  * The optimizer module is used to generated optimized
  * web pages--including optimized resource bundles and the HTML markup
- * to include the optimized resource bundles in an HTML page.
+ * to dependency the optimized resource bundles in an HTML page.
  * 
  * Simple usage:
  * <js>
@@ -144,16 +144,16 @@ raptor.define(
              * 
              * @param options
              */
-            forEachInclude: function(options) {
+            forEachDependency: function(options) {
     
                
                 var enabledExtensions = options.enabledExtensions, 
-                    includeCallback = options.handleInclude,
+                    dependencyCallback = options.handleDependency,
                     packageCallback = options.handlePackage,
                     thisObj = options.thisObj;
     
     
-                var foundIncludes = {};
+                var foundDependencies = {};
                 
                 var handleManifest = function(manifest, parentPackage, recursive, depth, async) {
                     var foundKey = manifest.getKey() + "|" + async;
@@ -166,16 +166,16 @@ raptor.define(
                         };
                     
                     var recurseIntoPackage = packageCallback.call(thisObj, manifest, context);
-                    if (recurseIntoPackage === false || foundIncludes[foundKey]) { //Avoid infinite loop by keeping track of which packages we have recursed into
+                    if (recurseIntoPackage === false || foundDependencies[foundKey]) { //Avoid infinite loop by keeping track of which packages we have recursed into
                         return;
                     }    
                     
                     if (recursive === true || depth <= 0) {
 
-                        manifest.forEachInclude(
-                            function(type, packageInclude) {
+                        manifest.forEachDependency(
+                            function(type, packageDependency) {
                                 
-                                handleInclude.call(this, packageInclude, manifest, recursive, depth+1, async || packageInclude.isAsync());
+                                handleDependency.call(this, packageDependency, manifest, recursive, depth+1, async || packageDependency.isAsync());
                             },
                             this,
                             {
@@ -185,13 +185,13 @@ raptor.define(
 
                 };
                 
-                var handleInclude = function(include, parentPackage, recursive, depth, async) {
-                    var foundKey = include.getKey() + "|" + async;
-                    if (foundIncludes[foundKey]) {
-                        return; //Include already handled
+                var handleDependency = function(dependency, parentPackage, recursive, depth, async) {
+                    var foundKey = dependency.getKey() + "|" + async;
+                    if (foundDependencies[foundKey]) {
+                        return; //Dependency already handled
                     }
                     
-                    foundIncludes[foundKey] = true;
+                    foundDependencies[foundKey] = true;
                     
                     var context = {
                         recursive: recursive === true, 
@@ -200,30 +200,30 @@ raptor.define(
                         parentPackage: parentPackage
                     };
                     
-                    if (include.isPackageInclude()) {
-                        var dependencyManifest = include.getManifest();
+                    if (dependency.isPackageDependency()) {
+                        var dependencyManifest = dependency.getManifest();
                         
                         if (!dependencyManifest) {
-                            throw raptor.createError(new Error("Dependency manifest not found for package include: " + include.toString()));
+                            throw raptor.createError(new Error("Dependency manifest not found for package dependency: " + dependency.toString()));
                         }
                         
                         handleManifest.call(this, dependencyManifest, parentPackage, recursive, depth, async);
                     }
                     else {
-                        includeCallback.call(thisObj, include, context);
+                        dependencyCallback.call(thisObj, dependency, context);
                     }
                 };
                 
-                forEach(options.includes, function(include) {
-                    include = packaging.createInclude(include);
+                forEach(options.dependencies, function(dependency) {
+                    dependency = packaging.createDependency(dependency);
                     
-                    handleInclude.call(
+                    handleDependency.call(
                         this, 
-                        include, 
+                        dependency, 
                         null,
-                        options.recursive === true || include.recursive === true, 
+                        options.recursive === true || dependency.recursive === true, 
                         0,
-                        include.isAsync());
+                        dependency.isAsync());
                     
                 }, this);
 

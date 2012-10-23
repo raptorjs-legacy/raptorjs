@@ -11,14 +11,14 @@
     ],
     
     "raptor": {
-        "includes": [
+        "dependencies": [
             {"path": "mime.js"}
         ],
         
         "extensions": [
             {
                 "name": "node",
-                "includes": [
+                "dependencies": [
                     {"path": "mime_node.js"}
                 ]
             }
