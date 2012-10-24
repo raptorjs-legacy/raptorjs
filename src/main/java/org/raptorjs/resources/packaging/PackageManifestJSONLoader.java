@@ -73,7 +73,7 @@ public class PackageManifestJSONLoader {
         if (includes != null) {
             for (int i=0; i<includes.size(); i++) {
                 JsonNode includeNode = includes.get(i);
-                Dependency include = this.deserializeInclude(manifest, includeNode);
+                Dependency include = this.deserializeDependency(manifest, includeNode);
                 manifest.addDependency(include);
             }
             
@@ -129,13 +129,13 @@ public class PackageManifestJSONLoader {
         if (dependencies != null) {
             for (int i=0; i<dependencies.size(); i++) {
                 JsonNode includeNode = dependencies.get(i);
-                Dependency include = this.deserializeInclude(manifest, includeNode);
+                Dependency include = this.deserializeDependency(manifest, includeNode);
                 extension.addInclude(include);
             }
         }
     }
     
-    private Dependency deserializeInclude(PackageManifest manifest, JsonNode node) {
+    private Dependency deserializeDependency(PackageManifest manifest, JsonNode node) {
         String type = null;
         Map<String, Object> props = new HashMap<String, Object>();
         
