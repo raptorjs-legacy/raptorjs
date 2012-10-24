@@ -358,15 +358,7 @@ raptor.defineClass(
                 
                 if (!config.outputDir) {
                     config.outputDir = resolvePath("static");
-                    
-                    if (!config.urlPrefix) {
-                        config.urlPrefix = "/static/";
-                    }
                 }
-                
-                
-                
-                
             }
         };
         

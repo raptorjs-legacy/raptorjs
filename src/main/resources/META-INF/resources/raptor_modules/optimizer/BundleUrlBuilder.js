@@ -81,7 +81,8 @@ raptor.define(
              */
             getPrefix: function(basePath) {
                 var prefix = this.urlPrefix;
-                
+
+
                 if (!prefix) {
                     if (basePath) {
                         
@@ -89,6 +90,10 @@ raptor.define(
 
                         var fromPath = basePath.toString();
                         prefix = require('path').relative(fromPath, toPath) + '/';
+
+                        if (prefix === '/') {
+                            prefix = './';
+                        }
                     }
                     else {
                         prefix = "/static/";
