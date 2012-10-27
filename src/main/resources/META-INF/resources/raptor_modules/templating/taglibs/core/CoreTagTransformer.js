@@ -44,6 +44,7 @@ raptor.defineClass(
                 this.findNestedAttrs(node, compiler, template);
                 
                 var forEachAttr,
+                    forEachPropAttr,
                     ifAttr,
                     elseIfAttr,
                     attrsAttr,
@@ -53,6 +54,7 @@ raptor.defineClass(
                     stripAttr,
                     contentAttr,
                     replaceAttr,
+                    forEachNode,
                     uri,
                     tag,
                     nestedTag,
@@ -156,8 +158,9 @@ raptor.defineClass(
                     node.dynamicAttributesExpression = attrsAttr;
                 }
                 
-                if ((forEachAttr = node.getAttributeNS(coreNS, "for")) != null) {
+                if (((forEachAttr = node.getAttributeNS(coreNS, "for")) || (forEachAttr = node.getAttributeNS(coreNS, "for-each"))) != null) {
                     node.removeAttributeNS(coreNS, "for");
+                    node.removeAttributeNS(coreNS, "for-each");
                     var forEachProps = AttributeSplitter.parse(
                             forEachAttr, 
                             {
@@ -183,7 +186,38 @@ raptor.defineClass(
                             });
                     
                     forEachProps.pos = node.getPosition(); //Copy the position property
-                    var forEachNode = new ForNode(forEachProps);
+                    forEachNode = new ForNode(forEachProps);
+
+                    //Surround the existing node with an "forEach" node by replacing the current
+                    //node with the new "forEach" node and then adding the current node as a child
+                    node.parentNode.replaceChild(forEachNode, node);
+                    forEachNode.appendChild(node);
+                }
+
+                if ((forEachPropAttr = node.getAttributeNS(coreNS, "for-each-property")) != null) {
+                    node.removeAttributeNS(coreNS, "for-each-property");
+                    var forEachPropertyProps = AttributeSplitter.parse(
+                            forEachPropAttr, 
+                            {
+                                "each-property": {
+                                    type: "custom"
+                                },
+                                separator: {
+                                    type: "expression"
+                                },
+                                "status-var": {
+                                    type: "identifier"
+                                }
+                            },
+                            {
+                                defaultName: "each-property",
+                                errorHandler: function(message) {
+                                    node.addError('Invalid c:for-property attribute of "' + forEachPropAttr + '". Error: ' + message);
+                                }
+                            });
+                    
+                    forEachPropertyProps.pos = node.getPosition(); //Copy the position property
+                    forEachNode = new ForNode(forEachPropertyProps);
 
                     //Surround the existing node with an "forEach" node by replacing the current
                     //node with the new "forEach" node and then adding the current node as a child

@@ -44,10 +44,11 @@ raptor.defineClass(
         ForNode.prototype = {
             doGenerateCode: function(template) {
                 var each = this.getProperty("each"),
+                    eachProp = this.getProperty("each-property"),
                     separator = this.getProperty("separator"),
                     statusVar = this.getProperty("status-var") || this.getProperty("varStatus");
                 
-                if (!each) {
+                if (!each && !eachProp) {
                     this.addError('"each" attribute is required');
                     this.generateCodeForChildren(template);
                     return;
@@ -56,7 +57,7 @@ raptor.defineClass(
                 var parts;
                 try
                 {
-                    parts = parseForEach(each);
+                    parts = parseForEach(each || eachProp);
                 }
                 catch(e) {
                     this.addError(e.message);
@@ -69,14 +70,18 @@ raptor.defineClass(
                 if (separator && !statusVar) {
                     statusVar = "__loop";
                 }
-                
+                var funcName;
+
+                console.error(eachProp, varName, items);
+
                 var forEachParams;
                 if (statusVar) {
                     forEachParams = [varName, statusVar];
                     
-                    
+                    funcName = eachProp ? template.getStaticHelperFunction("forEachPropWithStatusVar", "fpv") : 
+                                          template.getStaticHelperFunction("forEachWithStatusVar", "fv");
                     template
-                        .statement(template.getStaticHelperFunction("forEachWithStatusVar", "fv") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                        .statement(funcName + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
                         .indent(function() {
                             this.generateCodeForChildren(template);
                             if (separator) {
@@ -112,8 +117,11 @@ raptor.defineClass(
                     else {
                         forEachParams = [varName];
                         
+                        funcName = eachProp ? template.getStaticHelperFunction("forEachProp", "fp") : 
+                                              template.getStaticHelperFunction("forEach", "f");
+
                         template
-                            .statement(template.getStaticHelperFunction("forEach", "f") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                            .statement(funcName + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
                             .indent(function() {
                                 this.generateCodeForChildren(template);    
                             }, this)

@@ -352,6 +352,11 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/looping.rhtml", {});
         expect(output).toEqual('abca - true - false - 0 - 3, b - false - false - 1 - 3, c - false - true - 2 - 3<div>red - true - false - 0 - 3</div>, <div>green - false - false - 1 - 3</div>, <div>blue - false - true - 2 - 3</div>');
     });
+
+    it("should allow for looping over properties", function() {
+        var output = compileAndRender("/test-templates/looping-props.rhtml", {});
+        expect(output).toEqual('[foo=low][bar=high]<ul><li>[foo=low]</li><li>[bar=high]</li></ul>');
+    });
     
     it("should allow for dynamic attributes", function() {
         var output = compileAndRender("/test-templates/attrs.rhtml", {"myAttrs": {style: "background-color: #FF0000; <test>", "class": "my-div"}});

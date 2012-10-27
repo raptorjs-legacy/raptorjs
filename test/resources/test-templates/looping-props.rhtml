@@ -1,0 +1,15 @@
+<c:template 
+    xmlns:c="http://raptorjs.org/templates/core" 
+    params="">
+
+    <c:for each-property="setting in {'foo': 'low', 'bar': 'high'}">
+        [${setting.name}=${setting.value}]
+    </c:for>
+
+    <ul>
+        <li c:for-each-property="setting in {'foo': 'low', 'bar': 'high'}">
+            [${setting.name}=${setting.value}]
+        </li>
+    </ul>
+    
+</c:template>
