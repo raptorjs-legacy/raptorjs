@@ -72,8 +72,6 @@ raptor.defineClass(
                 }
                 var funcName;
 
-                console.error(eachProp, varName, items);
-
                 var forEachParams;
                 if (statusVar) {
                     forEachParams = [varName, statusVar];
