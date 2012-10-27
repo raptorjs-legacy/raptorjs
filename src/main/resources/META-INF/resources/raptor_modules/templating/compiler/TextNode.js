@@ -79,7 +79,36 @@ raptor.defineClass(
                 
             trim: function() {
                 var text = this.getText();
-                if (!text || this.isPreserveWhitespace()) {
+                if (!text) {
+                    return;
+                }
+
+                var parentNode = this.parentNode;
+
+                if (parentNode && 
+                    parentNode.trimBodyIndent || 
+                    (parentNode.getAttributeNS && parentNode.getAttributeNS("http://raptorjs.org/templates/core", 'trim-body-indent') === 'true')) {
+
+                    var initialSpaceMatches = /^\s+/.exec(text);
+                    
+
+                    if (initialSpaceMatches) {
+                        //console.error(JSON.stringify(initialSpaceMatches[0]));
+
+                        var indentMatches = /\n[^\n]*$/.exec(initialSpaceMatches[0]);
+                        if (indentMatches) {
+                            //console.error(JSON.stringify(indentMatches[0]));
+                            var indentRegExp = new RegExp(indentMatches[0].replace(/\n/g, "\\n"), "g");
+                            text = text.replace(indentRegExp, '\n');
+                        }
+
+                        text = text.replace(/^\s*/, '').replace(/\s*$/, '');
+
+                        this.setText(text);
+                    }
+                }
+
+                if (this.isPreserveWhitespace()) {
                     return;
                 }
 
@@ -123,6 +152,8 @@ raptor.defineClass(
                         
                     }
                 }
+
+                
             
                 
                 this.setText(text);
