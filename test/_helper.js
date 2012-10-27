@@ -132,7 +132,7 @@ var compileAndLoad = function(templatePath, invalid) {
             
             var resource = raptor.require('resources').findResource(templatePath);
             if (!resource.exists()) {
-                throw new Error('Template not found at path "' + path + '"');
+                throw new Error('Template not found at path "' + templatePath + '"');
             }
             
             var src = resource.readAsString();
