@@ -36,6 +36,18 @@ raptor.define('templating', function(raptor) {
         Context = raptor.require("templating.Context"),
         templating,
         helpers,
+        properties = function(o) {
+            var entries = [];
+            for (var k in o)
+            {
+                if (o.hasOwnProperty(k))
+                {
+                    entries.push({name: k, value: o[k]});
+                }
+            }
+
+            return entries;
+        },
         _getFunction = function(className, name, helpers) {
             var Clazz = raptor.require(className),
                 helper = Clazz[name] || (Clazz.prototype && Clazz.prototype[name]);
@@ -240,18 +252,18 @@ raptor.define('templating', function(raptor) {
             /**
              * forEach helper function
              * 
-             * @param list {Array} The array to iterate over
+             * @param array {Array} The array to iterate over
              * @param callback {Function} The callback function to invoke for each iteration 
              * @returns {void}
              */
-            fv: function(list, callback) {
-                if (!list) return;
-                if (!isArray(list)) {
-                    list = [list];
+            fv: function(array, callback) {
+                if (!array) return;
+                if (!isArray(array)) {
+                    array = [array];
                 }
                 
                 var i=0, 
-                    len=list.length, //Cache the list size
+                    len=array.length, //Cache the array size
                     loopStatus = { //The "loop status" object is provided as the second argument to the callback function used for each iteration
                         /**
                          * Returns the length of the array that is being iterated over
@@ -277,7 +289,7 @@ raptor.define('templating', function(raptor) {
                     };
                 
                 for (; i<len; i++) { //Loop over the elements in the array
-                    var o = list[i];
+                    var o = array[i];
                     callback(o || '', loopStatus);
                 }
             },
@@ -291,6 +303,22 @@ raptor.define('templating', function(raptor) {
                     }
                     func(array, 0, array.length);
                 }
+            },
+
+            fp: function(o, func) {
+                if (!o) {
+                    return;
+                }
+                raptor.forEach(properties(o), func);
+
+            },
+
+            fpv: function(o, func) {
+                if (!o) {
+                    return;
+                }
+                this.fv(properties(o), func);
+
             },
             
             e: function(o) {
