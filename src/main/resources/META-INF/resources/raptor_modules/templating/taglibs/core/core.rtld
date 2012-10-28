@@ -70,11 +70,6 @@
         </attribute>
 
         <attribute>
-            <name>for-each-property</name>
-            <allow-expressions>false</allow-expressions>
-        </attribute>
-
-        <attribute>
             <name>if</name>
             <type>expression</type>
         </attribute>
@@ -159,12 +154,6 @@
         
         <attribute>
             <name>each</name>
-            <required>false</required>
-            <allow-expressions>false</allow-expressions>
-        </attribute>
-
-        <attribute>
-            <name>each-property</name>
             <required>false</required>
             <allow-expressions>false</allow-expressions>
         </attribute>

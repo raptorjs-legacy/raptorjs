@@ -2,13 +2,13 @@
     xmlns:c="http://raptorjs.org/templates/core" 
     params="">
 
-    <c:for each-property="setting in {'foo': 'low', 'bar': 'high'}">
-        [${setting.name}=${setting.value}]
+    <c:for each="(name,value) in {'foo': 'low', 'bar': 'high'}">
+        [$name=$value]
     </c:for>
 
     <ul>
-        <li c:for-each-property="setting in {'foo': 'low', 'bar': 'high'}">
-            [${setting.name}=${setting.value}]
+        <li c:for="(name, value) in {'foo': 'low', 'bar': 'high'}">
+            [$name=$value]
         </li>
     </ul>
     
