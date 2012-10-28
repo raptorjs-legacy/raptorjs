@@ -53,23 +53,21 @@ raptor.extend('loader', function(raptor) {
                 _this = this;
             
             var success = function() {
-                if (complete == false)
-                {                    
+                if (complete === false) {                    
                     complete = true;
                     _this.logger().debug('Downloaded "' + src + '"...');
                     callback.success();
                 }
-            }
+            };
             
             var error = function() {
-                if (complete == false)
-                {                    
+                if (complete === false) {                    
                     complete = true;
-                    _this.logger().error('Failed: "' + src + '": ' + errorThrown);
+                    _this.logger().error('Failed: "' + src);
                     //Let the loader module know that the resource was failed to be included
                     callback.error();
                 }
-            }
+            };
             
             extend(attributes, {
                 type: 'text/javascript',

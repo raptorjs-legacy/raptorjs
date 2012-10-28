@@ -62,7 +62,7 @@ raptor.defineClass(
 
                                 return "{" + propParts.join(", ") + "}";
                             }
-                        }
+                        };
                     }
                     
                     

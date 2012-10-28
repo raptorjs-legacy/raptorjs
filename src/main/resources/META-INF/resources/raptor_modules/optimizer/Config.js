@@ -80,6 +80,7 @@ raptor.defineClass(
             getUrlForSourceFile: function(path) {
                 
                 for (var i=0, len=this.serverSourceMappings.length; i<len; i++) {
+                    var mapping = this.serverSourceMappings[i];
                     if (strings.startsWith(path, mapping.baseDir)) {
                         var relativePath = path.substring(mapping.baseDir.length);
                         return mapping.baseUrl + relativePath;

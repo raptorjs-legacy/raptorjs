@@ -179,6 +179,40 @@ raptor.defineClass(
                     throw new Error('Invalid simple conditional of "' + expression + '". Simple conditionals should be in the form {?<expression>;<true-template>[;<false-template>]}');
                 }
                 
+            },
+            processNestedStrings = function(expression, foundStrings) {
+                
+                var hasExpression,
+                    parts,
+                    handleText = function(text) {
+                        parts.push(foundString.quote + text + foundString.quote);
+                    },
+                    handleExpression = function(expression) {
+                        hasExpression = true;
+                        parts.push(expression);
+                    };
+                
+                for (var i=foundStrings.length-1, foundString; i>=0; i--) {
+                    foundString = foundStrings[i];
+                    
+                    if (!foundString.value) {
+                        continue;
+                    }
+                    
+                    hasExpression = false,
+                    parts = [];
+
+                    ExpressionParser.parse(foundString.value, {
+                        text: handleText,
+                        expression: handleExpression
+                    });
+
+                    if (hasExpression) {
+                        expression = expression.substring(0, foundString.start) + "(" + parts.join('+') + ")" + expression.substring(foundString.end);
+                    }
+                }
+                
+                return expression;
             };
         
             
@@ -360,7 +394,7 @@ raptor.defineClass(
                 
                 var endToken = endingTokens[startToken]; //Look up the end token
                 if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
-                    var variableRegExp = /^([_a-zA-Z]\w*(?:\.[_a-zA-Z]\w*)*)/g
+                    var variableRegExp = /^([_a-zA-Z]\w*(?:\.[_a-zA-Z]\w*)*)/g;
                     variableRegExp.lastIndex = 0;
                     var variableMatches = variableRegExp.exec(str.substring(expressionStart)); //Find the variable name that follows the starting "$" token
                     
@@ -447,9 +481,7 @@ raptor.defineClass(
                             }
                         }
                     }
-                    
-                    
-                    
+
                     if (!handler) {
                         if (isScriptlet) {
                             helper.addScriptlet(expression);
@@ -460,31 +492,7 @@ raptor.defineClass(
                         else {
                             
                             if (foundStrings.length > 0) {
-                                for (var i=foundStrings.length-1; i>=0; i--) {
-                                    var foundString = foundStrings[i];
-                                    
-                                    if (!foundString.value) {
-                                        continue;
-                                    }
-                                    
-                                    var hasExpression = false,
-                                        parts = [];
-
-                                    ExpressionParser.parse(foundString.value, {
-                                        text: function(text) {
-                                            parts.push(foundString.quote + text + foundString.quote);
-                                        },
-                                        
-                                        expression: function(expression) {
-                                            hasExpression = true;
-                                            parts.push(expression);
-                                        }
-                                    });
-
-                                    if (hasExpression) {
-                                        expression = expression.substring(0, foundString.start) + "(" + parts.join('+') + ")" + expression.substring(foundString.end);
-                                    }
-                                }
+                                expression = processNestedStrings(expression, foundStrings);
                             }
 
                             if (startToken === '$!{') {

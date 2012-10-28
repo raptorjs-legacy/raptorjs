@@ -72,7 +72,7 @@ raptor.defineClass(
                             packageManifest = packaging.getPackageManifest(packageResource);
                         }
                         else {
-                            dependencies = options.dependencies;
+                            var dependencies = options.dependencies;
                             if (dependencies) {
                                 packageManifest = packaging.createPackageManifest();
                                 packageManifest.setDependencies(dependencies);

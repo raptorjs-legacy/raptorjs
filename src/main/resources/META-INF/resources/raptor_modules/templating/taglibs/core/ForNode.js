@@ -84,8 +84,8 @@ raptor.defineClass(
                 
                 var items = template.makeExpression(parts["in"]),
                     varName = parts["var"],
-                    nameVarName = parts["nameVar"],
-                    valueVarName = parts["valueVar"];
+                    nameVarName = parts.nameVar,
+                    valueVarName = parts.valueVar;
 
                 if (nameVarName) {
                     if (separator) {

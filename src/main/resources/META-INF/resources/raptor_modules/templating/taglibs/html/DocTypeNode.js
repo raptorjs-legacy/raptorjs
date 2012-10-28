@@ -45,7 +45,6 @@ raptor.defineClass(
                             template.write(expression);
                         },
                         error: function(message) {
-                            invalidAttr = true;
                             this.addError('Invalid doctype: "' + doctype + '". ' + message);
                         }
                     },
