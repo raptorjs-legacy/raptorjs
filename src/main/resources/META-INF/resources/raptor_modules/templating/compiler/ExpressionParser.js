@@ -360,7 +360,7 @@ raptor.defineClass(
                 
                 var endToken = endingTokens[startToken]; //Look up the end token
                 if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
-                    var variableRegExp = /^([_a-zA-Z]\w*)/g
+                    var variableRegExp = /^([_a-zA-Z]\w*(?:\.[_a-zA-Z]\w*)*)/g
                     variableRegExp.lastIndex = 0;
                     var variableMatches = variableRegExp.exec(str.substring(expressionStart)); //Find the variable name that follows the starting "$" token
                     

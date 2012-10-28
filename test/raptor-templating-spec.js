@@ -278,6 +278,22 @@ describe('templating module', function() {
         expect(raptor.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in (a = [1,2,3])");
     });
+
+    it("should allow for text replacement", function() {
+        var output = compileAndRender("/test-templates/text-replacement.rhtml", {
+            person: {
+                name: "John",
+                address: {
+                    city: "San Jose",
+                    state: "CA",
+                    line1: "2065 E. Hamilton Ave.",
+                    zip: "95125"
+                }
+            }
+        });
+        expect(output).toEqual('Hello John. You are from San Jose, CA');
+    });
+
     
     it("should allow for escaping XML", function() {
         var escapeXml = raptor.require("xml.utils").escapeXml;
