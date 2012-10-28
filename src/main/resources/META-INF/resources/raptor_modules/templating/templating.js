@@ -36,18 +36,6 @@ raptor.define('templating', function(raptor) {
         Context = raptor.require("templating.Context"),
         templating,
         helpers,
-        properties = function(o) {
-            var entries = [];
-            for (var k in o)
-            {
-                if (o.hasOwnProperty(k))
-                {
-                    entries.push({name: k, value: o[k]});
-                }
-            }
-
-            return entries;
-        },
         _getFunction = function(className, name, helpers) {
             var Clazz = raptor.require(className),
                 helper = Clazz[name] || (Clazz.prototype && Clazz.prototype[name]);
@@ -93,23 +81,21 @@ raptor.define('templating', function(raptor) {
         };
     
     templating = {
+
         /**
-         * Renders a template to the provided context.
+         * Returns a function that can be used to render the template with the specified name.
+         *
+         * The template function should always be invoked with two arguments:
+         * <ol>
+         *  <li><b>data</b> {Object}: The template data object</li>
+         *  <li><b>context</b> {@link templating.Context}: The template context object</li>
+         * </ul>
          * 
-         * <p>
-         * The template specified by the templateName parameter must already have been loaded. The data object
-         * is passed to the compiled rendering function of the template. All output is written to the provided
-         * context using the "writer" associated with the context.
-         * 
-         * @param templateName The name of the template to render. The template must have been previously rendered
-         * @param data The data object to pass to the template rendering function
-         * @param context The context to use for all rendered output (required)
+         * @param  {String} templateName The name of the template
+         * @return {Function} The function that can be used to render the specified template.
          */
-        render: function(templateName, data, context) {
-            if (!context) {
-                throw raptor.createError(new Error("Context is required"));
-            }
-            
+        templateFunc: function(templateName) {
+
             /*
              * We first need to find the template rendering function. It's possible
              * that the factory function for the template rendering function has been
@@ -150,7 +136,29 @@ raptor.define('templating', function(raptor) {
                 }
                 loadedTemplates[templateName] = templateFunc; //Store the template rendering function in the lookup
             }
+
+            return templateFunc;
+        },
+
+        /**
+         * Renders a template to the provided context.
+         * 
+         * <p>
+         * The template specified by the templateName parameter must already have been loaded. The data object
+         * is passed to the compiled rendering function of the template. All output is written to the provided
+         * context using the "writer" associated with the context.
+         * 
+         * @param templateName The name of the template to render. The template must have been previously rendered
+         * @param data The data object to pass to the template rendering function
+         * @param context The context to use for all rendered output (required)
+         */
+        render: function(templateName, data, context) {
+            if (!context) {
+                throw raptor.createError(new Error("Context is required"));
+            }
             
+            var templateFunc = this.templateFunc(templateName);
+
             try
             {
                 templateFunc(data || {}, context); //Invoke the template rendering function with the required arguments
@@ -165,7 +173,7 @@ raptor.define('templating', function(raptor) {
          * 
          * @param templateName {String}The name of the template to render. NOTE: The template must have already been loaded.
          * @param data {Object} The data object to provide to the template rendering function
-         * @param context {templating$Context} The context object to use (optional). If a context is provided then the writer will be 
+         * @param context {templating.Context} The context object to use (optional). If a context is provided then the writer will be 
          *                                     temporarily swapped with a StringBuilder to capture the output of rendering. If a context 
          *                                     is not provided then one will be created using the "createContext" method.
          * @returns {String} The string output of the template
@@ -309,16 +317,13 @@ raptor.define('templating', function(raptor) {
                 if (!o) {
                     return;
                 }
-                raptor.forEach(properties(o), func);
-
-            },
-
-            fpv: function(o, func) {
-                if (!o) {
-                    return;
+                for (var k in o)
+                {
+                    if (o.hasOwnProperty(k))
+                    {
+                        func(k, o[k]);
+                    }
                 }
-                this.fv(properties(o), func);
-
             },
             
             e: function(o) {
