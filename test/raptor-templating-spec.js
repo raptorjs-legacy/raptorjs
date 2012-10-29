@@ -559,7 +559,7 @@ describe('templating module', function() {
     
     it("should allow for simple conditionals", function() {
         var output = compileAndRender("/test-templates/simple-conditionals.rhtml", {name: "John", count: 51});
-        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><span class="under;-50\\"></span>Hello John! Over 50');        
+        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><span class="under;-50\\"></span><input type="checked" checked>Hello John! Over 50');        
     });
     
     it("should allow for conditional attributes", function() {

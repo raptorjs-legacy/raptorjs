@@ -134,7 +134,7 @@ raptor.defineClass(
                     else if (matches[0] === '\\;') { 
                         /*
                          * 1) Convert \; --> ;
-                         * 2) Start searching again after the semocolon 
+                         * 2) Start searching again after the semicolon 
                          */
                         expression = expression.substring(0, matches.index) + ';' + expression.substring(tokensRegExp.lastIndex);
                         tokensRegExp.lastIndex = matches.index + 1;
@@ -169,7 +169,10 @@ raptor.defineClass(
                     return expressionParts.join('+');
                 };
                 
-                if (parts.length === 2) {
+                if (parts.length === 1) {
+                    return "(" + parts[0] + " ? " + 'null' + " : '')";    
+                }
+                else if (parts.length === 2) {
                     return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : '')";    
                 }
                 else if (parts.length === 3) {
