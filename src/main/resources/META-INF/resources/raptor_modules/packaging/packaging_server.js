@@ -53,7 +53,7 @@ $rload(function(raptor) {
         
         config: raptor.config.create({
             "enabledExtensions": {
-                value: raptor.getModuleConfig('packaging').enabledExtensions,
+                value: raptor.getModuleConfig('packaging').enabledExtensions || raptor.getModuleConfig('packager').enabledExtensions /* <-- for old code using the old module name...*/,
                 onChange: function(value) {
                     arrays.forEach(value, function(ext) {
                         getEnabledExtensions().add(ext);
