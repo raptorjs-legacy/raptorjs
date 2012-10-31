@@ -8,36 +8,7 @@ raptor.defineClass(
             PageConfig = raptor.require('optimizer.PageConfig'),
             strings = raptor.require('strings'),
             files = raptor.require('files'),
-            File = files.File,
-            dependencyHandler = {
-                _type: "object",
-                _begin: function(parent, context) {
-                    var dependency = { 
-                            type: context.el.getLocalName(),
-                            toString: function() { 
-                                return JSON.stringify(this);
-                            }
-                        };
-                    parent.addDependency(dependency);
-                    return dependency;
-                },
-                
-                "@*": {
-                    _type: "string",
-                    _set: function(dependency, name, value) {
-                        if (value === 'true') {
-                            value = true;
-                        }
-                        else if (value === 'false') {
-                            value = false;
-                        }
-                        else if ("" + parseInt(value, 10) === value) {
-                             value = parseInt(value, 10);
-                        }
-                        dependency[name] = value;
-                    }
-                } //End dependency attribute
-            };
+            File = files.File;
         
         var ConfigXmlParser = function() {
             
@@ -47,7 +18,8 @@ raptor.defineClass(
             
             parse: function(xml, configFilePath, config) {
                 var configDir = new File(configFilePath).getParent(),
-                    outputDir = null;
+                    outputDir = null,
+                    configResource = raptor.require('resources').createFileResource(configFilePath);
                 
                 var resolvePath = function(path) {
                     if (!path) {
@@ -56,9 +28,43 @@ raptor.defineClass(
                     
                     return files.resolvePath(configDir, path);
                 };
-                
+
                 var objectMapper = raptor.require('xml.sax.object-mapper'),
                     reader,
+                    dependencyHandler = {
+                        _type: "object",
+                        _begin: function(parent, context) {
+                            var dependency = { 
+                                type: context.el.getLocalName(),
+                                toString: function() { 
+                                    return JSON.stringify(this);
+                                }
+                            };
+
+                            parent.addDependency(dependency);
+                            return dependency;
+                        },
+
+                        _end: function() {
+
+                        },
+                        
+                        "@*": {
+                            _type: "string",
+                            _set: function(dependency, name, value) {
+                                if (value === 'true') {
+                                    value = true;
+                                }
+                                else if (value === 'false') {
+                                    value = false;
+                                }
+                                else if ("" + parseInt(value, 10) === value) {
+                                     value = parseInt(value, 10);
+                                }
+                                dependency[name] = value;
+                            }
+                        } //End dependency attribute
+                    },
                     echoHandler = {
                         _type: "object",
                         _begin: function() {
@@ -272,6 +278,41 @@ raptor.defineClass(
                                         }
                                     }
                                     config.registerPageConfig(pageConfig);
+                                },
+
+                                "package-manifest": {
+                                    _type: "string",
+                                    _set: function(parent, name, value) {
+                                        var packagePath = resolvePath(value);
+                                        var packageManifest = raptor.require('packaging').getPackageManifest(packagePath);
+                                        parent.setPackageManifest(packageManifest);
+                                    }
+                                },
+
+                                "<dependencies>": {
+                                    _type: "object",
+                                    _begin: function() {
+                                        var dependencies = [];
+                                        return {
+                                            dependencies: dependencies,
+
+                                            addDependency: function(dependency) {
+                                                dependencies.push(dependency);
+                                            }
+                                        }
+                                    },
+
+                                    _end: function(dependencies, pageConfig) {
+                                        var packageManifest = raptor.require("packaging").createPackageManifest({
+                                                dependencies: dependencies.dependencies
+                                            }, 
+                                            configResource);
+
+                                        pageConfig.setPackageManifest(packageManifest);
+
+                                    },
+
+                                    "<*>": dependencyHandler
                                 },
 
                                 "@name": {

@@ -43,9 +43,14 @@ raptor.define(
                 }
                 raptor.packaging.load(this.path);
             },
+            
+            getResourcePath: function() {
+                return this.path;
+            },
 
-            getManifest: function() {
-                var manifest = raptor.packaging.getPackageManifest(this.path);
+            getManifest: function(context) {
+                var packageResource = this.getResource(context);
+                var manifest = raptor.packaging.getPackageManifest(packageResource);
                 if (!manifest) {
                     throw raptor.createError(new Error('Package manifest not found at path "' + this.path + '"'));    
                 }

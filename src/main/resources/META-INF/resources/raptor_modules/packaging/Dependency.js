@@ -73,7 +73,10 @@ raptor.defineClass(
                 else {
                     var resource = manifest.resolveResource(path);
                     if (!resource || !resource.exists()) {
-                        throw raptor.createError(new Error('Resource "' + path + '" not found for package ' + manifest.getSystemPath()));
+                        resource = raptor.require('resources').createFileResource(path);
+                        if (!resource || !resource.exists()) {
+                            throw raptor.createError(new Error('Resource "' + path + '" not found for package ' + manifest.getSystemPath()));
+                        }
                     }
                     return resource;
                 }

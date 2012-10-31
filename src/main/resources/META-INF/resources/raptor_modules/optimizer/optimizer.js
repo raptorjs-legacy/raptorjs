@@ -47,6 +47,21 @@ raptor.define(
              * @type optimizer.PageOptimizer
              */
             pageOptimizer: null,
+            
+            getDefaultConfig: function() {
+                return this.defaultConfig;
+            },
+
+            /**
+             * Returns the configuration for hte default page optimizer
+             */
+            getConfig: function() {
+                return this.pageOptimizer.getConfig();
+            },
+            
+            getDefaultPageOptimizer: function() {
+                return this.pageOptimizer;
+            },
 
             /**
              * Optimizes a page based on the page options provided. 
@@ -98,7 +113,7 @@ raptor.define(
                     config = defaultConfig;
                 }
                 else {
-                    if (typeof config === 'string' || config instanceof File || raptor.require('resources.Resource')) {
+                    if (typeof config === 'string' || config instanceof File || config instanceof raptor.require('resources.Resource')) {
                         config = this.loadConfigXml(config, params);
                     }    
                 }
@@ -121,6 +136,7 @@ raptor.define(
                 
                 var config = new Config(params);
                 var configXml;
+                var configPath = null;
                 
                 if (typeof configFile === 'string') {
                     configFile = new File(configFile);
@@ -129,13 +145,15 @@ raptor.define(
                 if (configFile instanceof File) {
                     configXml = configFile.readAsString("UTF-8");
                     config.setConfigResource(raptor.require('resources').createFileResource(configFile));
+                    configPath = configFile.getAbsolutePath();
                 }
                 else if (configFile instanceof Resource) {
                     configXml = configFile.readAsString("UTF-8");
                     config.setConfigResource(configFile);
+                    configPath = configFile.getSystemPath();
                 }
 
-                config.parseXml(configXml, configFile.getAbsolutePath());
+                config.parseXml(configXml, configPath);
                 return config;
             },
 

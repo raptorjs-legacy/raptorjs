@@ -682,7 +682,7 @@ describe('optimizer module', function() {
         var bundles = {},
             File = raptor.require('files').File;
 
-        var oldWriteBundleFile = raptor.require('optimizer').pageOptimizer.writer.writeBundleFile;
+        var oldWriteBundleFile = raptor.require('optimizer').pageOptimizer.getWriter().writeBundleFile;
         try {
             raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = function(outputPath, code) {
                 var file = new File(outputPath);
@@ -731,5 +731,44 @@ describe('optimizer module', function() {
         }
         
         
+    });
+
+    it("should allow for accessing page configs loaded from XML configuration file", function() {
+        var template = raptor.require('templating');
+        var renderContext = template.createContext();
+        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        raptor.require('optimizer').configure(configPath);
+        var config = raptor.require('optimizer').getDefaultPageOptimizer().getConfig();
+
+        var pageConfigsByName = {};
+
+        config.forEachPageConfig(function(pageConfig) {
+            pageConfigsByName[pageConfig.getName()] = pageConfig;
+        }, this);
+
+        expect(pageConfigsByName['page1']).toNotEqual(null);
+        expect(pageConfigsByName['page2']).toNotEqual(null);
+        expect(pageConfigsByName['page3']).toNotEqual(null);
+        expect(Object.keys(pageConfigsByName).length).toEqual(3);
+
+        var page2Manifest = pageConfigsByName['page2'].getPackageManifest();
+        var page2Dependencies = page2Manifest.getDependencies();
+        expect(page2Dependencies.length).toEqual(2);
+        expect(page2Dependencies[0].type).toEqual("module");
+        expect(page2Dependencies[0].name).toEqual("test.optimizer.moduleA");
+        expect(page2Dependencies[1].type).toEqual("module");
+        expect(page2Dependencies[1].name).toEqual("test.optimizer.mixedA");
+
+        var page3Manifest = pageConfigsByName['page3'].getPackageManifest();
+        var page3Dependencies = page3Manifest.getDependencies();
+        expect(page3Dependencies.length).toEqual(4);
+        expect(page3Dependencies[0].type).toEqual("module");
+        expect(page3Dependencies[0].name).toEqual("test.optimizer.moduleA");
+        expect(page3Dependencies[1].type).toEqual("module");
+        expect(page3Dependencies[1].name).toEqual("test.optimizer.mixedA");
+        expect(page3Dependencies[2].type).toEqual("module");
+        expect(page3Dependencies[2].name).toEqual("test.optimizer.mixedB");
+        expect(page3Dependencies[3].type).toEqual("module");
+        expect(page3Dependencies[3].name).toEqual("test.optimizer.asyncA");
     });
 });

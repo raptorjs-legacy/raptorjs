@@ -19,6 +19,10 @@ raptor.defineClass(
             
             getSlotHtml: function(slot) {
                 return this.htmlBySlot[slot];
+            },
+            
+            toJSON: function() {
+                return JSON.stringify(this.htmlBySlot);
             }
         };
         

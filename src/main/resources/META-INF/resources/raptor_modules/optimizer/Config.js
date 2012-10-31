@@ -15,15 +15,17 @@ raptor.defineClass(
             this.urlPrefix = null;
             this.enabledExtensions = raptor.require('packaging').createExtensionCollection();
             this.params = {};
-            this.pages = [];
             this.bundleSetConfigsByName = {};
             this.inPlaceDeploymentEnabled = false;
             this.serverSourceMappings = [];
+            this.pageConfigs = [];
             this.pageConfigsByName = {};
             this.checksumLength = 8;
             this.filters = [];
             this.bundlingEnabled = true;
             this.raptorConfigJSON = '{}';
+            this.minifyJs = false;
+            this.minifyCss = false;
             
             if (params) {
                 raptor.extend(this.params, params);
@@ -150,6 +152,15 @@ raptor.defineClass(
                 return this.minifyJs === true;
             },
 
+            isMinifyCssEnabled: function() {
+                return this.minifyCss === true;
+            },
+            
+            enableMinification: function() {
+                this.minifyJs = true;
+                this.minifyCss = true;
+            },
+
             isResolveCssUrlsEnabled: function() {
                 return this.resolveCssUrls === true;
             },
@@ -180,6 +191,7 @@ raptor.defineClass(
                 if (!pageConfig.name) {
                     throw raptor.createError(new Error('name is required for page'));
                 }
+                this.pageConfigs.push(pageConfig);
                 this.pageConfigsByName[pageConfig.name] = pageConfig;
             },
             
@@ -244,6 +256,10 @@ raptor.defineClass(
                 var ConfigXmlParser = raptor.require('optimizer.ConfigXmlParser');
                 var parser = new ConfigXmlParser();
                 parser.parse(xml, configFilePath, this);
+            },
+
+            forEachPageConfig: function(callback, thisObj) {
+                this.pageConfigs.forEach(callback, thisObj);
             }
         };
         

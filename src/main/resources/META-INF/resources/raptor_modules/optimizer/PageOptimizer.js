@@ -11,7 +11,6 @@ raptor.defineClass(
         
         var PageOptimizer = function(config) {
             this.config = config;
-            this.writer = this.createBundlesWriter();
             this.cacheLookup = {};
         };
         
@@ -40,12 +39,12 @@ raptor.defineClass(
             
             buildPageBundles: function(options) {
                 var PageBundles = raptor.require('optimizer.PageBundles'),
-                    pageName = options.name,
+                    pageName = options.name || options.pageName,
                     config = this.config,
                     enabledExtensions = packaging.createExtensionCollection(options.enabledExtensions);
                 
                 if (!pageName) {
-                    throw raptor.createError(new Error('"pageName" property is required'));
+                    throw raptor.createError(new Error('"name" property is required'));
                 }
                 
                 /*
@@ -130,11 +129,15 @@ raptor.defineClass(
             getConfig: function() {
                 return this.config;
             },
-            
-            setConfig: function(config) {
-                this.config = config;
+
+            getWriter: function() {
+                if (!this.writer) {
+                    this.writer = this.createBundlesWriter();
+                }
+
+                return this.writer;
             },
-            
+
             createBundlesWriter: function() {
                 var config = this.config,     
                     outputDir = config.getOutputDir(), 
@@ -143,9 +146,13 @@ raptor.defineClass(
                     writer = new BundlesFileWriter(config, urlBuilder);
                 
                 writer.context.raptorConfig = config.getRaptorConfigJSON();
-                
+
                 if (config.isMinifyJsEnabled()) {
                     writer.addFilter(raptor.require("optimizer.MinifyJSFilter"));
+                }
+
+                if (config.isMinifyCssEnabled()) {
+                    writer.addFilter(raptor.require("optimizer.MinifyCSSFilter"));
                 }
 
                 if (config.isResolveCssUrlsEnabled()) {
@@ -174,9 +181,10 @@ raptor.defineClass(
             },
             
             optimizePage: function(options) {
+                var writer = this.getWriter();
                 var pageBundles = this.buildPageBundles(options);
                 var basePath = options.basePath;
-                var optimizedPage = this.writer.writePageBundles(pageBundles, basePath);
+                var optimizedPage = writer.writePageBundles(pageBundles, basePath);
                 return optimizedPage;
             }
         };

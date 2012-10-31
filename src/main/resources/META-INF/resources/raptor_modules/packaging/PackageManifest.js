@@ -102,7 +102,15 @@ $rload(function(raptor) {
         setPackageResource: function(packageResource) {
             this.packageResource = packageResource;
         },
-            
+
+        getDependencies: function() {
+            return this.dependencies || [];
+        },
+        
+        getExtensions: function() {
+            return this.extensions || [];
+        },
+
         setDependencies: function(dependencies) {
             if (!dependencies || dependencies.length === 0) {
                 this.dependencies = [];
@@ -220,7 +228,7 @@ $rload(function(raptor) {
         /**
          */
         toString: function() {
-            return '[Module manifest: ' + this.getName() + ']';
+            return '[Package manifest: ' + this.getName() + ']';
         },
         
         resolveResource: function(relPath) {
