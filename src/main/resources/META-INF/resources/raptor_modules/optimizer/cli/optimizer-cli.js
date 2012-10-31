@@ -34,7 +34,15 @@ raptor.define('optimizer.cli', function() {
             };
             
             argv = require('optimist')(args)
-                .usage('Usage: $0 -n <page-name> -p <path-to-package.json> -s ./modules -d my-module,/some-resource.js -c optimizer-config.xml')
+                .usage('Usage:\n Examples:\n' + 
+                       '  Optimize a set of dependencies:\n' + 
+                       '   $0 --name test-page --dependencies my-module,/some-resource.js --source=path/to/my-modules\n\n' + 
+                       '  Optimize a package:\n' + 
+                       '   $0 --name test-page --package path/to/package.json --source=path/to/my-modules\n\n' + 
+                       '  Optimize using a configuration file:\n' + 
+                       '   $0 --name test-page --package path/to/package.json --source=path/to/my-modules --config path/to/optimizer-config.xml\n\n' + 
+                       '  Optimize all of the pages defined in a configuration file:\n' + 
+                       '   $0 --config path/to/optimizer-config.xml\n')
                 .alias('n', 'name')
                 .describe('n', 'The name of the page being optimized (e.g. "my-page")')
                 .alias('p', 'package')
@@ -50,7 +58,16 @@ raptor.define('optimizer.cli', function() {
                 .alias('m', 'minify')
                 .boolean('m')
                 .describe('m', 'Enable JavaScript and CSS minification (disabled by default)')
+                .alias('h', 'help')
+                .describe('h', 'Display this usage information')
                 .check(function(argv) {
+                    if (argv['help']) {
+                        throw '';
+                    }
+
+                    if (args.length === 2) {
+                        throw '';   
+                    }
 
                     pageName = argv['name'];
                     packagePath = argv['package'];
@@ -87,7 +104,7 @@ raptor.define('optimizer.cli', function() {
                         //Maybe we can find the package manifest from the page configured in the optimizer config...
                         
                         if (!argv['config']) {
-                            throw 'Invalid Options. Either the "dependencies", "package" or "config" must be provided.';    
+                            throw 'Invalid Options. Either the "dependencies", "package" or "config" option must be provided.';    
                         }
                         else if (argv['name']) {
                             //See if a page config with the provided name exists in the configuration file
