@@ -86,8 +86,7 @@ raptor.defineClass(
                 var parentNode = this.parentNode;
 
                 if (parentNode && 
-                    parentNode.trimBodyIndent || 
-                    (parentNode.getAttributeNS && parentNode.getAttributeNS("http://raptorjs.org/templates/core", 'trim-body-indent') === 'true')) {
+                    parentNode.trimBodyIndent) {
 
                     var initialSpaceMatches = /^\s+/.exec(text);
                     

@@ -28,7 +28,6 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             strings = raptor.require('strings'),
-            listeners = raptor.require('listeners'),
             StringBuilder = strings.StringBuilder,
             nextUniqueId = 0,
             helpers,
@@ -57,19 +56,7 @@ raptor.defineClass(
             getAttributes: function() {
                 return this.attributes || (this.attributes = {});
             },
-            
-            /**
-             * A {@link listeners.Observable} object that can be used to publish and
-             * subscribe to messages associated with the context.
-             *  
-             * @returns {listeners.Observable} The observable object
-             */
-            events: function() {
-                if (!this.events) {
-                    this.events = listeners.createObservable();
-                }
-                return this.events;
-            },
+
             /**
              * Returns a auto-incrementing unique ID that remains unique across multiple context objects. 
              * @returns {Number} The unique number

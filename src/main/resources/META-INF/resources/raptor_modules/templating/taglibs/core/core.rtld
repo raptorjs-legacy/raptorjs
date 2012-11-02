@@ -413,6 +413,21 @@
             <name>value</name>
             <type>expression</type>
         </attribute>
+
+        <attribute>
+            <name>string-value</name>
+            <type>string</type>
+        </attribute>
+
+        <attribute>
+            <name>boolean-value</name>
+            <type>boolean</type>
+        </attribute>
+
+        <attribute>
+            <name>number-value</name>
+            <type>number</type>
+        </attribute>
     </tag>
     
     <tag>

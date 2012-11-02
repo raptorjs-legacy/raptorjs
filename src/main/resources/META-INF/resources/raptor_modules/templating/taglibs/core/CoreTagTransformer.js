@@ -254,6 +254,11 @@ raptor.defineClass(
                     node.removeChildren();
                     node.appendChild(newChild);
                 }
+
+                if (node.getAttributeNS(coreNS, "trim-body-indent") === 'true') {
+                    node.removeAttributeNS(coreNS, "trim-body-indent");
+                    node.trimBodyIndent = true;
+                }
                 
                 if (node.getAttributeNS && (stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
                     node.removeAttributeNS(coreNS, "strip");
