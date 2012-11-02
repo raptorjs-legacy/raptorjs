@@ -18,12 +18,58 @@ raptor.define('optimizer.cli', function() {
             var pageName,
                 packageManifest = null,
                 packagePath,
-                dependencies,
+                dependencies = [],
                 sourceDirs,
                 configPath,
                 outputDirPath,
                 minify,
-                params;
+                params,
+                parseDependencies = function(dependencies) {
+                    var asyncFound = false;
+                        
+                    dependencies.forEach(function(dependency, i) {
+                        var async = false;
+                        if (endsWith(dependency, "?")) {
+                            dependency = dependency.substring(0, dependency.length-1);
+                            async = true;
+                        }
+                        else if (startsWith(dependency, "?")) {
+                            dependency = dependency.substring(1);
+                            async = true;
+                        }
+                        if (dependency.charAt(0) === '/') { //Treat
+                            if (endsWith(dependency, "package.json")) {
+                                dependencies[i] = { "package":  dependency};
+                            }
+                            else {
+                                dependencies[i] = { "path":  dependency};
+                            }
+                        }
+                        else if (startsWith(dependency, './')) {
+                            dependency = resolveFile(dependency).getAbsolutePath();
+                            if (endsWith(dependency, "package.json")) {
+                                dependencies[i] = { "package":  dependency};
+                            }
+                            else {
+                                dependencies[i] = { "path":  dependency};
+                            }
+                            
+                        }
+                        else {
+                            dependencies[i] = { "module": dependency };
+                        }
+                        
+                        if (async) {
+                            asyncFound = true;
+                            dependencies[i].async = true;
+                        }
+                    });
+                    
+                    if (asyncFound) {
+                        dependencies.push({"module": "loader.require"});
+                        dependencies.push({"type": "loader-metadata"});
+                    }
+                };
 
             var resolveFile = function(path) {
                 if (!path) {
@@ -32,25 +78,29 @@ raptor.define('optimizer.cli', function() {
                 
                 return new File(files.resolvePath(basePath, path));
             };
+
+
             
             argv = require('optimist')(args)
-                .usage('Usage:\n Examples:\n' + 
+                .usage('Usage: $0 [dependency-1] [dependency-2] [dependency-n] [options]\nExamples:\n' + 
                        '  Optimize a set of dependencies:\n' + 
-                       '   $0 --name test-page --dependencies my-module,/some-resource.js --source=path/to/my-modules\n\n' + 
+                       '   $0 my-module /some-resource.js --name test-page --source=path/to/my-modules\n\n' + 
                        '  Optimize a package:\n' + 
                        '   $0 --name test-page --package path/to/package.json --source=path/to/my-modules\n\n' + 
                        '  Optimize using a configuration file:\n' + 
                        '   $0 --name test-page --package path/to/package.json --source=path/to/my-modules --config path/to/optimizer-config.xml\n\n' + 
                        '  Optimize all of the pages defined in a configuration file:\n' + 
-                       '   $0 --config path/to/optimizer-config.xml\n')
+                       '   $0 --config path/to/optimizer-config.xml\n' + 
+                       '\n' +
+                       'NOTE: Modules to download asynchronously should be suffixed with a question mark. For example:\n' + 
+                       '  Optimize a page with an asynchronous dependency:\n' + 
+                       '   $0 my-module my-async-module? --name test-page\n')
                 .alias('n', 'name')
                 .describe('n', 'The name of the page being optimized (e.g. "my-page")')
                 .alias('p', 'package')
                 .describe('p', 'A package manifest describing page dependencies')
-                .alias('d', 'dependencies')
-                .describe('d', 'A comma-separated list of dependencies to be optimized (e.g. "my-module,/some-resource.js"')
                 .alias('o', 'out')
-                .describe('o', 'The output directory for static bundles and optimized page JSON files.')
+                .describe('o', 'The output directory for static bundles and optimized page JSON files')
                 .alias('s', 'source')
                 .describe('s', 'A comma-separated list of source directories to search for modules and resources')
                 .alias('c', 'config')
@@ -71,12 +121,35 @@ raptor.define('optimizer.cli', function() {
 
                     pageName = argv['name'];
                     packagePath = argv['package'];
-                    dependencies = argv['dependencies'];
                     sourceDirs = argv['source'];
                     configPath = argv['config'];
                     outputDirPath = argv['out'];
                     minify = argv['minify'];
                     params = argv._;
+                    if (params) {
+                        var parsedParams = {};
+                        for (var i=2, len=params.length, param; i<len; i++) {
+                            param = params[i];
+                            var eqIndex = param.indexOf('=');
+                            if (eqIndex != -1) {
+                                var name = param.substring(0, eqIndex);
+                                var value = param.substring(eqIndex+1);
+                                if (value === 'true') {
+                                    value = true;
+                                }
+                                else if (value === 'false') {
+                                    value = true;
+                                }
+                                parsedParams[name] = value;
+                            }
+                            else {
+                                dependencies.push(param)
+                            }
+                        }
+                        params = parsedParams;
+                    }
+
+                    parseDependencies(dependencies);
 
                     if (outputDirPath) {
                         outputDirPath = resolveFile(outputDirPath);
@@ -100,15 +173,15 @@ raptor.define('optimizer.cli', function() {
                         packageManifest = raptor.require('packaging').getPackageManifest(resources.createFileResource(packagePath));
                     }
 
-                    if (argv['dependencies'] && argv['package']) {
-                        throw 'Invalid Options. The "dependencies" and "package" options cannot be used together.';
+                    if (dependencies.length && argv['package']) {
+                        throw 'Invalid Options. Dependencies cannot be provided in conjunction with the "package" option.';
                     }
 
-                    if (!argv['dependencies'] && !argv['package']) {
+                    if (!dependencies.length && !argv['package']) {
                         //Maybe we can find the package manifest from the page configured in the optimizer config...
                         
                         if (!argv['config']) {
-                            throw 'Invalid Options. Either the "dependencies", "package" or "config" option must be provided.';    
+                            throw 'Invalid Options. Either dependencies must be provided or the "package" or "config" option must be provided.';    
                         }
                         else if (argv['name']) {
                             //See if a page config with the provided name exists in the configuration file
@@ -123,22 +196,15 @@ raptor.define('optimizer.cli', function() {
                             }
                         }
                         else {
-                            throw 'Invalid Options. Either the "dependencies" or "package" option must be specified or the "name" property and a "config" must be provided.';    
+                            throw 'Invalid Options. No dependencies provided.';    
                         }
                         
                     }
-
-                    // if (argv['dependencies'] && !argv['name']) {
-                    //     throw 'Invalid Options. The "name" option is required when using the "dependencies" option.';
-                    // }
 
                     if (argv['package'] && !argv['name']) {
                         if (packageManifest.name) {
                             argv['name'] = packageManifest.name;
                         }
-                        // else {
-                        //     throw 'Invalid Options. The "name" option is required when using the "package" option.';    
-                        // }
                     }
                 })
                 .argv; 
@@ -147,72 +213,9 @@ raptor.define('optimizer.cli', function() {
             
             
 
-            if (params) {
-                var parsedParams = {};
-                params.forEach(function(param) {
-                    var eqIndex = param.indexOf('=');
-                    if (eqIndex != -1) {
-                        var name = param.substring(0, eqIndex);
-                        var value = param.substring(eqIndex+1);
-                        if (value === 'true') {
-                            value = true;
-                        }
-                        else if (value === 'false') {
-                            value = true;
-                        }
-                        parsedParams[name] = value;
-                    }
-                });
-                params = parsedParams;
-            }
+            
 
-            if (dependencies) {
-                dependencies = dependencies.split(/[,;]/);
-                var asyncFound = false;
-                
-                dependencies.forEach(function(dependency, i) {
-                    var async = false;
-                    if (endsWith(dependency, "?")) {
-                        dependency = dependency.substring(0, dependency.length-1);
-                        async = true;
-                    }
-                    else if (startsWith(dependency, "?")) {
-                        dependency = dependency.substring(1);
-                        async = true;
-                    }
-                    if (dependency.charAt(0) === '/') { //Treat
-                        if (endsWith(dependency, "package.json")) {
-                            dependencies[i] = { "package":  dependency};
-                        }
-                        else {
-                            dependencies[i] = { "path":  dependency};
-                        }
-                    }
-                    else if (startsWith(dependency, './')) {
-                        dependency = resolveFile(dependency).getAbsolutePath();
-                        if (endsWith(dependency, "package.json")) {
-                            dependencies[i] = { "package":  dependency};
-                        }
-                        else {
-                            dependencies[i] = { "path":  dependency};
-                        }
-                        
-                    }
-                    else {
-                        dependencies[i] = { "module": dependency };
-                    }
-                    
-                    if (async) {
-                        asyncFound = true;
-                        dependencies[i].async = true;
-                    }
-                });
-                
-                if (asyncFound) {
-                    dependencies.push({"module": "loader.require"});
-                    dependencies.push({"type": "loader-metadata"});
-                }
-
+            if (dependencies.length) {
                 packageManifest = raptor.require("packaging").createPackageManifest({
                         dependencies: dependencies
                     },
