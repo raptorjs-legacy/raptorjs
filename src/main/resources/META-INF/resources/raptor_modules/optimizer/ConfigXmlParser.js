@@ -224,14 +224,20 @@ raptor.defineClass(
                             _type: "boolean",
                             _targetProp: "minifyCss"
                         },
+                        "minify": {
+                            _type: "boolean",
+                            _set: function(parent, name, value) {
+                                config.minifyJs = true;
+                                config.minifyCss = true;
+                            }
+                        },
                         "resolve-css-urls": {
                             _type: "boolean",
                             _targetProp: "resolveCssUrls"
                         },
                         "output-dir": {
                             _type: "string",
-                            _targetProp: "outputDir",
-                            _set: function(config, name, value) {
+                            _set: function(parent, name, value) {
                                 
                                 outputDir = value;
                                 

@@ -78,6 +78,10 @@ raptor.define('optimizer.cli', function() {
                     minify = argv['minify'];
                     params = argv._;
 
+                    if (outputDirPath) {
+                        outputDirPath = resolveFile(outputDirPath);
+                    }
+                    
                     if (configPath) {
                         configPath = resolveFile(configPath);
                         if (!configFile.exists()) {
