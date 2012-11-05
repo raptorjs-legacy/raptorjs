@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class RaptorTemplatingServlet extends HttpServlet {
+public class RaptorTemplatesServlet extends HttpServlet {
     
-    private final transient Log log = LogFactory.getLog(RaptorTemplatingServlet.class);
+    private final transient Log log = LogFactory.getLog(RaptorTemplatesServlet.class);
     /**
      * 
      */
