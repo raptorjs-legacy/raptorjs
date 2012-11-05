@@ -8,12 +8,20 @@ describe('development spec', function() {
         compileAndRender = helpers.templating.compileAndRender;
         
     before(function() {
-        createRaptor();
+        // createRaptor({
+        //     amd: {
+        //         enabled: true
+        //     }
+        // });
     });
 
-    xit("should allow for <c:def> functions", function() {
-        var output = compileAndRender("/test-templates/def.rhtml", {});
-        expect(output).toEqual('');
+    xit("should allow for amd", function() {
+        var template = raptor.require('templating');
+        var renderContext = template.createContext();
+        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        raptor.require('optimizer').configure(configPath);
+        var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
+        expect(output.indexOf('<script')).toNotEqual(-1);
     });
 
     xit("should allow for includes", function() {
