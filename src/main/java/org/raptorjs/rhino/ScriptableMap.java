@@ -19,7 +19,7 @@
  *  Change log:
  *  - Merging into raptorjs project to avoid dependency on RingoJS
  *  - Minor code modifications
- *  - 
+ *  - Make use of WrapFactory via Context.javaToJS for automatic wrapping
  */
 
 package org.raptorjs.rhino;
