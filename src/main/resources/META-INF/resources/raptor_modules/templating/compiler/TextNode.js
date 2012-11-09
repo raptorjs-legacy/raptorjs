@@ -38,6 +38,9 @@ raptor.defineClass(
         
         var TextNode = function(text, escapeXml) {
             TextNode.superclass.constructor.call(this, 'text');
+            if (text != null && typeof text !== 'string') {
+            	throw raptor.createError('Invalid text: ' + text);
+            }
             this.text = text;
             this.escapeXml = escapeXml !== false;
         };

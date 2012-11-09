@@ -37,20 +37,23 @@ public class JavaScriptEngine {
 		return globalScope;
 	}
 
+    private RaptorJSWrapFactory wrapFactory = new RaptorJSWrapFactory();
+    
     public JavaScriptEngine()
     {
 
+    	
         Context cx = ContextFactory.getGlobal().enterContext();
-
-        this.initRhinoGlobal();
         
         try {
-
+        	this.initRhinoGlobal();
             this.globalScope = cx.initStandardObjects();
         }
         finally
         {
-            Context.exit();
+        	if (cx != null) {
+        		Context.exit();
+        	}
         }
     }
     
@@ -89,6 +92,7 @@ public class JavaScriptEngine {
                 @Override
                 protected Context makeContext() {
                     Context context = super.makeContext();
+                    context.setWrapFactory(wrapFactory);
                     context.setOptimizationLevel(9);
                     return context;
                 }
@@ -100,7 +104,6 @@ public class JavaScriptEngine {
         Context context = Context.enter();
         try
         {
-            
             return Context.javaToJS(o, this.globalScope);
         }
         finally
@@ -144,7 +147,7 @@ public class JavaScriptEngine {
         } catch(Exception e) {
             throw new RuntimeException("An error occurred when evaluating \"" + path + "\". Exception: "  + e, e);
         } finally {
-             Context.exit();
+        	Context.exit();
         }
     }
     
@@ -202,9 +205,12 @@ public class JavaScriptEngine {
         return this.invokeMethod(this.globalScope, functionName, args);
     }
     
-    public Object invokeMethod(ScriptableObject thiz, String methodName, Object ...args) {        
+    public Object invokeMethod(ScriptableObject thiz, String methodName, Object ...args) {
         Context context = Context.enter();
         try {
+        	for (int i=0; i<args.length; i++) {
+        		args[i] = Context.javaToJS(args[i], this.getGlobalScope());
+        	}
             return ScriptableObject.callMethod(thiz, methodName, args);
         }
         catch (Exception e) {

@@ -12,7 +12,16 @@
     ],
     "raptor": {
         "dependencies": [
-            {"path": "utils.js"}
+            {"path": "xml-utils.js"}
+        ],
+        
+        "extensions": [
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "xml-utils_rhino.js"}
+                ]
+            }
         ]
     }
 }

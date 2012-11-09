@@ -25,6 +25,13 @@
                     {"path": "File_node.js"},
                     {"path": "files_node.js"}
                 ]
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "File_rhino.js"},
+                    {"path": "files_rhino.js"}
+                ]
             }
         ]
     }

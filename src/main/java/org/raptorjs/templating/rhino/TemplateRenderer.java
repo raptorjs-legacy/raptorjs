@@ -16,6 +16,7 @@
 
 package org.raptorjs.templating.rhino;
 
+import java.io.StringWriter;
 import java.io.Writer;
 
 import org.mozilla.javascript.ScriptableObject;
@@ -45,22 +46,16 @@ public class TemplateRenderer {
         throw new RuntimeException(message + ". Exception: " + e, e);
     }
     
-    public String renderToString(String templateName, String json) {
-        try
-        {
-            String output = (String) this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoRenderToString", templateName, json);
-            return output;
-        }
-        catch(Exception e) {
-            this.handleJavaScriptError(e, "Unable to render template (name=\"" + templateName + "\").");
-            return null;
-        }
+    public String renderToString(String templateName, Object data) {
+    	StringWriter writer = new StringWriter();
+    	this.render(templateName, data, writer);
+    	return writer.toString();
     }
     
-    public void render(String templateName, String json, Writer writer) {
+    public void render(String templateName, Object data, Writer writer) {
         try
         {
-            this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoRender", templateName, json, writer);
+            this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoRender", templateName, data, writer);
         }
         catch(Exception e) {
             this.handleJavaScriptError(e, "Unable to render template (name=\"" + templateName + "\").");

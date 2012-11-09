@@ -71,8 +71,9 @@ raptorBootstrap = {
         this._require('files/files.js');
         this._require('files/File_node.js', NODE);
         this._require('files/files_node.js', NODE);
-        
+        this._require('files/File_rhino.js', RHINO);
         this._require('files/files_rhino.js', RHINO);
+        
 
         //JavaScript runtime module
         this._require('runtime/runtime.js');
