@@ -30,6 +30,10 @@ $rload(function(raptor) {
         loggers = [],
         config = raptor.getModuleConfig('logging'),
         configure = function(loggersConfig) {            
+            if (!loggersConfig) {
+                return;
+            }
+            
             var keys = objects.keys(loggersConfig);
 
             var sortByLen = function(a, b) {

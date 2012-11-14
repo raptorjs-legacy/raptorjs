@@ -227,8 +227,8 @@ raptor.defineClass(
                         "minify": {
                             _type: "boolean",
                             _set: function(parent, name, value) {
-                                config.minifyJs = true;
-                                config.minifyCss = true;
+                                config.minifyJs = value;
+                                config.minifyCss = value;
                             }
                         },
                         "resolve-css-urls": {
