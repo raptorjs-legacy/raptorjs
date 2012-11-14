@@ -18,7 +18,6 @@ package org.raptorjs.resources.osgi;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Dictionary;
 
 import org.osgi.framework.Bundle;
 import org.raptorjs.resources.Resource;
@@ -70,9 +69,8 @@ public class BundleResource extends Resource {
     }
     
     public String getBundleHeader(String name) {
-        Dictionary<?, ?> headers = bundle.getHeaders();
-        String headerValue = (String) headers.get(name);
-        return headerValue;
+        Object value = bundle.getHeaders().get(name);
+        return value == null ? null : value.toString();
     }
 
     @Override

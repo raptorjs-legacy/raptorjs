@@ -23,7 +23,6 @@ raptor.extend(
         "use strict";
         
         var resources = raptor.require('resources'),
-            json = raptor.require('json'),
             packaging = raptor.require("packaging"),
             discoveryComplete = false,
             searchPathListenerHandler = null,
@@ -41,7 +40,7 @@ raptor.extend(
                 if (!resource.exists()) {
                     throw raptor.createError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
-                var src = resource.readAsString(src);
+                var src = resource.readAsString();
                 return this.compile(src, resource.getSystemPath(), options);
             },
             
@@ -51,6 +50,10 @@ raptor.extend(
             
             disableWatching: function() {
                 watchingEnabled = false;
+            },
+            
+            setWatchingEnabled: function(enabled) {
+            	watchingEnabled = enabled;
             },
             
             /**
@@ -64,24 +67,21 @@ raptor.extend(
                     throw raptor.createError(new Error('Unable to compile template with resource path "' + path + '". Resource not found'));
                 }
                 
-                
-                
                 this.compileAndLoad(resource.readAsString(), resource, options);
                 
-                if (watchingEnabled && resource.isFileResource()) {
-                    raptor.require('file-watcher').watch(
-                        resource.getSystemPath(), 
+                if (watchingEnabled) {
+                	resource.watch( 
                         function() {
-                            this.logger().info('Template modified at path "' + resource.getSystemPath() + '". Reloading template...');
-                            try
-                            {
-                                this.compileAndLoad(resource.readAsString(), resource.getSystemPath(), options);    
-                            }
-                            catch(e) {
-                                this.logger().warn('Unable to re-compile modified template at path "' + resource.getSystemPath() + '". Exception: ' + e, e);
-                            }
-                        },
-                        this);
+	                        this.logger().info('Template modified at path "' + resource.getSystemPath() + '". Reloading template...');
+	                        try
+	                        {
+	                            this.compileAndLoad(resource.readAsString(), resource.getSystemPath(), options);    
+	                        }
+	                        catch(e) {
+	                            this.logger().warn('Unable to re-compile modified template at path "' + resource.getSystemPath() + '". Exception: ' + e, e);
+	                        }
+	                    },
+	                    this);
                 }
             },
             

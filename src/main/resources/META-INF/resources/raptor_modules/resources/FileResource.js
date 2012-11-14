@@ -124,6 +124,14 @@ $rload(function(raptor) {
                             this.getSearchPathEntry(),
                             resourcePath, 
                             absolutePath);
+                },
+                
+                watch: function(callback, thisObj) {
+                	var fileWatcher = raptor.require('file-watcher');
+                	return fileWatcher.watch(
+                			this.getSystemPath(), 
+                			callback, 
+                			thisObj);
                 }
             };
             return FileResource;

@@ -218,8 +218,7 @@ public class JavaScriptEngine {
         }
         finally
         {
-            if (context != null)
-            {
+            if (context != null) {
                 Context.exit();
             }
         }

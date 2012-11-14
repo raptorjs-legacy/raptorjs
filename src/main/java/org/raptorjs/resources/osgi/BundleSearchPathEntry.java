@@ -41,7 +41,7 @@ public class BundleSearchPathEntry extends SearchPathEntry {
         
         URL resourceURL = this.bundle.getResource(fullPath);
         if (resourceURL != null) {
-            return new BundleResource(path, this, this.bundle, fullPath, resourceURL);
+            return this.createBundleResource(path, fullPath, resourceURL);
         }
         return null;
     }
@@ -51,6 +51,18 @@ public class BundleSearchPathEntry extends SearchPathEntry {
         return "BundleSearchPathEntry [bundle=" + bundle.getSymbolicName() + " (" + bundle.getBundleId() + ")" + ", basePath="
                 + basePath + "]";
     }
+    
+    protected Resource createBundleResource(String path, String fullPath, URL url) {
+    	return new BundleResource(path, this, this.bundle, fullPath, url);
+    }
+
+	public Bundle getBundle() {
+		return bundle;
+	}
+
+	public String getBasePath() {
+		return basePath;
+	}
     
     
 }

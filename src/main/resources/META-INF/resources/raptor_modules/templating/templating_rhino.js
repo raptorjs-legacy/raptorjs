@@ -45,7 +45,13 @@ raptor.extend('templating', function(raptor) {
          */
         rhinoRender: function(templateName, data, javaWriter) {
             if (data && typeof data === 'string') {
-                data = eval("(" + data + ")"); //Convert the JSON string to a native JavaScript object
+            	try
+            	{
+            		data = eval("(" + data + ")"); //Convert the JSON string to a native JavaScript object
+            	}
+                catch(e) {
+                	throw raptor.createError('Invalid JSON data passed to "' + templateName + '". Exception: ' + e, e);
+                }
             }
             
             var context = this.createContext(new WrappedWriter(javaWriter)); //Wrap the Java writer with a JavaScript object

@@ -16,12 +16,16 @@
 
 package org.raptorjs.rhino;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.ResourceManager;
+import org.raptorjs.resources.WatchListener;
 
 public class ResourcesHelper {
     private ResourceManager resourceManager = null;
-    
+
     public ResourcesHelper(RaptorJSEnv jsEnv) {
         this.resourceManager = jsEnv.getResourceManager();
     }
@@ -29,5 +33,10 @@ public class ResourcesHelper {
     public Resource findResource(String path) {
         Resource resource = this.resourceManager.findResource(path);
         return resource;
+    }
+    
+    public WatchListener createWatchListener(Function callback, Scriptable thisObj) {
+    	JavaScriptCallbackWatchListener listener = new JavaScriptCallbackWatchListener(Context.getCurrentContext(), callback, thisObj);
+    	return listener;
     }
 }

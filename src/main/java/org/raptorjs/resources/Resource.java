@@ -44,6 +44,10 @@ public abstract class Resource {
     public abstract boolean isFile();
     public abstract String getSystemPath();
     public abstract InputStream getResourceAsStream();
+    public void watch(WatchListener listener) {
+    	//Not implemented
+    }
+    
     public Resource resolve(String relPath) {
         String basePath;
         
