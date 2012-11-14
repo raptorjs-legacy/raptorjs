@@ -216,7 +216,7 @@ raptor.defineClass(
                 
                 var checksum;
                 
-                if (this.checksumsEnabled !== false || bundle.requireChecksum) {
+                if (this.config.checksumsEnabled !== false || bundle.requireChecksum) {
                     checksum = this.calculateChecksum(bundleCode);
                 }
                 
