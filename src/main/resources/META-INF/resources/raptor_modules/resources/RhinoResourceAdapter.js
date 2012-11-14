@@ -52,6 +52,10 @@ $rload(function(raptor) {
                     return java.convertString(this.javaResource.readAsString(encoding));
                 },
                 
+                getFilePath: function() {
+                	return this.javaResource.getFilePath();
+                },
+                
                 isDirectory: function() {
                     return this.javaResource.isDirectory();
                 },

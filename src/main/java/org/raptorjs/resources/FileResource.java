@@ -62,6 +62,9 @@ public class FileResource extends Resource {
 		return file;
 	}
     
+	public String getFilePath() {
+		return this.file.getAbsolutePath();
+	}
     
 
 }

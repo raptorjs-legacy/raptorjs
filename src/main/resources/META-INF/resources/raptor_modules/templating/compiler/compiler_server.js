@@ -89,8 +89,8 @@ raptor.extend(
              * 
              * @returns
              */
-            discoverTaglibs: function() {
-                if (discoveryComplete) {
+            discoverTaglibs: function(force) {
+                if (discoveryComplete && force !== true) {
                     return;
                 }
                 discoveryComplete = true;

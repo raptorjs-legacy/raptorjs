@@ -21,6 +21,7 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.ResourceManager;
+import org.raptorjs.resources.ResourceManager.ResourceCallback;
 import org.raptorjs.resources.WatchListener;
 
 public class ResourcesHelper {
@@ -35,8 +36,24 @@ public class ResourcesHelper {
         return resource;
     }
     
+    public void forEachResource(String path, Function callback, Scriptable thisObj) {
+        this.resourceManager.forEachResource(path, new JavaScriptResourceCallback(callback, thisObj));
+    }
+    
     public WatchListener createWatchListener(Function callback, Scriptable thisObj) {
     	JavaScriptCallbackWatchListener listener = new JavaScriptCallbackWatchListener(Context.getCurrentContext(), callback, thisObj);
     	return listener;
+    }
+    
+    private static class JavaScriptResourceCallback extends JavaScriptCallback implements ResourceCallback {
+
+		public JavaScriptResourceCallback(Function callback, Scriptable thisObj) {
+			super(callback, thisObj);
+		}
+
+		public void resourceFound(Resource resource) {
+			this.invoke(resource);
+		}
+    	
     }
 }

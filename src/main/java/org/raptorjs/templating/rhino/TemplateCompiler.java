@@ -119,4 +119,8 @@ public class TemplateCompiler {
         }
     }
     
+    public void discoverTaglibs() {
+    	this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptCompiler, "discoverTaglibs", true /* force */);
+    }
+    
 }

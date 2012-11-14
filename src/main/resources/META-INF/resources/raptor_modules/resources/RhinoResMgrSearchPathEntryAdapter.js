@@ -18,6 +18,13 @@ $rload(function(raptor) {
                         return new RhinoResourceAdapter(javaResource, this);
                     }
                     return null;
+                },
+                
+                forEachResource: function(path, callback, thisObj) {
+                	__rhinoHelpers.resources.forEachResource(path, function(javaResource) {
+                		var resource = new RhinoResourceAdapter(javaResource, this);
+                		callback.call(thisObj, resource);
+                	}, null);
                 }
             };
             
