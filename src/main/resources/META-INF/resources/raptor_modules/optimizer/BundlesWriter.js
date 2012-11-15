@@ -218,7 +218,6 @@ raptor.defineClass(
                 
                 // see if checksums are explicitly set for the bundle
                 var checksumsEnabled = bundle.checksumsEnabled;
-                console.log(checksumsEnabled + ' ' + bundle.name)
                 if (checksumsEnabled === undefined) {
                     // checksumsEnabled not set for bundle so check optimizer config
                     checksumsEnabled = (this.config.checksumsEnabled !== false) || bundle.requireChecksum
