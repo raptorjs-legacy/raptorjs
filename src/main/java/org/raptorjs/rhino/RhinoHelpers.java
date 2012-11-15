@@ -105,7 +105,12 @@ public class RhinoHelpers {
 	public XmlHelper getXml() {
 		return xml;
 	}
+
+	public RaptorJSEnv getRaptorJSEnv() {
+		return raptorJSEnv;
+	}
     
+	
     
     
     
