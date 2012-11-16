@@ -9,12 +9,13 @@ raptor.defineClass(
         
         var BundlesWriter = function(config, urlBuilder) {
             this.urlBuilder = urlBuilder;
-            this.context = (this.config && this.config.context) || {};
+            this.context = raptor.extend({}, (this.config && this.config.context) || {});
             this.config = config;
             
             if (!this.filters) {
                 this.filters = [];
             }
+            this.context.config = config;
             this.context.writer = this;
         };
         
@@ -208,7 +209,7 @@ raptor.defineClass(
                 bundle.forEachDependency(function(dependency) {
                     var code = dependency.getCode(context);
                     if (code) {
-                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), dependency, bundle));    
+                        bundleCode.push(this.applyFilter(code, bundle.getContentType(), dependency, bundle, context));
                     }
                 }, this);
                 
