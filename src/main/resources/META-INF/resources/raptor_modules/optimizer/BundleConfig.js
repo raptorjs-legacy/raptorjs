@@ -5,6 +5,7 @@ raptor.defineClass(
         
         var BundleConfig = function() {
             this.name = null;
+            this.checksumsEnabled = undefined;
             this.dependencies = [];
             this.enabled = true;
         };

@@ -43,7 +43,7 @@ raptor.defineClass(
                 return this.enabledExtensions;
             },
             
-            addDependenciesToBundle: function(dependencies, targetBundleName) {
+            addDependenciesToBundle: function(dependencies, targetBundleName, checksumsEnabled) {
                 var optimizer = raptor.require('optimizer');
                 
                 optimizer.forEachDependency({
@@ -73,7 +73,7 @@ raptor.defineClass(
                             return;
                         }
                         
-                        this.addDependencyToBundle(dependency, targetBundleName);
+                        this.addDependencyToBundle(dependency, targetBundleName, checksumsEnabled);
                         this.logger().info(leftPad(targetBundleName, 30) + ": " + indent(context.depth) + 'Added "' + dependency.toString() + '"');
                         
                     },
@@ -81,7 +81,7 @@ raptor.defineClass(
                 });
             },
             
-            addDependencyToBundle: function(dependency, targetBundleName) {
+            addDependencyToBundle: function(dependency, targetBundleName, checksumsEnabled) {
                 dependency = packaging.createDependency(dependency);
                 var Bundle = raptor.require('optimizer.Bundle');
                 
@@ -98,6 +98,7 @@ raptor.defineClass(
                 var targetBundle = this.bundlesByKey[bundleKey];
                 if (!targetBundle) {
                     targetBundle = new Bundle(targetBundleName);
+                    targetBundle.checksumsEnabled = checksumsEnabled;
                     targetBundle.setSlot(dependencySlot);
                     targetBundle.setContentType(dependency.getContentType());
                     this.bundlesByKey[bundleKey] = targetBundle;

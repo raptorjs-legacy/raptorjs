@@ -130,6 +130,11 @@ raptor.defineClass(
                                 _type: "boolean"
                             },
                             
+                            "@checksums-enabled": {
+                                _type: "boolean",
+                                _targetProp: "checksumsEnabled"
+                            },
+
                             "<*>": dependencyHandler
                         } //End "bundle"
                     },
