@@ -13,8 +13,8 @@
     
     "raptor": {
         "dependencies": [
-            {"module": "strings"},
-            {"module": "xml.utils"},
+            {"module": "raptor/strings"},
+            {"module": "raptor/xml/utils"},
             {"path": "Context.js"},
             {"path": "templating.js"}
         ],
