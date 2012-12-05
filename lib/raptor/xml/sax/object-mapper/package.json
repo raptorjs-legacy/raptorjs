@@ -14,8 +14,8 @@
     "raptor": {
     
         "dependencies": [
-            {"module": "xml.sax"},
-            {"module": "arrays"},
+            {"module": "raptor/xml/sax"},
+            {"module": "raptor/arrays"},
             {"path": "object-mapper.js"}
         ]
     }
