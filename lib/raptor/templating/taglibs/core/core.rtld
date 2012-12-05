@@ -32,7 +32,7 @@
             <allow-expressions>false</allow-expressions>
         </attribute>
 
-        <node-class>templating.taglibs.core.TemplateNode</node-class>
+        <node-class>raptor/templating/taglibs/core/TemplateNode</node-class>
     </tag>
     
     <tag extends="template">
@@ -140,7 +140,7 @@
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
-            <class-name>templating.taglibs.core.CoreTagTransformer</class-name>
+            <class-name>raptor/templating/taglibs/core/CoreTagTransformer</class-name>
         </transformer>
     </tag>
     
@@ -150,7 +150,7 @@
         
         <name>for</name> 
 
-        <node-class>templating.taglibs.core.ForNode</node-class>
+        <node-class>raptor/templating/taglibs/core/ForNode</node-class>
         
         <attribute>
             <name>each</name>
@@ -187,7 +187,7 @@
         
         <name>write</name> 
 
-        <node-class>templating.taglibs.core.WriteNode</node-class>
+        <node-class>raptor/templating/taglibs/core/WriteNode</node-class>
         
         <attribute>
             <name>value</name>
@@ -214,7 +214,7 @@
         
         <name>if</name> 
 
-        <node-class>templating.taglibs.core.IfNode</node-class>
+        <node-class>raptor/templating/taglibs/core/IfNode</node-class>
 
         <attribute>
             <name>test</name>
@@ -225,11 +225,11 @@
     
     <tag>
         <name>else</name> 
-        <node-class>templating.taglibs.core.ElseNode</node-class>
+        <node-class>raptor/templating/taglibs/core/ElseNode</node-class>
         
         <transformer>
-            <class-name>templating.taglibs.core.ElseTagTransformer</class-name>
-            <after>templating.taglibs.core.CoreTagTransformer</after>
+            <class-name>raptor/templating/taglibs/core/ElseTagTransformer</class-name>
+            <after>raptor/templating/taglibs/core/CoreTagTransformer</after>
             <properties>
                 <type>else</type>
             </properties>
@@ -240,11 +240,11 @@
         <name>else-if</name>
         <attribute name="test" type="expression"/>
          
-        <node-class>templating.taglibs.core.ElseIfNode</node-class>
+        <node-class>raptor/templating/taglibs/core/ElseIfNode</node-class>
         
         <transformer>
-            <class-name>templating.taglibs.core.ElseTagTransformer</class-name>
-            <after>templating.taglibs.core.CoreTagTransformer</after>
+            <class-name>raptor/templating/taglibs/core/ElseTagTransformer</class-name>
+            <after>raptor/templating/taglibs/core/CoreTagTransformer</after>
             <properties>
                 <type>else-if</type>
             </properties>
@@ -255,7 +255,7 @@
         
         <name>invoke</name> 
 
-        <node-class>templating.taglibs.core.InvokeNode</node-class>
+        <node-class>raptor/templating/taglibs/core/InvokeNode</node-class>
 
         <attribute>
             <name>function</name>
@@ -276,7 +276,7 @@
         
         <name>choose</name> 
 
-        <node-class>templating.taglibs.core.ChooseNode</node-class>
+        <node-class>raptor/templating/taglibs/core/ChooseNode</node-class>
 
     </tag>
 
@@ -284,7 +284,7 @@
         
         <name>when</name> 
 
-        <node-class>templating.taglibs.core.WhenNode</node-class>
+        <node-class>raptor/templating/taglibs/core/WhenNode</node-class>
 
         <attribute>
             <name>test</name>
@@ -297,7 +297,7 @@
         
         <name>otherwise</name> 
 
-        <node-class>templating.taglibs.core.OtherwiseNode</node-class>
+        <node-class>raptor/templating/taglibs/core/OtherwiseNode</node-class>
 
     </tag>
         
@@ -305,7 +305,7 @@
         
         <name>def</name> 
 
-        <node-class>templating.taglibs.core.DefNode</node-class>
+        <node-class>raptor/templating/taglibs/core/DefNode</node-class>
 
         <attribute>
             <name>function</name>
@@ -325,7 +325,7 @@
         
         <name>with</name> 
 
-        <node-class>templating.taglibs.core.WithNode</node-class>
+        <node-class>raptor/templating/taglibs/core/WithNode</node-class>
 
         <attribute>
             <name>vars</name>
@@ -339,7 +339,7 @@
         
         <name>include</name> 
 
-        <node-class>templating.taglibs.core.IncludeNode</node-class>
+        <node-class>raptor/templating/taglibs/core/IncludeNode</node-class>
 
         <attribute>
             <name>template</name>
@@ -401,7 +401,7 @@
         
         <name>var</name> 
 
-        <node-class>templating.taglibs.core.VarNode</node-class>
+        <node-class>raptor/templating/taglibs/core/VarNode</node-class>
 
         <attribute>
             <name>name</name>
@@ -434,7 +434,7 @@
         
         <name>assign</name> 
 
-        <node-class>templating.taglibs.core.AssignNode</node-class>
+        <node-class>raptor/templating/taglibs/core/AssignNode</node-class>
 
         <attribute>
             <name>var</name>
@@ -449,7 +449,7 @@
     </tag>
     
     <text-transformer>
-        <class-name>templating.taglibs.core.CoreTextTransformer</class-name>
+        <class-name>raptor/templating/taglibs/core/CoreTextTransformer</class-name>
     </text-transformer>
     
 </raptor-taglib>
