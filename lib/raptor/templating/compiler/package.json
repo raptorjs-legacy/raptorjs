@@ -13,14 +13,14 @@
     
     "raptor": {
         "dependencies": [
-            {"module": "resources"},
-            {"module": "regexp"},
-            {"module": "strings"},
-            {"module": "objects"},
-            {"module": "listeners"},
-            {"module": "json.stringify"},
-            {"module": "xml.utils"},
-            {"module": "xml.sax.object-mapper"},
+            {"module": "raptor/resources"},
+            {"module": "raptor/regexp"},
+            {"module": "raptor/strings"},
+            {"module": "raptor/objects"},
+            {"module": "raptor/listeners"},
+            {"module": "raptor/json/stringify"},
+            {"module": "raptor/xml/utils"},
+            {"module": "raptor/xml/sax/object-mapper"},
             {"path": "Expression.js"},
             {"path": "ExpressionParser.js"},
             {"path": "TypeConverter.js"},
