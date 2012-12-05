@@ -113,9 +113,9 @@ raptor.defineClass(
                             
                             var sourceResource = dependency.getResource();
                             
-                            if (!this.bundlingEnabled) {
+                            if (this.inPlaceDeploymentEnabled) {
                                 //Create a bundle with a single dependency for each dependency
-                                if (this.inPlaceDeploymentEnabled && dependency.isInPlaceDeploymentAllowed() && sourceResource) {
+                                if (dependency.isInPlaceDeploymentAllowed() && sourceResource) {
                                     
                                     var sourceUrl;
                                     
