@@ -36,7 +36,6 @@
             "rhtml": {"class": "raptor/packaging/Dependency_rhtml", "path": "/raptor/packaging/Dependency_rhtml.js"},
             "rtld": {"class": "raptor/packaging/Dependency_rtld", "path": "/raptor/packaging/Dependency_rtld.js"},
             "resource": {"class": "raptor/packaging/Dependency_resource", "path": "/raptor/packaging/Dependency_resource.js"},
-            "init-raptor": {"class": "raptor/packaging/Dependency_init-raptor", "path": "/raptor/packaging/Dependency_init-raptor.js"},
             "loader-metadata": {"class": "raptor/packaging/Dependency_loader-metadata", "path": "/raptor/packaging/Dependency_loader-metadata.js"} 
         }
     }
