@@ -13,7 +13,6 @@
 
     "raptor": {
         "dependencies": [
-            {"module": "oop"},
             {"path": "widgets.js"}
         ],
         "extensions": [
@@ -32,8 +31,8 @@
             {
                 "name": "browser",
                 "dependencies": [                
-                    {"module": "listeners"},
-                    {"module": "pubsub"},
+                    {"module": "raptor/listeners"},
+                    {"module": "raptor/pubsub"},
                     {"path": "widgets_browser.js"},
                     {"path": "Widget.js"}
                 ]    
