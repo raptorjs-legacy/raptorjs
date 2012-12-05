@@ -44,5 +44,5 @@
     "raptor-jsdoc": "bin/raptor-jsdoc",
     "raptor-optimizer": "bin/raptor-optimizer"
   },
-  "main": "lib/raptor/raptor-node-main"
+  "main": "lib/raptor/raptor-main_node.js"
 }
