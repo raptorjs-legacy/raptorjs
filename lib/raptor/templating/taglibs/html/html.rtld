@@ -12,7 +12,7 @@
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
-            <class-name>templating.taglibs.html.HtmlTagTransformer</class-name>
+            <class-name>raptor/templating/taglibs/html/HtmlTagTransformer</class-name>
         </transformer>
     </tag>
     
@@ -25,14 +25,14 @@
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
-            <class-name>templating.taglibs.html.HtmlTagTransformer</class-name>
+            <class-name>raptor/templating/taglibs/html/HtmlTagTransformer</class-name>
         </transformer>
     </tag>
 
     <tag>
         <name>doctype</name>
         <attribute name="value" type="custom"/>
-        <node-class>templating.taglibs.html.DocTypeNode</node-class>
+        <node-class>raptor/templating/taglibs/html/DocTypeNode</node-class>
     </tag>
     
     <tag>
@@ -42,7 +42,7 @@
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
-            <class-name>templating.taglibs.html.HtmlTagTransformer</class-name>
+            <class-name>raptor/templating/taglibs/html/HtmlTagTransformer</class-name>
         </transformer>
     </tag>
     
