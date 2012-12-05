@@ -24,21 +24,21 @@
             },
             "json.raptor": {
                 "dependencies": [
-                    {"module": "json.parse"},
-                    {"module": "json.stringify"},
+                    {"module": "raptor/json/parse"},
+                    {"module": "raptor/json/stringify"},
                     {"path": "jsonParse_raptor.js"},
                     {"path": "jsonStringify_raptor.js"}
                 ]
             },
             "json.raptorStringify": {
                 "dependencies": [
-                    {"module": "json.stringify"},
+                    {"module": "raptor/json/stringify"},
                     {"path": "jsonStringify_raptor.js"}
                 ]
             },
             "json.raptorParse": {
                 "dependencies": [
-                    {"module": "json.parse"},
+                    {"module": "raptor/json/parse"},
                     {"path": "jsonParse_raptor.js"}
                 ]
             }
