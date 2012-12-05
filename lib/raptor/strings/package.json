@@ -13,8 +13,9 @@
     
     "raptor": {
         "dependencies": [
-            {"path": "strings.js"},
-            {"path": "StringBuilder.js"}
+            {"path": "StringBuilder.js"},
+            {"path": "strings.js"}
+            
         ]
     }
 }
