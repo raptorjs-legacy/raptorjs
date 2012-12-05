@@ -17,14 +17,14 @@
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
-            <class-name>templating.taglibs.widgets.WidgetsTagTransformer</class-name>
-            <after>templating.taglibs.core.CoreTagTransformer</after>
+            <class-name>raptor/templating/taglibs/widgets/WidgetsTagTransformer</class-name>
+            <after>raptor/templating/taglibs/core/CoreTagTransformer</after>
         </transformer>
     </tag>
     
     <tag>
         <name>widget</name>
-        <handler-class>templating.taglibs.widgets.WidgetTag</handler-class>
+        <handler-class>raptor/templating/taglibs/widgets/WidgetTag</handler-class>
         
         <attribute name="jsClass" type="string"/>
         
@@ -36,7 +36,7 @@
     
     <tag>
         <name>init-widgets</name>
-        <handler-class>templating.taglibs.widgets.InitWidgetsTag</handler-class>
+        <handler-class>raptor/templating/taglibs/widgets/InitWidgetsTag</handler-class>
         
         <attribute name="includeScriptTag" type="boolean"/>
     </tag>
