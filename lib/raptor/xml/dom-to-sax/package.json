@@ -12,7 +12,7 @@
     ],
     "raptor": {
         "dependencies": [
-            {"module": "listeners"},
+            {"module": "raptor/listeners"},
             {"path": "dom-to-sax.js"}
         ]
     }
