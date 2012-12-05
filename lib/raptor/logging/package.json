@@ -19,8 +19,8 @@
         "extensions": {
             "logging.console": {
                 "dependencies": [
-                    {"module": "strings"},
-                    {"module": "objects"},
+                    {"module": "raptor/strings"},
+                    {"module": "raptor/objects"},
                     {"path": "ConsoleLogger.js"},
                     {"path": "logging.js"},
                     {"path": "LogHelper.js"}
