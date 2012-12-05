@@ -12,7 +12,7 @@
     ],
     "raptor": {
         "dependencies": [
-            {"module": "listeners"},
+            {"module": "raptor/listeners"},
             {"path": "loader.js"}
         ],
                 
@@ -35,7 +35,7 @@
             },
             "loader.requires": {
                 "dependencies": [
-                    {"module": "loader.requires"}
+                    {"module": "raptor/loader/requires"}
                 ]
             }
         }
