@@ -22,8 +22,7 @@
                     {"module": "raptor/strings"},
                     {"module": "raptor/objects"},
                     {"path": "ConsoleLogger.js"},
-                    {"path": "logging.js"},
-                    {"path": "LogHelper.js"}
+                    {"path": "logging.js"}
                 ] 
             }
         }
