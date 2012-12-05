@@ -7,10 +7,10 @@
 
     <tag>
         <name>page</name>
-        <handler-class>templating.taglibs.optimizer.PageTag</handler-class>
+        <handler-class>raptor/templating/taglibs/optimizer/PageTag</handler-class>
         
         <!-- Add a transformer to provide the template path to the PageTag -->
-        <transformer-class>templating.taglibs.optimizer.PageTagTransformer</transformer-class>
+        <transformer-class>raptor/templating/taglibs/optimizer/PageTagTransformer</transformer-class>
         
         <attribute name="name" type="string"/>
         <attribute name="package-path" type="string"/>
@@ -21,21 +21,21 @@
     
     <tag>
         <name>slot</name>
-        <handler-class>templating.taglibs.optimizer.SlotTag</handler-class>
+        <handler-class>raptor/templating/taglibs/optimizer/SlotTag</handler-class>
         
         <attribute name="name" type="string"/>
     </tag>
     
     <tag>
         <name>enable-extension</name>
-        <handler-class>templating.taglibs.optimizer.EnableExtensionTag</handler-class>
+        <handler-class>raptor/templating/taglibs/optimizer/EnableExtensionTag</handler-class>
         
         <attribute name="name" type="string"/>
     </tag>
     
     <tag>
         <name>disable-extension</name>
-        <handler-class>templating.taglibs.optimizer.DisableExtensionTag</handler-class>
+        <handler-class>raptor/templating/taglibs/optimizer/DisableExtensionTag</handler-class>
         
         <attribute name="name" type="string"/>
     </tag>
