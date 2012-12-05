@@ -19,7 +19,7 @@
         "extensions": {
             "browser": {
                 "dependencies": [
-                    {"module": "loader"},
+                    {"module": "raptor/loader"},
                     {"type": "loader-metadata"},
                     {"path": "require.js"}
                 ]
