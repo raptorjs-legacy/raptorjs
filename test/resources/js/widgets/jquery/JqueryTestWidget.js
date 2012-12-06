@@ -1,4 +1,4 @@
-raptor.defineClass('widgets.jquery.JqueryTestWidget', function() {
+define.Class('widgets.jquery.JqueryTestWidget', function() {
     return {
         init: function() {
             

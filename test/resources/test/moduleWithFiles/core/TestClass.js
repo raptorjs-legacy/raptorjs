@@ -1,4 +1,4 @@
-raptor.defineClass('test.moduleWithFiles.core.TestClass', function() {
+define.Class('test.moduleWithFiles.core.TestClass', function() {
 
     return {
         testMethod: function() {

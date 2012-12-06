@@ -1,7 +1,6 @@
-raptor.defineClass(
+define.Class(
     'taglibs.test.DynamicAttributesTag',
-    function(raptor) {
-        var templating = raptor.require("templating");
+    function(require) {
         
         var DynamicAttributesTag = function() {
             

@@ -41,7 +41,7 @@
  * 
  * <h2>Usage:</h2>
  * <p>
- * <js>var pubsub = raptor.require('pubsub');
+ * <js>var pubsub = require('raptor/pubsub');
  * pubsub.subscribe('someTopic', function(message) {
  *     alert(message.myMessage); //Will alert "Hello World!"
  * });
@@ -62,7 +62,7 @@
  * 
  * <p>
  * <h2>Channel usage:</h2>
- * <js>var pubsub = raptor.require('pubsub');
+ * <js>var pubsub = require('raptor/pubsub');
  * var channel = pubsub.channel('myPrivateChannel');
  * channel.subscribe('someTopic', function(message) {
  *     alert(message.myMessage); //Will alert "Hello World!"
@@ -84,7 +84,7 @@
  * 
  * <p>
  * <h2>Wildcard usage:</h2>
- * <js>var pubsub = raptor.require('pubsub');
+ * <js>var pubsub = require('raptor/pubsub');
  * 
  * channel.subscribe('someTopic.*', function(data, message) {
  *     alert(data.myValue + " - " + message.getTopic());
@@ -134,7 +134,7 @@ raptor.define('pubsub', function(raptor) {
      * @class
      * @anonymous
      */
-    var Channel = raptor.defineClass(function(raptor) {
+    var Channel = define.Class(function(require) {
 
         return {
             /**
@@ -153,7 +153,7 @@ raptor.define('pubsub', function(raptor) {
              * 
              * Usage:
              * <js>
-             * var pubsub = raptor.require('pubsub');
+             * var pubsub = require('raptor/pubsub');
              * var channel = pubsub.channel('myChannel');
              * 
              * channel.publish('myTopic', {
@@ -178,7 +178,7 @@ raptor.define('pubsub', function(raptor) {
                     message = topic;
                 }
                 else {
-                    message = raptor.require('pubsub').createMessage(topic, data);
+                    message = require('raptor/pubsub').createMessage(topic, data);
                 }
                 
                 this.observable.publish(message);
@@ -196,7 +196,7 @@ raptor.define('pubsub', function(raptor) {
              * </ol>
              * 
              * Usage:
-             * <js>var pubsub = raptor.require('pubsub');
+             * <js>var pubsub = require('raptor/pubsub');
              *  
              *  //Option 1) Subscribing to a single topic
              *  pubsub.subscribe('someTopic', function(message) {
@@ -263,7 +263,7 @@ raptor.define('pubsub', function(raptor) {
          * 
          * Usage:
          * <js>
-         * var pubsub = raptor.require('pubsub');
+         * var pubsub = require('raptor/pubsub');
          * 
          * pubsub.publish('myTopic', {
          *     hello: "Hello",
@@ -295,7 +295,7 @@ raptor.define('pubsub', function(raptor) {
          * </ol>
          * 
          * Usage:
-         * <js>var pubsub = raptor.require('pubsub');
+         * <js>var pubsub = require('raptor/pubsub');
          *  
          *  //Option 1) Subscribing to a single topic
          *  pubsub.subscribe('someTopic', function(message) {

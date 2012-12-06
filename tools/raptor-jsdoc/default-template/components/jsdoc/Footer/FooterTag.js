@@ -1,7 +1,7 @@
 raptor.define(
     "components.jsdoc.Footer.FooterTag",
     function(raptor) {
-        var templating = raptor.require('templating');
+        var templating = require('raptor/templating');
         
         var FooterTag = function(config) {
             

@@ -1,4 +1,4 @@
-raptor.defineClass(
+define.Class(
     'test.extensions.Test', 
     function() {
         return {

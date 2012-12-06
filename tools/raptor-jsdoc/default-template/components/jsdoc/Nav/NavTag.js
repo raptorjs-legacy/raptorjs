@@ -3,7 +3,7 @@ raptor.define(
     function(raptor) {
         
         var jsdocUtil = raptor.require("jsdoc-util"),
-            strings = raptor.require('strings');
+            strings = require('raptor/strings');
         
         var Node = function(props) {
             this.children = [];
@@ -56,7 +56,7 @@ raptor.define(
         
         var navContent = null,
             nodesByName = {},
-            templating = raptor.require('templating'),
+            templating = require('raptor/templating'),
             nameRegExp = /[\.\/]([^\.\/]*)$/,
             sortOrders = {
                 "package": 5,

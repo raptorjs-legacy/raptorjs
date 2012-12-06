@@ -15,4 +15,4 @@ require("raptor").createRaptor({
     }
 });
 
-raptor.require('optimizer.cli').run(process.argv);
+require('raptor/optimizer/cli').run(process.argv);

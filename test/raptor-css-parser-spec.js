@@ -1,13 +1,16 @@
 require('./_helper.js');
 
-var logger = raptor.require('logging').logger("raptor-css-parser-spec"),
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+var logger = require('raptor/logging').logger("raptor-css-parser-spec"),
     findUrls = function(path) {
         try
         {
-            var File = raptor.require('files').File;
+            var File = require('raptor/files/File');
             var cssFile = new File(__dirname, path);
             var code = cssFile.readAsString();
-            var cssParser = raptor.require('css-parser');
+            var cssParser = require('raptor/css-parser');
             var urls = {};
             cssParser.findUrls(code, function(url, index, endIndex) {
                 urls[url] = [index, endIndex];
@@ -23,10 +26,10 @@ var logger = raptor.require('logging').logger("raptor-css-parser-spec"),
     replaceUrls = function(path, callback, thisObj) {
         try
         {
-            var File = raptor.require('files').File;
+            var File = require('raptor/files/File');
             var cssFile = new File(__dirname, path);
             var code = cssFile.readAsString();
-            var cssParser = raptor.require('css-parser');
+            var cssParser = require('raptor/css-parser');
             return cssParser.replaceUrls(code, callback, thisObj);
         }
         

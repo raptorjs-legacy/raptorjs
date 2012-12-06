@@ -1,13 +1,13 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 var jsdomScripts = helpers.jsdom.jsdomScripts,
     jsdomWrapper = helpers.jsdom.jsdomWrapper;
 
 describe('XML parsing in the browser', function() {
-    before(function() {
-        createRaptor();
-    });
-      
+
     it('should allow DOM parsing', function() {
         
         
@@ -15,12 +15,11 @@ describe('XML parsing in the browser', function() {
             html: "<html><head><title>XML</title></head><body></body></html>",
             require: [
                '/js/jquery-1.7.js',
-               'core',
-               '/js/init-raptor.js',
-               'xml.sax'
+               'raptor',
+               'raptor/xml/sax'
             ],
             ready: function(window, raptor, done) {
-                var sax = raptor.require('xml.sax');
+                var sax = require('raptor/xml/sax');
                 var parser = sax.createParser();
                 
                 var result = [];

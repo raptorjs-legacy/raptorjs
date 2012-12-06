@@ -1,4 +1,4 @@
-raptor.defineModule('test/simple', function(raptor, module) {
+define('test/simple', function(require) {
     return {
         testMethod: function() {
             return 'testMethod';

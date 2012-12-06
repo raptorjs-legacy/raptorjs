@@ -1,4 +1,6 @@
-raptor.defineClass('widgets.input.ButtonWidget', function(raptor) {
+define.Class('widgets.input.ButtonWidget', function(raptor, require, exports, module) {
+    var logger = module.logger();
+    
     return {
         initBeforeOnDomReady: true,
         
@@ -7,7 +9,7 @@ raptor.defineClass('widgets.input.ButtonWidget', function(raptor) {
             if (config == null) {
                 throw new Error('Config is null');
             }
-            this.logger().debug('Config: ' + JSON.stringify(config));
+            logger.debug('Config: ' + JSON.stringify(config));
             this.config = config;
             this.label = config.label;
         },

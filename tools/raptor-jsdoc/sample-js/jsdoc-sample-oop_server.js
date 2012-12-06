@@ -65,13 +65,13 @@ $rload(function(raptor) {
                 return undefined;
             } 
             
-            raptor.require('packaging').load(manifest);
+            require('raptor/packaging').load(manifest);
             
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
         },
         createModuleManifestForResource = function(resource) {
-            var manifest = raptor.require('packaging').createPackageManifest();
+            var manifest = require('raptor/packaging').createPackageManifest();
             manifest.setPackageResource(resource);
             manifest.setDependencies([{
                 path: resource.getName()
@@ -106,7 +106,7 @@ $rload(function(raptor) {
             }
             discoveryComplete = true;
             
-            raptor.require('packaging').forEachTopLevelPackageManifest(function(manifest) {
+            require('raptor/packaging').forEachTopLevelPackageManifest(function(manifest) {
                 var manifestMappings = manifest.getRaptorProp("module-mappings");
                 
                 if (manifestMappings) {
@@ -169,7 +169,7 @@ $rload(function(raptor) {
         getModuleManifest: function(name) {
             var path = mappings[name],
                 manifest,
-                packaging = raptor.require('packaging');
+                packaging = require('raptor/packaging');
 
             if (path) {
                 manifest = packaging.getPackageManifest(path);

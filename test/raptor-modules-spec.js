@@ -1,27 +1,23 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('modules module', function() {
 
-    before(function() {
-        createRaptor();
-        raptor.resources.addSearchPathDir(getTestsDir('test-modules'));
-    });
-    
-    
-
     it('should allow module with no mixins', function() {
-        var simple = raptor.require('test/simple');
+        var simple = require('test/simple');
         expect(simple.testMethod()).toEqual('testMethod');
     });
     
     it('should allow module with extensions', function() {
-        var extensions = raptor.require('test/extensions');
+        var extensions = require('test/extensions');
         expect(extensions.env()).toEqual('server');
         expect(extensions.getMessage()).toEqual('Test');
     });
     
     it('should allow non-external modules', function() {
-        raptor.defineModule('test/myLocalModule', function() {
+        define('test/myLocalModule', function() {
             return {
                 localModuleMethod: function() {
                     return true;
@@ -29,17 +25,17 @@ describe('modules module', function() {
             };
         });
         
-        var myLocalModule = raptor.require('test/myLocalModule');
+        var myLocalModule = require('test/myLocalModule');
         expect(myLocalModule.localModuleMethod()).toEqual(true);
     });
     
     it('should allow modules with sub-files', function() {
-        var moduleWithFiles = raptor.require('test/moduleWithFiles');
+        var moduleWithFiles = require('test/moduleWithFiles');
         expect(moduleWithFiles.createTestObject().testMethod()).toEqual(true);
     });
     
     it('should allow module manifests to be read', function() {
-        var coreManifest = raptor.oop.getModuleManifest('core');
+        var coreManifest = require('raptor/packaging').getModuleManifest('raptor');
         expect(coreManifest).toNotEqual(null);
         
         var modules = {};
@@ -52,13 +48,13 @@ describe('modules module', function() {
             }
         });
         
-        expect(modules['logging']).toEqual(true);
+        expect(modules['raptor/logging']).toEqual(true);
         
         
     });
     
     it('should allow modules to be extended lazily using the extend function', function() {
-        raptor.defineModule('extendLazy', function() {
+        define('extendLazy', function() {
             return {
                 test: function() {
                     this.testExecuted = true;
@@ -66,20 +62,20 @@ describe('modules module', function() {
             };
         });
         
-        raptor.extend('extendLazy', function(raptor, target) {
+        define.extend('extendLazy', function(raptor, target) {
                 target.test();
             });
         
-        var extendLazy = raptor.require('extendLazy');
+        var extendLazy = require('extendLazy');
         expect(extendLazy.testExecuted).toEqual(true);
     });
     
     it('should allow modules to have conditionals', function() {
         
-        raptor.require('packaging').enableExtension("test.conditionals");
-        raptor.require('packaging').enableExtension("test.conditionals.a");
+        require('raptor/packaging').enableExtension("test.conditionals");
+        require('raptor/packaging').enableExtension("test.conditionals.a");
         
-        var conditional = raptor.require('test.conditional-extensions');
+        var conditional = require('test.conditional-extensions');
         expect(conditional["default"]).toEqual(true);
         expect(conditional["test"]).toEqual(true);
         expect(conditional["test2"]).toNotEqual(true);
@@ -90,33 +86,12 @@ describe('modules module', function() {
         var missingError;
         try
         {
-            raptor.load("MISSING_MODULE");
+            require('raptor').require("MISSING_MODULE");
         }
         catch(e) {
             missingError = e;
         }
         
-        expect(missingError).toNotEqual(null);
-        
-        var findCalled = false;
-        
-        var oldFind = raptor.oop._find;
-        raptor.oop._find = function() {
-            findCalled = true;
-        };
-        
-        
-        try
-        {
-            raptor.load("MISSING_MODULE");
-        }
-        catch(e) {
-            missingError = e;
-        }
-        raptor.oop._find = oldFind;
-        
-        expect(missingError).toNotEqual(null);
-        expect(findCalled).toEqual(false);
-        
+        expect(missingError).toNotEqual(null);        
     });
 });

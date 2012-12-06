@@ -39,7 +39,6 @@
 			"name": "Raptor JSDoc (sample js)",
 			"working_dir": "${project_path}"
 		},
-		
 		{
 			"cmd":
 			[
@@ -65,18 +64,108 @@
 		{
 			"cmd":
 			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-dev-spec.js"
+			],
+			"name": "Jasmine Tests - dev",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-oop-spec.js"
+			],
+			"name": "Jasmine Tests - oop",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-files-spec.js"
+			],
+			"name": "Jasmine Tests - files",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-objects-spec.js"
+			],
+			"name": "Jasmine Tests - objects",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-optimizer-spec.js"
+			],
+			"name": "Jasmine Tests - optimizer",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-logging-spec.js"
+			],
+			"name": "Jasmine Tests - logging",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
 				"jshint",
 				"${project_path}/lib/raptor/raptor_modules"
 			],
 			"name": "JSHint (RaptorJS)",
 			"working_dir": "${project_path}"
+		},
+		{
+			"cmd":
+			[
+				"node",
+				"--debug-brk",
+				"/usr/local/lib/node_modules/jasmine-node/lib/jasmine-node/cli.js",
+				"--noColor",
+				"."
+			],
+			"name": "Jasmine Tests (debug)",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"node",
+				"--debug-brk",
+				"scratch.js"
+			],
+			"name": "scratch (debug)",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"node",
+				"scratch.js"
+			],
+			"name": "scratch",
+			"working_dir": "${project_path}/test"
 		}
+
+
 	],
 	"folders":
 	[
-		{
-			"path": "src/main/resources/META-INF/resources/raptor_modules"
-		},
 		{
 			"path": "tools/raptor-jsdoc"
 		},
@@ -85,6 +174,12 @@
 		},
 		{
 			"path": "tools/jsdoc-toolkit-2.4.0"
+		},
+		{
+			"path": "lib/raptor"
+		},
+		{
+			"path": "test"
 		}
 	],
 	"settings":
@@ -96,7 +191,16 @@
 			"Raptor JSDoc (sample js)",
 			"Raptor JSDoc (single file)",
 			"Jasmine Tests",
-			"JSHint (RaptorJS)"
+			"Jasmine Tests (debug)",
+			"Jasmine Tests - dev",
+			"Jasmine Tests - files",
+			"Jasmine Tests - logging",
+			"Jasmine Tests - objects",
+			"Jasmine Tests - oop",
+			"Jasmine Tests - optimizer",
+			"JSHint (RaptorJS)",
+			"scratch",
+			"scratch (debug)"
 		]
 	}
 }

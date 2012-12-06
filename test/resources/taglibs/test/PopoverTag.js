@@ -1,11 +1,11 @@
-raptor.defineClass(
+define.Class(
     'taglibs.test.PopoverTag',
-    function(raptor) {
+    function(require) {
         
         return {
             process: function(input, context) {
                 
-                raptor.require('templating').render('taglibs/test/Popover', {
+                require('raptor/templating').render('taglibs/test/Popover', {
                     content: input.content,
                     title: input.title,
                     tag: input

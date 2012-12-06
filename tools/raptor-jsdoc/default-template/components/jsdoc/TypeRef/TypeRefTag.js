@@ -3,9 +3,9 @@ raptor.define(
     function(raptor) {
         
         var jsdocUtil = raptor.require("jsdoc-util"),
-            templating = raptor.require('templating'),
-            strings = raptor.require('strings'),
-            Type = raptor.require('jsdoc.Type');
+            templating = require('raptor/templating'),
+            strings = require('raptor/strings'),
+            Type = require('raptor/jsdoc/Type');
         
         var ParsedType = function(symbolName, context) {
             var attrs = context.getAttributes().jsdocs;

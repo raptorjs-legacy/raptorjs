@@ -1,3 +1,8 @@
+require('./_helper.js');
+
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('raptor loader module', function() {
     
     var _resources = {},
@@ -32,7 +37,7 @@ describe('raptor loader module', function() {
         return config;
     };
     
-    var mockLoader = raptor.extend({}, raptor.require('loader'));
+    var mockLoader = raptor.extend({}, require('raptor/loader'));
     
     var mockIncludeImpl = function(url, callback) {
         var _this = this;
@@ -143,7 +148,6 @@ describe('raptor loader module', function() {
     
     before(function() {
         clearLoaderHistory();
-        createRaptor();
     });
     
     it('should use the provided "thisObj" with all callbacks for error case', function() {

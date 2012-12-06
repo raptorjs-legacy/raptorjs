@@ -477,7 +477,7 @@ $rload(function(raptor) {
          *
          * <h2>Examples: Class with prototype</h2>
          * <js>
-         * raptor.defineClass(
+         * define.Class(
          *     'some.namespace.MyClass',
          *     function() {
          *         return {
@@ -627,7 +627,7 @@ raptor.defineEnum(
          * 
          * <h3>Synchronous module/class/mixin/enum loading</h3>
          * <js>
-         * var widgets = raptor.require('widgets');
+         * var widgets = require('raptor/widgets');
          * widgets.get(widgetId).destroy();
          * </js>
          * 
@@ -824,7 +824,7 @@ raptor.defineEnum(
         }
     }
 
-    raptor.defineModule = oop.define;
+    define = oop.define;
     
     raptor.define("raptor", raptor);
 });

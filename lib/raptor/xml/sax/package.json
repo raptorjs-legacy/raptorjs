@@ -31,7 +31,7 @@
             },
             "jquery": {
                 "dependencies": [
-                    {"module": "raptor/xm/dom"},
+                    {"module": "raptor/xml/dom"},
                     {"module": "raptor/xml/dom-to-sax"},
                     {"path": "SaxParserDOM.js"}
                 ]

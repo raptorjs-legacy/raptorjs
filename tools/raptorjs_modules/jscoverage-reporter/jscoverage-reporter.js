@@ -1,4 +1,4 @@
-raptor.defineModule("jscoverage-reporter", function() {
+define("jscoverage-reporter", function() {
     var CoverageReporter = raptor.require('jscoverage-reporter.CoverageReporter');
     return {
         buildReport: function(jscoverage) {

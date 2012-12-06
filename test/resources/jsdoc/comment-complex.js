@@ -20,7 +20,7 @@
  *
  * <h2>Examples: Class with prototype</h2>
  * <js>
- * raptor.defineClass(
+ * define.Class(
  *     'some.namespace.MyClass',
  *     function() {
  *         return {

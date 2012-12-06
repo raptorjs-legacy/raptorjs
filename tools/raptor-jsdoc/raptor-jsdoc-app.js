@@ -10,11 +10,11 @@ require("raptor").createRaptor({
     }
 });
 
-var files = raptor.require('files'),
+var files = require('raptor/files'),
     File = files.File,
-    jsdoc = raptor.require('jsdoc'),
-    walker = raptor.require('files.walker'),
-    logger = raptor.require('logging').logger('raptor-jsdoc-app'),
+    jsdoc = require('raptor/jsdoc'),
+    walker = require('raptor/files/walker'),
+    logger = require('raptor/logging').logger('raptor-jsdoc-app'),
     configArgRegExp=/^(?:-|--)([A-Za-z0-9_\-]+)(?:=([^\s]+))?$/,
     paramArgRegExp=/^([A-Za-z0-9_\-]+)(?:=([^\s]+))?$/,
     cwd = process.cwd(),
@@ -105,8 +105,8 @@ exports.run = function() {
         });
         
         //Add the resources for the plugin to the resource search path
-        raptor.require('resources').getSearchPath().addDir(templateFile.getParent());
-        raptor.require('resources').getSearchPath().addDir(outputDir);
+        require('raptor/resources').getSearchPath().addDir(templateFile.getParent());
+        require('raptor/resources').getSearchPath().addDir(outputDir);
         
         logger.info("Output directory: " + outputDir);
         logger.info("Source directories: [" + sourceDirs.join(",") + ']');

@@ -1,7 +1,7 @@
 /**
  * Simple class-level comment
  */
-raptor.defineClass("Simple", function(raptor) {
+define.Class("Simple", function(require) {
 	/**
 	 * Constructor comment
 	 * @returns

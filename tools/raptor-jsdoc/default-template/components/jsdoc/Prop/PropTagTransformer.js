@@ -3,7 +3,7 @@ raptor.define(
     function(raptor) {
         "use strict";
         
-        var VarNode = raptor.require('templating.taglibs.core.VarNode');
+        var VarNode = raptor.require('raptor/templating/taglibs/core/VarNode');
         
         return {
             process: function(node, compiler, template) {

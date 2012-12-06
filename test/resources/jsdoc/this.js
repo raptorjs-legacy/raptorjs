@@ -1,7 +1,7 @@
 /**
  * Simple module with anonymous class
  */
-raptor.define("Simple", function(raptor) {
+define("Simple", function(require) {
     var Simple = function() {
     	/**
     	 * Test property a

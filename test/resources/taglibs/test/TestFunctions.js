@@ -1,12 +1,12 @@
-raptor.define(
+define(
     "taglibs.test.TestFunctions",
-    function(raptor) {
+    function(require) {
         var testInfo = {};
         
         return {
             trim: function(str, info) {
                 testInfo.trimThisObj = this;
-                return str ? raptor.require("strings").trim(str) : str;
+                return str ? str.trim() : str;
             },
             upperCase: function(str, info) {
                 testInfo.upperCaseThisObj = this;

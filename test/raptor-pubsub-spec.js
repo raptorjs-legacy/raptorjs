@@ -1,11 +1,12 @@
+require('./_helper.js');
+
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('pubsub module', function() {
 
-    before(function() {
-        createRaptor();
-    });
-
     it('should allow basic pub sub on the global channel', function() {
-        var pubsub = raptor.require('pubsub');
+        var pubsub = require('raptor/pubsub');
         
         var receivedMessage = null;
         var receivedData = null;
@@ -29,7 +30,7 @@ describe('pubsub module', function() {
     });
     
     it('should allow basic pub sub on the named channels', function() {
-        var pubsub = raptor.require('pubsub');
+        var pubsub = require('raptor/pubsub');
         
         var channel1 = pubsub.channel('channel1');
         var channel2 = pubsub.channel('channel2');
@@ -60,7 +61,7 @@ describe('pubsub module', function() {
     });
     
     it('should allow basic pub sub with topic wild-cards', function() {
-        var pubsub = raptor.require('pubsub');
+        var pubsub = require('raptor/pubsub');
         
         var channel = pubsub.channel('channel1');
         
@@ -101,7 +102,7 @@ describe('pubsub module', function() {
     });
     
     it('should allow unsubscribe', function() {
-        var pubsub = raptor.require('pubsub');
+        var pubsub = require('raptor/pubsub');
         
         var channel = pubsub.channel('test');
         
@@ -124,8 +125,8 @@ describe('pubsub module', function() {
     });
     
     it('should allow the message object to be accessed after the normal arguments', function() {
-        var pubsub = raptor.require('pubsub');
-        var listeners = raptor.require('listeners');
+        var pubsub = require('raptor/pubsub');
+        var listeners = require('raptor/listeners');
         
         var channel = pubsub.channel('messageObjectTest');
         
@@ -149,7 +150,7 @@ describe('pubsub module', function() {
     });
     
 //    it('should allow data provided by a subscriber to be passed to a callback function', function() {
-//        var pubsub = raptor.require('pubsub');
+//        var pubsub = require('raptor/pubsub');
 //        
 //        
 //        var channel = pubsub.channel('subscriberData');

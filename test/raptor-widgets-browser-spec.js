@@ -1,13 +1,13 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 var compileAndLoad = helpers.templating.compileAndLoad,
     compileAndRender = helpers.templating.compileAndRender,
     jsdomWrapper = helpers.jsdom.jsdomWrapper;
 
 describe('widgets module in the browser', function() {
-    before(function() {
-        createRaptor();
-    });
       
 //    it('should allow widgets to be initialized', function() {
 //        
@@ -35,14 +35,13 @@ describe('widgets module in the browser', function() {
             html: compileAndRender('/pages/widgets/SimpleWidgetPage.rhtml'),
             require: [
                '/js/jquery-1.7.js',
-               'core',
-               '/js/init-raptor.js',
-               'widgets',
+               'raptor',
+               'raptor/widgets',
                'pages/widgets/SimpleWidgetPage'
             ],
             ready: function(window, raptor, done) {
-//                var widgets = raptor.require('widgets');
-                var PageWidget = raptor.require('pages.widgets.PageWidget');
+//                var widgets = require('raptor/widgets');
+                var PageWidget = require('pages.widgets.PageWidget');
                 window.initWidgets();
                 window.$(function() {
                     try
@@ -82,9 +81,8 @@ describe('widgets module in the browser', function() {
                     html: getTestHtmlUrl('two-buttons.html'),
                     scripts: getRequiredBrowserScripts([
                         { lib: 'jquery' },
-                        { module: 'core' }, 
-                        { file: getTestJavaScriptPath('init-raptor.js') },
-                        { module: 'widgets' },
+                        { module: 'raptor' }, 
+                        { module: 'raptor/widgets' },
                         { file: getTestJavaScriptPath('widgets/input/ButtonWidget.js') },
                         { file: getTestHtmlPath('two-buttons.js') }
                     ]),
@@ -92,7 +90,7 @@ describe('widgets module in the browser', function() {
                         expect(!errors || errors.length == 0).toEqual(true);
                         
                         var raptor = window.raptor;
-                        var widgets = raptor.require('widgets');
+                        var widgets = require('raptor/widgets');
                         var widget = widgets.get('w0');
                         expect(widget.getEl('button')).toNotEqual(null);
                         expect(widget.initInvoked).toEqual(true);
@@ -143,7 +141,7 @@ describe('widgets module in the browser', function() {
                         expect(!errors || errors.length == 0).toEqual(true);
                         
                         var raptor = window.raptor;
-                        var widgets = raptor.require('widgets');
+                        var widgets = require('raptor/widgets');
                         var widget = widgets.get('w0');
                         expect(widget.getEl('button')).toNotEqual(null);
                         expect(widget.initInvoked).toEqual(true);
@@ -193,7 +191,7 @@ describe('widgets module in the browser', function() {
                     expect(!errors || errors.length == 0).toEqual(true);
                     
                     var raptor = window.raptor;
-                    var widgets = raptor.require('widgets');
+                    var widgets = require('raptor/widgets');
                     
                     var button1 = widgets.get('w0');
                     expect(button1).toNotEqual(null);
@@ -256,7 +254,7 @@ describe('widgets module in the browser', function() {
                     expect(!errors || errors.length == 0).toEqual(true);
                     
                     var raptor = window.raptor;
-                    var widgets = raptor.require('widgets');
+                    var widgets = require('raptor/widgets');
                     
                     var widget = widgets.get('w0');
                     expect(widget.$).toNotEqual(null);

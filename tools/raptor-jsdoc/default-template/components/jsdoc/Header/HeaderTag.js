@@ -1,7 +1,7 @@
 raptor.define(
     "components.jsdoc.Header.HeaderTag",
     function(raptor) {
-        var templating = raptor.require('templating');
+        var templating = require('raptor/templating');
         
         var HeaderTag = function(config) {
             

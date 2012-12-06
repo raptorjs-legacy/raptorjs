@@ -3,7 +3,7 @@ raptor.define(
     function(raptor) {
         
         var jsdocUtil = raptor.require("jsdoc-util"),
-            templating = raptor.require('templating'),
+            templating = require('raptor/templating'),
             summarize = function(desc) {
                 if (!desc) return desc;
                 
@@ -250,7 +250,7 @@ raptor.define(
             },
 
             getProperties: function() {
-                var properties = raptor.require("objects").values(this.propertiesByName);
+                var properties = require('raptor/objects').values(this.propertiesByName);
                 properties.sort(function(a, b) {
                     a = a.name.toLowerCase();
                     b = b.name.toLowerCase();
