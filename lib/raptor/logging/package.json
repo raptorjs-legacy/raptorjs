@@ -21,6 +21,7 @@
                 "dependencies": [
                     {"module": "raptor/strings"},
                     {"module": "raptor/objects"},
+                    {"module": "raptor/stacktraces"},
                     {"path": "ConsoleLogger.js"},
                     {"path": "logging.js"}
                 ] 
