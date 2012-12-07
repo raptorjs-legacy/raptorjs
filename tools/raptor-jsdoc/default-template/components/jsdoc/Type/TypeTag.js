@@ -268,7 +268,7 @@ define(
             this.symbols = symbols;
             this.name = type.name;
             this.label = type.getLabel();
-            this._isClass = type.isJavaScriptFunction();
+            this._isClass = type.isJavaScriptFunction() && type.raptorType !== 'module';
 
             this.sourceLink = null;
 
