@@ -77,7 +77,7 @@ describe('json module', function() {
      });
     
     it('should support escaping of backslash', function() {
-        var stringify = require('raptor/json/stringify').stringify;
+        var stringify = require('raptor/json/stringify');
         expect(stringify("\\")).toEqual('"\\\\"');
         expect(stringify("\\", {useSingleQuote: true})).toEqual("'\\\\'");
         //expect(stringify("TEST\\")).toEqual('"\\n{1}\\nTEST\\\\"');
