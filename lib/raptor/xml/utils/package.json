@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "xml.utils",
+    "name": "raptor/xml/utils",
     "version": "1.0",
     "description": "Utility functions for working with XML",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

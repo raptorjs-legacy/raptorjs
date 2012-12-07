@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "ecma.es5",
+    "name": "raptor/ecma/es5",
     "version": "1.0",
     "description": "es5 shim for older browsers. Adapted from https://github.com/kriskowal/es5-shim/",
     "raptor": {

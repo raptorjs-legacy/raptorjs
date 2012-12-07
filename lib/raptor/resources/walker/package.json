@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "resources.walker",
+    "name": "raptor/resources/walker",
     "version": "1.0",
     "description": "Utility class for walking a directory structure",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

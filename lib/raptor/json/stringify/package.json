@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "json.stringify",
+    "name": "raptor/json/stringify",
     "version": "1.0",
     "description": "Raptor module which exposes a new stringify function with additional options beyond the standard JSON.stringify function",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

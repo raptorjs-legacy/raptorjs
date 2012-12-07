@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "debug",
+    "name": "raptor/debug",
     "version": "1.0",
     "description": "Utility functions and classes for debugging",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "json.parse",
+    "name": "raptor/json/parse",
     "version": "1.0",
     "description": "Raptor module which exposes a new parse function with additional options beyond the standard JSON.parse function",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

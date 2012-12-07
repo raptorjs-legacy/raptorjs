@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "java",
+    "name": "raptor/java",
     "version": "1.0",
     "description": "Utility functions for Java",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

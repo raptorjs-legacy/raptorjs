@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "json",
+    "name": "raptor/json",
     "version": "1.0",
     "description": "Raptor Module: widgets",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

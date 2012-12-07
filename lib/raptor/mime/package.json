@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "mime",
+    "name": "raptor/mime",
     "version": "1.0",
     "description": "Mime lookup library",
     "authors": [

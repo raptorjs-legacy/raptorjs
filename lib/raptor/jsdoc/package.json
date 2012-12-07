@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "jsdoc",
+    "name": "raptor/jsdoc",
     "version": "1.0",
     "description": "Raptor Module: jsdoc",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

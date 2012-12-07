@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "file-watcher",
+    "name": "raptor/file-watcher",
     "version": "1.0",
     "description": "Utility functions for working with files on the server",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

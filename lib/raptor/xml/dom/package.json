@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "xml.dom",
+    "name": "raptor/xml/dom",
     "version": "1.0",
     "description": "DOM-based XML parser",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

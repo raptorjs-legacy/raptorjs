@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "process",
+    "name": "raptor/process",
     "version": "1.0",
     "description": "Utility functions for obtaining information about the current running process",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

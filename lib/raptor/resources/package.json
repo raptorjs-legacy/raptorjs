@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "resources",
+    "name": "raptor/resources",
     "version": "1.0",
     "description": "Module to find and access resources in the Raptor resource search path",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

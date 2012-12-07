@@ -3,7 +3,7 @@
     "name": "jscoverage-reporter",
     "version": "1.0",
     "description": "Module to publish the results of JSCoverage (http://siliconforks.com/jscoverage/)",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

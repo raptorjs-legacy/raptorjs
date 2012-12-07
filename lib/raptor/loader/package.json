@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "loader",
+    "name": "raptor/loader",
     "version": "1.0",
     "description": "Provides support for loading remote JS and CSS code on demand",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

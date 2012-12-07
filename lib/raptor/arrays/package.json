@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "arrays",
+    "name": "raptor/arrays",
     "version": "1.0",
     "description": "Utility functions for working with arrays",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

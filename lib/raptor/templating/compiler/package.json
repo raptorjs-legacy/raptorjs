@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "templating.compiler",
+    "name": "raptor/templating/compiler",
     "version": "1.0",
     "description": "RaptorJS JavaScript Template Compiler",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

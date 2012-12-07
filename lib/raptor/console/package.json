@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "console",
+    "name": "raptor/console",
     "version": "1.0",
     "description": "JavaScript code to normalize the global console object",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

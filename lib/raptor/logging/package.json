@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "logging",
+    "name": "raptor/logging",
     "version": "1.0",
     "description": "Logging framework for Raptor",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",
