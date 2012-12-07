@@ -1,6 +1,7 @@
-raptor.define(
+define(
     "components.jsdoc.Header.HeaderTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         var templating = require('raptor/templating');
         
         var HeaderTag = function(config) {
@@ -9,7 +10,7 @@ raptor.define(
         
         HeaderTag.prototype = {
             process: function(input, context) {
-                var indexUrl = raptor.require('jsdoc-util').indexUrl();
+                var indexUrl = require('jsdoc-util').indexUrl();
 
                 templating.render("components/jsdoc/Header", {
                     indexUrl: indexUrl

@@ -3,7 +3,7 @@ require('./_helper.js');
 var raptor = require('raptor');
 var define = raptor.createDefine(module);
 
-describe('xml.sax.objectMapper module', function() {
+describe('raptor/xml/sax/objectMapper module', function() {
 
     it('should allow simple types', function() {
         var xml = "<root><string>Hello World</string><myBoolean>true</myBoolean></root>";

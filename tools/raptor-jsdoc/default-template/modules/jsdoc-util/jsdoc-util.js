@@ -1,10 +1,11 @@
-raptor.define(
+define(
     'jsdoc-util',
-    function() {
+    ['raptor'],
+    function(raptor, require) {
         var File = require('raptor/files/File'),
             strings = require('raptor/strings'),
             safeFilename = function(name) {
-                return name.replace(/[^A-Za-z0-9_\-\.]/g, '_');
+                return name.replace(/[^A-Za-z0-9_\-\.\/]/g, '_');
             };
         
         return {

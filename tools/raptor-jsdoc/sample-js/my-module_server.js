@@ -17,7 +17,7 @@
 /**
  * @extension Server
  */
-raptor.define("my-module", function() {
+define("my-module", function(require) {
     return {
         helloServer: function(name) {
             

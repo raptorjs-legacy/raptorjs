@@ -1,8 +1,9 @@
-raptor.define(
+define(
     "components.jsdoc.Nav.NavTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
+        var jsdocUtil = require('jsdoc-util'),
             strings = require('raptor/strings');
         
         var Node = function(props) {
@@ -125,7 +126,7 @@ raptor.define(
                 }
 
                 var currentNode = rootNode;
-                var parts = name.split(/\./);
+                var parts = name.split(/[\.\/]/);
                 var currentParts = [];
 
                 parts.forEach(function(part) {
@@ -133,8 +134,9 @@ raptor.define(
 
                     var childNode = currentNode.childNodesByName[part];
                     if (!childNode) {
+
                         childNode = addChildNode(currentNode, {
-                            name: currentParts.join("."),
+                            name: currentParts.join("/"),
                             shortName: part,
                             label: part,
                             href: "#",
@@ -167,7 +169,7 @@ raptor.define(
                     var parentName = getParentName(name, type);
                     var parentNode = getOrCreateNode(rootNode, parentName);
                     var label = type.extensionFor ? type.getExtension() + " Extension" : type.getShortLabel();
-                    
+
                     addChildNode(parentNode, {
                             name: name,
                             shortName: type.getShortName(),
@@ -214,6 +216,9 @@ raptor.define(
             
             process: function(input, context) {
                 var symbols = jsdocUtil.context.symbols;
+
+                
+
                 var nodeName = jsdocUtil.context.currentSymbolName || jsdocUtil.context.currentSourcePath;
                 
                 if (!symbols) {

@@ -41,12 +41,11 @@
             <module name="jQuery" recursive="true"/>
         </bundle>
         <bundle name="core">
-            <module name="core" recursive="true"/>
-            <init-raptor/>
-            <module name="listeners" recursive="true"/>
+            <module name="raptor" recursive="true"/>
+            <module name="raptor/listeners" recursive="true"/>
         </bundle>
         <bundle name="widgets">
-            <module name="widgets" recursive="true"/>
+            <module name="raptor/widgets" recursive="true"/>
         </bundle>
         <bundle name="jsdoc">
             <module name="jsdoc-global"/>

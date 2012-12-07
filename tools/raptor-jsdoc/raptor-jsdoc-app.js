@@ -1,17 +1,17 @@
-require("raptor").createRaptor({
-    logging: {
-        loggers: {
-            'ROOT': {level: 'WARN'},
-            'oop-server': {level: 'WARN'},
-            "jsdoc": {level: "INFO"},
-            "raptor-jsdoc-app": {level: "INFO"},
-            'resources': {level: 'WARN'}
-        }
+var raptor = require('raptor');
+
+var define = raptor.createDefine(module);
+
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': {level: 'WARN'},
+        "raptor/jsdoc": {level: "INFO"},
+        "raptor-jsdoc-app": {level: "INFO"},
     }
 });
 
 var files = require('raptor/files'),
-    File = files.File,
+    File = require('raptor/files/File'),
     jsdoc = require('raptor/jsdoc'),
     walker = require('raptor/files/walker'),
     logger = require('raptor/logging').logger('raptor-jsdoc-app'),
@@ -123,7 +123,7 @@ exports.run = function() {
            } 
         });
         
-        raptor.require('jsdoc.raptor-plugin').load(env);
+        require('raptor/jsdoc/raptor-plugin').load(env);
         
         sourceDirs.forEach(function(sourceDir) {
             logger.info('Loading symbols in directory "' + sourceDir + '"...');

@@ -1,9 +1,9 @@
 /**
  * Description for my-module.MyClass
  */
-raptor.define(
+define(
     "my-module.MyClass",
-    function() {
+    function(require) {
         /**
          * Description for the constructor
          * @param {String} a Param a description

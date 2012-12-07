@@ -1,8 +1,9 @@
-raptor.define(
+define(
     "components.jsdoc.TypeRef.TypeRefTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
+        var jsdocUtil = require('jsdoc-util'),
             templating = require('raptor/templating'),
             strings = require('raptor/strings'),
             Type = require('raptor/jsdoc/Type');

@@ -1,8 +1,9 @@
-var templating = require('raptor/templating'),
-    optimizer = raptor.require('optimizer'),
-    jsdocUtil = raptor.require('jsdoc-util'),
-    logger = require('raptor/logging').logger('publish')
-    File = require('raptor/file/File');
+var raptor = require('raptor'),
+    templating = require('raptor/templating'),
+    optimizer = require('raptor/optimizer'),
+    jsdocUtil = require('jsdoc-util'),
+    logger = require('raptor/logging').logger('publish'),
+    File = require('raptor/files/File');
 
 
 var Publisher = function(symbols, config, env) {

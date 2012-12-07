@@ -1,9 +1,9 @@
 {
     "type": "raptor-module",
-    "name": "xml.dom-to-sax",
+    "name": "raptor/xml/dom-to-sax",
     "version": "1.0",
     "description": "Helper module to generate SAX events for DOM nodes",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

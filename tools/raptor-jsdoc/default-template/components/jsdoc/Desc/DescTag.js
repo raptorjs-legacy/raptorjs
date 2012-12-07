@@ -1,8 +1,9 @@
-raptor.define(
+define(
     "components.jsdoc.Desc.DescTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
+        var jsdocUtil = require('jsdoc-util'),
             templating = require('raptor/templating');
         
         /**s Find symbol {@link ...} strings in text and turn into html links */

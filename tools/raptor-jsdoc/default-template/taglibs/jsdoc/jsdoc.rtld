@@ -5,7 +5,7 @@
     
 <!--     <function name="url" bind-to-context="true" class="taglibs.jsdoc.JSDocFunctions"/> -->
 
-    <function name="symbolUrl" bind-to-context="true" class="taglibs.jsdocs.JSDocFunctions"/>
+    <function name="symbolUrl" bind-to-context="true" class="taglibs/jsdocs/JSDocFunctions"/>
 
     <import-taglib path="/components/jsdoc/Prop/Prop.rtld"/>
     <import-taglib path="/components/jsdoc/Header/Header.rtld"/>

@@ -1,9 +1,10 @@
-raptor.define(
+define(
     "components.jsdoc.Prop.PropTagTransformer",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         "use strict";
         
-        var VarNode = raptor.require('raptor/templating/taglibs/core/VarNode');
+        var VarNode = require('raptor/templating/taglibs/core/VarNode');
         
         return {
             process: function(node, compiler, template) {
@@ -13,7 +14,7 @@ raptor.define(
                     
                     var varNode = new VarNode({
                         "name": varName,                        
-                        "value": template.makeExpression("raptor.require('jsdoc-util').getProp(" + JSON.stringify(propName) + ")"),
+                        "value": template.makeExpression("require('jsdoc-util').getProp(" + JSON.stringify(propName) + ")"),
                         pos: node.getPosition()
                     });
                     

@@ -8,7 +8,7 @@
 				"output-dir=${project_path}/docs/api",
 				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
 				"clean=${project_path}/api",
-				"${project_path}/src/main/resources/META-INF/resources/raptor_modules"
+				"${project_path}/lib"
 			],
 			"name": "Raptor JSDoc",
 			"working_dir": "${project_path}"
@@ -46,6 +46,7 @@
 				"output-dir=${project_path}/docs/api",
 				"props=${project_path}/node_modules/raptor/package.json,${project_path}/node_modules/raptor/jsdoc-props.json",
 				"clean=${project_path}/api",
+				"profile=development",
 				"${project_path}/tools/raptor-jsdoc/sample-js/jsdoc-sample-dev.js"
 			],
 			"name": "Raptor JSDoc (single file)",
@@ -161,25 +162,17 @@
 			"name": "scratch",
 			"working_dir": "${project_path}/test"
 		}
-
-
 	],
 	"folders":
 	[
-		{
-			"path": "tools/raptor-jsdoc"
-		},
-		{
-			"path": "docs/jsdoc-template"
-		},
-		{
-			"path": "tools/jsdoc-toolkit-2.4.0"
-		},
 		{
 			"path": "lib/raptor"
 		},
 		{
 			"path": "test"
+		},
+		{
+			"path": "tools"
 		}
 	],
 	"settings":

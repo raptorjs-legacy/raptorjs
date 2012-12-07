@@ -176,21 +176,7 @@ describe('classes module', function() {
         expect(ostrich.isOstrich()).toEqual(true);
         expect(ostrich.toString()).toEqual('[Bird: ostrich]');
     });
-    
-//    it('should allow imports', function() {
-//       var imports = raptor.requireAll(
-//               'test.classes.Bird',
-//               'test.classes.Ostrich'
-//               );
-//       
-//       var Bird = require('test.classes.Bird');
-//       var Ostrich = require('test.classes.Ostrich');
-//       
-//       expect(Bird).toEqual(imports.Bird);
-//       expect(Ostrich).toEqual(imports.Ostrich);
-//       
-//    });
-    
+
     it('should support external classes', function() {
        var TestClass = require('TestClass');
        expect(TestClass).toNotEqual(null);

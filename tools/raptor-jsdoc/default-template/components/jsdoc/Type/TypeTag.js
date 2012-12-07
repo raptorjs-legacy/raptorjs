@@ -1,8 +1,9 @@
-raptor.define(
+define(
     "components.jsdoc.Type.TypeTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
+        var jsdocUtil = require('jsdoc-util'),
             templating = require('raptor/templating'),
             summarize = function(desc) {
                 if (!desc) return desc;
@@ -116,6 +117,7 @@ raptor.define(
             
             if (comment) {
                 var returnTag = comment.getTag("return");
+
                 if (returnTag) {
                     this.returnType = returnTag.returnType;
                     this.returnDesc = returnTag.returnDesc;
