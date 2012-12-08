@@ -41,7 +41,7 @@ describe('widgets module in the browser', function() {
             ],
             ready: function(window, raptor, done) {
 //                var widgets = require('raptor/widgets');
-                var PageWidget = require('pages.widgets.PageWidget');
+                var PageWidget = window.require('pages.widgets.PageWidget');
                 window.initWidgets();
                 window.$(function() {
                     try
