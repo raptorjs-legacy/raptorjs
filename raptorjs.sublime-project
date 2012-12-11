@@ -176,7 +176,10 @@
 	"folders":
 	[
 		{
-			"path": "lib/raptor"
+			"path": "lib"
+		},
+		{
+			"path": "tools/raptor-jsdoc"
 		},
 		{
 			"path": "test"
