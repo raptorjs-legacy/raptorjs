@@ -1,10 +1,8 @@
-require("raptor").createRaptor({
-    logging: {
-        loggers: {
-            'ROOT': {level: 'WARN'},
-            'oop-server': {level: 'WARN'},
-            'resources': {level: 'WARN'}
-        }
+require("raptor");
+
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': {level: 'WARN'}
     }
 });
 
