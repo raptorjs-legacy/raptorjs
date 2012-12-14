@@ -26,17 +26,17 @@
         },
         
         "dependency-types": {
-            "js": {"class": "raptor/packaging/Dependency_js", "path": "/raptor/packaging/Dependency_js.js"},
-            "css": {"class": "raptor/packaging/Dependency_css", "path": "/raptor/packaging/Dependency_css.js"},
-            "dust": {"class": "raptor/packaging/Dependency_dust", "path": "/raptor/packaging/Dependency_dust.js"},
-            "less": {"class": "raptor/packaging/Dependency_less", "path": "/raptor/packaging/Dependency_less.js"},
-            "4cc": {"class": "raptor/packaging/Dependency_4cc", "path": "/raptor/packaging/Dependency_4cc.js"},
-            "module": {"class": "raptor/packaging/Dependency_module", "path": "/raptor/packaging/Dependency_module.js"},
-            "package": {"class": "raptor/packaging/Dependency_package", "path": "/raptor/packaging/Dependency_package.js"},
-            "rhtml": {"class": "raptor/packaging/Dependency_rhtml", "path": "/raptor/packaging/Dependency_rhtml.js"},
-            "rtld": {"class": "raptor/packaging/Dependency_rtld", "path": "/raptor/packaging/Dependency_rtld.js"},
-            "resource": {"class": "raptor/packaging/Dependency_resource", "path": "/raptor/packaging/Dependency_resource.js"},
-            "loader-metadata": {"class": "raptor/packaging/Dependency_loader-metadata", "path": "/raptor/packaging/Dependency_loader-metadata.js"} 
+            "js": {"class": "raptor/packaging/Dependency_js"},
+            "css": {"class": "raptor/packaging/Dependency_css"},
+            "dust": {"class": "raptor/packaging/Dependency_dust"},
+            "less": {"class": "raptor/packaging/Dependency_less"},
+            "4cc": {"class": "raptor/packaging/Dependency_4cc"},
+            "module": {"class": "raptor/packaging/Dependency_module"},
+            "package": {"class": "raptor/packaging/Dependency_package"},
+            "rhtml": {"class": "raptor/packaging/Dependency_rhtml"},
+            "rtld": {"class": "raptor/packaging/Dependency_rtld"},
+            "resource": {"class": "raptor/packaging/Dependency_resource"},
+            "loader-metadata": {"class": "raptor/packaging/Dependency_loader-metadata"} 
         }
     }
     
