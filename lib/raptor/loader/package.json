@@ -13,6 +13,7 @@
     "raptor": {
         "dependencies": [
             {"module": "raptor/listeners"},
+            {"module": "raptor/loader/require"},
             {"path": "loader.js"}
         ],
                 
@@ -31,11 +32,6 @@
                 "condition": "!extensions.contains('jquery')",
                 "dependencies": [
                     {"path": "loader_browser_raptor.js"}
-                ]
-            },
-            "loader.requires": {
-                "dependencies": [
-                    {"module": "raptor/loader/requires"}
                 ]
             }
         }
