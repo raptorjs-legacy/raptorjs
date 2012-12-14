@@ -2,16 +2,13 @@ if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'test';
 var path = require('path');
 var fs   = require('fs');
 
+require('raptor');
 
-require("raptor").createRaptor({
-    logging: {
-        loggers: {
-            'ROOT': {level: 'WARN'},
-            'oop-server': {level: 'WARN'},
-            "optimizer": {level: "INFO"},
-            "optimizer.cli": {level: "INFO"},
-            'resources': {level: 'WARN'}
-        }
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': {level: 'WARN'},
+        "raptor/optimizer": {level: "INFO"},
+        "raptor/optimizer/cli": {level: "INFO"},
     }
 });
 
