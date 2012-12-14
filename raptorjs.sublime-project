@@ -186,6 +186,9 @@
 		},
 		{
 			"path": "tools"
+		},
+		{
+			"path": "bin"
 		}
 	],
 	"settings":
