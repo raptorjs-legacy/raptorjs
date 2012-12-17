@@ -56,6 +56,11 @@ raptor.extend('templating', function(raptor) {
             
             var context = this.createContext(new WrappedWriter(javaWriter)); //Wrap the Java writer with a JavaScript object
             this.render('' + templateName, data, context);
+        },
+        
+        rhinoCreateContext: function(javaWriter) {
+            var context = this.createContext(new WrappedWriter(javaWriter)); //Wrap the Java writer with a JavaScript object
+            return context;
         }
     };
 });
