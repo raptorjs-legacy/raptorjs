@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.Scriptable;
@@ -199,9 +200,14 @@ public class Require extends BaseFunction
 			}
 			return module;
 		} catch (Exception e) {
+			String stackTrace = null;
+			if (e instanceof RhinoException) {
+				RhinoException re = (RhinoException) e;
+				stackTrace = re.getScriptStackTrace();
+			}
 			String failedModuleId = uri != null ? uri.toString() : id;
 			throw ScriptRuntime.throwError(cx, scope,
-	                "require() failed for module \"" + failedModuleId + "\". Exception: " + e);
+	                "require() failed for module \"" + failedModuleId + "\". Exception: " + e + (stackTrace != null ? "\nStack trace: " + stackTrace : ""));
 		}
     }
 
