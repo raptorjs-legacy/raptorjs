@@ -42,6 +42,8 @@ public abstract class RaptorJSEnv {
     private ResourceManager resourceManager = null;
     private InjectDefineScript injectDefineScript = null;
     
+    private ScriptableObject raptor = null;
+    
     public RaptorJSEnv(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         
@@ -59,15 +61,18 @@ public abstract class RaptorJSEnv {
         Require require = this.createRequire(cx, globalScope);
         require.install(globalScope);
         
-        ScriptableObject raptor = (ScriptableObject) this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor");
+        this.raptor = (ScriptableObject) this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor");
         injectDefineScript.setRaptor(raptor);
         this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, "/META-INF/resources"));
         
         this.rhinoHelpers = this.createRhinoHelpers();
         jsEnv.setGlobal("__rhinoHelpers", this.rhinoHelpers);
         
+        
+        
         this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor-main_rhino");
-        System.out.println(raptor);
+        
+        
         Context.exit();
     }
     
@@ -127,7 +132,7 @@ public abstract class RaptorJSEnv {
     }
     
     public ScriptableObject require(String name) {
-        return (ScriptableObject)this.getJavaScriptEngine().invokeFunction("rhinoRaptorRequire", name);
+    	return (ScriptableObject)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
     }
     
     public void load(String name) {
