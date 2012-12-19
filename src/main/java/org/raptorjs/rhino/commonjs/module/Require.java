@@ -385,6 +385,8 @@ public class Require extends BaseFunction
 
         URI base = moduleScript.getBase();
         defineReadOnlyProperty(moduleObject, "id", uri.toString());
+        defineReadOnlyProperty(moduleObject, "require", this);
+        
         if(!sandboxed) {
             defineReadOnlyProperty(moduleObject, "uri", uri.toString());
         }
