@@ -55,6 +55,7 @@ public abstract class RaptorJSEnv {
         injectDefineScript = new InjectDefineScript(this);
         
         ScriptableObject globalScope = this.getJavaScriptEngine().getGlobalScope();
+        globalScope.put("global", globalScope, globalScope);
         Require require = this.createRequire(cx, globalScope);
         require.install(globalScope);
         
