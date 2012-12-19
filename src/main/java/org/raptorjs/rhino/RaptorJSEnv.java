@@ -100,7 +100,6 @@ public abstract class RaptorJSEnv {
     protected abstract void createRaptor();
     
     protected void afterInit() {
-        this.getRhinoHelpers().getBootstrap().require("/resources/rhino-resource-search-path-adapter.js");
     }
         
     protected RhinoHelpers createRhinoHelpers() {
