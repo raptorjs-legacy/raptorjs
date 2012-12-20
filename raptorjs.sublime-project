@@ -107,6 +107,16 @@
 			[
 				"jasmine-node",
 				"--noColor",
+				"raptor-legacy-spec.js"
+			],
+			"name": "Jasmine Tests - legacy",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
 				"raptor-objects-spec.js"
 			],
 			"name": "Jasmine Tests - objects",
@@ -203,6 +213,7 @@
 			"Jasmine Tests (debug)",
 			"Jasmine Tests - dev",
 			"Jasmine Tests - files",
+			"Jasmine Tests - legacy",
 			"Jasmine Tests - logging",
 			"Jasmine Tests - objects",
 			"Jasmine Tests - oop",
