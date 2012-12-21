@@ -147,4 +147,30 @@ describe('legacy raptor module', function() {
         expect(employeeB.getName()).toEqual('Jane');
         expect(employeeB.getCompany()).toEqual('PayPal');
     });
+
+    it('should support extensions for legacy modules', function() {
+        var myBaseModule = {},
+            extendArgs;
+
+        legacyRaptor.define('test.my-base-module', function() {
+            return myBaseModule;
+        });
+
+        legacyRaptor.extend('test.my-base-module', function() {
+            extendArgs = arguments;
+            return {
+                newMethod: function() {
+
+                }
+            };
+        });
+
+        var returnedMyModule = legacyRaptor.require('test.my-base-module');
+        expect(returnedMyModule).toEqual(myBaseModule);
+        expect(typeof returnedMyModule.newMethod).toEqual('function');
+
+        expect(extendArgs.length).toEqual(2);
+        expect(extendArgs[0]).toEqual(legacyRaptor);
+        expect(extendArgs[1]).toEqual(myBaseModule);
+    });
 });
