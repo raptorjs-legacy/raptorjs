@@ -1,0 +1,20 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/files/walker",
+    "version": "1.0",
+    "description": "Utility class for walking a directory structure",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "DirWalker.js"},
+            {"path": "walker.js"}
+        ]
+    }
+}

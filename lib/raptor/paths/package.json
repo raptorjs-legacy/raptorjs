@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/paths",
+    "version": "1.0",
+    "description": "Raptor Module: paths",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            "paths.js"
+        ]
+    }
+}

@@ -31,7 +31,7 @@ public class TemplateRenderer {
     public TemplateRenderer(RaptorJSEnv raptorJSEnv) {
         this.raptorJSEnv = raptorJSEnv;        
         
-        this.setJavaScriptTemplatingModule(raptorJSEnv.require("templating"));        
+        this.setJavaScriptTemplatingModule(raptorJSEnv.require("raptor/templating"));        
         
         if (this.javaScriptModule == null) {
             throw new RuntimeException("JavaScript compiler not regiesterd");

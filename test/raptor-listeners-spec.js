@@ -1,12 +1,13 @@
-describe('listeners module', function() {
+require('./_helper.js');
 
-    before(function() {
-        createRaptor();
-    });
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+describe('listeners module', function() {
 
     it('should allow listener groups', function() {
         
-        var listeners = raptor.listeners.createObservable();
+        var listeners = require('raptor/listeners').createObservable();
         
         var thisObj = {};
         var testEventFired = false;
@@ -26,7 +27,7 @@ describe('listeners module', function() {
     
     it('should allow multiple types for ListenerGroup.subscribe()', function() {
         
-        var listeners = raptor.listeners.createObservable();
+        var listeners = require('raptor/listeners').createObservable();
         
         var event1Fired = false,
             event2Fired = false;
@@ -53,7 +54,7 @@ describe('listeners module', function() {
     
     it('should allow a custom thisObj to be used for callbacks with listener groups', function() {
         
-        var listeners = raptor.listeners.createObservable();
+        var listeners = require('raptor/listeners').createObservable();
         
         var thisObj = {};
         listeners.subscribe('testEvent', function() {
@@ -79,7 +80,7 @@ describe('listeners module', function() {
     
     it('should allow listeners to be removed', function() {
         
-        var listeners = raptor.listeners.createObservable();
+        var listeners = require('raptor/listeners').createObservable();
         
         var event1Fired = false,
             event2Fired = false;
@@ -138,7 +139,7 @@ describe('listeners module', function() {
     
     it('should allow any object become a listener', function() {
         var myObject = {};
-        raptor.listeners.makeObservable(myObject);
+        require('raptor/listeners').makeObservable(myObject);
         
         var thisObj = {};
         
@@ -155,7 +156,7 @@ describe('listeners module', function() {
         
         var anotherObject = {};
         
-        raptor.listeners.makeObservable(anotherObject);
+        require('raptor/listeners').makeObservable(anotherObject);
         
         var event1Fired = false,
             event2Fired = false;
@@ -179,7 +180,7 @@ describe('listeners module', function() {
     
     it('should allow the original message name to be accessed', function() {
         
-        var observable = raptor.require('listeners').createObservable();
+        var observable = require('raptor/listeners').createObservable();
         
         var receivedMessage;
         
@@ -196,7 +197,7 @@ describe('listeners module', function() {
     
     it('should allow an args array to be provided to the publish method', function() {
         
-        var observable = raptor.require('listeners').createObservable();
+        var observable = require('raptor/listeners').createObservable();
         
         var receivedHello,
             receivedWorld,
@@ -217,7 +218,7 @@ describe('listeners module', function() {
     });
     
     it('should allow messages to be restricted for observables', function() {
-        var observable = raptor.require('listeners').createObservable();
+        var observable = require('raptor/listeners').createObservable();
         observable.registerMessages([]);
         
         
@@ -281,7 +282,7 @@ describe('listeners module', function() {
     });
 
     it('should allow message functions to be added for allowed messages', function() {
-        var observable = raptor.require('listeners').createObservable();
+        var observable = require('raptor/listeners').createObservable();
         observable.registerMessages(['test1', 'test2'], true /* create functions */);
         
         
@@ -313,7 +314,7 @@ describe('listeners module', function() {
     });
     
     it('should allow the set of allowed messages and option to create functions to be passed in at creation time', function() {
-        var observable = raptor.require('listeners').createObservable(['test1', 'test2'], true /* create functions */);
+        var observable = require('raptor/listeners').createObservable(['test1', 'test2'], true /* create functions */);
         
         var test1Count = 0;
         var test2Count = 0;
@@ -361,7 +362,7 @@ describe('listeners module', function() {
             f.success({result: "Hello World!"});
         };
         
-        raptor.require('listeners').makeObservable(f, null, ['success', 'error'], true /* create functions */);
+        require('raptor/listeners').makeObservable(f, null, ['success', 'error'], true /* create functions */);
         
         var result = null;
         
@@ -375,9 +376,9 @@ describe('listeners module', function() {
     });
     
     it('should allow an object to unsubscribe from everything', function() {
-        var publisher1 = raptor.require('listeners').createObservable();
-        var publisher2 = raptor.require('listeners').createObservable();
-        var publisher3 = raptor.require('listeners').createObservable();
+        var publisher1 = require('raptor/listeners').createObservable();
+        var publisher2 = require('raptor/listeners').createObservable();
+        var publisher3 = require('raptor/listeners').createObservable();
         
         var subscriber = {};
         
@@ -407,7 +408,7 @@ describe('listeners module', function() {
         
         p3Handle.unsubscribe();
         
-        raptor.require('listeners').unsubscribeFromAll(subscriber);
+        require('raptor/listeners').unsubscribeFromAll(subscriber);
         
         publisher1.publish('test1');
         publisher2.publish('test2');

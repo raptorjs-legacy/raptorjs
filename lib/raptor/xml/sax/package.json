@@ -1,0 +1,41 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/xml/sax",
+    "version": "1.0",
+    "description": "SAX-based XML parser",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/listeners"},
+            {"module": "raptor/xml/dom"},
+            {"path": "sax.js"},
+            {"path": "BaseSaxParser.js"}
+        ],
+        
+        "extensions": {
+            "node": {
+                "dependencies": [
+                    {"path": "SaxParser_node.js"}
+                ]
+            },
+            "rhino": {
+                "dependencies": [
+                    {"path": "SaxParser_rhino.js"}
+                ]
+            },
+            "jquery": {
+                "dependencies": [
+                    {"module": "raptor/xml/dom"},
+                    {"module": "raptor/xml/dom-to-sax"},
+                    {"path": "SaxParserDOM.js"}
+                ]
+            }
+        }
+    }
+}

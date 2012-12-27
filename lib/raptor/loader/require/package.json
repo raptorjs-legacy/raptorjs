@@ -1,0 +1,29 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/loader/require",
+    "version": "1.0",
+    "description": "Adds support for asynchronously loading packages",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "raptor": {
+        "dependencies": [
+            
+        ],
+                
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"module": "raptor/loader"},
+                    {"type": "loader-metadata"},
+                    {"path": "require.js"}
+                ]
+            }
+        }
+    }
+}

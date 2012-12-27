@@ -1,6 +1,6 @@
-raptor.defineClass(
+define.Class(
     'taglibs.test.ContainerTag',
-    function(raptor) {
+    function(require) {
         
         return {
             process: function(input, context) {

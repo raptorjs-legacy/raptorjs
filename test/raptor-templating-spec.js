@@ -1,16 +1,15 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('templating module', function() {
-    var logger = raptor.require('logging').logger('raptor-templating-spec'),
+    var logger = require('raptor/logging').logger('raptor-templating-spec'),
         compileAndLoad = helpers.templating.compileAndLoad,
         compileAndRender = helpers.templating.compileAndRender;
-        
-    before(function() {
-        createRaptor();
-    });
     
     it("should allow appending child nodes", function() {
-        var Node = raptor.require('templating.compiler.Node');
+        var Node = require('raptor/templating/compiler/Node');
         var root = new Node();
         root.setRoot(true);
         
@@ -41,7 +40,7 @@ describe('templating module', function() {
     });
     
     it("should allow expressions to be parsed", function() {
-        var ExpressionParser = raptor.require('templating.compiler.ExpressionParser');
+        var ExpressionParser = require('raptor/templating/compiler/ExpressionParser');
         
         var parts = [],
             parseCallback = {
@@ -198,7 +197,7 @@ describe('templating module', function() {
     });
     
     it("should allow for attribute splitting", function() {
-        var AttributeSplitter = raptor.require('templating.compiler.AttributeSplitter');
+        var AttributeSplitter = require('raptor/templating/compiler/AttributeSplitter');
         var result;
         
         result = AttributeSplitter.parse(
@@ -218,7 +217,7 @@ describe('templating module', function() {
                 defaultName: "each"
             });
         
-        expect(raptor.keys(result).length).toEqual(3);
+        expect(Object.keys(result).length).toEqual(3);
         expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
         expect(result["separator"].getExpression()).toEqual("', '");
         expect(result["status-var"]).toEqual("loop");
@@ -239,7 +238,7 @@ describe('templating module', function() {
                 defaultName: "each"
             });
         
-        expect(raptor.keys(result).length).toEqual(1);
+        expect(Object.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
         
         //////
@@ -257,7 +256,7 @@ describe('templating module', function() {
                 defaultName: "each"
             });
         
-        expect(raptor.keys(result).length).toEqual(1);
+        expect(Object.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in ['one', 'two', 'three']");
         
         //////
@@ -275,7 +274,7 @@ describe('templating module', function() {
                 defaultName: "each"
             });
         
-        expect(raptor.keys(result).length).toEqual(1);
+        expect(Object.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in (a = [1,2,3])");
     });
 
@@ -296,10 +295,10 @@ describe('templating module', function() {
 
     
     it("should allow for escaping XML", function() {
-        var escapeXml = raptor.require("xml.utils").escapeXml;
+        var escapeXml = require("raptor/xml/utils").escapeXml;
         expect(escapeXml('"-&')).toEqual('"-&amp;');
         
-        var escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr;
+        var escapeXmlAttr = require("raptor/xml/utils").escapeXmlAttr;
         expect(escapeXmlAttr('"-&')).toEqual('&quot;-&amp;');
     });
     
@@ -455,7 +454,7 @@ describe('templating module', function() {
     
     it("should allow for context helper functions", function() {
 
-        var context = raptor.require('templating').createContext();
+        var context = require('raptor/templating').createContext();
         context.getAttributes()["loggedInUser"] = {
                 firstName: "John",
                 lastName: "Doe"
@@ -481,7 +480,7 @@ describe('templating module', function() {
     
     it("should allow for context helper functions", function() {
         
-        var context = raptor.require('templating').createContext();
+        var context = require('raptor/templating').createContext();
         context.getAttributes()["loggedInUser"] = {
                 firstName: "John",
                 lastName: "Doe"
@@ -543,7 +542,7 @@ describe('templating module', function() {
     });
     
     it("should allow type conversion", function() {
-        var TypeConverter = raptor.require('templating.compiler.TypeConverter');
+        var TypeConverter = require('raptor/templating/compiler/TypeConverter');
         expect(TypeConverter.convert('${entity:special}', "string", true).toString()).toEqual('"&special;"');
     });
     
@@ -573,11 +572,11 @@ describe('templating module', function() {
     });
     
     it("should allow for nodes to be converted to expressions", function() {
-        var ElementNode = raptor.require('templating.compiler.ElementNode');
-        var TextNode = raptor.require('templating.compiler.TextNode');
-        var TemplateBuilder = raptor.require('templating.compiler.TemplateBuilder');
+        var ElementNode = require('raptor/templating/compiler/ElementNode');
+        var TextNode = require('raptor/templating/compiler/TextNode');
+        var TemplateBuilder = require('raptor/templating/compiler/TemplateBuilder');
 
-        var compiler = raptor.require('templating.compiler').createCompiler();
+        var compiler = require('raptor/templating/compiler').createCompiler();
         var template = new TemplateBuilder(compiler);
         
         var div = new ElementNode("div");
@@ -587,8 +586,8 @@ describe('templating module', function() {
         var expression = div.getExpression(template).toString();
         var bodyContentExpression = div.getBodyContentExpression(template).toString();
         
-        var sb = raptor.require('strings').createStringBuilder();
-        var context = raptor.require('templating').createContext(sb);
+        var sb = require('raptor/strings').createStringBuilder();
+        var context = require('raptor/templating').createContext(sb);
         var output = eval(expression);
         expect(output.toString()).toEqual('<div>Hello World!</div>');
         

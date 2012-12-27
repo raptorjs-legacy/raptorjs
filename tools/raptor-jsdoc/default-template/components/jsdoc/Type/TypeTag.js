@@ -1,9 +1,10 @@
-raptor.define(
+define(
     "components.jsdoc.Type.TypeTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
-            templating = raptor.require('templating'),
+        var jsdocUtil = require('jsdoc-util'),
+            templating = require('raptor/templating'),
             summarize = function(desc) {
                 if (!desc) return desc;
                 
@@ -116,6 +117,7 @@ raptor.define(
             
             if (comment) {
                 var returnTag = comment.getTag("return");
+
                 if (returnTag) {
                     this.returnType = returnTag.returnType;
                     this.returnDesc = returnTag.returnDesc;
@@ -250,7 +252,7 @@ raptor.define(
             },
 
             getProperties: function() {
-                var properties = raptor.require("objects").values(this.propertiesByName);
+                var properties = require('raptor/objects').values(this.propertiesByName);
                 properties.sort(function(a, b) {
                     a = a.name.toLowerCase();
                     b = b.name.toLowerCase();
@@ -266,7 +268,7 @@ raptor.define(
             this.symbols = symbols;
             this.name = type.name;
             this.label = type.getLabel();
-            this._isClass = type.isJavaScriptFunction();
+            this._isClass = type.isJavaScriptFunction() && type.raptorType !== 'module';
 
             this.sourceLink = null;
 

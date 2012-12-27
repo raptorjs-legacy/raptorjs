@@ -1,12 +1,15 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('resources module', function() {
 
     it('should allow for resolving relative paths', function() {
-        var resources = raptor.require("resources"),
-            files = raptor.require('files');
+        var resources = require("raptor/resources"),
+            files = require('raptor/files');
         
-        var DirSearchPathEntry = raptor.require('resources.DirSearchPathEntry');
+        var DirSearchPathEntry = require('raptor/resources/DirSearchPathEntry');
         
         var searchPathEntry = new DirSearchPathEntry(files.joinPaths(__dirname, 'resources'));
         var resourceA = resources.findResource('/resource-search-path/a.txt', searchPathEntry);

@@ -1,0 +1,32 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/logging",
+    "version": "1.0",
+    "description": "Logging framework for Raptor",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "logging_stubs.js"}
+        ],
+        
+        "extensions": {
+            "logging.console": {
+                "dependencies": [
+                    {"module": "raptor/strings"},
+                    {"module": "raptor/objects"},
+                    {"module": "raptor/stacktraces"},
+                    {"path": "ConsoleLogger.js"},
+                    {"path": "logging.js"}
+                ] 
+            }
+        }
+    }
+        
+}

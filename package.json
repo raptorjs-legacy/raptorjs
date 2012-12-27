@@ -1,11 +1,14 @@
 {
   "name": "raptor",
-  "version": "0.9.2",
+  "version": "2.0.0",
   "description": "RaptorJS",
   "keywords": [
+    "AMD",
     "modules",
     "loader",
-    "packaging"
+    "packaging",
+    "optimization",
+    "templating"
   ],
   "scripts": {
     "test": "node_modules/.bin/jasmine-node --verbose test/ && node_modules/.bin/jshint lib/raptor/raptor_modules"
@@ -44,5 +47,5 @@
     "raptor-jsdoc": "bin/raptor-jsdoc",
     "raptor-optimizer": "bin/raptor-optimizer"
   },
-  "main": "lib/raptor/raptor-node-main"
+  "main": "lib/raptor/raptor-main_node.js"
 }

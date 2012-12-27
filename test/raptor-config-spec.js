@@ -1,10 +1,13 @@
-describe('config module', function() {
+require('./_helper.js');
 
-    createRaptor();
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+describe('config module', function() {
 
     it('should allow properties as part of the constructor', function() {
         
-        var config = raptor.config.create({
+        var config = require('raptor/config').create({
             "testProperty": {
                 value: 100
             }
@@ -15,7 +18,7 @@ describe('config module', function() {
     
      it('should allow onChange callbacks for initial value', function() {
         var initialOnChangeCalled = false;
-        raptor.config.create({
+        require('raptor/config').create({
             "testProperty": {
                 value: 100,
                 onChange: function(value) {
@@ -30,7 +33,7 @@ describe('config module', function() {
      
      it('should allow onChange callbacks after initial value', function() {
          
-         var config = raptor.config.create({
+         var config = require('raptor/config').create({
              "testProperty": {
                  value: 100
              }            
@@ -56,7 +59,7 @@ describe('config module', function() {
          var initialPropertyValue = 100;
          var newPropertyValue = 200;
          
-         var config = raptor.config.create({
+         var config = require('raptor/config').create({
              "initialProperty": {
                  value: initialPropertyValue
              }            

@@ -1,0 +1,42 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/loader",
+    "version": "1.0",
+    "description": "Provides support for loading remote JS and CSS code on demand",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/listeners"},
+            {"module": "raptor/loader/require"},
+            {"path": "loader.js"}
+        ],
+                
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"path": "loader_browser.js"}
+                ]
+            },
+            "jquery": {
+                "dependencies": [
+                    {"path": "loader_browser_jquery.js"}
+                ]
+            },
+            "raptor": {
+                "condition": "!extensions.contains('jquery')",
+                "dependencies": [
+                    {"path": "loader_browser_raptor.js"}
+                ]
+            }
+        }
+    }
+    
+    
+
+}

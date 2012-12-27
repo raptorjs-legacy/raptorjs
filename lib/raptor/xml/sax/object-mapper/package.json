@@ -1,0 +1,22 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/xml/sax/object-mapper",
+    "version": "1.0",
+    "description": "Simple SAX-based object mapper to build objects from XML",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+    
+        "dependencies": [
+            {"module": "raptor/xml/sax"},
+            {"module": "raptor/arrays"},
+            {"path": "object-mapper.js"}
+        ]
+    }
+}

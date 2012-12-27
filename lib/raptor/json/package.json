@@ -1,0 +1,47 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/json",
+    "version": "1.0",
+    "description": "Raptor Module: widgets",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "json.js"}
+        ],
+    
+        "extensions": {
+            "jquery": {
+                "dependencies": [
+                    {"path": "json_jquery.js"}
+                ]
+            },
+            "json.raptor": {
+                "dependencies": [
+                    {"module": "raptor/json/parse"},
+                    {"module": "raptor/json/stringify"},
+                    {"path": "jsonParse_raptor.js"},
+                    {"path": "jsonStringify_raptor.js"}
+                ]
+            },
+            "json.raptorStringify": {
+                "dependencies": [
+                    {"module": "raptor/json/stringify"},
+                    {"path": "jsonStringify_raptor.js"}
+                ]
+            },
+            "json.raptorParse": {
+                "dependencies": [
+                    {"module": "raptor/json/parse"},
+                    {"path": "jsonParse_raptor.js"}
+                ]
+            }
+        }
+    }
+}

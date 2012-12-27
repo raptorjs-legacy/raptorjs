@@ -4,7 +4,7 @@ window.executeTest = function(expect, completeCallback, config) {
         
     var baseUrl = config.baseUrl;
     
-    var loader = raptor.require('loader');
+    var loader = require('raptor/loader');
     var _this = {};
     
     loader.includeJS(baseUrl + "/js1.js", function(result) {

@@ -1,0 +1,18 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/arrays",
+    "version": "1.0",
+    "description": "Utility functions for working with arrays",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "dependencies": [
+            {"path": "arrays.js"}
+        ]
+    }
+}

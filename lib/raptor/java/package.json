@@ -1,0 +1,22 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/java",
+    "version": "1.0",
+    "description": "Utility functions for Java",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "extensions": {
+            "rhino": {
+                "dependencies": [
+                    {"path": "java_rhino.js"}
+                ]
+            }
+        }
+    }
+}

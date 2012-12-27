@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.define("my-module.sub-module", function() {
+define("my-module.sub-module", function(require) {
     return {
         hello: function(name) {
             

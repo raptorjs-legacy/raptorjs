@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "pubsub",
+    "version": "1.0",
+    "description": "Raptor Module: pubsub",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "pubsub.js"}
+        ]
+    }
+}

@@ -1,0 +1,44 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    <short-name>widgets</short-name>
+    <uri>http://raptorjs.org/templates/widgets</uri>
+    
+    <attribute name="id" type="string"/>
+    <attribute pattern="event-*" type="custom" allow-expressions="false"/>
+    
+    <tag>
+        
+        <name>*</name> 
+        <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
+        
+        <attribute name="widget" type="string"/>
+        
+        <!-- Compiler that applies to all tags as well -->
+        <transformer>
+            <class-name>raptor/templating/taglibs/widgets/WidgetsTagTransformer</class-name>
+            <after>raptor/templating/taglibs/core/CoreTagTransformer</after>
+        </transformer>
+    </tag>
+    
+    <tag>
+        <name>widget</name>
+        <handler-class>raptor/templating/taglibs/widgets/WidgetTag</handler-class>
+        
+        <attribute name="jsClass" type="string"/>
+        
+        <nested-variable name="widget"/>
+        
+        <imported-variable target-property="config" expression="data.widgetConfig"/>
+        <imported-variable target-property="widgetArgs" expression="data.widgetArgs"/>
+    </tag>
+    
+    <tag>
+        <name>init-widgets</name>
+        <handler-class>raptor/templating/taglibs/widgets/InitWidgetsTag</handler-class>
+        
+        <attribute name="includeScriptTag" type="boolean"/>
+    </tag>
+    
+</raptor-taglib>

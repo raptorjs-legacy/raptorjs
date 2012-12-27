@@ -1,3 +1,0 @@
-raptor.defineClass('files.File', {
-
-});

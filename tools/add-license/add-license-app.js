@@ -1,22 +1,20 @@
-require("raptor").createRaptor({
-    logging: {
-        loggers: {
-            'ROOT': {level: 'WARN'},
-            'oop-server': {level: 'WARN'},
-            'resources': {level: 'WARN'}
-        }
+require("raptor");
+
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': {level: 'WARN'}
     }
 });
 
-var files = raptor.require("files"),
-    strings = raptor.require('strings');
+var files = require('raptor/files'),
+    strings = require('raptor/strings');
 
 var licenseText = files.readAsString(__dirname + "/LICENSE");
 
 var raptorJSModulesDir = files.joinPaths(__dirname, "../../src/main/resources/META-INF/resources/raptor_modules");
 var javaSrcDir = files.joinPaths(__dirname, "../../src/main/java");
 
-var walker = raptor.require("files.walker");
+var walker = require('raptor/files/walker');
 
 var count = 0;
 

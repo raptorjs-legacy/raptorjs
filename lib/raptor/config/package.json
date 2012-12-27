@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/config",    
+    "version": "1.0",
+    "description": "Configuration object support with getters, setters and onchange listeners",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "dependencies": [
+            {"path": "config.js"}
+        ]
+    }
+    
+}

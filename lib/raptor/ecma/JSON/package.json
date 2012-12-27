@@ -1,0 +1,12 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/ecma/JSON",
+    "version": "1.0",
+    "description": "ECMA-compatible JSON object",
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "JSON.js"}        
+        ]
+    }
+}

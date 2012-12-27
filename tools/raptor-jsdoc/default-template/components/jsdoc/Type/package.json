@@ -1,6 +1,6 @@
 {
     "includes": [
-        {"module": "widgets"},
+        {"module": "raptor/widgets"},
         "TypeWidget.js",
         "Type.css"
     ]
