@@ -52,6 +52,22 @@
 	},
 	"file_history":
 	[
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs.github.com/src/publish.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/optimizer/PageRhtml.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs.github.com/src/optimizer-config.xml",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/optimizer/OptimizerEngine.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/publish.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/templating/taglibs/optimizer/PageTag.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/optimizer/SimpleUrlBuilder.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/raptor-optimizer.xml",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/raptorjs.sublime-project",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/modules/jsdoc-util/jsdoc-util.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/components/jsdoc/Header/HeaderTag.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/components/jsdoc/Header/Header.rhtml",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/default-template/components/jsdoc/Header/Header.css",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-jsdoc/raptor-jsdoc-app.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/tools/raptor-optimizer/raptor-optimizer-app.js",
+		"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/templating/compiler/compiler.js",
 		"/Users/psteeleidem/development/ebay/github/Raptor/RaptorJSOpenSource/src/main/resources/META-INF/resources/raptor_modules/packager/Include_4cc.js",
 		"/Users/psteeleidem/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/Users/psteeleidem/development/ebay/github/Raptor/RaptorJSOpenSource/src/main/resources/META-INF/resources/raptor_modules/packager/Include_css.js",
@@ -83,6 +99,7 @@
 		"height": 0.0,
 		"where_history":
 		[
+			"/Users/psteeleidem/development/github/raptorjs/raptorjs/src/main/resources/META-INF/resources/raptor_modules/optimizer"
 		]
 	},
 	"find_state":
@@ -90,6 +107,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"profile",
+			"setBaseDir",
 			"defineClass",
 			"Include_XXX",
 			"Include_loader_metadata",
@@ -172,6 +191,26 @@
 		"selected_items":
 		[
 			[
+				"pager",
+				"raptor_modules/optimizer/PageRhtml.js"
+			],
+			[
+				"pagetag",
+				"raptor_modules/templating/taglibs/optimizer/PageTag.js"
+			],
+			[
+				"raptor-optimiz",
+				"raptor-jsdoc/default-template/raptor-optimizer.xml"
+			],
+			[
+				"headertag",
+				"raptor-jsdoc/default-template/components/jsdoc/Header/HeaderTag.js"
+			],
+			[
+				"jsdoc-util",
+				"raptor-jsdoc/default-template/modules/jsdoc-util/jsdoc-util.js"
+			],
+			[
 				"include_rhtml",
 				"raptor_modules/packager/Include_rhtml.js"
 			],
@@ -193,7 +232,7 @@
 		[
 			[
 				"",
-				"/Users/psteeleidem/development/ebay/github/Raptor/RaptorJSOpenSource/raptor_modules.sublime-project"
+				"/Users/psteeleidem/development/ebay/github/Raptor/RaptorJSOpenSource/raptorjs.sublime-project"
 			]
 		],
 		"width": 380.0

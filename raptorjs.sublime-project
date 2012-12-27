@@ -39,7 +39,6 @@
 			"name": "Raptor JSDoc (sample js)",
 			"working_dir": "${project_path}"
 		},
-		
 		{
 			"cmd":
 			[
@@ -84,7 +83,10 @@
 			"path": "docs/jsdoc-template"
 		},
 		{
-			"path": "tools/jsdoc-toolkit-2.4.0"
+			"path": "tools/raptor-optimizer"
+		},
+		{
+			"path": "/Users/psteeleidem/development/github/raptorjs/raptorjs.github.com/src"
 		}
 	],
 	"settings":
