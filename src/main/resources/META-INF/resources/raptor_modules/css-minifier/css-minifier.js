@@ -1,3 +1,0 @@
-raptor.define("css-minifier", {
-    
-});

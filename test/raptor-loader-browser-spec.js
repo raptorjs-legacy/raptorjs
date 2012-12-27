@@ -1,10 +1,11 @@
+require('./_helper.js');
+
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 xdescribe('raptor loader module', function() {
 
     var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-    
-    before(function() {
-        createRaptor();
-    });
     
     it('should allow JavaScript resources to be loaded dynamically', function() {
         
@@ -31,7 +32,7 @@ xdescribe('raptor loader module', function() {
                     window.XMLHttpRequest = XMLHttpRequest;
                     
                     var raptor = window.raptor;
-                    var loader = raptor.require('loader');
+                    var loader = require('raptor/loader');
                     expect(loader).toNotEqual(null);
                     
                     try{

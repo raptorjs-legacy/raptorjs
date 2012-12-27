@@ -1,7 +1,8 @@
-raptor.define(
+define(
     "components.jsdoc.Prop.PropTag",
-    function(raptor) {
-        var jsdocUtil = raptor.require("jsdoc-util");
+    ['raptor'],
+    function(raptor, require) {
+        var jsdocUtil = require('jsdoc-util');
         
         var PropTag = function(config) {
             

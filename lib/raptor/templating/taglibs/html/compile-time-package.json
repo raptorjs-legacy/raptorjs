@@ -1,0 +1,21 @@
+{
+    "type": "rtld",
+    "name": "raptor/templating/taglibs/html",
+    "version": "1.0",
+    "description": "RaptorJS Templating Module",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"type": "js", "path": "HtmlTagTransformer.js"},
+            {"type": "js", "path": "DocTypeNode.js"},
+            {"type": "rtld", "path": "html.rtld"}
+        ]
+    }
+}

@@ -1,20 +1,20 @@
-require("raptor").createRaptor({
-    logging: {
-        loggers: {
-            'ROOT': {level: 'WARN'},
-            'oop-server': {level: 'WARN'},
-            "jsdoc": {level: "INFO"},
-            "raptor-jsdoc-app": {level: "INFO"},
-            'resources': {level: 'WARN'}
-        }
+var raptor = require('raptor');
+
+var define = raptor.createDefine(module);
+
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': {level: 'WARN'},
+        "raptor/jsdoc": {level: "INFO"},
+        "raptor-jsdoc-app": {level: "INFO"},
     }
 });
 
-var files = raptor.require('files'),
-    File = files.File,
-    jsdoc = raptor.require('jsdoc'),
-    walker = raptor.require('files.walker'),
-    logger = raptor.require('logging').logger('raptor-jsdoc-app'),
+var files = require('raptor/files'),
+    File = require('raptor/files/File'),
+    jsdoc = require('raptor/jsdoc'),
+    walker = require('raptor/files/walker'),
+    logger = require('raptor/logging').logger('raptor-jsdoc-app'),
     configArgRegExp=/^(?:-|--)([A-Za-z0-9_\-]+)(?:=([^\s]+))?$/,
     paramArgRegExp=/^([A-Za-z0-9_\-]+)(?:=([^\s]+))?$/,
     cwd = process.cwd(),
@@ -105,8 +105,8 @@ exports.run = function() {
         });
         
         //Add the resources for the plugin to the resource search path
-        raptor.require('resources').getSearchPath().addDir(templateFile.getParent());
-        raptor.require('resources').getSearchPath().addDir(outputDir);
+        require('raptor/resources').getSearchPath().addDir(templateFile.getParent());
+        require('raptor/resources').getSearchPath().addDir(outputDir);
         
         logger.info("Output directory: " + outputDir);
         logger.info("Source directories: [" + sourceDirs.join(",") + ']');
@@ -123,7 +123,7 @@ exports.run = function() {
            } 
         });
         
-        raptor.require('jsdoc.raptor-plugin').load(env);
+        require('raptor/jsdoc/raptor-plugin').load(env);
         
         sourceDirs.forEach(function(sourceDir) {
             logger.info('Loading symbols in directory "' + sourceDir + '"...');

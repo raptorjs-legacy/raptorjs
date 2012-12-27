@@ -1,0 +1,28 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/runtime",
+    "version": "1.0",
+    "description": "Module to provide functions for working with the JavaScript runtime",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "extensions": {
+            "server": {
+                "dependencies": [
+                    {"path": "runtime.js"}
+                ]
+            },
+            "server_node": {
+                "dependencies": [
+                    {"path": "runtime_node.js"}
+                ]
+            }
+        }
+    }
+}

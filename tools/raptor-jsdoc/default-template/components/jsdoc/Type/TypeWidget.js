@@ -1,6 +1,7 @@
-raptor.define(
+define(
     "components.jsdoc.Type.TypeWidget",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         var TypeWidget = function(config) {
             var _this = this;
 

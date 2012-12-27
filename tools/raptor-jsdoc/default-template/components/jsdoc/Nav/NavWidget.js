@@ -1,6 +1,7 @@
-raptor.define(
+define(
     "components.jsdoc.Nav.NavWidget",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         var NavWidget = function(config) {
             
             $('#navTree').jstree({

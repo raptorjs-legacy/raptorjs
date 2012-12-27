@@ -1,5 +1,10 @@
-raptor.defineEnum(
-    'test.enums.simple.Day',
+require('./_helper.js');
+
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+define.Enum(
+    'test/enums/simple/Day',
     [
         "SUN",
         "MON",
@@ -10,8 +15,8 @@ raptor.defineEnum(
         "SAT"
     ]);
 
-raptor.defineEnum(
-    'test.enums.complex.Day',
+define.Enum(
+    'test/enums/complex/Day',
     {
         SUN: [false, "Sunday"],
         MON: [true, "Monday"],
@@ -21,7 +26,7 @@ raptor.defineEnum(
         FRI: [true, "Friday"],
         SAT: [false, "Saturday"]
     },
-    function(raptor, type) {
+    function(require) {
         return {
             init: function(isWeekday, longName) {
                 this._isWeekday = isWeekday;
@@ -38,8 +43,8 @@ raptor.defineEnum(
         };
     });
  
-raptor.defineEnum(
-        'test.enums.complex.Day2',
+define.Enum(
+        'test/enums/complex/Day2',
         {
             SUN: [false, "Sunday"],
             MON: [true, "Monday"],
@@ -49,7 +54,7 @@ raptor.defineEnum(
             FRI: [true, "Friday"],
             SAT: [false, "Saturday"]
         },
-        function(raptor, type) {
+        function(require) {
             var Day2 = function(isWeekday, longName) {
                 this._isWeekday = isWeekday;
                 this._longName = longName;
@@ -76,42 +81,38 @@ raptor.defineEnum(
 
 describe('enums', function() {
 
-    before(function() {
-        createRaptor();
-    });
-    
     it('should allow simple enums', function() {
-        var Day = raptor.require('test.enums.simple.Day');
+        var Day = require('test/enums/simple/Day');
         expect(Day.SUN).toNotEqual(null);
     });
     
     it('should allow instanceof to be used with enum vales', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.SUN instanceof SimpleDay).toEqual(true);
         
         
-        var ComplexDay = raptor.require('test.enums.complex.Day');
+        var ComplexDay = require('test/enums/complex/Day');
         expect(ComplexDay.SUN instanceof ComplexDay).toEqual(true);
         expect(ComplexDay.SUN instanceof SimpleDay).toEqual(false);
         
         
-        var ComplexDay2 = raptor.require('test.enums.complex.Day2');
+        var ComplexDay2 = require('test/enums/complex/Day2');
         expect(ComplexDay2.SUN instanceof ComplexDay2).toEqual(true);
     });
     
     it('should allow enums to have static properties', function() {
 
-        var ComplexDay2 = raptor.require('test.enums.complex.Day2');
+        var ComplexDay2 = require('test/enums/complex/Day2');
         expect(ComplexDay2.TEST_STATIC).toNotEqual(null);
     });
     
     it('should support "valueOf" method for enum classes', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.valueOf("SUN")).toStrictlyEqual(SimpleDay.SUN);
     });
 
     it('should support "ordinal" method for enum values', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.SUN.ordinal()).toEqual(0);
         expect(SimpleDay.MON.ordinal()).toEqual(1);
         expect(SimpleDay.TUE.ordinal()).toEqual(2);
@@ -119,20 +120,20 @@ describe('enums', function() {
     });
     
     it('should support "name" method for enum values', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.SUN.name()).toEqual("SUN");
     });
 
     it('should support "toString" method for enum values', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.SUN.toString()).toEqual("SUN");
         
-        var ComplexDay2 = raptor.require('test.enums.complex.Day2');
+        var ComplexDay2 = require('test/enums/complex/Day2');
         expect(ComplexDay2.SUN.toString()).toEqual("Sunday");
     });
 
     it('should support "compareTo" method for enum values', function() {
-        var SimpleDay = raptor.require('test.enums.simple.Day');
+        var SimpleDay = require('test/enums/simple/Day');
         expect(SimpleDay.SUN.compareTo(SimpleDay.MON) < 0).toEqual(true);
         expect(SimpleDay.MON.compareTo(SimpleDay.SUN) > 0).toEqual(true);
         expect(SimpleDay.MON.compareTo(SimpleDay.MON) === 0).toEqual(true);

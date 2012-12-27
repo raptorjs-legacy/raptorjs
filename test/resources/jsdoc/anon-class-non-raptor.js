@@ -1,7 +1,7 @@
 /**
  * Simple module with anonymous class
  */
-raptor.define("simple", function(raptor) {
+define("simple", function(require) {
     
     /**
      * Anonymous inner class

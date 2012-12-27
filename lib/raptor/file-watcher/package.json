@@ -1,0 +1,30 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/file-watcher",
+    "version": "1.0",
+    "description": "Utility functions for working with files on the server",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "file-watcher.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "dependencies": [
+                    {"path": "file-watcher_node.js" }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/stacktraces",
+    "version": "1.0",
+    "description": "Code to normalize stacktraces across multiple JavaScript runtimes",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "raptor": {
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"path": "stacktraces_browser.js"}
+                ]
+            },
+            "node": {
+                "dependencies": [
+                    {"path": "stacktraces_node.js"}
+                ]
+            }
+        }
+    }
+}

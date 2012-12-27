@@ -1,4 +1,4 @@
-raptor.define("simple", function(raptor) {
+define("simple", function(require) {
     return {
         hello: function() {
             

@@ -1,6 +1,6 @@
-raptor.defineClass(
+define.Class(
     'taglibs.test.TabTag',
-    function(raptor) {
+    function(require) {
         
         
         var TabTag = function() {

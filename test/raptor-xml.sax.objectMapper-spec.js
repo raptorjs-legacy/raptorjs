@@ -1,10 +1,13 @@
 require('./_helper.js');
 
-describe('xml.sax.objectMapper module', function() {
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+describe('raptor/xml/sax/objectMapper module', function() {
 
     it('should allow simple types', function() {
         var xml = "<root><string>Hello World</string><myBoolean>true</myBoolean></root>";
-        var obj = raptor.require('xml.sax.object-mapper').read(
+        var obj = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {
@@ -28,7 +31,7 @@ describe('xml.sax.objectMapper module', function() {
 
     it('should allow _targetProp', function() {
         var xml = "<root><string>Hello World</string></root>";
-        var obj = raptor.require('xml.sax.object-mapper').read(
+        var obj = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {
@@ -52,7 +55,7 @@ describe('xml.sax.objectMapper module', function() {
             root = {},
             foundSetArgs;
         
-        var obj = raptor.require('xml.sax.object-mapper').read(
+        var obj = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {
@@ -84,7 +87,7 @@ describe('xml.sax.objectMapper module', function() {
     
     it('should allow custom objects to be returned', function() {
         var xml = "<root><string>Hello World</string></root>";
-        var obj = raptor.require('xml.sax.object-mapper').read(
+        var obj = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {
@@ -109,7 +112,7 @@ describe('xml.sax.objectMapper module', function() {
     
     it('should allow elements to be skipped', function() {
         var xml = "<root><string>Hello World</string></root>";
-        var reader = raptor.require('xml.sax.object-mapper').createReader(
+        var reader = require('raptor/xml/sax/object-mapper').createReader(
             {
                 "<root>": {
                     _type: "object",
@@ -147,7 +150,7 @@ describe('xml.sax.objectMapper module', function() {
             foundEndRootArgs,
             foundEndNestedArgs;
         
-        var reader = raptor.require('xml.sax.object-mapper').createReader(
+        var reader = require('raptor/xml/sax/object-mapper').createReader(
             {
                 "<root>": {
                     _type: "object",
@@ -209,7 +212,7 @@ describe('xml.sax.objectMapper module', function() {
     it('should allow attribute handlers', function() {
         var xml = '<root myAttr="true"></root>';
 
-        var reader = raptor.require('xml.sax.object-mapper').createReader(
+        var reader = require('raptor/xml/sax/object-mapper').createReader(
             {
                 "<root>": {
                     _type: "object",
@@ -231,7 +234,7 @@ describe('xml.sax.objectMapper module', function() {
     
     it('should allow properties as both attributes and elements', function() {
 
-        var reader = raptor.require('xml.sax.object-mapper').createReader(
+        var reader = require('raptor/xml/sax/object-mapper').createReader(
             {
                 "<root>": {
                     _type: "object",
@@ -261,7 +264,7 @@ describe('xml.sax.objectMapper module', function() {
         var xml = '<root myAttr="myattr">mytext<nested anotherAttr="anotherAttr">moretext</nested></root>',
             foundParsePropArgs = [];
 
-        var reader = raptor.require('xml.sax.object-mapper').createReader(
+        var reader = require('raptor/xml/sax/object-mapper').createReader(
             {
                 "<root>": {
                     _type: "object",
@@ -287,7 +290,7 @@ describe('xml.sax.objectMapper module', function() {
             },
             {
                 parseProp: function(value, context) {
-                    foundParsePropArgs.push(raptor.arrayFromArguments(arguments));
+                    foundParsePropArgs.push(require('raptor').arrayFromArguments(arguments));
                     
                     
                     return value.toUpperCase();
@@ -310,7 +313,7 @@ describe('xml.sax.objectMapper module', function() {
         var xml = "<root><object><string></string></object></root>";
         var root = {};
         
-        var obj = raptor.require('xml.sax.object-mapper').read(
+        var obj = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {
@@ -350,7 +353,7 @@ describe('xml.sax.objectMapper module', function() {
         var xml = '<root><object a="true"><nested-object b="b" c="c"/></object></root>';
         var root = {isRoot: true};
         
-        var returnedRoot = raptor.require('xml.sax.object-mapper').read(
+        var returnedRoot = require('raptor/xml/sax/object-mapper').read(
             xml, 
             'test', 
             {

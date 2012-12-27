@@ -1,0 +1,27 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/js-minifier",
+    "version": "1.0",
+    "description": "RaptorJS module to support ",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "js-minifier.js"}
+        ],
+        
+        "extensions": {
+            "node": {
+                "dependencies": [
+                    {"path": "js-minifier_node.js"}
+                ]
+            }
+        }
+    }
+}

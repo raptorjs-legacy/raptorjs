@@ -1,6 +1,6 @@
 {
     "includes": [
-        {"module": "widgets"},
+        {"module": "raptor/widgets"},
         {"module": "jsTree/cookie"},
         {"module": "jsTree/hotkeys"},
         {"module": "jsTree"},

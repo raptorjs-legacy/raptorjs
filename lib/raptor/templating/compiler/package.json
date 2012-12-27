@@ -1,0 +1,62 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/templating/compiler",
+    "version": "1.0",
+    "description": "RaptorJS JavaScript Template Compiler",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/resources"},
+            {"module": "raptor/regexp"},
+            {"module": "raptor/strings"},
+            {"module": "raptor/objects"},
+            {"module": "raptor/listeners"},
+            {"module": "raptor/json/stringify"},
+            {"module": "raptor/xml/utils"},
+            {"module": "raptor/xml/sax/object-mapper"},
+            {"path": "Expression.js"},
+            {"path": "ExpressionParser.js"},
+            {"path": "TypeConverter.js"},
+            {"path": "AttributeSplitter.js"},
+            {"path": "TemplateBuilder.js"},
+            {"path": "TemplateCompiler.js"},
+            {"path": "Taglib.js"},
+            {"path": "TaglibCollection.js"},        
+            {"path": "compiler.js"},
+            {"path": "Node.js"},
+            {"path": "ElementNode.js"},
+            {"path": "TextNode.js"},
+            {"path": "ParseTreeBuilder.js"},
+            {"path": "TaglibXmlLoader.js"},
+            {"path": "EscapeXmlContext.js"}
+        ],
+        
+        "extensions": [
+            {   
+                "name": "server",
+                "dependencies": [
+                    {"path": "compiler_server.js"}
+                ]
+            },
+            {   
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "compiler_rhino.js"}
+                ]
+            },
+            {   
+                "name": "browser",
+                "dependencies": [
+                    {"path": "compiler_browser.js"}
+                ]
+            }
+        ]
+    }
+}

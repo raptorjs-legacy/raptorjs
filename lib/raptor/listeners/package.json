@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/listeners",
+    "version": "1.0",
+    "description": "Provides support for listener lists and observables",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "listeners.js"}
+        ]
+    }
+}

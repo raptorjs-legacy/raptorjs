@@ -1,3 +1,0 @@
-raptor.define("js-minifier", {
-    
-});

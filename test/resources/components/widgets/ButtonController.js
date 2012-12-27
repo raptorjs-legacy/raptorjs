@@ -1,6 +1,6 @@
-raptor.defineClass(
+define.Class(
     'components.widgets.ButtonController',
-    function(raptor) {
+    function(require) {
         
         return {
             process: function(input, context) {

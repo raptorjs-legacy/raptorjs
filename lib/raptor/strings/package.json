@@ -1,0 +1,21 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/strings",
+    "version": "1.0",
+    "description": "Utility functions for working with strings",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "StringBuilder.js"},
+            {"path": "strings.js"}
+            
+        ]
+    }
+}

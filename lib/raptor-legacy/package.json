@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor",
+    "version": "1.0",
+    "description": "RaptorJS",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            "raptor-legacy.js"
+        ]
+    }
+}

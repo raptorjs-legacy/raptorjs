@@ -1,6 +1,11 @@
-raptor.defineClass(
+require('./_helper.js');
+
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
+define.Class(
     'test.classes.Bird', 
-    function(raptor, type) {
+    function(require) {
         return {
             init: function(species) {
                 this.species = species;
@@ -20,12 +25,12 @@ raptor.defineClass(
         };
     });
     
-raptor.defineClass(
+define.Class(
     'test.classes.Ostrich',
     {
         superclass: 'test.classes.Bird'
     },
-    function(raptor, type) {
+    function(require) {
         var Ostrich = function() {
             Ostrich.superclass.init.call(this, 'ostrich');
         };
@@ -47,10 +52,10 @@ raptor.defineClass(
         return Ostrich;
     });
 
-raptor.defineClass(
+define.Class(
     'test.classes.Ostrich2',
     'test.classes.Bird',
-    function(raptor, type) {
+    function(require) {
         var Ostrich = function() {
             Ostrich.superclass.constructor.call(this, 'ostrich');
         };
@@ -72,7 +77,7 @@ raptor.defineClass(
         return Ostrich;
     });
 
-raptor.defineClass('test.syntax.AlternativeSuperClass', function(raptor) {
+define.Class('test.syntax.AlternativeSuperClass', function(require) {
     var Type = function(message) {
         this.initMessage = message;
         this.initB = true;
@@ -90,15 +95,15 @@ raptor.defineClass('test.syntax.AlternativeSuperClass', function(raptor) {
     return Type;
 });
 
-raptor.defineClass(
+define.Class(
     'test.syntax.AlternativeClass', 
     {
         superclass: 'test.syntax.AlternativeSuperClass'
     },
-    function(raptor, helper) {
+    function(require) {
         var Type = function(message) {
             
-            Type.superclass.init.call(this, message);
+            Type.superclass.constructor.call(this, message);
             this.initA = true;
         };
         
@@ -120,50 +125,48 @@ raptor.defineClass(
         return Type;
     });
 
-raptor.defineMixin(
+define(
     'test.mixins.BirdMixins',
-    function(raptor) {
+    function(require) {
         return {
             fly: function() {
                 
             }
         };
     });
-raptor.defineClass(
-        'test.mixins.Ostrich',
-        {
-            mixins: ['test.mixins.BirdMixins']
-        },
-        function(raptor, type) {
-            var Ostrich = function() {
-                
-            };
+
+define(
+    'test.mixins.Ostrich',
+    ['raptor'],
+    function(raptor, require) {
+        var Ostrich = function() {
             
-            Ostrich.prototype = {
-                isFlighted: function() {
-                    return false;
-                },
-                
-                isOstrich: function() {
-                    return true;
-                },
-                
-                toString: function() {
-                    return Ostrich.superclass.toString.call(this);
-                }
-            };
+        };
+        
+        Ostrich.prototype = {
+            isFlighted: function() {
+                return false;
+            },
             
-            return Ostrich;
-        });
+            isOstrich: function() {
+                return true;
+            },
+            
+            toString: function() {
+                return Ostrich.superclass.toString.call(this);
+            }
+        };
+        
+        raptor.extend(
+            Ostrich.prototype, 
+            require('test.mixins.BirdMixins'));
+        
+        return Ostrich;
+    });
 
 describe('classes module', function() {
 
-    before(function() {
-        createRaptor();
-        raptor.resources.addSearchPathDir(getTestsDir('test-classes'));
-    });
-    
-    var Ostrich = raptor.require('test.classes.Ostrich');
+    var Ostrich = require('test.classes.Ostrich');
     
     var ostrich = new Ostrich();
     
@@ -173,28 +176,14 @@ describe('classes module', function() {
         expect(ostrich.isOstrich()).toEqual(true);
         expect(ostrich.toString()).toEqual('[Bird: ostrich]');
     });
-    
-//    it('should allow imports', function() {
-//       var imports = raptor.requireAll(
-//               'test.classes.Bird',
-//               'test.classes.Ostrich'
-//               );
-//       
-//       var Bird = raptor.require('test.classes.Bird');
-//       var Ostrich = raptor.require('test.classes.Ostrich');
-//       
-//       expect(Bird).toEqual(imports.Bird);
-//       expect(Ostrich).toEqual(imports.Ostrich);
-//       
-//    });
-    
+
     it('should support external classes', function() {
-       var TestClass = raptor.require('TestClass');
+       var TestClass = require('TestClass');
        expect(TestClass).toNotEqual(null);
     });
     
     it('should allow anonymous classes', function() {
-        var AnonClass = raptor.defineClass(function(raptor) {
+        var AnonClass = define.Class(function(raptor) {
             return {
                 testMethod: function() {
                     return true;
@@ -207,7 +196,7 @@ describe('classes module', function() {
      });
     
     it('should allow anonymous classes with superclasses', function() {
-        var AnonClass = raptor.defineClass(
+        var AnonClass = define.Class(
             {
                 superclass: 'test.classes.Bird'
             },
@@ -232,7 +221,7 @@ describe('classes module', function() {
      });
     
     it('should allow statics', function() {
-        var AnonClass = raptor.defineClass(function(raptor) {
+        var AnonClass = define.Class(function(raptor) {
             return {
                 statics: {
                     staticMethod: function() {
@@ -251,7 +240,7 @@ describe('classes module', function() {
      });
     
     it('should allow class factory functions to return constructor functions', function() {
-        var AlternativeClass = raptor.require('test.syntax.AlternativeClass');
+        var AlternativeClass = require('test.syntax.AlternativeClass');
         expect(AlternativeClass.myStatic).toEqual(true);
         
         var myAlternative = new AlternativeClass('AlternativeClass');
@@ -271,8 +260,8 @@ describe('classes module', function() {
     });
     
     it('should allow instanceof to be used', function() {
-        var AlternativeClass = raptor.require('test.syntax.AlternativeClass');
-        var AlternativeSuperClass = raptor.require('test.syntax.AlternativeSuperClass');
+        var AlternativeClass = require('test.syntax.AlternativeClass');
+        var AlternativeSuperClass = require('test.syntax.AlternativeSuperClass');
         
         var myAlternative = new AlternativeClass('AlternativeClass');
         expect(myAlternative instanceof AlternativeClass).toEqual(true);
@@ -281,24 +270,15 @@ describe('classes module', function() {
         var mySuperAlternative = new AlternativeSuperClass('AlternativeSuperClass');
         expect(mySuperAlternative instanceof AlternativeClass).toNotEqual(true);
         
-        var Ostrich = raptor.require('test.classes.Ostrich');
+        var Ostrich = require('test.classes.Ostrich');
         var ostrich = new Ostrich();
         expect(ostrich instanceof Ostrich).toEqual(true);
         
     });
     
-    it('should make all instances loggers', function() {
-        
-        var Ostrich = raptor.require('test.classes.Ostrich');
-        var ostrich = new Ostrich();
-        expect(ostrich.logger().error).toNotEqual(null);
-        ostrich.logger().error('Test error message');
-        
-    });
-    
     it('should make all superclass name as the modifiers', function() {
         
-        var Ostrich2 = raptor.require('test.classes.Ostrich2');
+        var Ostrich2 = require('test.classes.Ostrich2');
         var ostrich = new Ostrich2();
         expect(ostrich.getSpecies()).toEqual('ostrich');
         expect(ostrich.isFlighted()).toEqual(false);
@@ -308,27 +288,27 @@ describe('classes module', function() {
     });
     
     it('should allow classes to be in the modules namespace', function() {
-        raptor.defineClass('globalTest.myModule.MyClass', function() {
+        define.Class('globalTest.myModule.MyClass', function(require) {
             return {
                 
             };
         });
         
-        expect(raptor.require("globalTest.myModule.MyClass")).toNotEqual(null);
+        expect(require("globalTest.myModule.MyClass")).toNotEqual(null);
 
-        raptor.defineModule('globalTest.myModule', function() {
+        define('globalTest.myModule', function(require) {
             return {
                 
             };
         });
         
-        var myModule = raptor.require('globalTest.myModule');
+        var myModule = require('globalTest.myModule');
         
-        expect(raptor.require("globalTest.myModule.MyClass")).toNotEqual(null);
+        expect(require("globalTest.myModule.MyClass")).toNotEqual(null);
     });
     
     xit('should allow instanceof against classes accessed using the global namespace', function() {
-        raptor.defineClass('instanceOfTest.myModule.MyClass', function() {
+        define.Class('instanceOfTest.myModule.MyClass', function(require) {
             return {
                 
             };
@@ -342,84 +322,34 @@ describe('classes module', function() {
        
     });
     
-    it('should allow instanceof against classes accessed using raptor.require', function() {
-        raptor.defineClass('instanceOfTest2.myModule.MyClass', function() {
+    it('should allow instanceof against classes accessed using require', function() {
+        define.Class('instanceOfTest2.myModule.MyClass', function(require) {
             return {
                 
             };
         });
         
-        var MyClass = raptor.require('instanceOfTest2.myModule.MyClass');
+        var MyClass = require('instanceOfTest2.myModule.MyClass');
         var myObject = new MyClass();
         
         expect(myObject instanceof MyClass).toEqual(true);
     });
     
-    xit('should allow static in classes accessed using the global namespace', function() {
-        raptor.defineClass('globalStaticsTest.myModule.MyClass', function() {
+    it('should allow static in classes accessed using require', function() {
+        define.Class('globalStaticsTest.myModule.MyClass', function() {
             var MyClass = function() {};
             MyClass.SOME_STATIC = true;
             return MyClass;
         });
         
-        var MyClass = globalStaticsTest.myModule.MyClass;
-        expect(MyClass.SOME_STATIC).toEqual(true);
-    });
-    
-    it('should allow static in classes accessed using raptor.require', function() {
-        raptor.defineClass('globalStaticsTest.myModule.MyClass', function() {
-            var MyClass = function() {};
-            MyClass.SOME_STATIC = true;
-            return MyClass;
-        });
-        
-        var MyClass = raptor.require('globalStaticsTest.myModule.MyClass');
+        var MyClass = require('globalStaticsTest.myModule.MyClass');
         expect(MyClass.SOME_STATIC).toEqual(true);
     });
     
     it('should allow for mixins', function() {
-        var Ostrich = raptor.require('test.mixins.Ostrich');
+        var Ostrich = require('test.mixins.Ostrich');
         var ostrich = new Ostrich();
         expect(ostrich.fly).toNotEqual(null);
     });
     
-    xit('should allow static properties of a superclass to be inherited', function() {
-        raptor.defineClass(
-            'test.classes.StaticsSuper', 
-            function(raptor, type) {
-                var StaticsSuper = function() {
-                    
-                };
-                
-                StaticsSuper.prototype = {
-                                      
-                };
-                
-                StaticsSuper.MyStatic = "StaticsSuper";
-                
-                return StaticsSuper;
-            });
-    
-        raptor.defineClass(
-            'test.classes.StaticsSub',
-            'test.classes.StaticsSuper',
-            function(raptor, type) {
-                var StaticsSub = function() {
-                    
-                };
-                
-                StaticsSub.prototype = {
-                                      
-                };
-                
-                StaticsSub.MyStatic = "StaticsSub";
-                
-                return StaticsSub;
-            });
-        
-        var StaticsSuper = raptor.require('test.classes.StaticsSuper');
-        var StaticsSub = raptor.require('test.classes.StaticsSub');
-        expect(StaticsSuper.MyStatic).toEqual("StaticsSuper");
-        expect(StaticsSub.MyStatic).toEqual("StaticsSub");
-    });
 });

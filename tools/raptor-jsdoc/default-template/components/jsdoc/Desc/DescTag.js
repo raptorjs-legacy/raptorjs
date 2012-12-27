@@ -1,11 +1,10 @@
-raptor.define(
+define(
     "components.jsdoc.Desc.DescTag",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require("jsdoc-util"),
-            templating = raptor.require('templating'),
-            strings = raptor.require('strings'),
-            Type = raptor.require('jsdoc.Type');
+        var jsdocUtil = require('jsdoc-util'),
+            templating = require('raptor/templating');
         
         /**s Find symbol {@link ...} strings in text and turn into html links */
         var resolveLinks = function(str, context) {
@@ -43,7 +42,7 @@ raptor.define(
             });
 
             return desc;
-        }
+        };
 
         var Desc = function(config) {
             

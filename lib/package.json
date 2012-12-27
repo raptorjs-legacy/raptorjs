@@ -1,0 +1,43 @@
+{
+    "type": "raptor-library",
+    "name": "raptor",
+    "version": "1.0",
+    "description": "RaptorJS",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "taglibs": [
+            "/raptor/templating/taglibs/core/core.rtld",
+            "/raptor/templating/taglibs/html/html.rtld",
+            "/raptor/templating/taglibs/optimizer/optimizer.rtld",
+            "/raptor/templating/taglibs/widgets/widgets.rtld"
+        ],
+        
+        "module-mappings": {
+            "taglibs/core/compile-time": "/raptor/templating/taglibs/core/compile-time-package.json",
+            "taglibs/html/compile-time": "/raptor/templating/taglibs/html/compile-time-package.json",
+            "taglibs/widgets/compile-time": "/raptor/templating/taglibs/widgets/compile-time-package.json"
+        },
+        
+        "dependency-types": {
+            "js": {"class": "raptor/packaging/Dependency_js"},
+            "css": {"class": "raptor/packaging/Dependency_css"},
+            "dust": {"class": "raptor/packaging/Dependency_dust"},
+            "less": {"class": "raptor/packaging/Dependency_less"},
+            "4cc": {"class": "raptor/packaging/Dependency_4cc"},
+            "module": {"class": "raptor/packaging/Dependency_module"},
+            "package": {"class": "raptor/packaging/Dependency_package"},
+            "rhtml": {"class": "raptor/packaging/Dependency_rhtml"},
+            "rtld": {"class": "raptor/packaging/Dependency_rtld"},
+            "resource": {"class": "raptor/packaging/Dependency_resource"},
+            "loader-metadata": {"class": "raptor/packaging/Dependency_loader-metadata"} 
+        }
+    }
+    
+}

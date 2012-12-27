@@ -1,2 +1,2 @@
-raptor.require('widgets').initAll(
+require('raptor/widgets').initAll(
     ['widgets.jquery.JqueryTestWidget','w0']);

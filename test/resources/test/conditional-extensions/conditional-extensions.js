@@ -1,4 +1,4 @@
-raptor.defineModule('test.conditional-extensions', function(raptor, module) {
+define('test.conditional-extensions', function(require) {
 
     return {
         "default": true

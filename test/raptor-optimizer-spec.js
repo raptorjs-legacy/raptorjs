@@ -1,26 +1,29 @@
 require('./_helper.js');
 
+var raptor = require('raptor');
+var define = raptor.createDefine(module);
+
 describe('optimizer module', function() {
     "use strict";
     
-    var logger = raptor.require('logging').logger('raptor-optimizer-spec'),
+    var logger = require('raptor/logging').logger('raptor-optimizer-spec'),
         forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
         compileAndRender = helpers.templating.compileAndRender,
         testOptimizer = function(config) {
         
-            var enabledExtensions = raptor.require('packaging').createExtensionCollection(config.enabledExtensions);
-            var optimizer = raptor.require("optimizer");
+            var enabledExtensions = require('raptor/packaging').createExtensionCollection(config.enabledExtensions);
+            var optimizer = require('raptor/optimizer');
             var pageIncludes = config.pageIncludes;
             
-            var packageManifest = raptor.require('packaging').createPackageManifest();
+            var packageManifest = require('raptor/packaging').createPackageManifest();
             packageManifest.setDependencies(pageIncludes);
 
             logger.debug("--------------------");
             logger.debug('Begin optimizer test for page "' + config.pageName + '":');
             
-            var BundleMappings = raptor.require("optimizer.BundleMappings");
-            var PageBundles = raptor.require("optimizer.PageBundles");
+            var BundleMappings = require('raptor/optimizer/BundleMappings');
+            var PageBundles = require('raptor/optimizer/PageBundles');
             
             //Create the bundle mappings from the bundle set
             var bundleMappings = new BundleMappings(config.enabledExtensions);
@@ -185,10 +188,6 @@ describe('optimizer module', function() {
             }
             
         };
-    
-    before(function() {
-        createRaptor();
-    });
 
     it('should handle de-duplication correctly', function() {
         
@@ -576,12 +575,12 @@ describe('optimizer module', function() {
             },
             
             done: function(pageBundles) {
-                var Config = raptor.require('optimizer.Config');
+                var Config = require('raptor/optimizer/Config');
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter');
-                var BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder');
+                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
                 var writer = new BundlesFileWriter(config, urlBuilder);
                 
@@ -615,12 +614,12 @@ describe('optimizer module', function() {
             pageIncludes: [{ "module": "test.optimizer.filtersA" }],
 
             done: function(pageBundles) {
-                var Config = raptor.require('optimizer.Config');
+                var Config = require('raptor/optimizer/Config');
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter');
-                var BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder');
+                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
                 var writer = new BundlesFileWriter(config, urlBuilder);
                 
@@ -653,9 +652,9 @@ describe('optimizer module', function() {
     });
     
     it('should allow for a simple optimizer project', function() {
-        var configPath = raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml');
-        var packageResource = raptor.require('resources').createFileResource(raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json'));
-        var pageOptimizer = raptor.require('optimizer').createPageOptimizer(configPath);
+        var configPath = require('raptor/files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml');
+        var packageResource = require('raptor/resources').createFileResource(require('raptor/files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json'));
+        var pageOptimizer = require('raptor/optimizer').createPageOptimizer(configPath);
         var optimizedPage = pageOptimizer.optimizePage({
             name: "page1",
             packageResource: packageResource
@@ -667,78 +666,78 @@ describe('optimizer module', function() {
     });
     
     it("should allow for optimizer tags in templates", function() {
-        var template = raptor.require('templating');
+        var template = require('raptor/templating');
         var renderContext = template.createContext();
-        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
-        raptor.require('optimizer').configure(configPath);
+        var configPath = require('raptor/files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        require('raptor/optimizer').configure(configPath);
         var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
         expect(output.indexOf('<script')).toNotEqual(-1);
     });
 
     it("should allow for optimizing a page without a configuration file", function() {
         
-        raptor.require('optimizer').configureDefault();
+        require('raptor/optimizer').configureDefault();
 
         var bundles = {},
-            File = raptor.require('files').File;
+            File = require('raptor/files/File');
 
-        var oldWriteBundleFile = raptor.require('optimizer').pageOptimizer.getWriter().writeBundleFile;
+        var oldWriteBundleFile = require('raptor/optimizer').pageOptimizer.getWriter().writeBundleFile;
         try {
-            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = function(outputPath, code) {
+            require('raptor/optimizer').pageOptimizer.writer.writeBundleFile = function(outputPath, code) {
                 var file = new File(outputPath);
                 var filename = file.getName();
                 bundles[filename] = code;
                 logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
             };
 
-            var optimizedPage = raptor.require('optimizer').optimizePage({
+            var optimizedPage = require('raptor/optimizer').optimizePage({
                 name: "page1",
-                packageFile: raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json')
+                packageFile: require('raptor/files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json')
             });
-            console.error(raptor.require('debug').prettyPrint(bundles));
-            console.error(raptor.require('debug').prettyPrint(optimizedPage));
+            console.error(require('raptor/debug').prettyPrint(bundles));
+            console.error(require('raptor/debug').prettyPrint(optimizedPage));
 
             expect(Object.keys(optimizedPage.getHtmlBySlot()).length).toEqual(2);
-            expect(optimizedPage.getHtmlBySlot()['body']).toEqual("<script type=\"text/javascript\" src=\"/static/page1-body-d14bc332.js\"></script>");
-            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-head-4b176a91.css\">");
+            expect(optimizedPage.getHtmlBySlot()['body']).toEqual("<script type=\"text/javascript\" src=\"/static/page1-d14bc332.js\"></script>");
+            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-4b176a91.css\">");
 
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires[0]).toEqual("test.optimizer.nestedB");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires.length).toEqual(1);
 
-            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css[0]).toEqual("/static/page1-async-1929e414.css");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css.length).toEqual(1);
 
-            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js[0]).toEqual("/static/page1-async-c17b7d9b.js");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js.length).toEqual(1);
 
-            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css[0]).toEqual("/static/page1-async-1929e414.css");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css.length).toEqual(1);
 
-            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js[0]).toEqual("/static/page1-async-c17b7d9b.js");
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js.length).toEqual(1);
             expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].hasOwnProperty('requires')).toEqual(false);
 
             expect(Object.keys(optimizedPage.getLoaderMetadata()).length).toEqual(2);
 
             expect(Object.keys(bundles).length).toEqual(4);
-            expect(bundles["page1-async-body-c17b7d9b.js"]).toEqual("nestedB_js\nnestedA_js");
-            expect(bundles["page1-async-head-1929e414.css"]).toEqual("nestedB_css\nnestedA_css");
-            expect(bundles["page1-body-d14bc332.js"]).toEqual("moduleA\nmixedA_js\nmixedB_js\nasyncA_js");
-            expect(bundles["page1-head-4b176a91.css"]).toEqual("mixedA_css\nmixedB_css\nasyncA_css");
+            expect(bundles["page1-async-c17b7d9b.js"]).toEqual("nestedB_js\nnestedA_js");
+            expect(bundles["page1-async-1929e414.css"]).toEqual("nestedB_css\nnestedA_css");
+            expect(bundles["page1-d14bc332.js"]).toEqual("moduleA\nmixedA_js\nmixedB_js\nasyncA_js");
+            expect(bundles["page1-4b176a91.css"]).toEqual("mixedA_css\nmixedB_css\nasyncA_css");
         }
         finally {
-            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = oldWriteBundleFile;
+            require('raptor/optimizer').pageOptimizer.writer.writeBundleFile = oldWriteBundleFile;
         }
         
         
     });
 
     it("should allow for accessing page configs loaded from XML configuration file", function() {
-        var template = raptor.require('templating');
+        var template = require('raptor/templating');
         var renderContext = template.createContext();
-        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
-        raptor.require('optimizer').configure(configPath);
-        var config = raptor.require('optimizer').getDefaultPageOptimizer().getConfig();
+        var configPath = require('raptor/files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        require('raptor/optimizer').configure(configPath);
+        var config = require('raptor/optimizer').getDefaultPageOptimizer().getConfig();
 
         var pageConfigsByName = {};
 
@@ -750,6 +749,8 @@ describe('optimizer module', function() {
         expect(pageConfigsByName['page2']).toNotEqual(null);
         expect(pageConfigsByName['page3']).toNotEqual(null);
         expect(Object.keys(pageConfigsByName).length).toEqual(3);
+
+        console.error('pageConfigsByName: ', pageConfigsByName);
 
         var page2Manifest = pageConfigsByName['page2'].getPackageManifest();
         var page2Dependencies = page2Manifest.getDependencies();

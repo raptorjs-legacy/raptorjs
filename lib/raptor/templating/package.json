@@ -1,0 +1,37 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/templating",
+    "version": "1.0",
+    "description": "RaptorJS Templating Module",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/strings"},
+            {"module": "raptor/xml/utils"},
+            {"path": "Context.js"},
+            {"path": "templating.js"}
+        ],
+        
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "templating_server.js"}
+                ]
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "templating_rhino.js"}
+                ]
+            }
+        ]
+    }
+}

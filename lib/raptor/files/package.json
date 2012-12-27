@@ -1,0 +1,38 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/files",
+    "version": "1.0",
+    "description": "Utility functions for working with files on the server",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "files.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "dependencies": [
+                    {"path": "File_node.js"},
+                    {"path": "files_node.js"}
+                ]
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "File_rhino.js"},
+                    {"path": "files_rhino.js"}
+                ]
+            }
+        ]
+    }
+}

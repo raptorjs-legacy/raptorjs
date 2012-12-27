@@ -1,5 +1,5 @@
-raptor.defineClass('jscoverage-reporter.CoverageReporter', function() {
-    var DefaultHtmlPublisher = raptor.require('jscoverage-reporter.DefaultHtmlPublisher'); 
+define.Class('jscoverage-reporter.CoverageReporter', function(require) {
+    var DefaultHtmlPublisher = require('jscoverage-reporter.DefaultHtmlPublisher'); 
     
     return {
         init: function(jscoverage, options) {

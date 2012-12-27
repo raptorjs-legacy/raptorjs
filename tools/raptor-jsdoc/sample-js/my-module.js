@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-raptor.define("my-module", function() {
+define("my-module", function(require) {
     return {
         /**
          * Hello Description

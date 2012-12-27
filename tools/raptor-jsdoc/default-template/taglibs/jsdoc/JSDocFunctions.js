@@ -1,8 +1,9 @@
-raptor.define(
+define(
     "taglibs.jsdoc.JSDocFunctions",
-    function(raptor) {
+    ['raptor'],
+    function(raptor, require) {
         
-        var jsdocUtil = raptor.require('jsdoc-util');
+        var jsdocUtil = require('jsdoc-util');
         
         var funcs = {
             symbolUrl: function(symbolName) {

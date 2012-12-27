@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/objects",
+    "version": "1.0",
+    "description": "Utility functions for working with JavaScript objects",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "objects.js"}
+        ]
+    }
+}

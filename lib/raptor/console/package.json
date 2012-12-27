@@ -1,0 +1,27 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/console",
+    "version": "1.0",
+    "description": "JavaScript code to normalize the global console object",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    "raptor": {
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"path": "console_browser.js"}
+                ]
+            },
+            "node": {
+                "dependencies": [
+                    {"path": "console_node.js"}
+                ]
+            }
+        }
+    }
+}

@@ -16,11 +16,18 @@
 
 package org.raptorjs.rhino;
 
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
 import org.raptorjs.resources.ClasspathSearchPathEntry;
 import org.raptorjs.resources.ResourceManager;
+import org.raptorjs.rhino.amd.InjectDefineScript;
+import org.raptorjs.rhino.commonjs.module.Require;
 
 
 
@@ -33,6 +40,9 @@ public abstract class RaptorJSEnv {
     
     private RhinoHelpers rhinoHelpers = null;
     private ResourceManager resourceManager = null;
+    private InjectDefineScript injectDefineScript = null;
+    
+    private ScriptableObject raptor = null;
     
     public RaptorJSEnv(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -42,33 +52,59 @@ public abstract class RaptorJSEnv {
         this.afterInit();
     }
 
-    private void findCoreModulesDir() {
-        this.coreModulesDir = "/raptor_modules";
-        URL bootstrapUrl = RaptorJSEnv.class.getResource(coreModulesDir + "/bootstrap/bootstrap_server.js");
-        if (bootstrapUrl == null) {
-            this.coreModulesDir = "/META-INF/resources/raptor_modules";
-        }
-    }
-    
-    
     public void init() { 
-        this.findCoreModulesDir();
+        Context cx = Context.enter();
+        injectDefineScript = new InjectDefineScript(this);
         
-        if (this.resourceManager.findResource("/bootstrap/bootstrap_server.js") == null) {
-            this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, this.coreModulesDir));    
-        }
+        ScriptableObject globalScope = this.getJavaScriptEngine().getGlobalScope();
+        globalScope.put("global", globalScope, globalScope);
+        Require require = this.createRequire(cx, globalScope);
+        require.install(globalScope);
+        
+        this.raptor = (ScriptableObject) this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor");
+        injectDefineScript.setRaptor(raptor);
+        this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, "/META-INF/resources"));
         
         this.rhinoHelpers = this.createRhinoHelpers();
-   
         jsEnv.setGlobal("__rhinoHelpers", this.rhinoHelpers);
-        this.getRhinoHelpers().getBootstrap().require("/bootstrap/bootstrap_server.js");
-        this.getRhinoHelpers().getBootstrap().require("/bootstrap/bootstrap_rhino.js");
+        
+        
+        
+        this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor-main_rhino");
+        
+        
+        Context.exit();
+    }
+    
+    private Require createRequire(Context cx, Scriptable scope)
+    {
+    	URI dirUri = this.getDirectory();
+    	Iterable<URI> uris = Collections.singleton(dirUri);
+    	UrlModuleSourceProvider urlModuleSourceProvider = new UrlModuleSourceProvider(uris, null);
+
+    	Require require = new Require(
+        		cx, 
+        		scope, 
+        		urlModuleSourceProvider, 
+        		this.injectDefineScript, 
+        		null, 
+        		false /* not sandboxed */);
+    	
+    	return require;
+    }
+    
+    private URI getDirectory() {
+        final String jsFile = getClass().getResource("/META-INF/resources/raptor/raptor.js").toExternalForm();
+        try {
+			return new URI(jsFile.substring(0, jsFile.lastIndexOf('/') + 1));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Unable to get directory for raptor.js as a URI. Exception: " + e, e);
+		}
     }
     
     protected abstract void createRaptor();
     
     protected void afterInit() {
-        this.getRhinoHelpers().getBootstrap().require("/resources/rhino-resource-search-path-adapter.js");
     }
         
     protected RhinoHelpers createRhinoHelpers() {
@@ -96,7 +132,7 @@ public abstract class RaptorJSEnv {
     }
     
     public ScriptableObject require(String name) {
-        return (ScriptableObject)this.getJavaScriptEngine().invokeFunction("rhinoRaptorRequire", name);
+    	return (ScriptableObject)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
     }
     
     public void load(String name) {

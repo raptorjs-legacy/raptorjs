@@ -1,6 +1,6 @@
-raptor.defineClass(
+define.Class(
     'taglibs.test.SimpleHelloTag',
-    function(raptor) {
+    function(require) {
         var SimpleHelloTag = function() {
             
         };

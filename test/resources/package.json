@@ -3,7 +3,7 @@
     "name": "test",
     "version": "1.0",
     "description": "Top-level manifest for test resources",
-    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "homepage": "http://raptorjs.org",
     "authors": [
         {
             "name": "Patrick Steele-Idem",

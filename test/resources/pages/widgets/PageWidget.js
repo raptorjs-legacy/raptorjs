@@ -1,6 +1,6 @@
-raptor.defineClass(
+define.Class(
     'pages.widgets.PageWidget',
-    function(raptor) {
+    function(require) {
         var PageWidget = function(config) {
             PageWidget.instance = this;
         };
