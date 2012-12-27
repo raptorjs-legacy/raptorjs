@@ -41,12 +41,12 @@ raptor.define(
                 }
                 
                 $(moreSection).slideDown();
-                $(".expand-collapse-bar", propertyEl).addClass("expanded")
+                $(".expand-collapse-bar", propertyEl).addClass("expanded");
             },
 
             toggleMore: function(linkEl, moreElId) {
-                $("#" + moreElId).slideToggle();
-                $(linkEl).toggleClass("expanded")
+                $(document.getElementById(moreElId)).slideToggle();
+                $(linkEl).toggleClass("expanded");
             },
 
             expandAll: function() {

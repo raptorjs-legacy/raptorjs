@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * The {@link templating.Context} class represents a "rendering context". 
+ * A context object is required when rendering a template and the context
+ * object contains a reference to an underlying writer object that is
+ * used to capture the rendered output.
+ */
 raptor.defineClass(
     'templating.Context',
     function(raptor) {
@@ -22,7 +28,6 @@ raptor.defineClass(
         var forEachEntry = raptor.forEachEntry,
             escapeXmlAttr = raptor.require("xml.utils").escapeXmlAttr,
             strings = raptor.require('strings'),
-            listeners = raptor.require('listeners'),
             StringBuilder = strings.StringBuilder,
             nextUniqueId = 0,
             helpers,
@@ -41,27 +46,29 @@ raptor.defineClass(
         };
 
         Context.prototype = {
+            /**
+             * Returns the attributes object associated with the context.
+             * 
+             * The attributes object is just a regular JavaScript Object that can be used to store arbitrary data.
+             * 
+             * @returns {Object} The attribute object.
+             */
             getAttributes: function() {
                 return this.attributes || (this.attributes = {});
             },
-            
-            events: function() {
-                if (!this.events) {
-                    this.events = listeners.createObservable();
-                }
-                return this.events;
-            },
+
             /**
-             * 
-             * @returns {Number}
+             * Returns a auto-incrementing unique ID that remains unique across multiple context objects. 
+             * @returns {Number} The unique number
              */
             uniqueId: function() {
                 return nextUniqueId++;
             },
             
             /**
-             * 
-             * @param str
+             * Outputs a string to the underlying writer. If the object is null then nothing is written. If the object is not a string then it is converted to a string using the <code>toString</code> method.
+             *  
+             * @param str {String|Object} The String (or Object) to write to the underlying writer.
              */
             write: function(str) {
                 if (str !== null && str !== undefined) {
@@ -73,15 +80,25 @@ raptor.defineClass(
                 return this;
             },
             
+            /**
+             * Returns the string output associated with the underling writer by calling <code>this.writer.toString()</code>
+             * 
+             * @returns {String} The String output
+             */
             getOutput: function() {
                 return this.writer.toString();
             },
             
             /**
              * 
-             * @param func
-             * @param thisObj
-             * @returns
+             * Temporarily swaps out the underlying writer with a temporary buffer and invokes the provided function to capture the output and return it. 
+             * 
+             * After the function has completed the old writer is swapped back into place. The old writer will remain untouched. 
+             * Internally, this method uses the {@link templating.Context.prototype#swapWriter} method.
+             * 
+             * @param func {Function} The function to invoke while the old writer is swapped out
+             * @param thisObj {Object} The "this" object ot use for the provided function
+             * @returns {String} The resulting string output.
              */
             captureString: function(func, thisObj) {
                 var sb = new StringBuilder();
@@ -90,10 +107,15 @@ raptor.defineClass(
             },
             
             /**
+             * Temporarily swaps out the underlying writer with the provided writer and invokes the provided function. 
              * 
-             * @param newWriter
-             * @param func
-             * @param thisObj
+             * After the function has completed the old writer is swapped back into place. The old writer will remain untouched. 
+             * 
+             * @param newWriter {Object} The new writer object to use. This object must have a "write" method.
+             * @param func {Function} The function to invoke while the old writer is swapped out
+             * @param thisObj {Object} The "this" object ot use for the provided function
+             * 
+             * @returns {void}
              */
             swapWriter: function(newWriter, func, thisObj) {
                 var oldWriter = this.writer;
@@ -149,7 +171,7 @@ raptor.defineClass(
                 return this;
             },
             
-            attr: function(name, value) {
+            attr: function(name, value, escapeXml) {
                 if (value === null) {
                     value = '';
                 }
@@ -157,7 +179,7 @@ raptor.defineClass(
                     return this;
                 }
                 else {
-                    value = '="' + escapeXmlAttr(value) + '"';
+                    value = '="' + (escapeXml === false ? value : escapeXmlAttr(value)) + '"';
                 }
                 
                 this.write(' ' + name + value);
@@ -170,7 +192,7 @@ raptor.defineClass(
              * @param attrs
              */
             attrs: function(attrs) {
-                if (arguments.length === 2) {
+                if (arguments.length !== 1) {
                     this.attr.apply(this, arguments);
                 }
                 else if (attrs) {

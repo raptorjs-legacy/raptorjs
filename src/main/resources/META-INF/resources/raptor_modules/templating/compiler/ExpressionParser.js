@@ -27,9 +27,11 @@ raptor.defineClass(
             endingTokens = {
 //                "{": "}",
                 "${": "}",
+                "$!{": "}",
                 "{%": "%}",
                 "{?": "}",
-                "$": null
+                "$": null,
+                "$!": null
             },
             createStartRegExpStr = function(starts) {
                 var parts = [];
@@ -42,11 +44,10 @@ raptor.defineClass(
 
                 return parts.join("|");
             },
-            startRegExpStr = createStartRegExpStr(["{%", "${", "$", "{?"]),
+            startRegExpStr = createStartRegExpStr(["{%", "${", "$!{", "$!", "$", "{?"]),
             createStartRegExp = function() {
                 return new RegExp(startRegExpStr, "g");
             },
-            variableRegExp = /^([_a-zA-Z]\w*)/g,
             getLine = function(str, pos) {
                 var lines = str.split("\n");
                 var index = 0;
@@ -133,7 +134,7 @@ raptor.defineClass(
                     else if (matches[0] === '\\;') { 
                         /*
                          * 1) Convert \; --> ;
-                         * 2) Start searching again after the semocolon 
+                         * 2) Start searching again after the semicolon 
                          */
                         expression = expression.substring(0, matches.index) + ';' + expression.substring(tokensRegExp.lastIndex);
                         tokensRegExp.lastIndex = matches.index + 1;
@@ -168,7 +169,10 @@ raptor.defineClass(
                     return expressionParts.join('+');
                 };
                 
-                if (parts.length === 2) {
+                if (parts.length === 1) {
+                    return "(" + parts[0] + " ? " + 'null' + " : '')";    
+                }
+                else if (parts.length === 2) {
                     return "(" + parts[0] + " ? " + getExpression(parts[1]) + " : '')";    
                 }
                 else if (parts.length === 3) {
@@ -178,6 +182,40 @@ raptor.defineClass(
                     throw new Error('Invalid simple conditional of "' + expression + '". Simple conditionals should be in the form {?<expression>;<true-template>[;<false-template>]}');
                 }
                 
+            },
+            processNestedStrings = function(expression, foundStrings) {
+                
+                var hasExpression,
+                    parts,
+                    handleText = function(text) {
+                        parts.push(foundString.quote + text + foundString.quote);
+                    },
+                    handleExpression = function(expression) {
+                        hasExpression = true;
+                        parts.push(expression);
+                    };
+                
+                for (var i=foundStrings.length-1, foundString; i>=0; i--) {
+                    foundString = foundStrings[i];
+                    
+                    if (!foundString.value) {
+                        continue;
+                    }
+                    
+                    hasExpression = false,
+                    parts = [];
+
+                    ExpressionParser.parse(foundString.value, {
+                        text: handleText,
+                        expression: handleExpression
+                    });
+
+                    if (hasExpression) {
+                        expression = expression.substring(0, foundString.start) + "(" + parts.join('+') + ")" + expression.substring(foundString.end);
+                    }
+                }
+                
+                return expression;
             };
         
             
@@ -190,32 +228,25 @@ raptor.defineClass(
                     this.callback = callback;
                     this.callbackThisObj = callbackThisObj;
                     
-                    this.text = '';
+                    this.prevText = null;
+                    this.prevEscapeXml = null;
                 },
                 
-                _invokeCallback: function(name, arg) {
+                _invokeCallback: function(name, value, escapeXml) {
                     if (!this.callback[name]) {
-                        throw raptor.createError(new Error(name + " not allowed: " + arg));
+                        throw raptor.createError(new Error(name + " not allowed: " + value));
                     }
                     
-                    this.callback[name].call(this.callbackThisObj, arg);
+                    this.callback[name].call(this.callbackThisObj, value, escapeXml);
                 },
                 
                 _endText: function() {
-                    if (this.text) {
-                        this._invokeCallback("text", this.text);
-                        this.text = '';
-                    }
-                },
-                
-                add: function(type, value) {
-                    if (type === 'text') {
-                        this.addText(value);
-                    }
-                    else {
-                        this._endText();
-                        this._invokeCallback(type, value);    
-                    }
+                    if (this.prevText !== null) {
+                        this._invokeCallback("text", this.prevText, this.prevEscapeXml);
+                        this.prevText = null;
+                        this.prevEscapeXml = null;
+                    } 
+                    
                 },
                 
                 /**
@@ -223,24 +254,44 @@ raptor.defineClass(
                  * @param newText
                  * @returns
                  */
-                addText: function(newText) {
-                    this.text += newText;
+                addXmlText: function(xmlText) {
+                    this.addText(xmlText, false);
+                },
+
+                /**
+                 * 
+                 * @param newText
+                 * @returns
+                 */
+                addText: function(text, escapeXml) {
+                    
+                    if (this.prevText !== null && this.prevEscapeXml === escapeXml) {
+                        this.prevText += text;
+                    }
+                    else {
+                        this._endText();
+                        this.prevText = text;
+                        this.prevEscapeXml = escapeXml;
+                    }                    
                 },
                 
+                addXmlExpression: function(expression, escapeXml) {
+                    this.addExpression(expression, false);
+                },
+
                 /**
                  * 
                  * @param expression
                  * @returns
                  */
-                addExpression: function(expression) {
+                addExpression: function(expression, escapeXml) {
                     this._endText();
-                    
                     
                     if (!(expression instanceof Expression)) {
                         expression = new Expression(expression);
                     }
 
-                    this._invokeCallback("expression", expression);
+                    this._invokeCallback("expression", expression, escapeXml !== false);
                 },
                 
                 /**
@@ -250,6 +301,7 @@ raptor.defineClass(
                  */
                 addScriptlet: function(scriptlet) {
                     this._endText();
+                    
                     this._invokeCallback("scriptlet", scriptlet);
                 }
             };
@@ -345,6 +397,7 @@ raptor.defineClass(
                 
                 var endToken = endingTokens[startToken]; //Look up the end token
                 if (!endToken) { //Check if the start token has an end token... not all start tokens do. For example: $myVar
+                    var variableRegExp = /^([_a-zA-Z]\w*(?:\.[_a-zA-Z]\w*)*)/g;
                     variableRegExp.lastIndex = 0;
                     var variableMatches = variableRegExp.exec(str.substring(expressionStart)); //Find the variable name that follows the starting "$" token
                     
@@ -356,7 +409,13 @@ raptor.defineClass(
                     }
                     
                     var varName = variableMatches[1];
-                    helper.addExpression(varName); //Add the variable as an expression
+                    if (startToken === '$!') {
+                        helper.addXmlExpression(varName); //Add the variable as an expression
+                    }
+                    else {
+                        helper.addExpression(varName); //Add the variable as an expression    
+                    }
+                    
                     startRegExp.lastIndex = textStart = expressionStart = expressionStart + varName.length;
                     
                     continue outer;
@@ -371,8 +430,8 @@ raptor.defineClass(
                 endRegExp.lastIndex = expressionStart; //Start searching from where the expression begins
                 
                 var depth = 0;
-                
                 var foundStrings = [];
+                var handler;
                 
                 while((endMatches = endRegExp.exec(str))) {
                     if (endMatches[0] === '{') {
@@ -411,7 +470,7 @@ raptor.defineClass(
                     expression = str.substring(expressionStart, endMatches.index);
                     
                     
-                    var handler;
+                    handler = null;
                     
                     if (startToken === "${") {
                         var firstColon = expression.indexOf(":"),
@@ -425,9 +484,7 @@ raptor.defineClass(
                             }
                         }
                     }
-                    
-                    
-                    
+
                     if (!handler) {
                         if (isScriptlet) {
                             helper.addScriptlet(expression);
@@ -437,34 +494,17 @@ raptor.defineClass(
                         }
                         else {
                             
-                            if (foundStrings.length) {
-                                for (var i=foundStrings.length-1; i>=0; i--) {
-                                    var foundString = foundStrings[i];
-                                    
-                                    if (!foundString.value) {
-                                        continue;
-                                    }
-                                    
-                                    var hasExpression = false,
-                                        parts = [];
-
-                                    ExpressionParser.parse(foundString.value, {
-                                        text: function(text) {
-                                            parts.push(foundString.quote + text + foundString.quote);
-                                        },
-                                        
-                                        expression: function(expression) {
-                                            hasExpression = true;
-                                            parts.push(expression);
-                                        }
-                                    });
-
-                                    if (hasExpression) {
-                                        expression = expression.substring(0, foundString.start) + "(" + parts.join('+') + ")" + expression.substring(foundString.end);
-                                    }
-                                }
+                            if (foundStrings.length > 0) {
+                                expression = processNestedStrings(expression, foundStrings);
                             }
-                            helper.addExpression(expression);
+
+                            if (startToken === '$!{') {
+                                helper.addXmlExpression(expression);
+                            }
+                            else {
+                                helper.addExpression(expression);   
+                            }
+                            
                         }
                         
                     }
@@ -484,24 +524,21 @@ raptor.defineClass(
                 helper.addText(str.substring(textStart, str.length));
             }
             
-            //console.log("Loop ended");
             helper._endText();
         };
         
         ExpressionParser.custom = {
             "xml": function(expression, helper) {
-                expression = new Expression(expression);
-                expression.escapeXml = false;
-                helper.addExpression(expression);
+                helper.addXmlExpression(new Expression(expression));
             },
             "entity": function(expression, helper) {
-                helper.addText("&" + expression + ";");
+                helper.addXmlText("&" + expression + ";");
             },
             "startTag": function(expression, helper) {
-                helper.addText("<" + expression + ">");
+                helper.addXmlText("<" + expression + ">");
             },
             "endTag": function(expression, helper) {
-                helper.addText("</" + expression + ">");
+                helper.addXmlText("</" + expression + ">");
             },
             "newline": function(expression, helper) {
                 helper.addText("\n");

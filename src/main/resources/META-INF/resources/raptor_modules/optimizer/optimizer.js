@@ -1,105 +1,177 @@
+/**
+ * The optimizer module is used to generated optimized
+ * web pages--including optimized resource bundles and the HTML markup
+ * to dependency the optimized resource bundles in an HTML page.
+ * 
+ * Simple usage:
+ * <js>
+ * var optimizer = raptor.require('optimizer');
+ * optimizer.configure('path/to/optimizer-config.xml', params);
+ * var optimizedPage = optimizer.optimizePage({
+ *         name: "test-page",
+ *         packageManifest: 'path/to/test-page-package.json'
+ *     });
+ * 
+ * var headHtml = optimizedPage.getSlotHtml('head');
+ * var bodyHtml = optimizedPage.getSlotHtml('body');
+ * var loaderMeta = optimizedPage.getLoaderMetadata();
+ * ...
+ * </js>
+ * 
+ * For more information, please see the <a href="http://raptorjs.org/optimizer/">Optimizer Documentation</a>.
+ */
 raptor.define(
     "optimizer", 
     function(raptor) {
         "use strict";
         
         var forEach = raptor.forEach,
-            File = raptor.require('files').File,
-            packager = raptor.require('packager'),
-            Bundle = raptor.require("optimizer.Bundle"),
-            BundleSet = raptor.require("optimizer.BundleSet"),
-            PageDependencies = raptor.require("optimizer.PageDependencies"),
-            fileWatcher = raptor.require('file-watcher');
+            files = raptor.require('files'),
+            File = files.File,
+            packaging = raptor.require('packaging'),
+            Config = raptor.require('optimizer.Config'),
+            PageOptimizer = raptor.require('optimizer.PageOptimizer');
+        
+        
+        var defaultConfig = new Config();
+        defaultConfig.setOutputDir(new File(raptor.require('process').cwd(), 'static'));
+        defaultConfig.enableExtension("browser");
+
+        var optimizer = {
+            /**
+             * @type optimizer.Config
+             */
+            defaultConfig: defaultConfig,
             
-        return {
+            /**
+             * @type optimizer.PageOptimizer
+             */
+            pageOptimizer: null,
             
-            
-            createOptimizer: function(config, params) {
-                var configXmlPath = null;
-                
-                if (typeof config === 'string' || config instanceof File) {
-                    configXmlPath = config;
-                    config = this.loadConfigXml(config, params);
-                }
-                
-                var OptimizerEngine = raptor.require('optimizer.OptimizerEngine');
-                var optimizerEngine = new OptimizerEngine(config);
-                var logger = this.logger();
-                
-                if (config.isWatchConfigEnabled() && configXmlPath) {
-                    fileWatcher.watch(configXmlPath, function(eventArgs) {
-                        logger.info("Optimizer configuration file modified: " + configXmlPath);
-                        try
-                        {
-                            config = this.createConfig(configXmlPath, params);
-                            if (!config.isWatchConfigEnabled()) {
-                                eventArgs.closeWatcher();
-                            }
-                            optimizerEngine.reloadConfig(config);    
-                        }
-                        catch(e) {
-                            logger.error('Unable to reload optimizier configuration file at path "' + configXmlPath + '". Exception: ' + e, e);
-                        }
-                        
-                    }, this);
-                }
-                
-                return optimizerEngine;
+            getDefaultConfig: function() {
+                return this.defaultConfig;
+            },
+
+            /**
+             * Returns the configuration for hte default page optimizer
+             */
+            getConfig: function() {
+                return this.pageOptimizer.getConfig();
             },
             
+            getDefaultPageOptimizer: function() {
+                return this.pageOptimizer;
+            },
+
+            /**
+             * Optimizes a page based on the page options provided. 
+             * 
+             * Supported options:
+             * <ul>
+             *     <li><b>name</b> {String}: The name of the page. This property is used to determine the name for page bundles and it is also used for any page-specific configuration options. [REQUIRED]
+             *     <li><b>basePath</b> {String}: A directory name used to generate relative URLs to resource bundles. The base path will typically be the output directory for the page. This option is ignored if the optimizer is configured to use a URL prefix.
+             *     <li><b>enabledExtensions</b> {Array|Object|{@link packaging.PackageExtension}}: A collection of extensions that should be enabled when generating the optimized page bundles
+             *     <li><b>packageManifest</b> {{@link packaging.PackageManifest}|{@link resources.Resource}|{@link files.File}|String}: A package manifest for the page that describes the page dependencies
+             * </ul>
+             * 
+             * @param  {options} options Information about the page being optimized (see above for supported options)
+             * @return {optimizer.OptimizedPage} The object that represents the optimized page.
+             */
+            optimizePage: function(options) {
+                return this.pageOptimizer.optimizePage(options);
+            },
+
+            /**
+             * Resets the optimizer back to the default configuration.
+             */
+            configureDefault: function() {
+                this.pageOptimizer = new PageOptimizer(defaultConfig);
+            },
+            
+            /**
+             * Configures the default page optimizer instance using the provided
+             * configuration and configuration params.
+             * 
+             * @param  {optimizer.Config|String|files.File|resources.Resource} config The configuration to use
+             * @param  {Object} params An object with name/value pairs that are used for variable substitutions in the XML configuration file. If a {@link optimimizer.Config} object is provided then this parameter is ignored.
+             * @return {void}
+             */
+            configure: function(config, params) {
+                var pageOptimizer = this.createPageOptimizer(config, params);
+                this.pageOptimizer = pageOptimizer;
+            },
+            
+            /**
+             * Creates a new instance of a page optimizer using the provided configuration and params.
+             * 
+             * @param config {optimizer.Config|String|files.File|resources.Resource} config The configuration to use
+             * @param params {Object} params An object with name/value pairs that are used for variable substitutions in the XML configuration file. If a {@link optimimizer.Config} object is provided then this parameter is ignored.
+             * @returns {optimizer.PageOptimizer} A new instance of a configured page optimizer
+             */
+            createPageOptimizer: function(config, params) {
+                if (!config) {
+                    config = defaultConfig;
+                }
+                else {
+                    if (typeof config === 'string' || config instanceof File || config instanceof raptor.require('resources.Resource')) {
+                        config = this.loadConfigXml(config, params);
+                    }    
+                }
+                
+                
+                var PageOptimizer = raptor.require('optimizer.PageOptimizer');
+                var pageOptimizer = new PageOptimizer(config);
+                return pageOptimizer;
+            },
+            
+            /**
+             * 
+             * @param configFile {files.File|resources.Resource|String} The configuration file to load. Either a File object, a Resource object, or a file path.
+             * @param params {Object} Variables that can be used inside the XML file in the following format:  s${&ltvariable-name}
+             * @returns {optimizer.Config} The configuration object
+             */
             loadConfigXml: function(configFile, params) {
+                var Config = raptor.require('optimizer.Config');
+                var Resource = raptor.require('resources.Resource');
+                
+                var config = new Config(params);
+                var configXml;
+                var configPath = null;
+                
                 if (typeof configFile === 'string') {
                     configFile = new File(configFile);
                 }
                 
-                var Config = raptor.require('optimizer.Config');
-                var configXml = configFile.readAsString("UTF-8");
-                var config = new Config(params);
-                config.setConfigResource(raptor.require('resources').createFileResource(configFile));
-                config.parseXml(configXml, configFile.getAbsolutePath());
-                config.findPages();
+                if (configFile instanceof File) {
+                    configXml = configFile.readAsString("UTF-8");
+                    config.setConfigResource(raptor.require('resources').createFileResource(configFile));
+                    configPath = configFile.getAbsolutePath();
+                }
+                else if (configFile instanceof Resource) {
+                    configXml = configFile.readAsString("UTF-8");
+                    config.setConfigResource(configFile);
+                    configPath = configFile.getSystemPath();
+                }
+
+                config.parseXml(configXml, configPath);
                 return config;
             },
-            
-            createPage: function(pageConfig) {
-                var Page = raptor.require("optimizer.Page");
-                return new Page(pageConfig);
-            },
-            
-            createPageDependencies: function(config) {
-                return new PageDependencies(config);
-            },
-            
-            createBundle: function(name) {
-                return new Bundle(name);
-            },
-            
-            createBundleSet: function(bundles, options) {
-                return new BundleSet(bundles, options);
-            },
-            
-            createPageDependenciesFileWriter: function(config) {
-                var PageDependenciesFileWriter = raptor.require("optimizer.PageDependenciesFileWriter");
-                return new PageDependenciesFileWriter(config);
-            },
-            
-            createSimpleUrlBuilder: function(config) {
-                var SimpleUrlBuilder = raptor.require("optimizer.SimpleUrlBuilder");
-                return new SimpleUrlBuilder(config);
-            },
-            
-            
-            
-            forEachInclude: function(options) {
+
+            /**
+             * Helper method to walk all dependencies recursively
+             * 
+             * @param options
+             */
+            forEachDependency: function(options) {
     
                
                 var enabledExtensions = options.enabledExtensions, 
-                    includeCallback = options.handleInclude,
+                    dependencyCallback = options.handleDependency,
                     packageCallback = options.handlePackage,
                     thisObj = options.thisObj;
     
     
-                var foundIncludes = {};
+                var foundDependencies = {};
                 
                 var handleManifest = function(manifest, parentPackage, recursive, depth, async) {
                     var foundKey = manifest.getKey() + "|" + async;
@@ -112,16 +184,16 @@ raptor.define(
                         };
                     
                     var recurseIntoPackage = packageCallback.call(thisObj, manifest, context);
-                    if (recurseIntoPackage === false || foundIncludes[foundKey]) { //Avoid infinite loop by keeping track of which packages we have recursed into
+                    if (recurseIntoPackage === false || foundDependencies[foundKey]) { //Avoid infinite loop by keeping track of which packages we have recursed into
                         return;
                     }    
                     
                     if (recursive === true || depth <= 0) {
 
-                        manifest.forEachInclude(
-                            function(type, packageInclude) {
+                        manifest.forEachDependency(
+                            function(type, packageDependency) {
                                 
-                                handleInclude.call(this, packageInclude, manifest, recursive, depth+1, async || packageInclude.isAsync());
+                                handleDependency.call(this, packageDependency, manifest, recursive, depth+1, async || packageDependency.isAsync());
                             },
                             this,
                             {
@@ -131,13 +203,13 @@ raptor.define(
 
                 };
                 
-                var handleInclude = function(include, parentPackage, recursive, depth, async) {
-                    var foundKey = include.getKey() + "|" + async;
-                    if (foundIncludes[foundKey]) {
-                        return; //Include already handled
+                var handleDependency = function(dependency, parentPackage, recursive, depth, async) {
+                    var foundKey = dependency.getKey() + "|" + async;
+                    if (foundDependencies[foundKey]) {
+                        return; //Dependency already handled
                     }
                     
-                    foundIncludes[foundKey] = true;
+                    foundDependencies[foundKey] = true;
                     
                     var context = {
                         recursive: recursive === true, 
@@ -146,30 +218,30 @@ raptor.define(
                         parentPackage: parentPackage
                     };
                     
-                    if (include.isPackageInclude()) {
-                        var dependencyManifest = include.getManifest();
+                    if (dependency.isPackageDependency()) {
+                        var dependencyManifest = dependency.getManifest();
                         
                         if (!dependencyManifest) {
-                            throw raptor.createError(new Error("Dependency manifest not found for package include: " + include.toString()));
+                            throw raptor.createError(new Error("Dependency manifest not found for package dependency: " + dependency.toString()));
                         }
                         
                         handleManifest.call(this, dependencyManifest, parentPackage, recursive, depth, async);
                     }
                     else {
-                        includeCallback.call(thisObj, include, context);
+                        dependencyCallback.call(thisObj, dependency, context);
                     }
                 };
                 
-                forEach(options.includes, function(include) {
-                    include = packager.createInclude(include);
+                forEach(options.dependencies, function(dependency) {
+                    dependency = packaging.createDependency(dependency);
                     
-                    handleInclude.call(
+                    handleDependency.call(
                         this, 
-                        include, 
+                        dependency, 
                         null,
-                        options.recursive === true || include.recursive === true, 
+                        options.recursive === true || dependency.recursive === true, 
                         0,
-                        include.isAsync());
+                        dependency.isAsync());
                     
                 }, this);
 
@@ -180,51 +252,66 @@ raptor.define(
                 }
             },
             
-            setOptimizerForContext: function(context, optimizer) {
-                context.getAttributes().optimizer = optimizer;
-            },
-            
-            getOptimizerFromContext: function(context) {
-                return context.getAttributes().optimizer;
-            },
-            
-            getPageFromContext: function(context) {
-                return context.getAttributes().optimizerPage;
-            },
-            
-            setPageForContext: function(context, optimizerPage) {
-                context.getAttributes().optimizerPage = optimizerPage;
-            },
-            
-            _getExtensionsForContext: function(context) {
-                var extensions = context.getAttributes().optimizerExtensions;
-                if (!extensions) {
-                    extensions = packager.createExtensionCollection();
-                    var page = this.getPageFromContext(context);
-                    if (page) {
-                        extensions.addAll(page.getEnabledExtensions());    
-                    }
-                    var optimizer = this.getOptimizerFromContext(context);
-                    if (optimizer) {
-                        extensions.addAll(optimizer.getEnabledExtensions());
-                    }
-                }
-                
-                return extensions;
-            },
-            
+            /**
+             * This method will update a context object to enable the provided extension so that the set of enabled
+             * extensions for the context can later be retrieved using  {@link optimizer#getEnabledExtensionsForContext}
+             * 
+             * This method expects an object that supports a <code>getAttributes()</code> method (typically a {@link templating.Context} object).
+             * 
+             * @param context {Object} The context object to update
+             * @param extension {String} The extension to enable
+             */
             enableExtensionForContext: function(context, extension) {
-                var extensions = this._getExtensionsForContext(context);
+                if (context.getAttributes) {
+                    context = context.getAttributes();
+                }
+                var extensions = context.optimizerExtensions;
+                if (!extensions) {
+                    extensions = packaging.createExtensionCollection();
+                }
                 extensions.add(extension);
             },
             
+            /**
+             * This method will update a context object to disable the provided extension so that the set of enabled
+             * extensions for the context can later be retrieved using  {@link optimizer#getEnabledExtensionsForContext}
+             * 
+             * This method expects an object that supports a <code>getAttributes()</code> method (typically a {@link templating.Context} object).
+             * 
+             * @param context {Object} The context object to update
+             * @param extension {String} The extension to disable
+             */
             disableExtensionForContext: function(context, extension) {
-                var extensions = this._getExtensionsForContext(context);
-                extensions.remove(extension);
+                if (context.getAttributes) {
+                    context = context.getAttributes();
+                }
+                
+                var extensions = context.optimizerExtensions;
+                if (extensions) {
+                    extensions.remove(extension);    
+                }
+                
             },
             
-            getEnabledExtensionsFromContext: function(context) {
-                return context.getAttributes().optimizerExtensions;
+            /**
+             * Returns the set of enabled extensions associated with the provided context.
+             * 
+             * @param context {Object}
+             * @returns {packaging.ExtensionCollection} The set of enabled extensions.
+             * 
+             * @see {@link optimizer#enableExtensionForContext}
+             * @see {@link optimizer#disableExtensionForContext}
+             */
+            getEnabledExtensionsForContext: function(context) {
+                if (context.getAttributes) {
+                    context = context.getAttributes();
+                }
+                
+                return context.optimizerExtensions;
             }
-        }; //end return
+        }; //end optimizer
+
+        optimizer.configureDefault();
+
+        return optimizer;
     });

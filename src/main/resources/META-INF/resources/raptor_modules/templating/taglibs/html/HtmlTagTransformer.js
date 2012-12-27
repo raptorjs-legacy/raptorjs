@@ -19,6 +19,8 @@ raptor.defineClass(
     function() {
         "use strict";
         
+        var DocTypeNode = raptor.require('templating.taglibs.html.DocTypeNode');
+        
         return {
             
             process: function(node, compiler) {
@@ -43,6 +45,20 @@ raptor.defineClass(
                     
                     if (compiler.options.xhtml !== true && startTagOnly[lookupKey] === true) {
                         node.setStartTagOnly(true);
+                    }
+                    
+                    
+                    if (node.getQName() === 'html' && node.hasAttributeNS("http://raptorjs.org/templates/html", "doctype")) {
+                        var doctype = node.getAttributeNS("http://raptorjs.org/templates/html", "doctype");
+                        
+                        var docTypeNode = new DocTypeNode({
+                            value: doctype,
+                            pos: node.getPosition()
+                        });
+                        
+                        node.parentNode.insertBefore(docTypeNode, node);
+                        
+                        node.removeAttributeNS("http://raptorjs.org/templates/html", "doctype");
                     }
                 }
                 

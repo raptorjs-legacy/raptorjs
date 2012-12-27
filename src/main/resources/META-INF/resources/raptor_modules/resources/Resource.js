@@ -145,6 +145,10 @@ $rload(function(raptor) {
             
             resolve: function(baseResource, path) {
                 throw raptor.createError(new Error('resolve() Not Implemented for ' + this.getClass().getName()));
+            },
+            
+            watch: function() {
+            	//No-op
             }
             
         };

@@ -10,8 +10,18 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-    
-    "includes": [
-        {"path": "utils.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "xml-utils.js"}
+        ],
+        
+        "extensions": [
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "xml-utils_rhino.js"}
+                ]
+            }
+        ]
+    }
 }

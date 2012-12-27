@@ -34,7 +34,7 @@ createRaptor = function(override) {
                 'resources': {level: 'WARN'}
             }
         },
-        packager: {
+        packaging: {
             enabledExtensions: ['json.raptor', 'logging.console']
         },
         resources: {
@@ -74,7 +74,7 @@ getTestsFile = function(relPath) {
 
 createBrowserRaptor = function() {
     createRaptor({
-        'packager': {
+        'packaging': {
             'enabledExtensions': ['browser', 'logging.console']
         },
         'resources': {

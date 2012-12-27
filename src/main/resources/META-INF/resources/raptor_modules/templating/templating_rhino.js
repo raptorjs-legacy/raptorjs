@@ -22,6 +22,8 @@
 raptor.extend('templating', function(raptor) {
     "use strict";
     
+    var JavaMap = Packages.java.util.Map;
+    
     var WrappedWriter = function(javaWriter) {
         this.javaWriter = javaWriter;
         this.write = function(o) {
@@ -30,8 +32,6 @@ raptor.extend('templating', function(raptor) {
             }
         };
     };
-    
-    
     
     return {
         /**
@@ -45,26 +45,17 @@ raptor.extend('templating', function(raptor) {
          */
         rhinoRender: function(templateName, data, javaWriter) {
             if (data && typeof data === 'string') {
-                data = eval("(" + data + ")"); //Convert the JSON string to a native JavaScript object
+            	try
+            	{
+            		data = eval("(" + data + ")"); //Convert the JSON string to a native JavaScript object
+            	}
+                catch(e) {
+                	throw raptor.createError('Invalid JSON data passed to "' + templateName + '". Exception: ' + e, e);
+                }
             }
             
             var context = this.createContext(new WrappedWriter(javaWriter)); //Wrap the Java writer with a JavaScript object
-            this.render('' + templateName, data);
-        },
-        
-        /**
-         * Provides a Rhino-compatible renderToString function that bridges the gap between
-         * the Java world and the JavaScript world.
-         * 
-         * @param templateName {java.lang.String} The name of template to render
-         * @param data {String|java.lang.Object} The data object to pass to the template rendering function
-         * @returns {String} The resulting String
-         */
-        rhinoRenderToString: function(templateName, data) {
-            if (data && typeof data === 'string') {
-                data = eval("(" + data + ")");
-            }
-            return this.renderToString('' + templateName, data);
+            this.render('' + templateName, data, context);
         }
     };
 });

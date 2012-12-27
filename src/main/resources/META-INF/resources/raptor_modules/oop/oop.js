@@ -164,7 +164,7 @@ $rload(function(raptor) {
                 proto,          //The prototype for the class (CLASS and ENUM types only)
                 targetType = def[TYPE_IDX],             //The output type (either CLASS, MODULE, ENUM or MIXIN)
                 targetTypeName, //The name of the output type (either 'class', 'module', 'enum' or 'mixin')
-                modifiers = def[MODIFIERS_IDX],   //Modifiers for the object being defined
+                modifiers = def[MODIFIERS_IDX] || {},   //Modifiers for the object being defined
                 superClassName,
                 mixinsTarget,   //The object to apply mixins to (either a prototype or the output object itself)
                 factory = def[FACTORY_IDX],        //The factory function for the definition (invoked to get the type definition)
@@ -195,7 +195,7 @@ $rload(function(raptor) {
                 type = function() {}; //Enum values were provided, but a constructor function is not required
             }
             else {
-                throw createError(new Error(name + ' invalid'));
+                throw createError(new Error(name + ' missing definition'));
             }
             
             clazz = mixinsTarget = type;
@@ -696,7 +696,7 @@ raptor.defineEnum(
          * @param asyncCallback {Object|Function} A success/error callback function or an object with callback functions for some or all of the the supported events. The following events are supported: asyncStart, success, error, asyncComplete, complete - (<b>NOTE:</b> Should only be used with module loading)
          * @param thisObj {Object} The "this" object for the callback function(s) - (<b>NOTE:</b> Should only be used with module loading)  
          * @param ignoreMissing {Boolean} If true then an Error will not be thrown if the requested object is not found.
-         * @returns {Object|loader-Transaction} For synchronous module/class/mixin/enum loading, a reference to the requested class/module/mixin/enum is returned. For asynchronous module loading, the transaction is returned. 
+         * @returns {Object|loader.Transaction} For synchronous module/class/mixin/enum loading, a reference to the requested class/module/mixin/enum is returned. For asynchronous module loading, the transaction is returned. 
          */
         require: _require,
 
@@ -716,8 +716,8 @@ raptor.defineEnum(
                     //We found a definition, just build the object based on that definition
                     loaded = _build(name, def);
                 }
-                else if (find && oop._find) { //Otherwise, try to find
-                    loaded =  oop._find(name);
+                else if (find && oop._resolve) { //Otherwise, try to resolve the object
+                    loaded =  oop._resolve(name);
                 }
             }
             return (loadedLookup[name] = loaded || null);

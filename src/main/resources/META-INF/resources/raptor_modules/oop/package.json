@@ -11,23 +11,25 @@
         }
     ],
     
-    "includes": [
-        {"path": "oop.js"}        
-    ],
-    
-    "extensions": {
-        "server": {
-            "includes": [
-                {"module": "objects"},
-                {"module": "arrays"},
-                {"module": "packager"},
-                {"path": "oop_server.js"}
-            ]
-        },
-        "rhino": {
-            "includes": [
-                {"path": "oop_rhino.js"}
-            ]
+    "raptor": {
+        "dependencies": [
+            {"path": "oop.js"}        
+        ],
+        
+        "extensions": {
+            "server": {
+                "dependencies": [
+                    {"module": "objects"},
+                    {"module": "arrays"},
+                    {"module": "packaging"},
+                    {"path": "oop_server.js"}
+                ]
+            },
+            "rhino": {
+                "dependencies": [
+                    {"path": "oop_rhino.js"}
+                ]
+            }
         }
     }
 }

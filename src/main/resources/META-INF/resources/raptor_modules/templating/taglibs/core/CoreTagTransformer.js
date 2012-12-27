@@ -53,6 +53,7 @@ raptor.defineClass(
                     stripAttr,
                     contentAttr,
                     replaceAttr,
+                    forEachNode,
                     uri,
                     tag,
                     nestedTag,
@@ -156,8 +157,9 @@ raptor.defineClass(
                     node.dynamicAttributesExpression = attrsAttr;
                 }
                 
-                if ((forEachAttr = node.getAttributeNS(coreNS, "for")) != null) {
+                if (((forEachAttr = node.getAttributeNS(coreNS, "for")) || (forEachAttr = node.getAttributeNS(coreNS, "for-each"))) != null) {
                     node.removeAttributeNS(coreNS, "for");
+                    node.removeAttributeNS(coreNS, "for-each");
                     var forEachProps = AttributeSplitter.parse(
                             forEachAttr, 
                             {
@@ -183,7 +185,7 @@ raptor.defineClass(
                             });
                     
                     forEachProps.pos = node.getPosition(); //Copy the position property
-                    var forEachNode = new ForNode(forEachProps);
+                    forEachNode = new ForNode(forEachProps);
 
                     //Surround the existing node with an "forEach" node by replacing the current
                     //node with the new "forEach" node and then adding the current node as a child
@@ -251,6 +253,11 @@ raptor.defineClass(
                     var newChild = new WriteNode({expression: contentAttr, pos: node.getPosition()});
                     node.removeChildren();
                     node.appendChild(newChild);
+                }
+
+                if (node.getAttributeNS(coreNS, "trim-body-indent") === 'true') {
+                    node.removeAttributeNS(coreNS, "trim-body-indent");
+                    node.trimBodyIndent = true;
                 }
                 
                 if (node.getAttributeNS && (stripAttr = node.getAttributeNS(coreNS, "strip")) != null) {
@@ -339,6 +346,7 @@ raptor.defineClass(
                 var attrName = node.getAttribute("name");
                 var attrValue = node.getAttribute("value");
                 var attrUri = node.getAttribute("uri") || '';
+                var attrPrefix = node.getAttribute("prefix") || '';
                 
                 if (parentNode.hasAttributeNS(attrUri, attrName)) {
                     node.addError(node.toString() + ' tag adds duplicate attribute with name "' + attrName + '"' + (attrUri ? ' and URI "' + attrUri + '"' : ''));
@@ -348,7 +356,7 @@ raptor.defineClass(
                 node.removeAttribute("name");
                 node.removeAttribute("value");
                 node.removeAttribute("uri");
-                
+                node.removeAttribute("prefix");
                 
                 if (node.hasAttributesAnyNS()) {
                     //There shouldn't be any other attributes...
@@ -358,16 +366,29 @@ raptor.defineClass(
                     node.addError("Invalid attributes for tag " + node.toString() + ': ' + invalidAttrs.join(", "));
                     return;
                 }
+                //Cleanup whitespace between <c:attr> tags
+                if (node.previousSibling && node.previousSibling.isTextNode() && node.previousSibling.getText().trim() === '') {
+                    node.previousSibling.detach();
+                }
                 
+                if (node.nextSibling && node.nextSibling.isTextNode() && node.nextSibling.getText().trim() === '') {
+                    node.nextSibling.detach();
+                }
+                
+                if (node.nextSibling && node.nextSibling.isTextNode()) {
+                    node.nextSibling.setText(node.nextSibling.getText().replace(/^\n\s*/, ""));
+                }
+
                 node.detach(); //Remove the node out of the tree
-                
+
                 compiler.transformTree(node, template);
                 
                 if (hasValue) {                    
-                    parentNode.setAttributeNS(attrUri, attrName, attrValue);
+                    parentNode.setAttributeNS(attrUri, attrName, attrValue, attrPrefix);
                 }
                 else {
-                    parentNode.setAttributeNS(attrUri, attrName, node.getBodyContentExpression(template));
+                    node.setEscapeXmlContext(raptor.require('templating.compiler.EscapeXmlContext').Attribute); //Escape body text and expressions as attributes
+                    parentNode.setAttributeNS(attrUri, attrName, node.getBodyContentExpression(template), attrPrefix, false /* Don't escape...pre-escaped*/);
                 }
             }
         };

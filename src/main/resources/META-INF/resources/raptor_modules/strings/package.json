@@ -11,8 +11,10 @@
         }
     ],
     
-    "includes": [
-        {"path": "strings.js"},
-        {"path": "StringBuilder.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "strings.js"},
+            {"path": "StringBuilder.js"}
+        ]
+    }
 }

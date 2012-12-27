@@ -71,8 +71,9 @@ raptorBootstrap = {
         this._require('files/files.js');
         this._require('files/File_node.js', NODE);
         this._require('files/files_node.js', NODE);
-        
+        this._require('files/File_rhino.js', RHINO);
         this._require('files/files_rhino.js', RHINO);
+        
 
         //JavaScript runtime module
         this._require('runtime/runtime.js');
@@ -80,11 +81,11 @@ raptorBootstrap = {
         this._require('runtime/runtime_rhino.js', RHINO);
 
         //Packaging module
-        this._require('packager/ExtensionCollection.js');
-        this._require('packager/packager_server.js');
-        this._require('packager/PackageManifest.js');
-        this._require('packager/PackageLoader.js');
-        this._require('packager/packager_rhino.js', RHINO);
+        this._require('packaging/ExtensionCollection.js');
+        this._require('packaging/packaging_server.js');
+        this._require('packaging/PackageManifest.js');
+        this._require('packaging/PackageLoader.js');
+        this._require('packaging/packaging_rhino.js', RHINO);
         
         //Classes module
         this._require('oop/oop.js');

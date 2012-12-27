@@ -33,7 +33,7 @@ public abstract class ResourceIncluderContext {
     private Map<String, PackageInclude> includedPackagesByPackagePath = new HashMap<String, PackageInclude>();
     private Map<String, AsyncInclude> includedAsyncRequiresByName = new HashMap<String, AsyncInclude>();
     
-    private Set<Include> includedSet = new HashSet<Include>();
+    private Set<Dependency> includedSet = new HashSet<Dependency>();
     
     private String defaultCssSlot = "head";
     private String defaultJsSlot = "body";
@@ -118,12 +118,12 @@ public abstract class ResourceIncluderContext {
         return this.includedAsyncRequiresByName.containsKey(require);
     }
 
-    public boolean isIncluded(Include include) {
+    public boolean isIncluded(Dependency include) {
         return this.includedSet.contains(include);
     }
     
     
-    public void setIncluded(Include include) {
+    public void setIncluded(Dependency include) {
         this.includedSet.add(include);
     }
     
@@ -199,19 +199,19 @@ public abstract class ResourceIncluderContext {
         
         
         List<String> requires = new LinkedList<String>();
-        List<Include> jsIncludes = new LinkedList<Include>();
-        List<Include> cssIncludes = new LinkedList<Include>();
+        List<Dependency> jsIncludes = new LinkedList<Dependency>();
+        List<Dependency> cssIncludes = new LinkedList<Dependency>();
         
-        List<Include> includes = packageManifest.getIncludes();
+        List<Dependency> includes = packageManifest.getIncludes();
         if (includes != null) {
-            for (Include include : includes) {
+            for (Dependency include : includes) {
                 if (include.isPackageInclude()) {
-                    IncludePackage packageInclude = (IncludePackage) include;
+                    DependencyPackage packageInclude = (DependencyPackage) include;
                     requires.add(packageInclude.getAsyncRequireName());
                     this.getAsyncMetadataJSONHelper(metadata, packageInclude.getAsyncRequireName(), packageInclude.getPackageManifest(this), null);
                 }
                 else {
-                    IncludeResource resourceInclude = (IncludeResource) include;
+                    DependencyResource resourceInclude = (DependencyResource) include;
                     if (resourceInclude.getContentType() == ContentType.JS) {
                         jsIncludes.add(include);
                     }
@@ -230,14 +230,14 @@ public abstract class ResourceIncluderContext {
                 
                 if ((includedExtensions != null && includedExtensions.contains(extension)) || this.isExtensionEnabled(extension, null)) {
                     includes = packageManifest.getIncludes();
-                    for (Include include : includes) {
+                    for (Dependency include : includes) {
                         if (include.isPackageInclude()) {
-                            IncludePackage packageInclude = (IncludePackage) include;
+                            DependencyPackage packageInclude = (DependencyPackage) include;
                             requires.add(packageInclude.getAsyncRequireName());
                             this.getAsyncMetadataJSONHelper(metadata, packageInclude.getAsyncRequireName(), packageInclude.getPackageManifest(this), null);
                         }
                         else {
-                            IncludeResource resourceInclude = (IncludeResource) include;
+                            DependencyResource resourceInclude = (DependencyResource) include;
                             if (resourceInclude.getContentType() == ContentType.JS) {
                                 jsIncludes.add(include);
                             }
@@ -255,7 +255,7 @@ public abstract class ResourceIncluderContext {
         metadata.setAsyncDependencies(requireName, asyncDependencies);
     }
 
-    protected abstract AsyncDependencies createAsyncDependencies(List<String> requires, List<Include> jsIncludes, List<Include> cssIncludes);
+    protected abstract AsyncDependencies createAsyncDependencies(List<String> requires, List<Dependency> jsIncludes, List<Dependency> cssIncludes);
 
     private static class PackageInclude {
         private Set<Extension> includedExtensions = new HashSet<Extension>();

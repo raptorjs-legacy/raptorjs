@@ -11,7 +11,10 @@
         }
     ],
     
-    "includes": [
-        {"path": "debug.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "debug.js"}
+        ]
+    }
+    
 }

@@ -17,6 +17,8 @@
 $rload(function(raptor) {
     "use strict";
     
+    
+
     var INDENT_STR = "  ",
         indent = function(depth) {
             var indent = ""; 
@@ -36,7 +38,7 @@ $rload(function(raptor) {
                 return "undefined";
             }
             else if (typeof o === 'string') {
-                return JSON.stringify(o);
+                return raptor.require('json.stringify').stringify(o, {useSingleQuote: true});
             }
             else if (typeof o == 'function') {
                 return options.includeFunctions !== false ? ("" + o).replace(/\r|\n|\r\n/g, "\n" + indent) : "(function)";

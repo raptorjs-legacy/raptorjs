@@ -21,6 +21,7 @@ raptor.define(
 
             this.registerTagType("param", raptor.require('jsdoc.ParamTag'));
             this.registerTagType("return", raptor.require('jsdoc.ReturnTag'));
+            this.registerTagType("returns", raptor.require('jsdoc.ReturnTag'));
             this.registerTagType("borrows", raptor.require('jsdoc.BorrowTag'));
             this.registerTagType("borrow", raptor.require('jsdoc.BorrowTag'));
         };

@@ -11,8 +11,11 @@
         }
     ],
     
-    "includes": [
-        {"type": "js", "path": "HtmlTagTransformer.js"},
-        {"type": "rtld", "path": "html.rtld"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"type": "js", "path": "HtmlTagTransformer.js"},
+            {"type": "js", "path": "DocTypeNode.js"},
+            {"type": "rtld", "path": "html.rtld"}
+        ]
+    }
 }

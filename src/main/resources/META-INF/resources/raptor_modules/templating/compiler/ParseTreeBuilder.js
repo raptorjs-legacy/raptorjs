@@ -44,21 +44,13 @@ raptor.defineClass(
                     parentNode = null,
                     rootNode = null,
                     prevTextNode = null,
-                    imports;
-                
-                var parser = sax.createParser({
+                    imports,
+                    parser = sax.createParser({
                         trim: false,
                         normalize: false,
                         dom: src.documentElement != null
-                    });
-                
-                
-                parser.on({
-                    error: function(e) {
-                        throw raptor.createError(e);
-                    },
-                    
-                    characters: function(t) {
+                    }),
+                    characters = function(t, isCDATA) {
                         if (!parentNode) {
                             return; //Some bad XML parsers allow text after the ending element...
                         }
@@ -70,7 +62,19 @@ raptor.defineClass(
                             prevTextNode.pos = parser.getPos();
                             parentNode.appendChild(prevTextNode);
                         }
-                        
+                    };
+
+                parser.on({
+                    error: function(e) {
+                        throw raptor.createError(e);
+                    },
+                    
+                    characters: function(t) {
+                        characters(t, false);
+                    },
+                    
+                    cdata: function(t) {
+                        characters(t, true);
                     },
                     
                     startElement: function(el) {

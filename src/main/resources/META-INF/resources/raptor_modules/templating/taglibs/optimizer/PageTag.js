@@ -2,61 +2,88 @@ raptor.define(
     'templating.taglibs.optimizer.PageTag',
     function(raptor) {
         "use strict";
+        var packaging = raptor.require('packaging'),
+            File = raptor.require('files').File,
+            resources = raptor.require('resources'),
+            optimizer = raptor.require('optimizer');
         
         return {
             process: function(input, context) {
                 
                 
-                var optimizer = raptor.require('optimizer'), 
-                    optimizerEngine = input.optimizer;
+                var pageOptimizer = input.optimizer;
                 
-                if (!optimizerEngine) {
-                    optimizerEngine = optimizer.getOptimizerFromContext(context);
-                }
-                else {
-                    optimizer.setOptimizerForContext(context, optimizerEngine);
+                if (!pageOptimizer) {
+                    pageOptimizer = optimizer.pageOptimizer;
                 }
                 
-                if (!optimizerEngine) {
-                    throw raptor.createError(new Error('Optimizer not set for request. An OptimizerEnginer instance can be associated with a request using the optimizerEngine.setOptimizerForContext(context) method.'));
+                if (!pageOptimizer) {
+                    throw raptor.createError(new Error('Page optimizer not configured for application. raptor.require("optimizer").configure(config) or provide an optimizer as input using the "optimizer" attribute.'));
                 }
                 
                 var packagePath = input['package-path'];
-                var packageManifest = input['package-manifest'];
-                var outputDir = input['output-dir'];
+                
+                var basePath = input['base-path'];
+                var enabledExtensions = input['enabled-extensions'];
+                if (enabledExtensions) {
+                    if (!packaging.isExtensionCollection(enabledExtensions)) {
+                        if (typeof enabledExtensions === 'string') {
+                            enabledExtensions = enabledExtensions.split(/\s*,\s*/);
+                        }
+                        enabledExtensions = packaging.createExtensionCollection(enabledExtensions);
+                    }
+                }
+                
+                if (basePath instanceof File) {
+                    basePath = basePath.getAbsolutePath();
+                }
+                
+                var contextEnabledExtensions = optimizer.getEnabledExtensionsForContext(context);
+                if (contextEnabledExtensions) {
+                    if (!enabledExtensions) {
+                        enabledExtensions = contextEnabledExtensions;
+                    }
+                    else {
+                        enabledExtensions.addAll(contextEnabledExtensions);
+                    }
+                }
                 
                 var pageKey = packagePath ? 
-                                (input.templatePath + "/" + packagePath + "/" + outputDir) : 
-                                input.templatePath + "/" + outputDir;
+                                (input.templatePath + "/" + packagePath + "/" + basePath) : 
+                                input.templatePath + "/" + basePath;
                 
-                var page = optimizerEngine.getPage(pageKey);
-                if (!page) {
+
+                var cache = pageOptimizer.getCache(enabledExtensions);
+                var optimizedPage = cache.getOptimizedPage(pageKey);
+                
+                if (!optimizedPage) {
+                    var packageManifest = input['package-manifest'];
                     var packageResource = null;
 
-                    if (packagePath) {
-                        packageResource = raptor.require('resources').findResource(input.templatePath).resolve(packagePath);
+                    if (packageManifest) {
+                        var templateResource = resources.findResource(input.templatePath); //All paths will be resolved relative to this resource
+                        packageManifest = packaging.createPackageManifest(packageManifest, templateResource);
+                    }
+                    else if (packagePath) {
+                        packageResource = resources.findResource(input.templatePath).resolve(packagePath);
                         
                         if (!packageResource.exists()) {
                             throw raptor.createError(new Error('Unable to configure page optimizer. The package resource at path "' + packageResource.getPath() + '" does not exist.'));
                         }    
                     }
-                    else if (packageManifest) {
-                        var templateResource = raptor.require('resources').findResource(input.templatePath); //All paths will be resolved relative to this resource
-                        packageManifest = raptor.require('packager').createPackageManifest(templateResource, packageManifest);
-                    }
                     
-                    
-                    page = optimizerEngine.registerPage({
-                        pageKey: pageKey,
+                    optimizedPage = pageOptimizer.optimizePage({
                         name: input.name,
-                        outputDir: outputDir,
+                        basePath: basePath,
+                        packageManifest: packageManifest,
                         packageResource: packageResource,
-                        packageManifest: packageManifest
+                        enabledExtensions: enabledExtensions
                     });
+                    
+                    cache.addOptimizedPage(pageKey, optimizedPage);
                 }
                 
-                optimizer.setPageForContext(context, page);
-                
+                context.getAttributes().optimizedPage = optimizedPage; 
             }
         };
     });

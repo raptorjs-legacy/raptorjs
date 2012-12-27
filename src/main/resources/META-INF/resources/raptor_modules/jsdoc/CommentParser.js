@@ -24,7 +24,7 @@ raptor.define("jsdoc.CommentParser", function(raptor) {
                 endTag = function() {
                     
                     if (curTagName != null) {
-                        var value = curTagLines.join('\n');
+                        var value = curTagLines.join('\n').replace(/\s*\n\s*/g, ' ');
                         var tag = env ? env.parseTag(curTagName, value) : new Tag(curTagName, value);
                         comment.addTag(tag);
                     }
@@ -34,7 +34,7 @@ raptor.define("jsdoc.CommentParser", function(raptor) {
                 };
 
             lines.forEach(function(line) {
-                line = line.replace(/\s*\*\s*/g, '');
+                line = line.replace(/\s*\*[ ]?/g, '');
                 if (line.trim() === '') {
                     if (curTagName) {
                         //We found an empty line... end the current tag
@@ -44,10 +44,11 @@ raptor.define("jsdoc.CommentParser", function(raptor) {
                         description.push(line);
                     }
                 }
-                else if (strings.startsWith(line, '@')) {
+                else if (/^\s*\@/.test(line)) {
+                    line = strings.ltrim(line);
                     endTag();
                     // Found a tag
-                    var tagEnd = line.indexOf(' '), value = '';
+                    var tagEnd = line.indexOf(' ');
                     if (tagEnd === -1) {
                         tagEnd = line.length;
                         curTagLines = [];

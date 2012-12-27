@@ -11,7 +11,9 @@
         }
     ],
     
-    "includes": [
-        {"path": "regexp.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "regexp.js"}
+        ]
+    }
 }

@@ -28,9 +28,9 @@ public class PackageManager {
     private Map<String, PackageManifest> cachedManifests = new ConcurrentHashMap<String, PackageManifest>();
     private PackageManifestJSONLoader loader = null;
     private ResourceManager resourceManager = null;
-    private IncludeFactory includeFactory = null;
+    private DependencyFactory includeFactory = null;
     
-    public PackageManager(ResourceManager resourceManager, IncludeFactory includeFactory) {
+    public PackageManager(ResourceManager resourceManager, DependencyFactory includeFactory) {
         this.resourceManager = resourceManager;
         this.includeFactory = includeFactory;
         this.loader = new PackageManifestJSONLoader(includeFactory);
@@ -58,14 +58,14 @@ public class PackageManager {
         this.cachedManifests.clear();
     }
     
-    public Include createInclude(String type, Map<String, Object> properties) {
-        Include include = this.includeFactory.createInclude(type, properties);
+    public Dependency createInclude(String type, Map<String, Object> properties) {
+        Dependency include = this.includeFactory.createInclude(type, properties);
         return include;
     }
     
-    public IncludeResource createResourceInclude(ContentType type, String path) {
+    public DependencyResource createResourceInclude(ContentType type, String path) {
         
-        IncludeResource include = this.includeFactory.createResourceInclude(type, path);
+        DependencyResource include = this.includeFactory.createResourceInclude(type, path);
         return include;
     }
     

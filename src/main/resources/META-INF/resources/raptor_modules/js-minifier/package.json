@@ -11,14 +11,17 @@
         }
     ],
     
-    "includes": [
-    ],
-    
-    "extensions": {
-        "node": {
-            "includes": [
-                {"path": "js-minifier_node.js"}
-            ]
+    "raptor": {
+        "dependencies": [
+            {"path": "js-minifier.js"}
+        ],
+        
+        "extensions": {
+            "node": {
+                "dependencies": [
+                    {"path": "js-minifier_node.js"}
+                ]
+            }
         }
     }
 }

@@ -1,0 +1,114 @@
+{
+  "name": "HomePageModule",
+  "version": "0.1.0",
+  "description": "Include all modules required by home page",
+  "homepage": "http://touch.ebay.com",
+  "authors": [
+    
+  ],
+  "includes": [
+    {
+      "type": "module",
+      "name": "marketplace.base"
+    },
+    {
+      "type": "module",
+      "name": "common.model.recentsearch"
+    },
+    {
+      "type": "module",
+      "name": "common.model.savedsearch"
+    },
+    {
+      "type": "module",
+      "name": "common.model.watcheditem"
+    },
+    {
+      "type": "module",
+      "name": "common.widgets.scroll"
+    },
+    {
+      "type": "module",
+      "name": "common.widgets.loading"
+    },
+    {
+      "type": "module",
+      "name": "common.store.user"
+    },
+    {
+      "type": "module",
+      "name": "common.store.recentsearch"
+    },
+    {
+      "type": "module",
+      "name": "common.store.savedsearch"
+    },
+    {
+      "type": "module",
+      "name": "common.store.search"
+    },
+    {
+      "type": "module",
+      "name": "common.services.autofill"
+    },
+    {
+      "type": "module",
+      "name": "common.services.tracker"
+    },
+    {
+      "type": "module",
+      "name": "common.components.headerbar"
+    },
+    {
+      "type": "module",
+      "name": "common.components.searchbar"
+    },
+    {
+      "type": "module",
+      "name": "common.components.categoryimages"
+    },
+    {
+      "type": "module",
+      "name": "common.components.subcategorypopover"
+    },
+    {
+      "type": "module",
+      "name": "common.components.categorycoordinator"
+    },
+    {
+      "type": "module",
+      "name": "common.components.searchestab"
+    },
+    {
+      "type": "module",
+      "name": "common.components.watchlisttab"
+    },
+    {
+      "type": "module",
+      "name": "common.services.tracker"
+    },
+    {
+      "type": "4cc",
+      "path": "/TabletWebApp/Home"
+    },
+    {
+      "type": "js",
+      "path": "Assembler.js"
+    },
+    {
+      "type": "less",
+      "path": "Page.less"
+    }
+  ],
+  "extensions": {
+    "ebay": {
+      "condition": "extensions.contains('ebay')",
+      "includes": [
+        {
+          "type": "js",
+          "path": "ebay/Config.js"
+        }
+      ]
+    }
+  }
+}

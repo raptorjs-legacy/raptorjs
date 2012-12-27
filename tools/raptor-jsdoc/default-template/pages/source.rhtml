@@ -1,10 +1,11 @@
 <c:template xmlns:c="core"
+    xmlns:html="html"
     xmlns:jsdoc="jsdoc"
     xmlns:w="widgets"
     xmlns:optimizer="optimizer"
-    params="path,src,mode,outputDir,optimizer">
+    params="path,src,mode,outputDir">
 
-    <optimizer:page name="type" output-dir="${outputDir}" optimizer="optimizer">
+    <optimizer:page name="type" base-path="${outputDir}">
         <includes>
             <module name="jsdoc-global"/>
             <module name="components/jsdoc/Header"/>
@@ -17,8 +18,7 @@
         </includes>
     </optimizer:page>
     
-    <![CDATA[<!doctype html>]]>
-    <html>
+    <html html:doctype="html">
         <head>
             <base href="${data.baseHref}" c:if="data.baseHref"/>
             <title>Source for ${path} — RaptorJS API</title>

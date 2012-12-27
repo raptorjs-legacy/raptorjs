@@ -5,7 +5,10 @@
     "description": "Number Formatting Modules",
     "authors": [
     ],
-    "includes": [
-        {"path": "numbers.js"}
-    ]
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "numbers.js"}
+        ]
+    }
 }

@@ -21,17 +21,34 @@ raptor.defineClass(
         "use strict";
         
         var errors = raptor.errors,
-            forEachRegEx = /^(.+)\s+in\s+(.+)$/,
+            forEachRegEx = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s+in\s+(.+)$/,
+            forEachPropRegEx = /^\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s+in\s+(.+)$/,
             stringify = raptor.require("json.stringify").stringify,
             parseForEach = function(value) {
                 var match = value.match(forEachRegEx);
-                if (!match) {
-                    throw new Error('Invalid each attribute of "' + value + '"');
+                if (match) {
+                    return {
+                        "var": match[1],
+                        "in": match[2]
+                    };
                 }
-                return {
-                    "var": match[1],
-                    "in": match[2]
-                };
+                else {
+                    match = value.match(forEachPropRegEx);
+                    if (!match) {
+                        throw new Error('Invalid each attribute of "' + value + '"');
+                    }
+
+                    return {
+                        "nameVar": match[1],
+                        "valueVar": match[2],
+                        "in": match[3]
+                    }; 
+                }
+
+                
+
+
+                
             };
         
         var ForNode = function(props) {
@@ -44,6 +61,7 @@ raptor.defineClass(
         ForNode.prototype = {
             doGenerateCode: function(template) {
                 var each = this.getProperty("each"),
+                    eachProp = false,
                     separator = this.getProperty("separator"),
                     statusVar = this.getProperty("status-var") || this.getProperty("varStatus");
                 
@@ -64,19 +82,40 @@ raptor.defineClass(
                     return;
                 }
                 
-                var items = template.makeExpression(parts["in"]);
-                var varName = parts["var"];
+                var items = template.makeExpression(parts["in"]),
+                    varName = parts["var"],
+                    nameVarName = parts.nameVar,
+                    valueVarName = parts.valueVar;
+
+                if (nameVarName) {
+                    if (separator) {
+                        this.addError('Separator is not supported when looping over properties');
+                        this.generateCodeForChildren(template);
+                        return;
+                    }
+
+                    if (statusVar) {
+                        this.addError('Loop status variable not supported when looping over properties');
+                        this.generateCodeForChildren(template);
+                        return;
+                    }
+                }
+                
                 if (separator && !statusVar) {
                     statusVar = "__loop";
                 }
-                
+
+
+                var funcName;
+
                 var forEachParams;
                 if (statusVar) {
                     forEachParams = [varName, statusVar];
                     
-                    
+                    funcName = template.getStaticHelperFunction("forEachWithStatusVar", "fv");
+
                     template
-                        .statement(template.getStaticHelperFunction("forEachWithStatusVar", "fv") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                        .statement(funcName + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
                         .indent(function() {
                             this.generateCodeForChildren(template);
                             if (separator) {
@@ -110,10 +149,12 @@ raptor.defineClass(
                             .line('});');
                     }
                     else {
-                        forEachParams = [varName];
-                        
+                        forEachParams = nameVarName ? [nameVarName, valueVarName] : [varName];
+                        funcName = nameVarName ? template.getStaticHelperFunction("forEachProp", "fp") : 
+                                              template.getStaticHelperFunction("forEach", "f");
+
                         template
-                            .statement(template.getStaticHelperFunction("forEach", "f") + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
+                            .statement(funcName + '(' + items + ', function(' + forEachParams.join(",") + ') {') 
                             .indent(function() {
                                 this.generateCodeForChildren(template);    
                             }, this)

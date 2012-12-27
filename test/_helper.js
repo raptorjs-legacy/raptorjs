@@ -132,7 +132,7 @@ var compileAndLoad = function(templatePath, invalid) {
             
             var resource = raptor.require('resources').findResource(templatePath);
             if (!resource.exists()) {
-                throw new Error('Template not found at path "' + path + '"');
+                throw new Error('Template not found at path "' + templatePath + '"');
             }
             
             var src = resource.readAsString();
@@ -246,7 +246,7 @@ jsdomScripts = function(dependencies) {
         if (!manifest) {
             throw raptor.createError(new Error('Module not found for name "' + name + '"'));
         }
-        manifest.forEachInclude({
+        manifest.forEachDependency({
             callback: function(type, include) {
                 if (type === 'js') {
                     var resource = manifest.resolveResource(include.path);

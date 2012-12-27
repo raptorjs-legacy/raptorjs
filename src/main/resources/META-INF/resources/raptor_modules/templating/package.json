@@ -11,26 +11,27 @@
         }
     ],
     
-    "includes": [
-        {"module": "strings"},
-        {"module": "listeners"},
-        {"module": "xml.utils"},
-        {"path": "Context.js"},
-        {"path": "templating.js"}
-    ],
-    
-    "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "templating_server.js"}
-            ]
-        },
-        {
-            "name": "rhino",
-            "includes": [
-                {"path": "templating_rhino.js"}
-            ]
-        }
-    ]
+    "raptor": {
+        "dependencies": [
+            {"module": "strings"},
+            {"module": "xml.utils"},
+            {"path": "Context.js"},
+            {"path": "templating.js"}
+        ],
+        
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "templating_server.js"}
+                ]
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "templating_rhino.js"}
+                ]
+            }
+        ]
+    }
 }

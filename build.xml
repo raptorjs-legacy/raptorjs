@@ -32,13 +32,30 @@
     	<delete dir="dist" />
         <mkdir dir="dist" />
     	
-        <copy todir="${dist.node-raptor.dir}">
-            <fileset dir="${node_modules.raptor.dir}" includes="bin lib test" />
+        <copy todir="${dist.node-raptor.dir}/bin">
+            <fileset dir="bin"/>
         </copy>
-        
-        <copy todir="${dist.node-raptor.raptor_modules.dir}">
+    	
+    	<copy todir="${dist.node-raptor.dir}/test">
+            <fileset dir="test"/>
+        </copy>
+    	
+    	<copy todir="${dist.node-raptor.dir}/tools">
+            <fileset dir="tools"/>
+        </copy>
+    	
+    	<copy todir="${dist.node-raptor.dir}/lib">
+            <fileset dir="lib"/>
+        </copy>
+    	
+    	<copy todir="${dist.node-raptor.dir}">
+            <fileset dir="." includes="package.json README.md"/>
+        </copy>
+    		
+        <!--
+    	<copy todir="${dist.node-raptor.dir}/lib/raptor/raptor_modules">
             <fileset dir="${raptor_modules.dir}" />
-        </copy>
+        </copy> -->
     </target>
 
 </project>

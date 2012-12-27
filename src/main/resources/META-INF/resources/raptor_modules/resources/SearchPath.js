@@ -40,9 +40,9 @@ $rload(function(raptor) {
                 
                 var packageJsonResource = entry.findResource("/package.json");
                 if (packageJsonResource != null && packageJsonResource.exists()) {
-                    var packager = raptor.packager;
-                    var packageManifest = packager.getPackageManifest(packageJsonResource);
-                    var packageSearchPath = packageManifest['raptor-search-path'];
+                    var packaging = raptor.packaging;
+                    var packageManifest = packaging.getPackageManifest(packageJsonResource);
+                    var packageSearchPath = packageManifest.getRaptorProp('search-path');
                     if (packageSearchPath != null) {
                         raptor.forEach(packageSearchPath, function(searchPathConfig) {
                             if (searchPathConfig.dir) {
@@ -65,7 +65,15 @@ $rload(function(raptor) {
                 if (path instanceof raptor.require('files').File) {
                     path = path.getAbsolutePath();
                 }
-                this.addEntry(new DirSearchPathEntry(path));
+                var entry = new DirSearchPathEntry(path);
+                this.addEntry(entry);
+                return entry;
+            },
+            
+            removeEntry: function(entryToRemove) {
+                this.entries = this.entries.filter(function(entry) {
+                    return entry !== entryToRemove;
+                });
             },
             
             hasDir: function(path) {

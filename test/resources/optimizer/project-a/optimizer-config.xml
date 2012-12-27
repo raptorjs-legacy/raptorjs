@@ -2,20 +2,20 @@
     
     
     <raptor-config>{raptor: true}</raptor-config>
-    
-    <resource-search-path>
-        <dir path="modules"/>
-    </resource-search-path>
+    <output-dir>dist</output-dir>
     
     <pages>
         <page name="page1">
-            <includes>
-                <module name="module-a" recursive="true"/>
-                <module name="module-b" recursive="true"/>
-            </includes>
+        </page>
+        <page name="page2" package-manifest="page2-package.json"/>
+        <page name="page3">
+            <dependencies>
+                <module name="test.optimizer.moduleA"/>
+                <module name="test.optimizer.mixedA"/>
+                <module name="test.optimizer.mixedB"/>
+                <module name="test.optimizer.asyncA"/>
+            </dependencies>
         </page>
     </pages>
-   
-    <bundles-output-dir>dist</bundles-output-dir>
-    
+
 </optimizer-config>

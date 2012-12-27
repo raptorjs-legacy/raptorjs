@@ -23,7 +23,7 @@ raptor.defineClass(
             arrayFromArguments = raptor.arrayFromArguments;
         
         var BaseSaxParser = function() {
-            this.observable = listeners.createObservable(['startElement', 'endElement', 'characters', 'comment', 'error']);
+            this.observable = listeners.createObservable(['startElement', 'endElement', 'characters', 'cdata', 'comment', 'error']);
         };
         
         BaseSaxParser.prototype = {
@@ -43,6 +43,12 @@ raptor.defineClass(
                 //Normalize EOL sequence...
                 text = text.replace(/\r\n|\r/g, "\n");
                 this.observable.publish("characters", text);
+            },
+            
+            _cdata: function(text) {
+                //Normalize EOL sequence...
+                text = text.replace(/\r\n|\r/g, "\n");
+                this.observable.publish("cdata", text);
             },
             
             _comment: function(comment) {

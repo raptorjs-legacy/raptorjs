@@ -1,0 +1,30 @@
+{
+    "type": "raptor-module",
+    "name": "process",
+    "version": "1.0",
+    "description": "Utility functions for obtaining information about the current running process",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "process.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "dependencies": [
+                    {"path": "process_node.js"}
+                ]
+            }
+        ]
+    }
+}

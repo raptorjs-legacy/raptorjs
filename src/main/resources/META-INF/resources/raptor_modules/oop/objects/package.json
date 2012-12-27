@@ -11,7 +11,9 @@
         }
     ],
     
-    "includes": [
-        {"path": "objects.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "objects.js"}
+        ]
+    }
 }

@@ -9,6 +9,17 @@ $rload(function(raptor) {
         function(raptor) {
             var java = raptor.require('java');
             
+            
+            var Watcher = function(javaWatcher) {
+            	this.javaWatcher = javaWatcher;
+            };
+            
+            Watcher.prototype = {
+        		closeWatcher: function() {
+        			this.javaWatcher.closeWatcher();
+        		}
+            };
+            
             var RhinoResourceAdapter = function(javaResource) {
                 var javaSearchPathEntry = javaResource.getSearchPathEntry();
                 var RhinoSearchPathEntryAdapter = raptor.require('resources.RhinoSearchPathEntryAdapter');
@@ -41,6 +52,10 @@ $rload(function(raptor) {
                     return java.convertString(this.javaResource.readAsString(encoding));
                 },
                 
+                getFilePath: function() {
+                	return this.javaResource.getFilePath();
+                },
+                
                 isDirectory: function() {
                     return this.javaResource.isDirectory();
                 },
@@ -52,6 +67,15 @@ $rload(function(raptor) {
                 resolve: function(relPath) {
                     var resolvedJavaResource = this.javaResource.resolve(relPath);
                     return new RhinoResourceAdapter(resolvedJavaResource);
+                },
+                
+                watch: function(callback, thisObj) {
+                	var javaWatchListener = __rhinoHelpers.getResources().createWatchListener(function() {
+                		callback.call(thisObj);
+                	}, null);
+                	
+                	var javaWatcher = this.javaResource.watch(javaWatchListener);
+                	return new Watcher(javaWatcher);
                 }
             };
             

@@ -135,7 +135,7 @@ raptor.defineClass(
                 },
 
                 oncdata: function(text) {
-                    _this._characters(text);
+                    _this._cdata(text);
                 },
                 
                 onclosetag: function () {

@@ -11,19 +11,21 @@
         }
     ],
     
-    "includes": [
-        {"path": "logging_stubs.js"}
-    ],
-    
-    "extensions": {
-        "logging.console": {
-            "includes": [
-                {"module": "strings"},
-                {"module": "objects"},
-                {"path": "ConsoleLogger.js"},
-                {"path": "logging.js"},
-                {"path": "LogHelper.js"}
-            ] 
+    "raptor": {
+        "dependencies": [
+            {"path": "logging_stubs.js"}
+        ],
+        
+        "extensions": {
+            "logging.console": {
+                "dependencies": [
+                    {"module": "strings"},
+                    {"module": "objects"},
+                    {"path": "ConsoleLogger.js"},
+                    {"path": "logging.js"},
+                    {"path": "LogHelper.js"}
+                ] 
+            }
         }
     }
         

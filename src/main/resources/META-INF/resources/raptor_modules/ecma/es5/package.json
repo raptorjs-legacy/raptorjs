@@ -3,13 +3,16 @@
     "name": "ecma.es5",
     "version": "1.0",
     "description": "es5 shim for older browsers. Adapted from https://github.com/kriskowal/es5-shim/",
-    "extensions": [
-        {
-            "name": "browser",
-            "includes": [
-                {"path": "es5.js"}
-            ]
-        }
-    ]
+    "raptor": {
+        "extensions": [
+            {
+                "name": "browser",
+                "dependencies": [
+                    {"path": "es5.js"}
+                ]
+            }
+        ]
+    }
+
     
 }

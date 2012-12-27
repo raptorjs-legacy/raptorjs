@@ -64,10 +64,7 @@ raptor.define(
             this.anchorName = (anchorPrefix ? anchorPrefix + prop.name : prop.name);
             this.moreElId = null;
 
-            this.permaLinkHref = "#" + this.anchorName;
-            if (attrs.profile === 'development') {
-                this.permaLinkHref = './' + attrs.currentSymbolName + '/index.html' + this.permaLinkHref;
-            }
+            this.permaLinkHref = jsdocUtil.symbolUrl(attrs.currentSymbolName) + "#" + this.anchorName;
             
             this._isMixin = prop.mixinSource != null;
 
@@ -95,6 +92,8 @@ raptor.define(
                         type: "deprecated"
                     });
                 }
+                
+                
             }
 
             if (this.isFunction()) {
@@ -109,6 +108,23 @@ raptor.define(
                         type: "params",
                         label: "Parameters",
                         params: params
+                    });    
+                }
+                
+                
+            }
+            
+            if (comment) {
+                var returnTag = comment.getTag("return");
+                if (returnTag) {
+                    this.returnType = returnTag.returnType;
+                    this.returnDesc = returnTag.returnDesc;
+                    
+                    this.sections.push({
+                        type: "returns",
+                        label: "Returns",
+                        returnType: returnTag.returnType,
+                        returnDesc: returnTag.returnDesc
                     });    
                 }
             }
@@ -269,6 +285,7 @@ raptor.define(
                 this.desc = comment.getDescription();
             }
             
+            this.permaLinkHref = jsdocUtil.symbolUrl(this.name);
 
             this.staticMethods = new PropertiesViewModel(this, context);
             this.staticProperties = new PropertiesViewModel(this, context);
@@ -282,8 +299,6 @@ raptor.define(
             this.ctorProperties = new PropertiesViewModel(this, context);
 
             if (this.isClass()) {
-                var ctorName = type.getShortName();
-
                 this.ctorProperties.addProperty({
                     ctor: true,
                     name: type.getShortName(),
@@ -347,7 +362,7 @@ raptor.define(
             toString: function() {
                 return "[TypeViewModel " + this.name + "]";
             }
-        }
+        };
 
         var TypeTag = function(config) {
             

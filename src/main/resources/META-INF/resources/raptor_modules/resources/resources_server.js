@@ -145,10 +145,16 @@ $rload(function(raptor) {
          */
         forEach: function(path, callback, thisObj) {
             searchPath.forEachEntry(function(entry) {
-                var resource = entry.findResource(path);
-                if (resource != null) {
-                    callback.call(thisObj, resource);
-                }
+            	if (entry.forEachResource) {
+            		entry.forEachResource(path, callback, thisObj);
+            	}
+            	else {
+            		var resource = entry.findResource(path);
+                    if (resource != null) {
+                        callback.call(thisObj, resource);
+                    }	
+            	}
+                
             }, this);
         },
         

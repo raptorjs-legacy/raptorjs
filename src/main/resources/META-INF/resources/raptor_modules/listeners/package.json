@@ -11,7 +11,9 @@
         }
     ],
     
-    "includes": [
-        {"path": "listeners.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "listeners.js"}
+        ]
+    }
 }

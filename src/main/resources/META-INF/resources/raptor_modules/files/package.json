@@ -10,20 +10,29 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-
-    "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "files.js"}
-            ]
-        },
-        {
-            "name": "node",
-            "includes": [
-                {"path": "File_node.js"},
-                {"path": "files_node.js"}
-            ]
-        }
-    ]
+    
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "files.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "dependencies": [
+                    {"path": "File_node.js"},
+                    {"path": "files_node.js"}
+                ]
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "File_rhino.js"},
+                    {"path": "files_rhino.js"}
+                ]
+            }
+        ]
+    }
 }

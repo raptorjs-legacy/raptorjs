@@ -10,14 +10,15 @@
             "email": "psteeleidem@ebay.com"
         }
     ],
-
-    "extensions": {
-        "rhino": {
-            "includes": [
-                {"path": "Request_rhino.js"},
-                {"path": "Response_rhino.js"},
-                {"path": "http.js"}
-            ]
+    "raptor": {
+        "extensions": {
+            "rhino": {
+                "dependencies": [
+                    {"path": "Request_rhino.js"},
+                    {"path": "Response_rhino.js"},
+                    {"path": "http.js"}
+                ]
+            }
         }
     }
 }

@@ -11,18 +11,20 @@
         }
     ],
 
-    "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "file-watcher.js"}
-            ]
-        },
-        {
-            "name": "node",
-            "includes": [
-                {"path": "file-watcher_node.js" }
-            ]
-        }
-    ]
+    "raptor": {
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "file-watcher.js"}
+                ]
+            },
+            {
+                "name": "node",
+                "dependencies": [
+                    {"path": "file-watcher_node.js" }
+                ]
+            }
+        ]
+    }
 }

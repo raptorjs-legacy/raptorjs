@@ -23,7 +23,9 @@ $rload(function(raptor) {
             return nodeFS.existsSync ? nodeFS.existsSync(path) : nodePath.existsSync(path);
         };
     /**
-     * @name files.File
+     * @name files.File_node
+     * @label files.File
+     * @extensionFor files.File
      * @extension Node
      * @anonymous
      */

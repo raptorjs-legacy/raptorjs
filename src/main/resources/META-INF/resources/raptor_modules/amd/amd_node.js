@@ -5,16 +5,15 @@ $rload(function(raptor) {
         Module, 
         _enabled = false,
         originalWrapper,
-        raptorWrapper = " var define=raptorCreateDefine(require); ",
+        raptorWrapper = " define=raptorCreateDefine(require); ",
         originalFindPath,
+        raptorPrefix = "raptor.",
         strings = raptor.require('strings'),
         raptorFindPath = function(request, paths) {
-            if (!strings.endsWith(request, ".js") && !strings.startsWith(request, ".")) { 
-                var module = raptor.find(request);
-                //console.log('find: ' + request, module);
-                if (module) {
-                    return request + '.raptor_module';
-                }    
+
+            if (strings.startsWith(request, raptorPrefix)) { 
+                
+                return request.substring(raptorPrefix.length) + '.raptor_module';
             }
             
             return originalFindPath.apply(this, arguments);
@@ -47,6 +46,7 @@ $rload(function(raptor) {
 
             if (!initialized) {
                 require.extensions['.raptor_module'] = function(module, filename) {
+
                     module.exports = raptor.require(filename.substring(0, filename.length - '.raptor_module'.length));
                 };
                 
@@ -57,13 +57,17 @@ $rload(function(raptor) {
             }
 
             if (enabled) {
-                Module.wrapper[0] += raptorWrapper;
+
+
+                Module.wrapper[0] = originalWrapper.replace(/\s*\)/, ', define)') + raptorWrapper;
                 Module._findPath = raptorFindPath;
             }
             else {
                 Module.wrapper[0] = originalWrapper;
                 Module._findPath = originalFindPath;
             }
+
+            console.error(Module.wrapper[0]);
         }
     };
     

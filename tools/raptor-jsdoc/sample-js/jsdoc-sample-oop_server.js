@@ -65,15 +65,15 @@ $rload(function(raptor) {
                 return undefined;
             } 
             
-            raptor.require('packager').load(manifest);
+            raptor.require('packaging').load(manifest);
             
             var module = oop._load(name, false /* Do not find again or infinite loop will result */);
             return module;
         },
         createModuleManifestForResource = function(resource) {
-            var manifest = raptor.require('packager').createPackageManifest();
+            var manifest = raptor.require('packaging').createPackageManifest();
             manifest.setPackageResource(resource);
-            manifest.setIncludes([{
+            manifest.setDependencies([{
                 path: resource.getName()
             }]);
 
@@ -106,8 +106,8 @@ $rload(function(raptor) {
             }
             discoveryComplete = true;
             
-            raptor.require('packager').forEachTopLevelPackageManifest(function(manifest) {
-                var manifestMappings = manifest["raptor-module-mappings"];
+            raptor.require('packaging').forEachTopLevelPackageManifest(function(manifest) {
+                var manifestMappings = manifest.getRaptorProp("module-mappings");
                 
                 if (manifestMappings) {
                     addMappings(manifestMappings);
@@ -169,17 +169,17 @@ $rload(function(raptor) {
         getModuleManifest: function(name) {
             var path = mappings[name],
                 manifest,
-                packager = raptor.require('packager');
+                packaging = raptor.require('packaging');
 
             if (path) {
-                manifest = packager.getPackageManifest(path);
+                manifest = packaging.getPackageManifest(path);
             }
             else {
                 var dir = getModuleDirPath(name);
                 
-                manifest = packager.getPackageManifest(dir + "/package.json");
+                manifest = packaging.getPackageManifest(dir + "/package.json");
                 if (!manifest) {
-                    manifest = packager.getPackageManifest(dir + "-package.json");
+                    manifest = packaging.getPackageManifest(dir + "-package.json");
                 }
                 
                 if (!manifest) {

@@ -11,16 +11,9 @@
         }
     ],
 
-    "includes": [
-        
-    ],
-            
-    "extensions": {
-        "browser": {
-            "includes": [
-                {"module": "loader"},
-                {"path": "requires.js"}
-            ]
-        }
+    "raptor": {
+        "dependencies": [
+            { "module": "loader.require" }
+        ]
     }
 }

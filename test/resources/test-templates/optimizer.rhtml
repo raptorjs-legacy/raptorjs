@@ -2,7 +2,13 @@
     xmlns:c="core"
     xmlns:optimizer="optimizer">
     
-    <optimizer:page name="test" package-path="optimizer-package.json"/>
+    <optimizer:page name="test">
+        <includes>
+            <module name="test.optimizer.moduleA"/>
+            <module name="test.optimizer.moduleB"/>
+        </includes>
+    </optimizer:page>
+    
     <html>
         <head>
             <optimizer:slot name="head"/>

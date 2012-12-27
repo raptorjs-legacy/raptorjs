@@ -11,8 +11,7 @@ var Publisher = function(symbols, config, env) {
     this.env = env;
     this.outputDir = config.outputDir;
     this.templatedir = config.templateDir;
-    this.optimizer = this.optimizerEngine = optimizer.createOptimizer(new File(this.templatedir, "raptor-optimizer.xml"), config);
-    this.profile = this.optimizer.getConfig().getParam("profile") || "production";
+    this.profile = config['profile'] || "production";
     this.baseUrl = this.config.baseUrl || "/api";
     jsdocUtil.context = this;
     this.autoCompleteSymbols = [];
@@ -102,7 +101,13 @@ Publisher.prototype = {
         }
 
         var targetType = null;
+        var sourceType = type;
         if (extendsTarget.isJavaScriptFunction()) {
+            sourceType = type.getPropertyType("prototype");
+            if (!sourceType) {
+                return;
+            }
+            
             targetType = extendsTarget.getPropertyType("prototype");
             if (!targetType) {
                 targetType = new Type("object");
@@ -116,7 +121,7 @@ Publisher.prototype = {
             targetType = extendsTarget;
         }
 
-        type.forEachProperty(function(mixinSourceProp) {
+        sourceType.forEachProperty(function(mixinSourceProp) {
             var mixinTargetProp = raptor.extend({}, mixinSourceProp);
             mixinTargetProp.mixinSource = type;
             mixinTargetProp.label = mixinSourceProp.name;
@@ -216,6 +221,7 @@ Publisher.prototype = {
     },
 
     publish: function() {
+        optimizer.configure(new File(this.templatedir, "raptor-optimizer.xml"), this.config);
         
         this.symbols.forEachSymbol(function(name, type) {
             this._collectInstanceTypes(type);
@@ -296,7 +302,6 @@ Publisher.prototype = {
         var html = templating.renderToString("pages/symbol", {
                 symbolName: symbolName,
                 type: type,
-                optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
                 baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
@@ -331,7 +336,6 @@ Publisher.prototype = {
 
         var html = templating.renderToString("pages/source", {
                 path: source.relativePath,
-                optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
                 mode: modes[ext],
                 src: source.file.readAsString(),

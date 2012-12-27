@@ -11,16 +11,18 @@
         }
     ],
 
-    "extensions": {
-        "browser": {
-            "includes": [
-                {"path": "stacktraces_browser.js"}
-            ]
-        },
-        "node": {
-            "includes": [
-                {"path": "stacktraces_node.js"}
-            ]
+    "raptor": {
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"path": "stacktraces_browser.js"}
+                ]
+            },
+            "node": {
+                "dependencies": [
+                    {"path": "stacktraces_node.js"}
+                ]
+            }
         }
-    } 
+    }
 }

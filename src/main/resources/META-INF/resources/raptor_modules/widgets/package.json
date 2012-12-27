@@ -11,39 +11,40 @@
         }
     ],
 
-
-    "includes": [
-        {"module": "oop"},
-        {"path": "widgets.js"}
-    ],
-    "extensions": [
-        {
-            "name": "server",
-            "includes": [
-                {"path": "widgets_server.js"}
-            ]    
-        },
-        {
-            "name": "rhino",
-            "includes": [
-                {"path": "widgets_rhino.js"}
-            ]    
-        },
-        {
-            "name": "browser",
-            "includes": [                
-                {"module": "listeners"},
-                {"module": "pubsub"},
-                {"path": "widgets_browser.js"},
-                {"path": "Widget.js"}
-            ]    
-        },
-        {
-            "name": "jquery",
-            "includes": [
-                {"path": "widgets_jquery.js"},
-                {"path": "Widget_jquery.js"}
-            ]
-        }
-    ]
+    "raptor": {
+        "dependencies": [
+            {"module": "oop"},
+            {"path": "widgets.js"}
+        ],
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    {"path": "widgets_server.js"}
+                ]    
+            },
+            {
+                "name": "rhino",
+                "dependencies": [
+                    {"path": "widgets_rhino.js"}
+                ]    
+            },
+            {
+                "name": "browser",
+                "dependencies": [                
+                    {"module": "listeners"},
+                    {"module": "pubsub"},
+                    {"path": "widgets_browser.js"},
+                    {"path": "Widget.js"}
+                ]    
+            },
+            {
+                "name": "jquery",
+                "dependencies": [
+                    {"path": "widgets_jquery.js"},
+                    {"path": "Widget_jquery.js"}
+                ]
+            }
+        ]
+    }
 }

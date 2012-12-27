@@ -33,7 +33,7 @@ raptor.defineClass(
             
             doGenerateCode: function(template) {
                 var varName = this.getProperty("name"),
-                    value = this.getProperty("value");
+                    value = this.getProperty("value") || this.getProperty("string-value");
                 
                 if (!varName) {
                     this.addError('"name" attribute is required');

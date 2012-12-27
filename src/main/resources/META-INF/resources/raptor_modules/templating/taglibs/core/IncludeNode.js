@@ -35,7 +35,8 @@ raptor.defineClass(
                 
                 var templateName = this.getProperty("template"),
                     templateData = this.getProperty("templateData") || this.getProperty("template-data"),
-                    resourcePath;
+                    resourcePath,
+                    _this = this;
                 
                 if (templateName) {
                     this.removeProperty("template");
@@ -45,13 +46,23 @@ raptor.defineClass(
                         dataExpression = templateData;
                     }
                     else {
-                        var propParts = [];
+
+
+                        dataExpression = {
+                            toString: function() {
+                                var propParts = [];
                         
-                        this.forEachPropertyNS('', function(name, value) {
-                            propParts.push(stringify(name) + ": " + value);
-                        }, this);
-                        
-                        dataExpression = "{" + propParts.join(",") + "}";
+                                _this.forEachPropertyNS('', function(name, value) {
+                                    propParts.push(stringify(name) + ": " + value);
+                                }, _this);
+                                
+                                if (_this.hasChildren()) {
+                                    propParts.push(stringify("includeBody") + ": " +  _this.getBodyContentExpression(template, false));
+                                }
+
+                                return "{" + propParts.join(", ") + "}";
+                            }
+                        };
                     }
                     
                     

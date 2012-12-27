@@ -47,6 +47,25 @@ raptor.define('templating', function(raptor) {
             return helper;
         },
         /**
+         * Helper function to return the singleton instance of a tag handler
+         * 
+         * @param name {String} The class name of the tag handler
+         * @returns {Object} The tag handler singleton instance.
+         */
+        _getHandler = function(name) {
+            var Handler = raptor.require(name), //Load the handler class
+                instance;
+            
+            if (Handler.process) {
+                instance = Handler;
+            }
+            else if (!(instance = Handler.instance)) { //See if an instance has already been created
+                instance = Handler.instance = new Handler(); //If not, create and store a new instance
+            }
+            
+            return instance; //Return the handler instance
+        },
+        /**
          * Helper function to check if an object is "empty". Different types of objects are handled differently:
          * 1) null/undefined: Null and undefined objects are considered empty
          * 2) String: The string is trimmed (starting and trailing whitespace is removed) and if the resulting string is an empty string then it is considered empty
@@ -62,23 +81,21 @@ raptor.define('templating', function(raptor) {
         };
     
     templating = {
+
         /**
-         * Renders a template to the provided context.
+         * Returns a function that can be used to render the template with the specified name.
+         *
+         * The template function should always be invoked with two arguments:
+         * <ol>
+         *  <li><b>data</b> {Object}: The template data object</li>
+         *  <li><b>context</b> {@link templating.Context}: The template context object</li>
+         * </ul>
          * 
-         * <p>
-         * The template specified by the templateName parameter must already have been loaded. The data object
-         * is passed to the compiled rendering function of the template. All output is written to the provided
-         * context using the "writer" associated with the context.
-         * 
-         * @param templateName The name of the template to render. The template must have been previously rendered
-         * @param data The data object to pass to the template rendering function
-         * @param context The context to use for all rendered output (required)
+         * @param  {String} templateName The name of the template
+         * @return {Function} The function that can be used to render the specified template.
          */
-        render: function(templateName, data, context) {
-            if (!context) {
-                throw raptor.createError(new Error("Context is required"));
-            }
-            
+        templateFunc: function(templateName) {
+
             /*
              * We first need to find the template rendering function. It's possible
              * that the factory function for the template rendering function has been
@@ -119,7 +136,29 @@ raptor.define('templating', function(raptor) {
                 }
                 loadedTemplates[templateName] = templateFunc; //Store the template rendering function in the lookup
             }
+
+            return templateFunc;
+        },
+
+        /**
+         * Renders a template to the provided context.
+         * 
+         * <p>
+         * The template specified by the templateName parameter must already have been loaded. The data object
+         * is passed to the compiled rendering function of the template. All output is written to the provided
+         * context using the "writer" associated with the context.
+         * 
+         * @param templateName The name of the template to render. The template must have been previously rendered
+         * @param data The data object to pass to the template rendering function
+         * @param context The context to use for all rendered output (required)
+         */
+        render: function(templateName, data, context) {
+            if (!context) {
+                throw raptor.createError(new Error("Context is required"));
+            }
             
+            var templateFunc = this.templateFunc(templateName);
+
             try
             {
                 templateFunc(data || {}, context); //Invoke the template rendering function with the required arguments
@@ -134,7 +173,7 @@ raptor.define('templating', function(raptor) {
          * 
          * @param templateName {String}The name of the template to render. NOTE: The template must have already been loaded.
          * @param data {Object} The data object to provide to the template rendering function
-         * @param context {templating$Context} The context object to use (optional). If a context is provided then the writer will be 
+         * @param context {templating.Context} The context object to use (optional). If a context is provided then the writer will be 
          *                                     temporarily swapped with a StringBuilder to capture the output of rendering. If a context 
          *                                     is not provided then one will be created using the "createContext" method.
          * @returns {String} The string output of the template
@@ -199,8 +238,10 @@ raptor.define('templating', function(raptor) {
             return new Context(writer || new StringBuilder()); //Create a new context using the writer provided
         },
         
+        getHandler: _getHandler,
+        
         /**
-         * 
+         * Helper functions (with short names for minification reasons)
          */
         helpers: {
             
@@ -214,41 +255,23 @@ raptor.define('templating', function(raptor) {
              */
             h: _getFunction,
             
-            /**
-             * Helper function to return the singleton instance of a tag handler
-             * 
-             * @param name The class name of the tag handler
-             * @returns {Object} The tag handler singleton instance.
-             */
-            t: function(name) {
-                var Handler = raptor.require(name), //Load the handler class
-                    instance;
-                
-                if (Handler.process) {
-                    instance = Handler;
-                }
-                else if (!(instance = Handler.instance)) { //See if an instance has already been created
-                    instance = Handler.instance = new Handler(); //If not, create and store a new instance
-                }
-                
-                return instance; //Return the handler instance
-            },
+            t: _getHandler,
             
             /**
              * forEach helper function
              * 
-             * @param list {Array} The array to iterate over
+             * @param array {Array} The array to iterate over
              * @param callback {Function} The callback function to invoke for each iteration 
              * @returns {void}
              */
-            fv: function(list, callback) {
-                if (!list) return;
-                if (!isArray(list)) {
-                    list = [list];
+            fv: function(array, callback) {
+                if (!array) return;
+                if (!isArray(array)) {
+                    array = [array];
                 }
                 
                 var i=0, 
-                    len=list.length, //Cache the list size
+                    len=array.length, //Cache the array size
                     loopStatus = { //The "loop status" object is provided as the second argument to the callback function used for each iteration
                         /**
                          * Returns the length of the array that is being iterated over
@@ -274,7 +297,7 @@ raptor.define('templating', function(raptor) {
                     };
                 
                 for (; i<len; i++) { //Loop over the elements in the array
-                    var o = list[i];
+                    var o = array[i];
                     callback(o || '', loopStatus);
                 }
             },
@@ -287,6 +310,19 @@ raptor.define('templating', function(raptor) {
                         array = [array];
                     }
                     func(array, 0, array.length);
+                }
+            },
+
+            fp: function(o, func) {
+                if (!o) {
+                    return;
+                }
+                for (var k in o)
+                {
+                    if (o.hasOwnProperty(k))
+                    {
+                        func(k, o[k]);
+                    }
                 }
             },
             

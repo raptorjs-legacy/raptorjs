@@ -127,9 +127,6 @@ raptor.defineClass(
                      * Allow imports for attributes that can be assigned to tags with a different URI
                      * e.g. <div c-if="someCondition"></div> --> <div c:if="someCondition"></div>
                      */
-                    if (!tag.forEachAttribute) {
-                        console.error('TAG w/o forEachAttribute: ', Object.keys(tag));
-                    }
                     tag.forEachAttribute(function(attr) {
                         
                         if (tag.uri !== from && (importsLookup['*'] || importsLookup["@" + attr.name])) {

@@ -156,8 +156,14 @@ describe('templating module', function() {
         expect(getExpression(0)).toEqual("{}");
 
         parse("${entity:lt}DIV${entity:gt}\n    ${startTag:div}Hello${endTag:div}");
-        expect(parts.length).toEqual(1);
-        expect(getText(0)).toEqual('&lt;DIV&gt;\n    <div>Hello</div>');
+        expect(parts.length).toEqual(7);
+        expect(getText(0)).toEqual('&lt;');
+        expect(getText(1)).toEqual('DIV');
+        expect(getText(2)).toEqual('&gt;');
+        expect(getText(3)).toEqual('\n    ');
+        expect(getText(4)).toEqual('<div>');
+        expect(getText(5)).toEqual('Hello');
+        expect(getText(6)).toEqual('</div>');
         
         parse('AAAA \\${1} BBBB \\\\${1} CCCC \\${1} DDDD \\\\${1}');
         expect(parts.length).toEqual(4);
@@ -272,6 +278,22 @@ describe('templating module', function() {
         expect(raptor.keys(result).length).toEqual(1);
         expect(result["each"]).toEqual("item in (a = [1,2,3])");
     });
+
+    it("should allow for text replacement", function() {
+        var output = compileAndRender("/test-templates/text-replacement.rhtml", {
+            person: {
+                name: "John",
+                address: {
+                    city: "San Jose",
+                    state: "CA",
+                    line1: "2065 E. Hamilton Ave.",
+                    zip: "95125"
+                }
+            }
+        });
+        expect(output).toEqual('Hello John. You are from San Jose, CA');
+    });
+
     
     it("should allow for escaping XML", function() {
         var escapeXml = raptor.require("xml.utils").escapeXml;
@@ -299,7 +321,7 @@ describe('templating module', function() {
 
     it("should allow entity expressions", function() {
         var output = compileAndRender("/test-templates/entities.rhtml", {});
-        expect(output).toEqual('&lt;DIV&gt; <div>Hello</div> <div data-entities="&lt; &lt; &#10;&#10;Line2"></div>');
+        expect(output).toEqual('<div data-attr="Hello &lt;John&gt; &lt;hello&gt;" data-nested-attr="Hello &lt;John&gt; &lt;hello&gt;" data-nested-attr2="Hello &lt;John&gt; &lt;hello&gt;">Hello &lt;John>© &lt;hello> <START></div>');
     });
     
     it("should allow escaped expressions", function() {
@@ -346,6 +368,11 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/looping.rhtml", {});
         expect(output).toEqual('abca - true - false - 0 - 3, b - false - false - 1 - 3, c - false - true - 2 - 3<div>red - true - false - 0 - 3</div>, <div>green - false - false - 1 - 3</div>, <div>blue - false - true - 2 - 3</div>');
     });
+
+    it("should allow for looping over properties", function() {
+        var output = compileAndRender("/test-templates/looping-props.rhtml", {});
+        expect(output).toEqual('[foo=low][bar=high]<ul><li>[foo=low]</li><li>[bar=high]</li></ul>');
+    });
     
     it("should allow for dynamic attributes", function() {
         var output = compileAndRender("/test-templates/attrs.rhtml", {"myAttrs": {style: "background-color: #FF0000; <test>", "class": "my-div"}});
@@ -373,7 +400,7 @@ describe('templating module', function() {
     
     it("should allow for <c:def> functions", function() {
         var output = compileAndRender("/test-templates/def.rhtml", {});
-        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p>');
+        expect(output).toEqual('<p class="greeting">Hello, World!</p>, <p class="greeting">Hello, Frank!</p><div class="section"><h1><a href="http://www.ebay.com/">ebay</a></h1><p><i>Visit eBay</i></p></div>');
     });
     
     it("should allow for <c:with> functions", function() {
@@ -408,7 +435,7 @@ describe('templating module', function() {
     
     it("should allow for includes", function() {
         var output = compileAndRender("/test-templates/include.rhtml", {});
-        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.');
+        expect(output).toEqual('Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.Hello Frank! You have 20 new messages.<div class="nested"><h1>Hello Frank! You have 20 new messages.</h1><p>Have a <b>wonderful</b> day!</p></div>');
     });
     
     it("should allow for <c:invoke function... />", function() {
@@ -512,7 +539,7 @@ describe('templating module', function() {
     it("should allow CDATA inside templates", function() {
 
         var output = compileAndRender("/test-templates/cdata.rhtml", {name: "World"});
-        expect(output).toEqual('<hello>');        
+        expect(output).toEqual('&lt;hello>');        
     });
     
     it("should allow type conversion", function() {
@@ -532,7 +559,7 @@ describe('templating module', function() {
     
     it("should allow for simple conditionals", function() {
         var output = compileAndRender("/test-templates/simple-conditionals.rhtml", {name: "John", count: 51});
-        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><span class="under;-50\\"></span>Hello John! Over 50');        
+        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><span class="under;-50\\"></span><input type="checked" checked>Hello John! Over 50');        
     });
     
     it("should allow for conditional attributes", function() {
@@ -577,7 +604,7 @@ describe('templating module', function() {
     
     it("should allow for nested attributes", function() {
         var output = compileAndRender("/test-templates/nested-attrs.rhtml", {active: true});
-        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div>');
+        expect(output).toEqual('<span title="Popover Title" data-content="Popover Content">Link Text</span><div class="tab-active" align="center"></div><div title=" red!  green!  blue! "></div>');
     });
     
     it("should allow for new variables to be created and assigned values", function() {
@@ -585,10 +612,23 @@ describe('templating module', function() {
         expect(output).toEqual('<div>red</div><div>green</div><div>blue</div><div>orange</div><div>purple</div><div>yellow</div>');
     });
     
+    
+    it("should handle XML escaping correctly", function() {
+        var output = compileAndRender("/test-templates/xml-escaping.rhtml", {name: "<Patrick>", welcome: '<span>Welcome</span>'});
+        //console.error(JSON.stringify(output));
+        expect(output).toEqual("<span>Welcome</span><span>Welcome</span><span>Welcome</span> &lt;Patrick><div title=\"&lt;span&gt;Welcome&lt;/span&gt; &lt;hello&gt;\" data-name=\"&lt;Patrick&gt;\"></div><div data-attr=\"Hello &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr=\"&lt;Hello&gt; &lt;Patrick&gt; &lt;hello&gt;\" data-nested-attr2=\"Hello &lt;John&gt; &lt;hello&gt;\">Hello &lt;John>© &lt;hello> <START></div>");
+    });
+    
+    it("should allow for a doctype tag and a doctype attribute", function() {
+        var output = compileAndRender("/test-templates/doctype.rhtml", {});
+        expect(output).toEqual("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><!DOCTYPE html><html><head><title>DOCTYPE Test</title></head><body></body></html>");
+    });
+
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         
         var output = compileAndRender("/test-templates/widgets.rhtml", {});
+        console.error(JSON.stringify(output));
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
     });
 });

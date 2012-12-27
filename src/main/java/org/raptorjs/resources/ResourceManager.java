@@ -48,6 +48,15 @@ public class ResourceManager {
         return null;
     }
     
+    public synchronized void forEachResource(String path, ResourceCallback callback) {
+    	for (SearchPathEntry searchPathEntry : this.searchPathEntries) {
+            Resource resource = searchPathEntry.findResource(path);
+            if (resource != null) {
+                callback.resourceFound(resource);
+            }
+        }
+    }
+    
     public void addDirSearchPathEntry(File dir) {
         this.addSearchPathEntry(new DirSearchPathEntry(dir));
     }
@@ -74,5 +83,9 @@ public class ResourceManager {
     
     public synchronized void addListener(ResourcesListener listener) {
         this.listeners.add(listener);
+    }
+    
+    public static interface ResourceCallback {
+    	public void resourceFound(Resource resource);
     }
 }

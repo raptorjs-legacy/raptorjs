@@ -32,9 +32,7 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var listeners = raptor.require("listeners"),
-            strings = raptor.require("strings"),
-            events = ['text', 'expression'],
+        var strings = raptor.require("strings"),
             Expression = raptor.require('templating.compiler.Expression'),
             TypeConverter = raptor.require('templating.compiler.TypeConverter'),
             regExp = /"(?:[^"]|\\")*"|'(?:[^']|\\')*'|==|===|[;=]/g;

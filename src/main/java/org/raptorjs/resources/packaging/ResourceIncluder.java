@@ -24,8 +24,8 @@ public abstract class ResourceIncluder {
     
 
     private PackageManager packageManager = null;
-    private Map<String, IncludeResource> cachedResourceIncludes = new ConcurrentHashMap<String, IncludeResource>();
-    private Map<String, Include> cachedModuleIncludes = new ConcurrentHashMap<String, Include>();
+    private Map<String, DependencyResource> cachedResourceIncludes = new ConcurrentHashMap<String, DependencyResource>();
+    private Map<String, Dependency> cachedModuleIncludes = new ConcurrentHashMap<String, Dependency>();
     
     public ResourceIncluder(PackageManager packageManager) {
         this.packageManager = packageManager;
@@ -33,8 +33,8 @@ public abstract class ResourceIncluder {
 
     
 
-    public IncludeResource getResourceIncludeCached(String path, ContentType contentType) {
-        IncludeResource include = this.cachedResourceIncludes.get(path);
+    public DependencyResource getResourceIncludeCached(String path, ContentType contentType) {
+        DependencyResource include = this.cachedResourceIncludes.get(path);
         if (include == null) {
             include = this.packageManager.createResourceInclude(contentType, path);    
             this.cachedResourceIncludes.put(path, include);
@@ -43,8 +43,8 @@ public abstract class ResourceIncluder {
         return include;
     }
     
-    public Include getModuleIncludeCached(String moduleName) {
-        Include include = this.cachedModuleIncludes.get(moduleName);
+    public Dependency getModuleIncludeCached(String moduleName) {
+        Dependency include = this.cachedModuleIncludes.get(moduleName);
         if (include == null) {
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put("name", moduleName);
@@ -56,7 +56,7 @@ public abstract class ResourceIncluder {
     }
     
     public void includeModule(String moduleName, IncludeOptions includeOptions, ResourceIncluderContext context) {
-        Include include = this.getModuleIncludeCached(moduleName);
+        Dependency include = this.getModuleIncludeCached(moduleName);
         include.include(includeOptions, context);
     }
     

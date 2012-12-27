@@ -306,11 +306,18 @@
     };
     
     $rset = function(category, key, data) {
+
         var catData = lookup[category];
         if (!catData) {
             catData = lookup[category] = {};
         }
-        catData[key] = data;
+        if (data !== undefined) {
+        	catData[key] = data;	
+        }
+        else {
+        	delete catData[key];
+        }
+        
     };
     
     $radd = function(category, data) {
@@ -325,6 +332,7 @@
         var catData = lookup[category];
         return arguments.length === 2 ? catData && catData[key] : catData; 
     };
+    
 
 }());
 

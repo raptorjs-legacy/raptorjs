@@ -43,6 +43,10 @@ public class TemplateCompiler {
         throw new RuntimeException(message + ". Exception: " + e, e);
     }
     
+    public void setWatchingEnabled(boolean enabled) {
+    	this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptCompiler, "setWatchingEnabled", enabled);
+    }
+    
     public String compile(String src, String path) {
         return this.compile(src, path, TemplateCompiler.defaultOptions);
     }
@@ -113,6 +117,10 @@ public class TemplateCompiler {
             this.handleJavaScriptError(e, "Unable to compile taglib at path \"" + path + "\"");
             return null;
         }
+    }
+    
+    public void discoverTaglibs() {
+    	this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptCompiler, "discoverTaglibs", true /* force */);
     }
     
 }

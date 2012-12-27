@@ -1,0 +1,27 @@
+{
+    "type": "raptor-module",
+    "name": "js-minifier",
+    "version": "1.0",
+    "description": "RaptorJS module to support ",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "css-minifier.js"}
+        ],
+        
+        "extensions": {
+            "node": {
+                "dependencies": [
+                    {"path": "css-minifier_node.js"}
+                ]
+            }
+        }
+    }
+}

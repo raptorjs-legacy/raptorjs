@@ -29,6 +29,8 @@ raptor.defineClass(
                 this._isRoot = false;
                 this.preserveWhitespace = null;
                 this.wordWrapEnabled = null;
+                this.escapeXmlBodyText = null;
+                this.escapeXmlContext = null;
                 this.nodeType = nodeType;
                 this.parentNode = null;
                 this.previousSibling = null;
@@ -54,10 +56,12 @@ raptor.defineClass(
                     }
                 };
                 
-                return pos;
-                
+                return pos; 
             },
-            
+
+            setPosition: function(pos) {
+                this.pos = pos;
+            },
             
             addError: function(error) {
                 var compiler = this.compiler,
@@ -225,7 +229,7 @@ raptor.defineClass(
                 }
             },
             
-            getExpression: function(template, childrenOnly) {
+            getExpression: function(template, childrenOnly, escapeXml) {
                 if (!template) {
                     throw raptor.createError(new Error("template argument is required"));
                 }
@@ -234,7 +238,7 @@ raptor.defineClass(
                 return template.makeExpression({
                     toString: function() {
                         return template.captureCode(function() {
-                            template.code("context.captureString(function() {\n")
+                            template.code("context." + (escapeXml !== false ? "captureString" : "c") + "(function() {\n")
                                 .indent(function() {
                                     if (childrenOnly === true) {
                                         _this.generateCodeForChildren(template);
@@ -251,8 +255,8 @@ raptor.defineClass(
                 });
             },
             
-            getBodyContentExpression: function(template) {
-                return this.getExpression(template, true);
+            getBodyContentExpression: function(template, escapeXml) {
+                return this.getExpression(template, true, escapeXml);
             },
         
             isTransformerApplied: function(transformer) {
@@ -500,20 +504,6 @@ raptor.defineClass(
                 this.stripExpression = stripExpression;
             },
             
-            normalizeText: function() {
-                if (this.isTextNode()) {
-                    var normalizedText = this.getText();
-                    var curChild = this.nextSibling;
-                    while(curChild && curChild.isTextNode()) {
-                        normalizedText += curChild.getText();
-                        var nodeToRemove = curChild;
-                        curChild = curChild.nextSibling;
-                        nodeToRemove.detach(); 
-                    }
-                    this.setText(normalizedText);
-                }
-            },
-            
             generateCode: function(template) {
                 this.compiler = template.compiler;
                 
@@ -535,16 +525,9 @@ raptor.defineClass(
                         this.setWordWrapEnabled(true);
                     }
                 }
-                
-                if (this.isTextNode()) {
-                    /*
-                     * After all of the transformation of the tree we
-                     * might have ended up with multiple text nodes
-                     * as siblings. We want to normalize adjacent
-                     * text nodes so that whitespace removal rules
-                     * will be correct
-                     */
-                    this.normalizeText();    
+
+                if (this.isEscapeXmlBodyText() == null) {
+                    this.setEscapeXmlBodyText(true);   
                 }
                 
                 try
@@ -644,6 +627,14 @@ raptor.defineClass(
                         childNode.setWordWrapEnabled(this.isWordWrapEnabled() === true);
                     }
                     
+                    if (childNode.isEscapeXmlBodyText() == null) {
+                        childNode.setEscapeXmlBodyText(this.isEscapeXmlBodyText() !== false);
+                    }
+
+                    if (childNode.getEscapeXmlContext() == null) {
+                        childNode.setEscapeXmlContext(this.getEscapeXmlContext() || raptor.require('templating.compiler.EscapeXmlContext').Element);
+                    }                    
+                    
                     childNode.generateCode(template);
                 }, this);
                 
@@ -693,6 +684,22 @@ raptor.defineClass(
                 printNode(this, "");
                 
                 return out.join('');
+            },
+            
+            setEscapeXmlBodyText: function(escapeXmlBodyText) {
+                this.escapeXmlBodyText = escapeXmlBodyText;
+            },
+            
+            isEscapeXmlBodyText: function() {
+                return this.escapeXmlBodyText;
+            },
+
+            setEscapeXmlContext: function(escapeXmlContext) {
+                this.escapeXmlContext = escapeXmlContext;
+            },
+            
+            getEscapeXmlContext: function() {
+                return this.escapeXmlContext;
             }
         };
         

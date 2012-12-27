@@ -1,44 +1,44 @@
 require('./_helper.js');
 
 describe('optimizer module', function() {
+    "use strict";
+    
     var logger = raptor.require('logging').logger('raptor-optimizer-spec'),
         forEachEntry = raptor.forEachEntry,
         forEach = raptor.forEach,
         compileAndRender = helpers.templating.compileAndRender,
         testOptimizer = function(config) {
         
+            var enabledExtensions = raptor.require('packaging').createExtensionCollection(config.enabledExtensions);
             var optimizer = raptor.require("optimizer");
             var pageIncludes = config.pageIncludes;
             
-            var packageManifest = raptor.require('packager').createPackageManifest();
-            packageManifest.setIncludes(pageIncludes);
+            var packageManifest = raptor.require('packaging').createPackageManifest();
+            packageManifest.setDependencies(pageIncludes);
 
             logger.debug("--------------------");
             logger.debug('Begin optimizer test for page "' + config.pageName + '":');
-            //Build the bundle set
-            var bundles = [];
-            forEach(config.bundleSet, function(bundleConfig) {
-                var bundle = optimizer.createBundle(bundleConfig.name);
-                forEach(bundleConfig.includes, function(include) {
-                    bundle.addInclude(include);
-                });
-                bundles.push(bundle);
-            });
+            
+            var BundleMappings = raptor.require("optimizer.BundleMappings");
+            var PageBundles = raptor.require("optimizer.PageBundles");
             
             //Create the bundle mappings from the bundle set
-            var bundleSet = optimizer.createBundleSet(
-                bundles,
-                {
-                    enabledExtensions: config.enabledExtensions
-                });
+            var bundleMappings = new BundleMappings(config.enabledExtensions);
+            forEach(config.bundleSet, function(bundleConfig) {
+                var bundleName = bundleConfig.name;
+                bundleMappings.addDependenciesToBundle(bundleConfig.includes, bundleName);
+            });
             
             //Get the page dependencies
             
-            var pageDependencies = optimizer.createPageDependencies({
+            var pageBundles = new PageBundles({
                     pageName: config.pageName,
+                    inPlaceDeploymentEnabled: false,
+                    bundlingEnabled: true,
+                    sourceUrlResolver: null,
+                    enabledExtensions: enabledExtensions,
                     packageManifest: packageManifest,
-                    bundleSet: bundleSet,
-                    enabledExtensions: config.enabledExtensions
+                    bundleMappings: bundleMappings
                 });
             
             var includesByKey = {},
@@ -55,7 +55,7 @@ describe('optimizer module', function() {
                 return indent + "name: " + bundle.getName() + "\n" + indent + "slot: " + bundle.getSlot() + "\n" + indent + "contentType: " + bundle.getContentType() + "\n" + indent + "code: " + code + "\n" + indent + "checksum: " + bundle.calculateChecksum();
             };
             
-            pageDependencies.forEachPageBundle(function(bundle) {
+            pageBundles.forEachBundle(function(bundle) {
                 var actualBundles = actualBundlesBySlot[bundle.getSlot()];
                 if (!actualBundles) {
                     actualBundles = actualBundlesBySlot[bundle.getSlot()] = [];
@@ -63,7 +63,7 @@ describe('optimizer module', function() {
                 
                 actualBundles.push(bundle);
                 logger.debug("Bundle for " + config.pageName + ":\n"+ bundleToString(bundle, "  "));
-                bundle.forEachInclude(function(include) {
+                bundle.forEachDependency(function(include) {
                     
                     var key = include.getKey();
                     if (includesByKey[key]) {
@@ -99,7 +99,7 @@ describe('optimizer module', function() {
                 var asyncRequires = [];
                 
                 
-                pageDependencies.forEachAsyncRequire(function(asyncRequire) {
+                pageBundles.forEachAsyncRequire(function(asyncRequire) {
                     asyncRequires.push(asyncRequire);
                 });
                 
@@ -149,20 +149,17 @@ describe('optimizer module', function() {
                         }, this);    
                     }
                 });
-                
-                
             }
 
-            
             expect(duplicates).toEqualArray([]);
             
             forEach(config.expectedMappings, function(expected) {
-                optimizer.forEachInclude(
+                optimizer.forEachDependency(
                     expected.include,
                     config.enabledExtensions,
                     function(include) {
                         if (!include.isPackageInclude()) {
-                            var targetBundle = pageDependencies.getBundleSet().getBundleForInclude(include),
+                            var targetBundle = pageBundles.getBundleMappings().getBundleForDependency(include),
                                 targetBundleName = targetBundle ? targetBundle.getName() : undefined;
                                 
                             if (!targetBundleName && expected.toBundle) {
@@ -176,15 +173,15 @@ describe('optimizer module', function() {
             
             
             if (config.expectedBundleCount) {
-                expect(pageDependencies.getBundleCount()).toEqual(config.expectedBundleCount);
+                expect(pageBundles.getBundleCount()).toEqual(config.expectedBundleCount);
             }
             
             if (config.test) {
-                config.test(pageDependencies, bundles, bundleSet);    
+                config.test(pageBundles);    
             }
             
             if (config.done) {
-                config.done(pageDependencies, bundles, bundleSet);    
+                config.done(pageBundles);    
             }
             
         };
@@ -578,17 +575,15 @@ describe('optimizer module', function() {
                 }
             },
             
-            done: function(pageDependencies) {
-                var optimizer = raptor.require("optimizer");
+            done: function(pageBundles) {
                 var Config = raptor.require('optimizer.Config');
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var writer = optimizer.createPageDependenciesFileWriter(config);
-                
-                writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
-                    prefix: "http://localhost:8080/static/"
-                }));
+                var BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter');
+                var BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder');
+                var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
+                var writer = new BundlesFileWriter(config, urlBuilder);
                 
                 var writtenFiles = {};
                 
@@ -598,7 +593,8 @@ describe('optimizer module', function() {
                 };
                 
                 
-                var htmlBySlot = writer.writePageDependencies(pageDependencies);
+                var optimizedPage = writer.writePageBundles(pageBundles);
+                var htmlBySlot = optimizedPage.getHtmlBySlot();
                 expect(htmlBySlot.head).toNotEqual(null);
                 expect(htmlBySlot.body).toNotEqual(null);
                 expect(Object.keys(writtenFiles).length).toEqual(7);
@@ -618,13 +614,15 @@ describe('optimizer module', function() {
             pageName: "filters",
             pageIncludes: [{ "module": "test.optimizer.filtersA" }],
 
-            done: function(pageDependencies) {
-                var optimizer = raptor.require("optimizer");
+            done: function(pageBundles) {
                 var Config = raptor.require('optimizer.Config');
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var writer = optimizer.createPageDependenciesFileWriter(config);
+                var BundlesFileWriter = raptor.require('optimizer.BundlesFileWriter');
+                var BundleUrlBuilder = raptor.require('optimizer.BundleUrlBuilder');
+                var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
+                var writer = new BundlesFileWriter(config, urlBuilder);
                 
                 writer.addFilter(function(code, contentType) {
                     if (contentType === 'application/javascript') {
@@ -638,23 +636,14 @@ describe('optimizer module', function() {
                     }
                 });
                 
-                
-                writer.setUrlBuilder(optimizer.createSimpleUrlBuilder({
-                    prefix: "http://localhost:8080/static/"
-                }));
-                
                 var writtenCode = {};
                 
                 writer.writeBundleFile = function(outputPath, code) {
                     logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
                     writtenCode[code] = outputPath;
                 };
-                
-                writer.writePageIncludeHtmlFile = function(outputPath, html) {
-                    logger.debug('Writing HTML include file "' + outputPath + '" to disk. Code: ' + html);
-                };
 
-                writer.writePageDependencies(pageDependencies);
+                writer.writePageBundles(pageBundles);
 
                 expect(writtenCode["FILTERSA_JS"]).toNotEqual(null);
                 expect(writtenCode["filtersa_css"]).toNotEqual(null);
@@ -664,9 +653,15 @@ describe('optimizer module', function() {
     });
     
     it('should allow for a simple optimizer project', function() {
-        var configPath = raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml' );
-        var optimizer = raptor.require('optimizer').createOptimizer(configPath);
-        var pageIncludes = optimizer.getPageHtmlBySlot("page1");
+        var configPath = raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/optimizer-config.xml');
+        var packageResource = raptor.require('resources').createFileResource(raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json'));
+        var pageOptimizer = raptor.require('optimizer').createPageOptimizer(configPath);
+        var optimizedPage = pageOptimizer.optimizePage({
+            name: "page1",
+            packageResource: packageResource
+        });
+        
+        var pageIncludes = optimizedPage.getHtmlBySlot("page1");
         expect(pageIncludes.body.indexOf('<script')).toNotEqual(-1);
         
     });
@@ -674,11 +669,106 @@ describe('optimizer module', function() {
     it("should allow for optimizer tags in templates", function() {
         var template = raptor.require('templating');
         var renderContext = template.createContext();
-        var optimizerConfigPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
-        var optimizer = raptor.require('optimizer').createOptimizer(optimizerConfigPath);
-        optimizer.setOptimizerForContext(renderContext);
-        
+        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        raptor.require('optimizer').configure(configPath);
         var output = compileAndRender("/test-templates/optimizer.rhtml", {}, renderContext);
         expect(output.indexOf('<script')).toNotEqual(-1);
+    });
+
+    it("should allow for optimizing a page without a configuration file", function() {
+        
+        raptor.require('optimizer').configureDefault();
+
+        var bundles = {},
+            File = raptor.require('files').File;
+
+        var oldWriteBundleFile = raptor.require('optimizer').pageOptimizer.getWriter().writeBundleFile;
+        try {
+            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = function(outputPath, code) {
+                var file = new File(outputPath);
+                var filename = file.getName();
+                bundles[filename] = code;
+                logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+            };
+
+            var optimizedPage = raptor.require('optimizer').optimizePage({
+                name: "page1",
+                packageFile: raptor.require('files').joinPaths(__dirname, 'resources/optimizer/project-a/page1-package.json')
+            });
+            console.error(raptor.require('debug').prettyPrint(bundles));
+            console.error(raptor.require('debug').prettyPrint(optimizedPage));
+
+            expect(Object.keys(optimizedPage.getHtmlBySlot()).length).toEqual(2);
+            expect(optimizedPage.getHtmlBySlot()['body']).toEqual("<script type=\"text/javascript\" src=\"/static/page1-body-d14bc332.js\"></script>");
+            expect(optimizedPage.getHtmlBySlot()['head']).toEqual("<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/page1-head-4b176a91.css\">");
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires[0]).toEqual("test.optimizer.nestedB");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].requires.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].css.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedA"].js.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css[0]).toEqual("/static/page1-async-head-1929e414.css");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].css.length).toEqual(1);
+
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js[0]).toEqual("/static/page1-async-body-c17b7d9b.js");
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].js.length).toEqual(1);
+            expect(optimizedPage.getLoaderMetadata()["test.optimizer.nestedB"].hasOwnProperty('requires')).toEqual(false);
+
+            expect(Object.keys(optimizedPage.getLoaderMetadata()).length).toEqual(2);
+
+            expect(Object.keys(bundles).length).toEqual(4);
+            expect(bundles["page1-async-body-c17b7d9b.js"]).toEqual("nestedB_js\nnestedA_js");
+            expect(bundles["page1-async-head-1929e414.css"]).toEqual("nestedB_css\nnestedA_css");
+            expect(bundles["page1-body-d14bc332.js"]).toEqual("moduleA\nmixedA_js\nmixedB_js\nasyncA_js");
+            expect(bundles["page1-head-4b176a91.css"]).toEqual("mixedA_css\nmixedB_css\nasyncA_css");
+        }
+        finally {
+            raptor.require('optimizer').pageOptimizer.writer.writeBundleFile = oldWriteBundleFile;
+        }
+        
+        
+    });
+
+    it("should allow for accessing page configs loaded from XML configuration file", function() {
+        var template = raptor.require('templating');
+        var renderContext = template.createContext();
+        var configPath = raptor.require('files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        raptor.require('optimizer').configure(configPath);
+        var config = raptor.require('optimizer').getDefaultPageOptimizer().getConfig();
+
+        var pageConfigsByName = {};
+
+        config.forEachPageConfig(function(pageConfig) {
+            pageConfigsByName[pageConfig.getName()] = pageConfig;
+        }, this);
+
+        expect(pageConfigsByName['page1']).toNotEqual(null);
+        expect(pageConfigsByName['page2']).toNotEqual(null);
+        expect(pageConfigsByName['page3']).toNotEqual(null);
+        expect(Object.keys(pageConfigsByName).length).toEqual(3);
+
+        var page2Manifest = pageConfigsByName['page2'].getPackageManifest();
+        var page2Dependencies = page2Manifest.getDependencies();
+        expect(page2Dependencies.length).toEqual(2);
+        expect(page2Dependencies[0].type).toEqual("module");
+        expect(page2Dependencies[0].name).toEqual("test.optimizer.moduleA");
+        expect(page2Dependencies[1].type).toEqual("module");
+        expect(page2Dependencies[1].name).toEqual("test.optimizer.mixedA");
+
+        var page3Manifest = pageConfigsByName['page3'].getPackageManifest();
+        var page3Dependencies = page3Manifest.getDependencies();
+        expect(page3Dependencies.length).toEqual(4);
+        expect(page3Dependencies[0].type).toEqual("module");
+        expect(page3Dependencies[0].name).toEqual("test.optimizer.moduleA");
+        expect(page3Dependencies[1].type).toEqual("module");
+        expect(page3Dependencies[1].name).toEqual("test.optimizer.mixedA");
+        expect(page3Dependencies[2].type).toEqual("module");
+        expect(page3Dependencies[2].name).toEqual("test.optimizer.mixedB");
+        expect(page3Dependencies[3].type).toEqual("module");
+        expect(page3Dependencies[3].name).toEqual("test.optimizer.asyncA");
     });
 });

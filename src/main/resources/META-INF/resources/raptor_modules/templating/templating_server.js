@@ -27,6 +27,24 @@ raptor.extend('templating', function(raptor) {
         File = files.File;
 
     return {
+        /**
+         * This method gets invoked if a template with a particular name has not been loaded/registered
+         * and will then try to find it and load it.
+         * 
+         * This method will attempt to convert the template name to various
+         * resource paths to try and find the template on disk. It assumes
+         * that templates are named with a particular convention. In addition to 
+         * trying the template as a file path, the following
+         * conventions are supported:
+         * 
+         * <ol>
+         *  <li>my/template --> /my/template.rhtml
+         *  <li>my/template --> /my/template/template.rhtml
+         * </ol>
+         * 
+         * @param name {String} The template name
+         * @returns {void}
+         */
         findTemplate: function(name) {
             var path = name,
                 resource,

@@ -1,0 +1,17 @@
+{
+    "type": "raptor-module",
+    "name": "test/extensions",
+    "raptor": {
+        "dependencies": [
+            {"path": "Test.js"},
+            {"path": "extensions.js"}
+        ],
+        "extensions": {
+            "server": {
+                "dependencies": [
+                    {"path": "extensions_server.js"}
+                ]
+            }
+        }
+    }
+}

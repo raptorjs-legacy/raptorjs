@@ -106,7 +106,7 @@ raptor.extend('loader', function(raptor) {
             };
             
             var error = function() {
-                this.logger().error('Failed: "' + href + '"');
+                _this.logger().error('Failed: "' + href + '"');
                 if (complete === false)
                 {                    
                     complete = true; 
@@ -122,7 +122,7 @@ raptor.extend('loader', function(raptor) {
                 href: href
             });
             
-            if (attributes == null) {
+            if (attributes) {
                 extend(el, attributes);
             }
             

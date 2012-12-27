@@ -44,7 +44,7 @@ describe('modules module', function() {
         
         var modules = {};
         
-        coreManifest.forEachInclude({
+        coreManifest.forEachDependency({
             callback: function(type, include) {
                 if (include.type === 'module') {
                     modules[include.name] = true;
@@ -76,8 +76,8 @@ describe('modules module', function() {
     
     it('should allow modules to have conditionals', function() {
         
-        raptor.require('packager').enableExtension("test.conditionals");
-        raptor.require('packager').enableExtension("test.conditionals.a");
+        raptor.require('packaging').enableExtension("test.conditionals");
+        raptor.require('packaging').enableExtension("test.conditionals.a");
         
         var conditional = raptor.require('test.conditional-extensions');
         expect(conditional["default"]).toEqual(true);

@@ -11,8 +11,10 @@
         }
     ],
 
-    "includes": [
-        {"path": "DirWalker.js"},
-        {"path": "walker.js"}
-    ]
+    "raptor": {
+        "dependencies": [
+            {"path": "DirWalker.js"},
+            {"path": "walker.js"}
+        ]
+    }
 }

@@ -65,6 +65,11 @@
         </attribute>
 
         <attribute>
+            <name>for-each</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
+        <attribute>
             <name>if</name>
             <type>expression</type>
         </attribute>
@@ -101,6 +106,12 @@
         
         <attribute>
             <name>parse-body-text</name>
+            <type>boolean</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
+        <attribute>
+            <name>trim-body-indent</name>
             <type>boolean</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
@@ -143,7 +154,7 @@
         
         <attribute>
             <name>each</name>
-            <required>true</required>
+            <required>false</required>
             <allow-expressions>false</allow-expressions>
         </attribute>
         
@@ -301,6 +312,12 @@
             <type>custom</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
+
+        <attribute>
+            <name>body-param</name>
+            <type>custom</type>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
         
     </tag>
     
@@ -373,6 +390,11 @@
             <name>uri</name>
             <type>string</type>
         </attribute>
+
+        <attribute>
+            <name>prefix</name>
+            <type>string</type>
+        </attribute>
     </tag>
     
     <tag>
@@ -390,6 +412,21 @@
         <attribute>
             <name>value</name>
             <type>expression</type>
+        </attribute>
+
+        <attribute>
+            <name>string-value</name>
+            <type>string</type>
+        </attribute>
+
+        <attribute>
+            <name>boolean-value</name>
+            <type>boolean</type>
+        </attribute>
+
+        <attribute>
+            <name>number-value</name>
+            <type>number</type>
         </attribute>
     </tag>
     

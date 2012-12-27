@@ -90,7 +90,7 @@ raptor.define(
                 var sourceOutputDir = new File(context.outputDir, "source");
                 var href = '.' + '/source' + relativePath + '/';
                 if (this.shouldAppendFilename()) {
-                    href += 'index.html'
+                    href += 'index.html';
                 }
                 
                 return {

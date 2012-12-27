@@ -3,8 +3,8 @@ raptor.defineClass(
     function(raptor) {
         "use strict";
         
-        var startRegExp = /<!--\s*\[\s*raptor-include\:?\s+(\w+)\s*\]\s*-->/g,
-            endRegExp = /<!--\s*\[\/\s*raptor-include\s*\]\s*-->/g;
+        var startRegExp = /<!--\s*\[\s*raptor-dependency\:?\s+(\w+)\s*\]\s*-->/g,
+            endRegExp = /<!--\s*\[\/\s*raptor-dependency\s*\]\s*-->/g;
         
         var HtmlInjector = function(pageHtml, keepMarkers) {
             this.keepMarkers = keepMarkers === true;
@@ -62,7 +62,7 @@ raptor.defineClass(
                 if (injectIndex === undefined) {
                     throw raptor.createError(new Error('Starting marker not found for slot "' + slot + '"'));
                 }
-                this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-include: ' + slot + '] -->' + injectHtml + '<!-- [/raptor-include] -->') : injectHtml;
+                this.parts[injectIndex] = this.keepMarkers ? ('<!-- [raptor-dependency: ' + slot + '] -->' + injectHtml + '<!-- [/raptor-dependency] -->') : injectHtml;
             },
             
             getHtml: function() {

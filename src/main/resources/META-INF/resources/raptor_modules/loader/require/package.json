@@ -1,0 +1,29 @@
+{
+    "type": "raptor-module",
+    "name": "loader.require",
+    "version": "1.0",
+    "description": "Adds support for asynchronously loading packages",
+    "homepage": "http://wiki2.arch.ebay.com/display/RAPTOR/Home",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+
+    "raptor": {
+        "dependencies": [
+            
+        ],
+                
+        "extensions": {
+            "browser": {
+                "dependencies": [
+                    {"module": "loader"},
+                    {"type": "loader-metadata"},
+                    {"path": "require.js"}
+                ]
+            }
+        }
+    }
+}
