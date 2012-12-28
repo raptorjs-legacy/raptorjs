@@ -28,6 +28,7 @@ import org.raptorjs.resources.ClasspathSearchPathEntry;
 import org.raptorjs.resources.ResourceManager;
 import org.raptorjs.rhino.amd.InjectDefineScript;
 import org.raptorjs.rhino.commonjs.module.Require;
+import org.raptorjs.rhino.commonjs.module.provider.RaptorUrlModuleSourceProvider;
 
 
 
@@ -80,7 +81,7 @@ public abstract class RaptorJSEnv {
     {
     	URI dirUri = this.getDirectory();
     	Iterable<URI> uris = Collections.singleton(dirUri);
-    	UrlModuleSourceProvider urlModuleSourceProvider = new UrlModuleSourceProvider(uris, null);
+    	UrlModuleSourceProvider urlModuleSourceProvider = new RaptorUrlModuleSourceProvider(uris, null);
 
     	Require require = new Require(
         		cx, 
@@ -94,7 +95,7 @@ public abstract class RaptorJSEnv {
     }
     
     private URI getDirectory() {
-        final String jsFile = getClass().getResource("/META-INF/resources/raptor/raptor.js").toExternalForm();
+        final String jsFile = RaptorJSEnv.class.getResource("/META-INF/resources/raptor/raptor.js").toExternalForm();
         try {
 			return new URI(jsFile.substring(0, jsFile.lastIndexOf('/') + 1));
 		} catch (URISyntaxException e) {
