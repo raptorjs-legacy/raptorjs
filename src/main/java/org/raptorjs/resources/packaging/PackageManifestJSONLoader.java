@@ -41,7 +41,7 @@ public class PackageManifestJSONLoader {
             return manifest;
         }
         catch(Exception e) {
-        	throw new RuntimeException("Unable to parse JSON file at path '" + resource.getSystemPath() + "'. Exception: " + e, e);
+        	throw new RuntimeException("Unable to parse JSON file at path '" + resource.getURL() + "'. Exception: " + e, e);
         }
     }
     

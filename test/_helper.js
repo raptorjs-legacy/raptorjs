@@ -139,7 +139,8 @@ jsdomScripts = function(dependencies) {
             if (!resource.exists()) {
                 throw new Error('Resource not found with path "' + path + '"');
             }
-            handleFile(resource.getSystemPath());
+
+            handleFile(resource.getURL());
         }
     };
     
@@ -160,7 +161,7 @@ jsdomScripts = function(dependencies) {
             callback: function(type, include) {
                 if (type === 'js') {
                     var resource = manifest.resolveResource(include.path);
-                    handleFile(resource.getSystemPath());
+                    handleFile(resource.getURL());
                 }
                 else if (type === 'module') {
                     handleModule(include.name);

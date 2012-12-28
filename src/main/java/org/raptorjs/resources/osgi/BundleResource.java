@@ -28,12 +28,15 @@ public class BundleResource extends Resource {
     private Bundle bundle = null;
     private String fullPath = null;
     private URL url = null;
+    private String urlString = null;
     
     protected BundleResource(String path, SearchPathEntry searchPathEntry, Bundle bundle, String fullPath, URL url) {
         super(path, searchPathEntry);
         this.bundle = bundle;
         this.fullPath = fullPath;
         this.url = url;
+        
+        this.urlString = url.toExternalForm();
     }
 
     public Bundle getBundle() {
@@ -44,14 +47,9 @@ public class BundleResource extends Resource {
         return fullPath;
     }
 
-    public URL getUrl() {
-        return url;
-    }
-
     @Override
-    public String getSystemPath() {
-        // TODO Auto-generated method stub
-        return fullPath + " (bundle=" + bundle.getSymbolicName() + ")";
+    public String getURL() {
+    	return this.urlString;
     }
 
     @Override

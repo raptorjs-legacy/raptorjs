@@ -42,7 +42,7 @@ public abstract class Resource {
     
     public abstract boolean isDirectory();
     public abstract boolean isFile();
-    public abstract String getSystemPath();
+    public abstract String getURL();
     public abstract InputStream getResourceAsStream();
     public void watch(WatchListener listener) {
     	//Not implemented
@@ -102,7 +102,7 @@ public abstract class Resource {
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Unable to read resource as string \"" + this.getSystemPath() + "\" (charset=" + charset + "). Exception: " + e, e);
+            throw new RuntimeException("Unable to read resource as string \"" + this.getURL() + "\" (charset=" + charset + "). Exception: " + e, e);
         } 
     }
 

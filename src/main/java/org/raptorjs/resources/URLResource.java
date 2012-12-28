@@ -49,8 +49,8 @@ public class URLResource extends Resource {
     }
 
     @Override
-    public String getSystemPath() {
-        return url.toString();
+    public String getURL() {
+        return url.toExternalForm();
     }
 
     @Override

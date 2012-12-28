@@ -55,7 +55,7 @@ public class PackageManifest {
     //////////
     
     public String getSystemPath() {
-        return this.resource.getSystemPath();
+        return this.resource.getURL();
     }
 
     

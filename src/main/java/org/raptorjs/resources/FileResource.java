@@ -20,19 +20,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
 
 public class FileResource extends Resource {
 
     private File file = null;
-    
+    private String url = null;
     public FileResource(String path, SearchPathEntry searchPathEntry, File file) {
         super(path, searchPathEntry);
         this.file = file;
+        URI uri = this.file.toURI();
+        try {
+			this.url = uri.toURL().toExternalForm();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+        
     }
 
     @Override
-    public String getSystemPath() {
-        return this.file.getAbsolutePath();
+    public String getURL() {
+        return this.url;
     }
 
     @Override
