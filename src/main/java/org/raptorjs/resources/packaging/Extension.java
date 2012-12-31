@@ -8,17 +8,24 @@ import org.raptorjs.rhino.RaptorJSEnv;
 
 public class Extension {
     
-    public List<Dependency> includes = new ArrayList<Dependency>();
+    public List<Dependency> dependencies = new ArrayList<Dependency>();
     
     private Condition condition = null;
     private String name = null;
 
-    public List<Dependency> getIncludes() {
-        return includes;
+    /**
+	 * @deprecated Use {@link #getDependencies()} instead
+	 */
+	public List<Dependency> getIncludes() {
+		return getDependencies();
+	}
+
+	public List<Dependency> getDependencies() {
+        return dependencies;
     }
 
-    public void addInclude(Dependency include) {
-        this.includes.add(include);
+    public void addInclude(Dependency dependency) {
+        this.dependencies.add(dependency);
     }
     
     
@@ -49,6 +56,6 @@ public class Extension {
 
     @Override
     public String toString() {
-        return "Extension [includes=" + includes + "]";
+        return "Extension [includes=" + dependencies + "]";
     }
 }

@@ -66,4 +66,12 @@ public class AsyncMetadata {
         }
         out.write("};");
     }
+
+	@Override
+	public String toString() {
+		return "AsyncMetadata [asyncDependenciesByName="
+				+ asyncDependenciesByName + "]";
+	}
+    
+    
 }

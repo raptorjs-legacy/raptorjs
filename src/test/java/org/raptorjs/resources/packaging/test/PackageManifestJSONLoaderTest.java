@@ -25,7 +25,7 @@ import org.raptorjs.resources.packaging.ResourceIncluderContext;
 
 public class PackageManifestJSONLoaderTest {
 	private void _testOldNew(PackageManifest manifest) {
-		List<Dependency> includes = manifest.getIncludes();
+		List<Dependency> includes = manifest.getDependencies();
 		assertNotNull(includes);
 		assertEquals(includes.size(), 2);
 		IncludeJSTest js0 = (IncludeJSTest) includes.get(0);

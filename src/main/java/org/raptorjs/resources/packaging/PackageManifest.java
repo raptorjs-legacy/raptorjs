@@ -59,7 +59,14 @@ public class PackageManifest {
     }
 
     
-    public List<Dependency> getIncludes() {
+    /**
+	 * @deprecated Use {@link #getDependencies()} instead
+	 */
+	public List<Dependency> getIncludes() {
+		return getDependencies();
+	}
+
+	public List<Dependency> getDependencies() {
         return this.dependencies;
     }
     

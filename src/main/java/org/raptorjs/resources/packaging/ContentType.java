@@ -9,7 +9,7 @@ public enum ContentType {
         this.includeTypeName = includeTypeName;
     }
 
-    public String getIncludeTypeName() {
+    public String getDependencyTypeName() {
         return includeTypeName;
     }
     

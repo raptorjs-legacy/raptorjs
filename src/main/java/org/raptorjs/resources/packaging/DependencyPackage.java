@@ -18,7 +18,7 @@ public abstract class DependencyPackage extends Dependency {
     @Override
     protected void doInclude(IncludeOptions includeOptions, ResourceIncluderContext context) {
         PackageManifest manifest = this.getPackageManifest(context);
-        List<Dependency> includes = manifest.getIncludes();
+        List<Dependency> includes = manifest.getDependencies();
         
         if (!context.isPackageExtensionIncluded(manifest, null)) {
             context.setPackageExtensionIncluded(manifest, null);
@@ -32,7 +32,7 @@ public abstract class DependencyPackage extends Dependency {
             if (!context.isPackageExtensionIncluded(manifest, extension) && context.isExtensionEnabled(extension, includeOptions)) {
                 context.setPackageExtensionIncluded(manifest, extension);
                 
-                for (Dependency include : extension.getIncludes()) {
+                for (Dependency include : extension.getDependencies()) {
                     include.include(includeOptions, context);
                 }    
             }

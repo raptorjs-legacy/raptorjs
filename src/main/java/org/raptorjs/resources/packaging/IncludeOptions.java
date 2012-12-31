@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.mozilla.javascript.ScriptableObject;
-import org.raptorjs.rhino.RaptorJSEnv;
 
 public class IncludeOptions {
     public enum AsyncType {
@@ -63,6 +62,10 @@ public class IncludeOptions {
     public Set<String> getEnabledExtensions() {
         return this.enabledExtensions;
     }
+    
+    public boolean hasEnabledExtensions() {
+    	return this.enabledExtensions != null && !this.enabledExtensions.isEmpty();
+    }
 
     public boolean isModuleExtensionEnabled(String extension) {
         return this.enabledExtensions != null && this.enabledExtensions.contains(extension);
@@ -74,15 +77,5 @@ public class IncludeOptions {
         }
         this.enabledExtensions.add(extension);
         this.scriptableExtensionsCollection = null;
-    }
-    
-    public ScriptableObject getScriptableExtensionsCollection(RaptorJSEnv raptorJSEnv) {
-        
-        if (this.scriptableExtensionsCollection == null) {
-            ScriptableObject packaging = raptorJSEnv.require("packaging");
-            this.scriptableExtensionsCollection = (ScriptableObject) raptorJSEnv.getJavaScriptEngine().invokeMethod(packaging, "rhinoCreateExtensions", raptorJSEnv.getJavaScriptEngine().javaToJS(enabledExtensions));
-        }
-        
-        return this.scriptableExtensionsCollection;
     }
 }

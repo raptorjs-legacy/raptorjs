@@ -20,10 +20,10 @@ import org.raptorjs.resources.Resource;
 public class PackageManifestJSONLoader {
     
     private ObjectMapper mapper = new ObjectMapper();
-    private DependencyFactory includeFactory = null;
+    private DependencyFactory dependencyFactory = null;
     
     public PackageManifestJSONLoader(DependencyFactory includeFactory) {
-        this.includeFactory = includeFactory;
+        this.dependencyFactory = includeFactory;
    
         mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -213,8 +213,8 @@ public class PackageManifestJSONLoader {
             props = Collections.emptyMap();
         }
         
-        Dependency include = this.includeFactory.createInclude(type, props);
-        include.setParentPackageManifest(manifest);
-        return include;
+        Dependency dependency = this.dependencyFactory.createDependency(type, props);
+        dependency.setParentPackageManifest(manifest);
+        return dependency;
     }
 }

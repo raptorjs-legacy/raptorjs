@@ -43,7 +43,8 @@ public abstract class ResourceIncluderContext {
     private PackageManager packageManager = null;
     private RaptorJSEnv raptorJSEnv = null;
     private ResourceManager resourceManager = null;
-    
+    private ScriptableObject defaultScriptableExtensionsCollection = null;
+    private ScriptableObject packaging = null;
     
     public ResourceIncluderContext(ResourceIncluder resourceIncluder, PackageManager packageManager, RaptorJSEnv raptorJSEnv, ResourceManager resourceManager) {
         this.resourceIncluder = resourceIncluder;
@@ -55,14 +56,41 @@ public abstract class ResourceIncluderContext {
     
     
     public ScriptableObject getScriptableExtensionsCollection(IncludeOptions packageIncludeOptions) {
-        return packageIncludeOptions.getScriptableExtensionsCollection(this.raptorJSEnv);
+    	if (packageIncludeOptions == null || !packageIncludeOptions.hasEnabledExtensions()) {
+    		//There are no include-specific extensions... just use the default extension collection (create it if necessary)
+    		if (this.defaultScriptableExtensionsCollection == null) {
+    			this.defaultScriptableExtensionsCollection = this.createExtensionsCollection(defaultPackageExtensions);
+    		}
+    		return this.defaultScriptableExtensionsCollection;
+    	}
+    	else {
+    		//Build the extension collection object from the enabled extensions provided in the include options and the default extensions
+    		Set<String> enabledExtensions = new HashSet<String>(packageIncludeOptions.getEnabledExtensions());
+    		enabledExtensions.addAll(defaultPackageExtensions);
+    		return this.createExtensionsCollection(enabledExtensions);
+    	}
+    }
+    
+    protected ScriptableObject createExtensionsCollection(Set<String> enabledExtensions) {
+    	ScriptableObject packaging = this.getPackagingModule();
+    	ScriptableObject scriptableExtensionsCollection = (ScriptableObject) raptorJSEnv.getJavaScriptEngine().invokeMethod(packaging, "rhinoCreateExtensions", raptorJSEnv.getJavaScriptEngine().javaToJS(enabledExtensions));
+    	return scriptableExtensionsCollection;
+    }
+    
+    protected ScriptableObject getPackagingModule() {
+    	if (this.packaging == null) {
+    		this.packaging = raptorJSEnv.require("raptor/packaging");
+    	}
+    	return this.packaging;
     }
     
     public void enableExtension(String extension) {
+    	this.defaultScriptableExtensionsCollection = null; //Invalidate the old extension collection object
         defaultPackageExtensions.add(extension);
     }
     
     public void disableExtension(String extension) {
+    	this.defaultScriptableExtensionsCollection = null; //Invalidate the old extension collection object
         defaultPackageExtensions.remove(extension);
     }
     
@@ -202,9 +230,9 @@ public abstract class ResourceIncluderContext {
         List<Dependency> jsIncludes = new LinkedList<Dependency>();
         List<Dependency> cssIncludes = new LinkedList<Dependency>();
         
-        List<Dependency> includes = packageManifest.getIncludes();
-        if (includes != null) {
-            for (Dependency include : includes) {
+        List<Dependency> dependencies = packageManifest.getDependencies();
+        if (dependencies != null) {
+            for (Dependency include : dependencies) {
                 if (include.isPackageInclude()) {
                     DependencyPackage packageInclude = (DependencyPackage) include;
                     requires.add(packageInclude.getAsyncRequireName());
@@ -229,20 +257,20 @@ public abstract class ResourceIncluderContext {
             for (Extension extension : extensions) {
                 
                 if ((includedExtensions != null && includedExtensions.contains(extension)) || this.isExtensionEnabled(extension, null)) {
-                    includes = packageManifest.getIncludes();
-                    for (Dependency include : includes) {
-                        if (include.isPackageInclude()) {
-                            DependencyPackage packageInclude = (DependencyPackage) include;
+                    dependencies = extension.getDependencies();
+                    for (Dependency dependency : dependencies) {
+                        if (dependency.isPackageInclude()) {
+                            DependencyPackage packageInclude = (DependencyPackage) dependency;
                             requires.add(packageInclude.getAsyncRequireName());
                             this.getAsyncMetadataJSONHelper(metadata, packageInclude.getAsyncRequireName(), packageInclude.getPackageManifest(this), null);
                         }
                         else {
-                            DependencyResource resourceInclude = (DependencyResource) include;
+                            DependencyResource resourceInclude = (DependencyResource) dependency;
                             if (resourceInclude.getContentType() == ContentType.JS) {
-                                jsIncludes.add(include);
+                                jsIncludes.add(dependency);
                             }
                             else {
-                                cssIncludes.add(include);    
+                                cssIncludes.add(dependency);    
                             }
                         }
                     }    
@@ -312,6 +340,12 @@ public abstract class ResourceIncluderContext {
         public Set<Extension> getIncludedExtensions() {
             return includedExtensions;
         }
+
+		@Override
+		public String toString() {
+			return "AsyncInclude [requireName=" + requireName
+					+ ", packageManifest=" + packageManifest.getSystemPath() + "]";
+		}
         
         
         

@@ -59,13 +59,13 @@ public class PackageManager {
     }
     
     public Dependency createInclude(String type, Map<String, Object> properties) {
-        Dependency include = this.includeFactory.createInclude(type, properties);
+        Dependency include = this.includeFactory.createDependency(type, properties);
         return include;
     }
     
     public DependencyResource createResourceInclude(ContentType type, String path) {
         
-        DependencyResource include = this.includeFactory.createResourceInclude(type, path);
+        DependencyResource include = this.includeFactory.createResourceDependency(type, path);
         return include;
     }
     

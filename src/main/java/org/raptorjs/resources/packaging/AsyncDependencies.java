@@ -46,5 +46,11 @@ public class AsyncDependencies {
     public List<String> getRequires() {
         return requires;
     }
+	@Override
+	public String toString() {
+		return "AsyncDependencies [jsUrls=" + jsUrls + ", cssUrls=" + cssUrls
+				+ ", requires=" + requires + "]";
+	}
 
+    
 }
