@@ -24,6 +24,10 @@ public class DependencyModule extends DependencyPackage {
     public void init() {
         this.moduleName = this.getProperty("name");
     }
+    
+    public String getModuleName() {
+    	return this.moduleName;
+    }
 
     @Override
     public boolean exists(ResourceIncluderContext context) {
@@ -62,6 +66,11 @@ public class DependencyModule extends DependencyPackage {
         return true;
     }
 
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+    
     
     
     
