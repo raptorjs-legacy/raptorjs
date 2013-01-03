@@ -23,6 +23,7 @@ import java.util.Collections;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Undefined;
 import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
 import org.raptorjs.resources.ClasspathSearchPathEntry;
 import org.raptorjs.resources.ResourceManager;
@@ -83,13 +84,14 @@ public abstract class RaptorJSEnv {
     	Iterable<URI> uris = Collections.singleton(dirUri);
     	UrlModuleSourceProvider urlModuleSourceProvider = new RaptorUrlModuleSourceProvider(uris, null);
 
-    	Require require = new Require(
+    	Require require = new RaptorRequire(
         		cx, 
         		scope, 
         		urlModuleSourceProvider, 
         		this.injectDefineScript, 
         		null, 
-        		false /* not sandboxed */);
+        		false /* not sandboxed */,
+        		this);
     	
     	return require;
     }
@@ -136,8 +138,28 @@ public abstract class RaptorJSEnv {
     	return (ScriptableObject)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
     }
     
+    public ScriptableObject find(String name) {
+    	if (this.raptor == null) {
+    		return null;
+    	}
+    	
+    	Object object = this.getJavaScriptEngine().invokeMethod(this.raptor, "find", name);
+    	if (object == null) {
+    		return null;
+    	}
+    	else if (object instanceof ScriptableObject) {
+    		return (ScriptableObject)object;
+    	}
+    	if (object instanceof Undefined) {
+    		return null;
+    	}
+    	else {
+    		throw new RuntimeException("Module is not a scriptable object. It is of type \"" + object.getClass().getName() + "\". Object: " + object );
+    	}
+    }
+    
     public void load(String name) {
-        this.getJavaScriptEngine().invokeFunction("rhinoRaptorLoad", name);
+    	this.getJavaScriptEngine().invokeMethod(this.raptor, "find", name);
     }
     
 }
