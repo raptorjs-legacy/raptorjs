@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -31,49 +33,64 @@ public class OSGIAdapter {
         return instance;
     }
     
-    public void addSearchPathEntriesFromOSGIManifests(ResourceManager resourceManager) throws IOException {
+    public void addSearchPathEntriesFromOSGIManifests(ResourceManager resourceManager) {
         Enumeration<URL> manifestUrls = null;
         
         ClassLoader cl = OSGIAdapter.class.getClassLoader();
 
+        Set<String> foundBasePaths = new HashSet<String>();
+        
         try {
             manifestUrls = cl.getResources("META-INF/MANIFEST.MF");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
-        if (manifestUrls != null) {
-            
-            while(manifestUrls.hasMoreElements()) {
-                URL manifestUrl = manifestUrls.nextElement();
-                InputStream in = manifestUrl.openStream();
-                
-                Manifest manifest = null;
-                try {
-                    manifest = new Manifest(in);
-                } catch (Exception e) {
-                    throw new RuntimeException("Unable to get input stream reader for manifest with URL \"" + manifestUrl + "\". Exception: " + e, e);
-                }
-                finally {
-                    if (in != null) {
-                        in.close();
-                    }
-                }
-
-                if (manifest != null) {
-                    
-                    Attributes attributes = manifest.getMainAttributes();
-                    if (attributes != null) {
-                        String raptorSearchPath = attributes.getValue("X-Raptor-Resource-Search-Path");//manifest.getHeader("X-Raptor-Resource-Search-Path");
-                        if (raptorSearchPath != null) {
-                            String[] parts = raptorSearchPath.split("\\s*,\\s*");
-                            for (String basePath : parts) {
-                                resourceManager.addClasspathSearchPathEntry(OSGIAdapter.class, basePath);
-                            }
-                        }
-                    }
-                }
-            }
+      
+	        if (manifestUrls != null) {
+	            
+	            while(manifestUrls.hasMoreElements()) {
+	                URL manifestUrl = manifestUrls.nextElement();
+	                InputStream in;
+					try {
+						in = manifestUrl.openStream();
+					} catch (IOException e1) {
+						throw new RuntimeException("Unable to open stream for manifest at path " + manifestUrl);
+					}
+	                
+	                Manifest manifest = null;
+	                try {
+	                    manifest = new Manifest(in);
+	                } catch (Exception e) {
+	                    throw new RuntimeException("Unable to get input stream reader for manifest with URL \"" + manifestUrl + "\". Exception: " + e, e);
+	                }
+	                finally {
+	                    if (in != null) {
+	                        try {
+								in.close();
+							} catch (IOException e) {
+								throw new RuntimeException();
+							}
+	                    }
+	                }
+	
+	                if (manifest != null) {
+	                    
+	                    Attributes attributes = manifest.getMainAttributes();
+	                    if (attributes != null) {
+	                        String raptorSearchPath = attributes.getValue("X-Raptor-Resource-Search-Path");//manifest.getHeader("X-Raptor-Resource-Search-Path");
+	                        if (raptorSearchPath != null) {
+	                            String[] parts = raptorSearchPath.split("\\s*,\\s*");
+	                            for (String basePath : parts) {
+	                            	if (!foundBasePaths.contains(basePath)) {
+	                            		foundBasePaths.add(basePath);
+	                            		resourceManager.addClasspathSearchPathEntry(OSGIAdapter.class, basePath);
+	                            	}
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
         }
-    }
+    
 }
