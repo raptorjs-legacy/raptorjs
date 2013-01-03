@@ -16,11 +16,15 @@
 
 package org.raptorjs.resources.osgi;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
 
 import org.osgi.framework.Bundle;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.SearchPathEntry;
+import org.raptorjs.resources.URLResource;
+import org.raptorjs.resources.ResourceManager.ResourceCallback;
 
 public class BundleSearchPathEntry extends SearchPathEntry {
 
@@ -44,6 +48,24 @@ public class BundleSearchPathEntry extends SearchPathEntry {
             return this.createBundleResource(path, fullPath, resourceURL);
         }
         return null;
+    }
+    
+    @Override
+    public void forEachResource(String path, ResourceCallback callback) {
+    	String fullPath = this.basePath + path;
+    	
+    	Enumeration<URL> urls;
+		try {
+			urls = this.bundle.getResources(fullPath);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+    	while (urls.hasMoreElements()) {
+    		URL url = urls.nextElement();
+    		Resource resource = new URLResource(path, this, fullPath, url, true);
+    		callback.resourceFound(resource);
+    	}
     }
 
     @Override

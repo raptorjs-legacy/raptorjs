@@ -16,6 +16,9 @@
 
 package org.raptorjs.resources;
 
+import org.raptorjs.resources.ResourceManager.ResourceCallback;
+
 public abstract class SearchPathEntry {
     public abstract Resource findResource(String path);
+    public abstract void forEachResource(String path, ResourceCallback callback);
 }

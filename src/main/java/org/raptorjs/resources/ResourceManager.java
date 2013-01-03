@@ -17,8 +17,10 @@
 package org.raptorjs.resources;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 public class ResourceManager {
@@ -49,11 +51,9 @@ public class ResourceManager {
     }
     
     public synchronized void forEachResource(String path, ResourceCallback callback) {
+    	callback = new DedupResourceCallback(callback);
     	for (SearchPathEntry searchPathEntry : this.searchPathEntries) {
-            Resource resource = searchPathEntry.findResource(path);
-            if (resource != null) {
-                callback.resourceFound(resource);
-            }
+            searchPathEntry.forEachResource(path, callback);
         }
     }
     
@@ -87,5 +87,22 @@ public class ResourceManager {
     
     public static interface ResourceCallback {
     	public void resourceFound(Resource resource);
+    }
+    
+    private static class DedupResourceCallback implements ResourceCallback {
+    	private ResourceCallback wrappedResourceCallback = null;
+    	private Set<Resource> foundResources = new HashSet<Resource>();
+    	
+    	private DedupResourceCallback(ResourceCallback wrappedResourceCallback) {
+    		this.wrappedResourceCallback = wrappedResourceCallback;
+    	}
+
+		@Override
+		public void resourceFound(Resource resource) {
+			if (!foundResources.contains(resource)) {
+				foundResources.add(resource);
+				this.wrappedResourceCallback.resourceFound(resource);
+			}
+		}
     }
 }

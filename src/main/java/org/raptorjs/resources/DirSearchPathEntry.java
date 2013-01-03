@@ -18,6 +18,8 @@ package org.raptorjs.resources;
 
 import java.io.File;
 
+import org.raptorjs.resources.ResourceManager.ResourceCallback;
+
 public class DirSearchPathEntry extends SearchPathEntry {
 
     private File dir = null;
@@ -33,6 +35,14 @@ public class DirSearchPathEntry extends SearchPathEntry {
             return new FileResource(path, this, file);
         }
         return null;
+    }
+    
+    @Override
+    public void forEachResource(String path, ResourceCallback callback) {
+    	Resource resource = this.findResource(path);
+    	if (resource != null) {
+    		callback.resourceFound(resource);
+    	}
     }
 
 }

@@ -16,7 +16,11 @@
 
 package org.raptorjs.resources;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
+
+import org.raptorjs.resources.ResourceManager.ResourceCallback;
 
 public class ClasspathSearchPathEntry extends SearchPathEntry {
 
@@ -40,6 +44,31 @@ public class ClasspathSearchPathEntry extends SearchPathEntry {
         else {
             return null;
         }
+    }
+    
+    @Override
+    public void forEachResource(String path, ResourceCallback callback) {
+    	String fullPath = this.basePath + path;
+    	
+    	if (fullPath.startsWith("/")) {
+    		fullPath = fullPath.substring(1);
+    	}
+    	
+    	
+    	Enumeration<URL> urls;
+		try {
+			urls = this.clazz.getClassLoader().getResources(fullPath);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+    	while (urls.hasMoreElements()) {
+    		URL url = urls.nextElement();
+    		Resource resource = new URLResource(path, this, fullPath, url, true);
+    		callback.resourceFound(resource);
+    	}
+    	
+    	
     }
 
     @Override
