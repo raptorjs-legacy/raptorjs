@@ -61,11 +61,13 @@ public class BundleSearchPathEntry extends SearchPathEntry {
 			throw new RuntimeException(e);
 		}
 		
-    	while (urls.hasMoreElements()) {
-    		URL url = urls.nextElement();
-    		Resource resource = new URLResource(path, this, fullPath, url, true);
-    		callback.resourceFound(resource);
-    	}
+		if (urls != null) {
+			while (urls.hasMoreElements()) {
+	    		URL url = urls.nextElement();
+	    		Resource resource = new URLResource(path, this, fullPath, url, true);
+	    		callback.resourceFound(resource);
+	    	}
+		}
     }
 
     @Override
