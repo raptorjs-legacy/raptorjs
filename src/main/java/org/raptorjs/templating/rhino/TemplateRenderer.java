@@ -19,14 +19,14 @@ package org.raptorjs.templating.rhino;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Scriptable;
 import org.raptorjs.rhino.RaptorJSEnv;
 
 
 public class TemplateRenderer {
 
     private RaptorJSEnv raptorJSEnv = null;
-    private ScriptableObject javaScriptModule = null;
+    private Scriptable javaScriptModule = null;
     
     public TemplateRenderer(RaptorJSEnv raptorJSEnv) {
         this.raptorJSEnv = raptorJSEnv;        
@@ -38,7 +38,7 @@ public class TemplateRenderer {
         }
     }
     
-    private void setJavaScriptTemplatingModule(ScriptableObject o) {
+    private void setJavaScriptTemplatingModule(Scriptable o) {
         this.javaScriptModule = o;
     }
     

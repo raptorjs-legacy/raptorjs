@@ -16,7 +16,7 @@
 
 package org.raptorjs.templating.rhino;
 
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Scriptable;
 import org.raptorjs.rhino.RaptorJSEnv;
 
 
@@ -25,7 +25,7 @@ public class TemplateCompiler {
     private static CompilerOptions defaultOptions = new CompilerOptions();
     
     private RaptorJSEnv raptorJSEnv = null;
-    private ScriptableObject javaScriptCompiler = null;
+    private Scriptable javaScriptCompiler = null;
     
     public TemplateCompiler(RaptorJSEnv raptorJSEnv) {
         this.raptorJSEnv = raptorJSEnv;
@@ -35,7 +35,7 @@ public class TemplateCompiler {
         }
     }
     
-    private void setJavaScriptCompilerModule(ScriptableObject o) {
+    private void setJavaScriptCompilerModule(Scriptable o) {
         this.javaScriptCompiler = o;
     }
     

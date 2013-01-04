@@ -205,7 +205,7 @@ public class JavaScriptEngine {
         return this.invokeMethod(this.globalScope, functionName, args);
     }
     
-    public Object invokeMethod(ScriptableObject thiz, String methodName, Object ...args) {
+    public Object invokeMethod(Scriptable thiz, String methodName, Object ...args) {
         Context context = Context.enter();
         try {
         	for (int i=0; i<args.length; i++) {

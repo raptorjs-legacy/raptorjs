@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.raptorjs.resources.ResourceManager;
 import org.raptorjs.rhino.RaptorJSEnv;
@@ -44,7 +45,7 @@ public abstract class ResourceIncluderContext {
     private RaptorJSEnv raptorJSEnv = null;
     private ResourceManager resourceManager = null;
     private ScriptableObject defaultScriptableExtensionsCollection = null;
-    private ScriptableObject packaging = null;
+    private Scriptable packagingModule = null;
     
     public ResourceIncluderContext(ResourceIncluder resourceIncluder, PackageManager packageManager, RaptorJSEnv raptorJSEnv, ResourceManager resourceManager) {
         this.resourceIncluder = resourceIncluder;
@@ -72,16 +73,16 @@ public abstract class ResourceIncluderContext {
     }
     
     protected ScriptableObject createExtensionsCollection(Set<String> enabledExtensions) {
-    	ScriptableObject packaging = this.getPackagingModule();
+    	Scriptable packaging = this.getPackagingModule();
     	ScriptableObject scriptableExtensionsCollection = (ScriptableObject) raptorJSEnv.getJavaScriptEngine().invokeMethod(packaging, "rhinoCreateExtensions", raptorJSEnv.getJavaScriptEngine().javaToJS(enabledExtensions));
     	return scriptableExtensionsCollection;
     }
     
-    protected ScriptableObject getPackagingModule() {
-    	if (this.packaging == null) {
-    		this.packaging = raptorJSEnv.require("raptor/packaging");
+    protected Scriptable getPackagingModule() {
+    	if (this.packagingModule == null) {
+    		this.packagingModule = raptorJSEnv.require("raptor/packaging");
     	}
-    	return this.packaging;
+    	return this.packagingModule;
     }
     
     public void enableExtension(String extension) {

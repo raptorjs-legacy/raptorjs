@@ -134,11 +134,11 @@ public abstract class RaptorJSEnv {
         this.coreModulesDir = coreModulesDir;
     }
     
-    public ScriptableObject require(String name) {
+    public Scriptable require(String name) {
     	return (ScriptableObject)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
     }
     
-    public ScriptableObject find(String name) {
+    public Scriptable find(String name) {
     	if (this.raptor == null) {
     		return null;
     	}
@@ -147,8 +147,8 @@ public abstract class RaptorJSEnv {
     	if (object == null) {
     		return null;
     	}
-    	else if (object instanceof ScriptableObject) {
-    		return (ScriptableObject)object;
+    	else if (object instanceof Scriptable) {
+    		return (Scriptable)object;
     	}
     	if (object instanceof Undefined) {
     		return null;
