@@ -28,6 +28,7 @@ public class RhinoHelpers {
     private StacktraceHelper stacktrace = null;
     private ResourcesHelper resources = null;
     private XmlHelper xml = null;
+    private WidgetsHelper widgets = null;
     
     public RhinoHelpers(RaptorJSEnv raptorJSEnv) {
         this.raptorJSEnv = raptorJSEnv;
@@ -39,6 +40,7 @@ public class RhinoHelpers {
         this.console = this.createConsole();
         this.stacktrace = this.createStacktrace();
         this.resources = this.createResources();
+        this.widgets = this.createWidgetsHelper();
         this.xml = this.createXml();
     }
     
@@ -68,6 +70,10 @@ public class RhinoHelpers {
     
     protected ResourcesHelper createResources() {
         return new ResourcesHelper(raptorJSEnv);
+    }
+    
+    protected WidgetsHelper createWidgetsHelper() {
+        return new WidgetsHelper();
     }
     
     protected XmlHelper createXml() {
@@ -104,6 +110,12 @@ public class RhinoHelpers {
 
 	public XmlHelper getXml() {
 		return xml;
+	}
+	
+	
+
+	public WidgetsHelper getWidgets() {
+		return widgets;
 	}
 
 	public RaptorJSEnv getRaptorJSEnv() {
