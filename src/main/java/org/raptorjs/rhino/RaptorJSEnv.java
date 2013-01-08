@@ -18,6 +18,7 @@ package org.raptorjs.rhino;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 
 import org.mozilla.javascript.Context;
@@ -49,8 +50,8 @@ public abstract class RaptorJSEnv {
     public RaptorJSEnv(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         
+        this.beforeInit();
         this.init();
-        this.createRaptor();
         this.afterInit();
     }
 
@@ -97,7 +98,8 @@ public abstract class RaptorJSEnv {
     }
     
     private URI getDirectory() {
-        final String jsFile = RaptorJSEnv.class.getResource("/META-INF/resources/raptor/raptor.js").toExternalForm();
+    	URL raptorUrl = RaptorJSEnv.class.getResource("/META-INF/resources/raptor/raptor.js");
+        final String jsFile = raptorUrl.toExternalForm();
         try {
 			return new URI(jsFile.substring(0, jsFile.lastIndexOf('/') + 1));
 		} catch (URISyntaxException e) {
@@ -105,7 +107,8 @@ public abstract class RaptorJSEnv {
 		}
     }
     
-    protected abstract void createRaptor();
+    protected void beforeInit() {
+    }
     
     protected void afterInit() {
     }
@@ -135,7 +138,7 @@ public abstract class RaptorJSEnv {
     }
     
     public Scriptable require(String name) {
-    	return (ScriptableObject)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
+    	return (Scriptable)this.getJavaScriptEngine().invokeMethod(this.raptor, "require", name);
     }
     
     public Scriptable find(String name) {
