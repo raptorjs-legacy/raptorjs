@@ -107,6 +107,16 @@
 			[
 				"jasmine-node",
 				"--noColor",
+				"raptor-strings-spec.js"
+			],
+			"name": "Jasmine Tests - strings",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
 				"raptor-legacy-spec.js"
 			],
 			"name": "Jasmine Tests - legacy",
@@ -218,6 +228,7 @@
 			"Jasmine Tests - objects",
 			"Jasmine Tests - oop",
 			"Jasmine Tests - optimizer",
+			"Jasmine Tests - strings",
 			"Jasmine Tests - widgets-browser",
 			"JSHint (RaptorJS)",
 			"scratch",
