@@ -203,6 +203,8 @@ jsdomScripts = function(dependencies) {
     return scripts;
 };
 
+var jsdomLogger = raptor.require('raptor/logging').logger('jsdomWrapper')
+
 helpers.jsdom = {
     jsdomScripts : jsdomScripts,
     jsdomWrapper: function(config) {
@@ -210,7 +212,8 @@ helpers.jsdom = {
         var html = config.html,
             scripts = jsdomScripts(config.require),
             done = false,
-            DOMParser = require('xmldom').DOMParser;
+            DOMParser = require('xmldom').DOMParser,
+            exception;
         
         runs(function() {
             try {
@@ -233,13 +236,16 @@ helpers.jsdom = {
                         window.DOMParser = DOMParser;
                         
                         try {
-                            config.ready(window, window.raptor, function() {
+                            config.ready(window, function(errorMessage) {
                                 done = true;
+                                if (errorMessage) {
+                                    exception = errorMessage;
+                                }
                             });
                         }
                         catch(e) {
-                            console.error("Error in ready function: " + e);
-                            done = true;
+                            exception = e;
+                            //throw raptor.createError(new Error("Error in ready function. Exception: " + e), e);
                         }
                     }
                 });
@@ -247,21 +253,24 @@ helpers.jsdom = {
             catch(e) {
                 done = true;
                 exception = e;
-                console.error('Error: ' + e, e.stack);
             }
         });
         
         waitsFor(function() {
+            if (exception) {
+                jsdomLogger.error("Error in jsdom test: " + exception, typeof exception !== 'string' ? exception : null);
+                throw exception;
+            }
             return done === true;
         }, "jsdom callback", config.timeout || 1000);
                 
-            return {
-                setDone: function() {
-                    done = true;
-                }
-            };
-        }
-    };
+        return {
+            setDone: function() {
+                done = true;
+            }
+        };
+    }
+};
 
 
 

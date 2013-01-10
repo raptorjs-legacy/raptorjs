@@ -18,7 +18,7 @@ describe('XML parsing in the browser', function() {
                'raptor',
                'raptor/xml/sax'
             ],
-            ready: function(window, raptor, done) {
+            ready: function(window, done) {
                 var sax = require('raptor/xml/sax');
                 var parser = sax.createParser();
                 
