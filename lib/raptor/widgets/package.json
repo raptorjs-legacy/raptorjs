@@ -30,6 +30,7 @@
                 "dependencies": [                
                     {"module": "raptor/listeners"},
                     {"module": "raptor/pubsub"},
+                    {"module": "raptor/dom"},
                     {"path": "WidgetsContext_browser.js"},
                     {"path": "widgets_browser.js"},
                     {"path": "Widget.js"}
