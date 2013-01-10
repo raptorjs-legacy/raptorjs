@@ -579,10 +579,10 @@ describe('optimizer module', function() {
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleFileWriter = require('raptor/optimizer/BundleFileWriter');
                 var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
-                var writer = new BundlesFileWriter(config, urlBuilder);
+                var writer = new BundleFileWriter(config, urlBuilder);
                 
                 var writtenFiles = {};
                 
@@ -618,10 +618,10 @@ describe('optimizer module', function() {
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleFileWriter = require('raptor/optimizer/BundleFileWriter');
                 var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
-                var writer = new BundlesFileWriter(config, urlBuilder);
+                var writer = new BundleFileWriter(config, urlBuilder);
                 
                 writer.addFilter(function(code, contentType) {
                     if (contentType === 'application/javascript') {
