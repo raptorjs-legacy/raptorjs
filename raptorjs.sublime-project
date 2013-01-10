@@ -127,6 +127,16 @@
 			[
 				"jasmine-node",
 				"--noColor",
+				"raptor-templating-spec.js"
+			],
+			"name": "Jasmine Tests - templating",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
 				"raptor-objects-spec.js"
 			],
 			"name": "Jasmine Tests - objects",
@@ -150,6 +160,16 @@
 				"raptor-logging-spec.js"
 			],
 			"name": "Jasmine Tests - logging",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
+				"raptor-component-renderer-browser-spec.js"
+			],
+			"name": "Jasmine Tests - component-renderer (browser)",
 			"working_dir": "${project_path}/test"
 		},
 		{
@@ -221,6 +241,7 @@
 			"Raptor JSDoc (single file)",
 			"Jasmine Tests",
 			"Jasmine Tests (debug)",
+			"Jasmine Tests - component-renderer (browser)",
 			"Jasmine Tests - dev",
 			"Jasmine Tests - files",
 			"Jasmine Tests - legacy",
@@ -229,6 +250,7 @@
 			"Jasmine Tests - oop",
 			"Jasmine Tests - optimizer",
 			"Jasmine Tests - strings",
+			"Jasmine Tests - templating",
 			"Jasmine Tests - widgets-browser",
 			"JSHint (RaptorJS)",
 			"scratch",
