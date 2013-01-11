@@ -248,7 +248,7 @@
                      */
                     forEach: function(a, func, thisp) {
                         if (a != null) {
-                            (isArray(a) === true ? a : [a]).forEach(func, thisp);    
+                            (a.forEach ? a : [a]).forEach(func, thisp);    
                         }
                         
 //                        if (Array.isArray(a) === false) {
