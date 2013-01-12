@@ -2,6 +2,7 @@ require('jsdom');
 
 var raptor = require('raptor'),
     files = require('raptor/files'),
+    File = require('raptor/files/File'),
     resources = require('raptor/resources'),
     logger = require('raptor/logging').logger('helper');
 
@@ -113,93 +114,25 @@ require('jsdom').defaultDocumentFeatures = {
     QuerySelector            : false
 };
 
-jsdomScripts = function(dependencies) {
+var jsdomOptimizerConfig = require('raptor/optimizer').loadConfigXml(new File(__dirname, 'jsdom-optimizer-config.xml')),
+    jsdomOptimizer = require('raptor/optimizer').createPageOptimizer(jsdomOptimizerConfig);
 
-    var scripts = [];
-    var arrays = require('raptor/arrays');
-    var included = {},
-        extensions = {
-            'browser': true, 
-            'jquery': true, 
-            'logging.console': true
-        };
-    
-    var handleFile = function(path) {
-        if (included[path] !== true) {
-            included[path] = true;
-            scripts.push("file://" + path);
-        }
-    };
-    
-    var handleResource = function(path) {
-        if (included[path] !== true) {
-            included[path] = true;
-            
-            var resource = require('raptor/resources').findResource(path);
-            if (!resource.exists()) {
-                throw new Error('Resource not found with path "' + path + '"');
-            }
+jsdomScripts = function(dependencies, enabledExtensions) {
+    if (!enabledExtensions) {
+        enabledExtensions = ['browser', 'jquery', 'raptor/logging/console'];
+    }
 
-            handleFile(resource.getURL());
-        }
-    };
+    var optimizedPage = jsdomOptimizer.optimizePage({
+        dependencies: dependencies,
+        name: 'jsdom',
+        enabledExtensions: enabledExtensions
+    })
+
+    var scripts = optimizedPage.getJavaScriptFiles().map(function(path) {
+        return files.fileUrl(path);
+    });
     
-    var handleModule = function(name) {
-        if (included[name] === true) {
-            return;
-        }
-        
-        included[name] = true;
-        
-        
-        
-        var manifest = require('raptor/packaging').getModuleManifest(name);
-        if (!manifest) {
-            throw raptor.createError(new Error('Module not found for name "' + name + '"'));
-        }
-        manifest.forEachDependency({
-            callback: function(type, include) {
-                if (type === 'js') {
-                    var resource = manifest.resolveResource(include.path);
-                    handleFile(resource.getURL());
-                }
-                else if (type === 'module') {
-                    handleModule(include.name);
-                }
-            },
-            enabledExtensions: extensions,
-            thisObj: this
-        });
-    };
-    
-    var processDependencies = function(dependencies) {
-        arrays.forEach(dependencies, function(d) {
-            if (typeof d === 'string') {
-                if (require('raptor/strings').endsWith(d, '.js')) {
-                    handleResource(d);
-                }
-                else {
-                    handleModule(d);
-                }
-            }
-            else if (d.module) {
-                handleModule(d.module);
-            }
-            else if (d.resource)
-            {
-                handleResoure(d.resource);
-            }
-            else if (d.file)
-            {
-                handleFile(d.file);
-            }
-        });
-    };
-    processDependencies(dependencies);
-    //
-    //
-    //console.log('BROWSER SCRIPTS:');
-    //console.log(scripts);
+    console.log('BROWSER SCRIPTS: \n', scripts);
     return scripts;
 };
 
