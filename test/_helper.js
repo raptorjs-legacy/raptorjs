@@ -21,20 +21,16 @@ beforeEach(function() {
         },
         
         toEqualArray: function(expected) {
-            if (this.actual == expected) {
-                return true;
-            }
             
+            if (this.actual == expected) return true;
             if (!this.actual || !expected) return false;
-            
-            if (this.actual.constructor !== Array) return false;
-            if (expected.constructor !== Array) return false;
-            
-            
+            if (!Array.isArray(this.actual)) return false;
+            if (!Array.isArray(expected)) return false;
             if (this.actual.length != expected.length) return false;
+            
+
             var i=0,
                 len=this.actual.length;
-            
             
             
             for (;i<len; i++) {
@@ -42,6 +38,7 @@ beforeEach(function() {
                     return false;
                 }
             }
+
             return true;
         }
     });
