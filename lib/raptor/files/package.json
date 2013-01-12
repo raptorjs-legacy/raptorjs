@@ -17,6 +17,7 @@
                 "name": "server",
                 "dependencies": [
                     {"path": "files.js"}
+                    {"path": "FileMixins.js"}
                 ]
             },
             {
