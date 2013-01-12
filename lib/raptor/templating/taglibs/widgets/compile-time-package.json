@@ -1,10 +1,11 @@
 {
     "raptor": {
         "dependencies": [
-            {"type": "js", "path": "WidgetsTagTransformer.js"},
-            {"type": "js", "path": "InitWidgetsTag.js"},
-            {"type": "js", "path": "WidgetTag.js"},
-            {"type": "rtld", "path": "widgets.rtld"}
+            { "module": "templating/taglibs/widgets" },
+            "WidgetsTagTransformer.js",
+            "widgets.rtld"
         ]
     }
 }
+
+
