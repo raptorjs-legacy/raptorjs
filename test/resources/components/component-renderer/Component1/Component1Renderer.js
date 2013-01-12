@@ -1,4 +1,5 @@
 define(
+
     'components/component-renderer/Component1/Component1Renderer',
     function(require) {
         return {
