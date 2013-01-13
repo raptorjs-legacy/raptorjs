@@ -129,7 +129,7 @@ jsdomScripts = function(dependencies, enabledExtensions) {
         return files.fileUrl(path);
     });
     
-    console.log('BROWSER SCRIPTS: \n', scripts);
+    console.log('jsdom scripts: \n', scripts);
     return scripts;
 };
 
