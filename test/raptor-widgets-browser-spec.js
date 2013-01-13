@@ -34,7 +34,7 @@ describe('widgets module in the browser', function() {
         jsdomWrapper({
             html: compileAndRender('/pages/widgets/SimpleWidgetPage.rhtml'),
             require: [
-               '/js/jquery-1.7.js',
+               '/js/jquery-1.8.3.js',
                'raptor',
                'raptor/widgets',
                'pages/widgets/SimpleWidgetPage'
