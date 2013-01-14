@@ -1,0 +1,7 @@
+{
+    "dependencies": [
+        "Component1Renderer.js",
+        "Component1Widget.js",
+        "Component1.rhtml"
+    ]
+}

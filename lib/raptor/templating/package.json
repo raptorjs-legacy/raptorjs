@@ -13,9 +13,9 @@
     
     "raptor": {
         "dependencies": [
+            {"module": "raptor/render-context"},
             {"module": "raptor/strings"},
             {"module": "raptor/xml/utils"},
-            {"path": "Context.js"},
             {"path": "templating.js"}
         ],
         

@@ -579,10 +579,10 @@ describe('optimizer module', function() {
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleFileWriter = require('raptor/optimizer/BundleFileWriter');
                 var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
-                var writer = new BundlesFileWriter(config, urlBuilder);
+                var writer = new BundleFileWriter(config, urlBuilder);
                 
                 var writtenFiles = {};
                 
@@ -618,10 +618,10 @@ describe('optimizer module', function() {
                 var config = new Config();
                 config.setOutputDir("/some/dir/static");
                 
-                var BundlesFileWriter = require('raptor/optimizer/BundlesFileWriter');
+                var BundleFileWriter = require('raptor/optimizer/BundleFileWriter');
                 var BundleUrlBuilder = require('raptor/optimizer/BundleUrlBuilder');
                 var urlBuilder = new BundleUrlBuilder("http://localhost:8080/static/");
-                var writer = new BundlesFileWriter(config, urlBuilder);
+                var writer = new BundleFileWriter(config, urlBuilder);
                 
                 writer.addFilter(function(code, contentType) {
                     if (contentType === 'application/javascript') {
@@ -771,5 +771,35 @@ describe('optimizer module', function() {
         expect(page3Dependencies[2].name).toEqual("test.optimizer.mixedB");
         expect(page3Dependencies[3].type).toEqual("module");
         expect(page3Dependencies[3].name).toEqual("test.optimizer.asyncA");
+    });
+
+    it("should allow for URLs with the file:// protocol when in-place deployment is enabled", function() {
+        var template = require('raptor/templating');
+        var renderContext = template.createContext();
+        var configPath = require('raptor/files').joinPaths(__dirname, '/resources/optimizer/file-urls/optimizer-config.xml');
+        var bundles = {},
+            File = require('raptor/files/File');
+
+        require('raptor/optimizer').configure(configPath);
+        var config = require('raptor/optimizer').getDefaultPageOptimizer().getConfig();
+
+        require('raptor/optimizer').pageOptimizer.getWriter().writeBundleFile = function(outputPath, code) {
+            var file = new File(outputPath);
+            var filename = file.getName();
+            bundles[filename] = code;
+            logger.debug('Writing bundle file "' + outputPath + '" to disk. Code: ' + code);
+        };
+
+        var optimizedPage = require('raptor/optimizer').optimizePage({
+            name: "page1",
+            packageFile: require('raptor/files').joinPaths(__dirname, 'resources/optimizer/file-urls/page1-package.json')
+        });
+
+        var jsFiles = optimizedPage.getJavaScriptFiles();
+        var cssFiles = optimizedPage.getCSSFiles();
+        expect(jsFiles.length).toEqual(3);
+        expect(cssFiles.length).toEqual(2);
+
+        console.error(optimizedPage);
     });
 });

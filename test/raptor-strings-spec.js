@@ -22,4 +22,21 @@ describe('strings module', function() {
         expect(strings.merge("${name}", {name: "World"})).toEqual("World");
     });
 
+    it('should support startsWith and endsWith', function() {
+        var str = "Hello World";
+        expect(str.startsWith("Hello")).toEqual(true);
+        expect(str.startsWith("FALSE")).toEqual(false);
+        expect(str.startsWith("Hello World")).toEqual(true);
+        expect(str.startsWith("Hello World!")).toEqual(false);
+        expect(str.startsWith("H")).toEqual(true);
+        expect(str.startsWith("ello", 1)).toEqual(true);
+
+        expect(str.endsWith("World")).toEqual(true);
+        expect(str.endsWith("FALSE")).toEqual(false);
+        expect(str.endsWith("Hello World")).toEqual(true);
+        expect(str.endsWith("Hello World!")).toEqual(false);
+        expect(str.endsWith("d")).toEqual(true);
+        expect(str.endsWith("ello World", 1)).toEqual(true);
+    });
+
 });

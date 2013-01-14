@@ -38,7 +38,8 @@
         <name>init-widgets</name>
         <handler-class>raptor/templating/taglibs/widgets/InitWidgetsTag</handler-class>
         
-        <attribute name="includeScriptTag" type="boolean"/>
+        <attribute name="include-script-tag" type="boolean"/>
+        
     </tag>
     
 </raptor-taglib>

@@ -22,7 +22,8 @@
         "module-mappings": {
             "taglibs/core/compile-time": "/raptor/templating/taglibs/core/compile-time-package.json",
             "taglibs/html/compile-time": "/raptor/templating/taglibs/html/compile-time-package.json",
-            "taglibs/widgets/compile-time": "/raptor/templating/taglibs/widgets/compile-time-package.json"
+            "taglibs/widgets/compile-time": "/raptor/templating/taglibs/widgets/compile-time-package.json",
+            "taglibs/widgets": "/raptor/templating/taglibs/widgets/package.json"
         },
         
         "dependency-types": {

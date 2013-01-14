@@ -1,0 +1,7 @@
+<optimizer-config>
+    
+    
+    <output-dir>jsdom-static</output-dir>
+    <in-place-deployment enabled="true"/>
+    
+</optimizer-config>

@@ -1,0 +1,7 @@
+{
+    "raptor": {
+        "dependencies": [
+            "test-template.rhtml"
+        ]
+    }
+}

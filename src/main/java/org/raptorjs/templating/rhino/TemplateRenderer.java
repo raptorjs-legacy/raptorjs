@@ -55,10 +55,23 @@ public class TemplateRenderer {
     public void render(String templateName, Object data, Writer writer) {
         try
         {
-            this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoRender", templateName, data, writer);
+        	Scriptable context = this.createRenderContext(writer);
+            this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoRender", templateName, data, context);
         }
         catch(Exception e) {
             this.handleJavaScriptError(e, "Unable to render template (name=\"" + templateName + "\").");
+        }
+    }
+    
+    public Scriptable createRenderContext(Writer writer) {
+        try
+        {
+            Scriptable context = (Scriptable) this.raptorJSEnv.getJavaScriptEngine().invokeMethod(this.javaScriptModule, "rhinoCreateContext", writer);
+            return context;
+        }
+        catch(Exception e) {
+            this.handleJavaScriptError(e, "Unable to create rendering context");
+            return null;
         }
     }
     

@@ -14,11 +14,11 @@ describe('XML parsing in the browser', function() {
         jsdomWrapper({
             html: "<html><head><title>XML</title></head><body></body></html>",
             require: [
-               '/js/jquery-1.7.js',
+               '/js/jquery-1.8.3.js',
                'raptor',
                'raptor/xml/sax'
             ],
-            ready: function(window, raptor, done) {
+            ready: function(window, done) {
                 var sax = require('raptor/xml/sax');
                 var parser = sax.createParser();
                 

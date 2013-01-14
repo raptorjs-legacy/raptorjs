@@ -13,19 +13,16 @@
 
     "raptor": {
         "dependencies": [
+            {"path": "WidgetDef.js"},
+            {"path": "WidgetsContext.js"},
             {"path": "widgets.js"}
         ],
         "extensions": [
             {
                 "name": "server",
                 "dependencies": [
+                    {"path": "WidgetsContext_server.js"},
                     {"path": "widgets_server.js"}
-                ]    
-            },
-            {
-                "name": "rhino",
-                "dependencies": [
-                    {"path": "widgets_rhino.js"}
                 ]    
             },
             {
@@ -33,6 +30,8 @@
                 "dependencies": [                
                     {"module": "raptor/listeners"},
                     {"module": "raptor/pubsub"},
+                    {"module": "raptor/dom"},
+                    {"path": "WidgetsContext_browser.js"},
                     {"path": "widgets_browser.js"},
                     {"path": "Widget.js"}
                 ]    
