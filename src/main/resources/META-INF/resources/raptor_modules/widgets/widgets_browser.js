@@ -221,6 +221,8 @@ raptor.extend('widgets', function(raptor, widgets) {
                             
                             widget._id = id;
                             widget._assignedId = assignedId;
+                            widget._parentWidget = parentWidget;
+                            
                             widgetsById[id] = widget;
                             
                             if (assignedId && scope) {
