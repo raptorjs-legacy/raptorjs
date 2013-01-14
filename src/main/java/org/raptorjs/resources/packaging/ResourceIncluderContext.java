@@ -213,6 +213,10 @@ public abstract class ResourceIncluderContext {
         
         return metadata;
     }
+    
+    public void clearAsyncMetadata() {
+    	this.includedAsyncRequiresByName = new HashMap<String, AsyncInclude>();
+    }
 
     private void getAsyncMetadataJSONHelper(AsyncMetadata metadata, String requireName, PackageManifest packageManifest, Set<Extension> includedExtensions) {
         if (metadata.hasRequires(requireName)) {
