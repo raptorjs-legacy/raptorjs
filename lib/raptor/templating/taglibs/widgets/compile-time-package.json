@@ -1,7 +1,7 @@
 {
     "raptor": {
         "dependencies": [
-            { "module": "templating/taglibs/widgets" },
+            { "module": "raptor/templating/taglibs/widgets" },
             "WidgetsTagTransformer.js",
             "widgets.rtld"
         ]
