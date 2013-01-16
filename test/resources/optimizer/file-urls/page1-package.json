@@ -1,0 +1,7 @@
+{
+    "includes": [
+        {"module": "test/optimizer/mixedA"},
+        {"module": "test/optimizer/mixedB"},
+        {"module": "test/optimizer/rhtml"}
+    ]
+}

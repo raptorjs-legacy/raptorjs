@@ -1,0 +1,8 @@
+<optimizer-config>
+    
+    
+    <output-dir>dist</output-dir>
+    <in-place-deployment enabled="true"/>
+
+    
+</optimizer-config>

@@ -12,6 +12,7 @@ public class RaptorJSWrapFactory extends WrapFactory {
 	
 	public RaptorJSWrapFactory() {
 		super();
+		this.setJavaPrimitiveWrap(false);
 	}
 
 

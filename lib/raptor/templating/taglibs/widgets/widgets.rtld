@@ -6,7 +6,7 @@
     <uri>http://raptorjs.org/templates/widgets</uri>
     
     <attribute name="id" type="string"/>
-    <attribute pattern="event-*" type="custom" allow-expressions="false"/>
+    <attribute pattern="event-*" type="custom" allow-expressions="false" preserve-name="true"/>
     
     <tag>
         
@@ -38,7 +38,8 @@
         <name>init-widgets</name>
         <handler-class>raptor/templating/taglibs/widgets/InitWidgetsTag</handler-class>
         
-        <attribute name="includeScriptTag" type="boolean"/>
+        <attribute name="include-script-tag" type="boolean"/>
+        
     </tag>
     
 </raptor-taglib>

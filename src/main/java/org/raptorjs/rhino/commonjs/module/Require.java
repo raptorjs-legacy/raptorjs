@@ -201,13 +201,14 @@ public class Require extends BaseFunction
 			return module;
 		} catch (Exception e) {
 			String stackTrace = null;
+			String failedModuleId = uri != null ? uri.toString() : id;
 			if (e instanceof RhinoException) {
 				RhinoException re = (RhinoException) e;
 				stackTrace = re.getScriptStackTrace();
 			}
-			String failedModuleId = uri != null ? uri.toString() : id;
-			throw ScriptRuntime.throwError(cx, scope,
-	                "require() failed for module \"" + failedModuleId + "\". Exception: " + e + (stackTrace != null ? "\nStack trace: " + stackTrace : ""));
+			
+			throw new RuntimeException("require() failed for module \"" + failedModuleId + "\". Exception: " + e + (stackTrace != null ? "\nJavaScript Stack trace: " + stackTrace + "\n[End: JavaScript Stack Trace]" : ""), e);
+			
 		}
     }
 

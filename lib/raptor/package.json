@@ -14,6 +14,7 @@
     "raptor": {
         "dependencies": [
             {"module": "raptor/ecma/es5"},
+            {"module": "raptor/ecma/es6"},
             "raptor.js",
             {"module": "raptor/logging"}
         ]
