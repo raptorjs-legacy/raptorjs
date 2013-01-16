@@ -46,14 +46,14 @@ describe('raptor/component-renderer module in the browser', function() {
                         var Component1Widget = window.require('components/component-renderer/Component1/Component1Widget');
 
                         expect(document.body.childNodes.length).toEqual(2);    
-                        renderToDOM("appendChild");
+                        renderToDOM("appendTo");
                         expect(targetEl.childNodes.length).toEqual(1);
-                        expect(document.getElementById('appendChild').parentNode).toEqual(targetEl);
+                        expect(document.getElementById('appendTo').parentNode).toEqual(targetEl);
 
-                        renderToDOM("prependChild");
+                        renderToDOM("prependTo");
                         expect(targetEl.childNodes.length).toEqual(2);
-                        expect(document.getElementById('prependChild').parentNode).toEqual(targetEl);
-                        expect(document.getElementById('prependChild').nextSibling).toEqual(document.getElementById('appendChild'));
+                        expect(document.getElementById('prependTo').parentNode).toEqual(targetEl);
+                        expect(document.getElementById('prependTo').nextSibling).toEqual(document.getElementById('appendTo'));
 
                         renderToDOM("insertBefore");
                         expect(targetEl.childNodes.length).toEqual(2);
@@ -74,7 +74,7 @@ describe('raptor/component-renderer module in the browser', function() {
                         expect(document.getElementById('replace').nextSibling).toEqual(document.getElementById('insertAfter'));
                         
                         expect(Component1Widget.initOrder.length).toEqual(5);
-                        expect(Component1Widget.initOrder).toEqualArray([ 'appendChild','prependChild','insertBefore','insertAfter','replace' ]);
+                        expect(Component1Widget.initOrder).toEqualArray([ 'appendTo','prependTo','insertBefore','insertAfter','replace' ]);
                         done();
                         
                     }
@@ -118,10 +118,10 @@ describe('raptor/component-renderer module in the browser', function() {
 
                         var Component1Widget = window.require('components/component-renderer/Component1/Component1Widget');
                         
-                        require('raptor/component-renderer').render('components/component-renderer/Component1', { id: 'appendChild'}).appendChild(targetEl);
+                        require('raptor/component-renderer').render('components/component-renderer/Component1', { id: 'appendTo'}).appendTo(targetEl);
                         expect(targetEl.childNodes.length).toEqual(1);
-                        expect(document.getElementById('appendChild').parentNode).toEqual(targetEl);
-                        expect(Component1Widget.initOrder).toEqualArray([ 'appendChild' ]);
+                        expect(document.getElementById('appendTo').parentNode).toEqual(targetEl);
+                        expect(Component1Widget.initOrder).toEqualArray([ 'appendTo' ]);
                         done();
                         
                     }
