@@ -6,7 +6,7 @@
     <uri>http://raptorjs.org/templates/widgets</uri>
     
     <attribute name="id" type="string"/>
-    <attribute pattern="event-*" type="custom" allow-expressions="false"/>
+    <attribute pattern="event-*" type="custom" allow-expressions="false" preserve-name="true"/>
     
     <tag>
         
