@@ -16,6 +16,15 @@
             {"module": "raptor/xml/utils"},
             "Context.js",
             "render-context.js"
+        ],
+        
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    "Context_server.js"
+                ]
+            }
         ]
     }
 }
