@@ -48,7 +48,8 @@
             {   
                 "name": "rhino",
                 "dependencies": [
-                    {"path": "compiler_rhino.js"}
+                    {"path": "compiler_rhino.js"},
+                    {"path": "TemplateCompiler_rhino.js"}
                 ]
             },
             {   
