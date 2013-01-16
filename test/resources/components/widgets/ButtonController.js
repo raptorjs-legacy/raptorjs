@@ -10,7 +10,7 @@ define.Class(
                     "components/widgets/Button",
                     {
                         label: input.label,
-                        id: input.id,
+                        id: input.id || ('btn' + context.uniqueId()),
                         widgetConfig: {
                             disabled: disabled                            
                         },
