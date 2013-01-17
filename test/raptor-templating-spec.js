@@ -623,6 +623,11 @@ describe('templating module', function() {
         expect(output).toEqual("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><!DOCTYPE html><html><head><title>DOCTYPE Test</title></head><body></body></html>");
     });
 
+    it("should allow for using templates to render custom tags", function() {
+        var output = compileAndRender("/test-templates/template-as-tag.rhtml", {title: "My Page Title"});
+        expect(output).toEqual('<div><h1>My Page Title</h1></div>');        
+    });
+    
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
         

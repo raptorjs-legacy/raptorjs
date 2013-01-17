@@ -87,4 +87,8 @@
         <nested-tag name="popover-content" type="string" target-property="content"/>
     </tag>
 
+    <tag name="page-title" template="taglibs/test/page-title">
+        <attribute name="title"/>
+    </tag>
+
 </raptor-taglib>
