@@ -19,11 +19,11 @@ package org.raptorjs.rhino;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BootstrapHelper {
+public class BootstrapRhinoHelper {
     private String basePath = null;
     private RaptorJSEnv raptorJS = null;
 
-    public BootstrapHelper(RaptorJSEnv raptorJS) {
+    public BootstrapRhinoHelper(RaptorJSEnv raptorJS) {
         this.basePath = raptorJS.getCoreModulesDir();
         this.raptorJS = raptorJS;
     }
@@ -36,7 +36,7 @@ public class BootstrapHelper {
         }
         String fullPath =  this.basePath + path;
         
-        InputStream in = BootstrapHelper.class.getResourceAsStream(fullPath);
+        InputStream in = BootstrapRhinoHelper.class.getResourceAsStream(fullPath);
         if (in == null) {
             throw new RuntimeException("Classpath resource not found at path \"" + fullPath + "\"");
         }

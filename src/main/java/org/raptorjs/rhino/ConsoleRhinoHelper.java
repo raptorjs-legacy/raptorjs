@@ -16,10 +16,10 @@
 
 package org.raptorjs.rhino;
 
-public class ConsoleHelper {
+public class ConsoleRhinoHelper {
     private RaptorJSEnv raptorJS = null;
 
-    public ConsoleHelper(RaptorJSEnv raptorJS) {
+    public ConsoleRhinoHelper(RaptorJSEnv raptorJS) {
         super();
         this.raptorJS = raptorJS;
     }

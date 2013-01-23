@@ -2,7 +2,7 @@ package org.raptorjs.rhino;
 
 import java.io.StringWriter;
 
-public class XmlHelper {
+public class XmlRhinoHelper {
 	
 	
 	

@@ -21,10 +21,10 @@ import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.ScriptableObject;
 
 
-public class StacktraceHelper {
+public class StacktraceRhinoHelper {
     private RaptorJSEnv raptorJS = null;
 
-    public StacktraceHelper(RaptorJSEnv raptorJS) {
+    public StacktraceRhinoHelper(RaptorJSEnv raptorJS) {
         super();
         this.raptorJS = raptorJS;
     }

@@ -22,9 +22,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 
-public class JavaHelper {
+public class JavaRhinoHelper {
     
-    public JavaHelper(RaptorJSEnv raptorJS) {
+    public JavaRhinoHelper(RaptorJSEnv raptorJS) {
         
     }
     public boolean isString(Object o) {

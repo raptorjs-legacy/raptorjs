@@ -20,15 +20,15 @@ package org.raptorjs.rhino;
 public class RhinoHelpers {
     private RaptorJSEnv raptorJSEnv = null;
     
-    private BootstrapHelper bootstrap = null;
-    private FilesHelper files = null;
-    private JavaHelper java = null;
+    private BootstrapRhinoHelper bootstrap = null;
+    private FilesRhinoHelper files = null;
+    private JavaRhinoHelper java = null;
     private RuntimeHelper runtime = null;
-    private ConsoleHelper console = null;
-    private StacktraceHelper stacktrace = null;
-    private ResourcesHelper resources = null;
-    private XmlHelper xml = null;
-    private WidgetsHelper widgets = null;
+    private ConsoleRhinoHelper console = null;
+    private StacktraceRhinoHelper stacktrace = null;
+    private ResourcesRhinoHelper resources = null;
+    private XmlRhinoHelper xml = null;
+    private WidgetsRhinoHelper widgets = null;
     
     public RhinoHelpers(RaptorJSEnv raptorJSEnv) {
         this.raptorJSEnv = raptorJSEnv;
@@ -44,47 +44,47 @@ public class RhinoHelpers {
         this.xml = this.createXml();
     }
     
-    protected BootstrapHelper createBootstrap() {
-        return new BootstrapHelper(raptorJSEnv);
+    protected BootstrapRhinoHelper createBootstrap() {
+        return new BootstrapRhinoHelper(raptorJSEnv);
     }
     
-    protected FilesHelper createFiles() {
-        return new FilesHelper(raptorJSEnv);
+    protected FilesRhinoHelper createFiles() {
+        return new FilesRhinoHelper(raptorJSEnv);
     }
     
-    protected JavaHelper createJava() {
-        return new JavaHelper(raptorJSEnv);
+    protected JavaRhinoHelper createJava() {
+        return new JavaRhinoHelper(raptorJSEnv);
     }
     
     protected RuntimeHelper createRuntime() {
         return new RuntimeHelper(raptorJSEnv);
     }
     
-    protected ConsoleHelper createConsole() {
-        return new ConsoleHelper(raptorJSEnv);
+    protected ConsoleRhinoHelper createConsole() {
+        return new ConsoleRhinoHelper(raptorJSEnv);
     }
     
-    protected StacktraceHelper createStacktrace() {
-        return new StacktraceHelper(raptorJSEnv);
+    protected StacktraceRhinoHelper createStacktrace() {
+        return new StacktraceRhinoHelper(raptorJSEnv);
     }
     
-    protected ResourcesHelper createResources() {
-        return new ResourcesHelper(raptorJSEnv);
+    protected ResourcesRhinoHelper createResources() {
+        return new ResourcesRhinoHelper(raptorJSEnv);
     }
     
-    protected WidgetsHelper createWidgetsHelper() {
-        return new WidgetsHelper();
+    protected WidgetsRhinoHelper createWidgetsHelper() {
+        return new WidgetsRhinoHelper();
     }
     
-    protected XmlHelper createXml() {
-        return new XmlHelper();
+    protected XmlRhinoHelper createXml() {
+        return new XmlRhinoHelper();
     }
 
-    public FilesHelper getFiles() {
+    public FilesRhinoHelper getFiles() {
         return files;
     }
 
-    public JavaHelper getJava() {
+    public JavaRhinoHelper getJava() {
         return java;
     }
 
@@ -92,29 +92,29 @@ public class RhinoHelpers {
         return runtime;
     }
 
-    public BootstrapHelper getBootstrap() {
+    public BootstrapRhinoHelper getBootstrap() {
         return bootstrap;
     }
 
-    public ConsoleHelper getConsole() {
+    public ConsoleRhinoHelper getConsole() {
         return console;
     }
 
-    public StacktraceHelper getStacktrace() {
+    public StacktraceRhinoHelper getStacktrace() {
         return stacktrace;
     }
 
-    public ResourcesHelper getResources() {
+    public ResourcesRhinoHelper getResources() {
         return resources;
     }
 
-	public XmlHelper getXml() {
+	public XmlRhinoHelper getXml() {
 		return xml;
 	}
 	
 	
 
-	public WidgetsHelper getWidgets() {
+	public WidgetsRhinoHelper getWidgets() {
 		return widgets;
 	}
 

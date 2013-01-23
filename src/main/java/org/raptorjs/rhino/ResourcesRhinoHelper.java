@@ -24,10 +24,10 @@ import org.raptorjs.resources.ResourceManager;
 import org.raptorjs.resources.ResourceManager.ResourceCallback;
 import org.raptorjs.resources.WatchListener;
 
-public class ResourcesHelper {
+public class ResourcesRhinoHelper {
     private ResourceManager resourceManager = null;
 
-    public ResourcesHelper(RaptorJSEnv jsEnv) {
+    public ResourcesRhinoHelper(RaptorJSEnv jsEnv) {
         this.resourceManager = jsEnv.getResourceManager();
     }
     

@@ -30,8 +30,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-public class FilesHelper {
-    public FilesHelper(RaptorJSEnv raptorJS) {
+public class FilesRhinoHelper {
+    public FilesRhinoHelper(RaptorJSEnv raptorJS) {
         
     }
     
