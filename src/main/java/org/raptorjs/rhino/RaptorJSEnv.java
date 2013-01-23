@@ -165,4 +165,7 @@ public abstract class RaptorJSEnv {
     	this.getJavaScriptEngine().invokeMethod(this.raptor, "find", name);
     }
     
+    public void enableExtension(String name) {
+    	this.getJavaScriptEngine().invokeMethod(this.require("raptor/packaging"), "enableExtension", name);
+    }
 }
