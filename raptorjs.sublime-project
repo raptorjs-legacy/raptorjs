@@ -176,7 +176,7 @@
 			"cmd":
 			[
 				"jshint",
-				"${project_path}/lib/raptor/raptor_modules"
+				"${project_path}/lib"
 			],
 			"name": "JSHint (RaptorJS)",
 			"working_dir": "${project_path}"

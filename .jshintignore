@@ -1,1 +1,2 @@
-lib/raptor/raptor_modules/ecma/es5
+lib/raptor/ecma/es5
+lib/raptor/ecma/es6

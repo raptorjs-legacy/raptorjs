@@ -15,6 +15,7 @@
         "$radd",
         "$rget",
         "$renv",
+        "$rwidgets",
         "$",
         "define",
         "require",
