@@ -173,4 +173,39 @@ describe('legacy raptor module', function() {
         expect(extendArgs[0]).toEqual(legacyRaptor);
         expect(extendArgs[1]).toEqual(myBaseModule);
     });
+
+    it('should support extensions for legacy classes', function() {
+        var myBaseModule = {},
+            extendArgs;
+
+        var LegacyClass = function() {
+
+        };
+
+        LegacyClass.prototype = {
+
+        };
+
+
+        legacyRaptor.defineClass('test.LegacyClass', function() {
+            return LegacyClass;
+        });
+
+        legacyRaptor.extend('test.LegacyClass', function() {
+            extendArgs = arguments;
+            return {
+                newMethod: function() {
+
+                }
+            };
+        });
+
+        var returnedLegacyClass = legacyRaptor.require('test.LegacyClass');
+        expect(returnedLegacyClass).toEqual(LegacyClass);
+        expect(typeof returnedLegacyClass.prototype.newMethod).toEqual('function');
+
+        expect(extendArgs.length).toEqual(2);
+        expect(extendArgs[0]).toEqual(legacyRaptor);
+        expect(extendArgs[1]).toEqual(LegacyClass.prototype);
+    });
 });
