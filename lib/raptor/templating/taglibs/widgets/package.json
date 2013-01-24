@@ -1,7 +1,8 @@
 {
     "raptor": {
         "dependencies": [
-            "WidgetTag.js"
+            "WidgetTag.js",
+            "WidgetFunctions.js"
         ]
     }
 }

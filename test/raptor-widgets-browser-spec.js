@@ -45,6 +45,8 @@ describe('widgets module in the browser', function() {
                 var document = window.document;
                 var widgets = window.require('raptor/widgets');
 
+                //console.error('WIDGET FUNCTIONS: ', window.require('raptor/templating/taglibs/widgets/WidgetFunctions'));
+
                 window.$(function() {
                     try
                     {

@@ -9,7 +9,6 @@ define.Class(
                     "taglibs/test/Button",
                     {
                         label: input.label,
-                        widgetArgs: input.widgetArgs,
                         widgetConfig: {
                             disabled: disabled
                         },

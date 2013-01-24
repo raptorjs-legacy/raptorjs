@@ -32,7 +32,6 @@
         <nested-variable name="widget"/>
         
         <imported-variable target-property="config" expression="data.widgetConfig"/>
-        <imported-variable target-property="widgetArgs" expression="data.widgetArgs"/>
     </tag>
     
     <tag>

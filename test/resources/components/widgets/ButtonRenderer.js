@@ -16,7 +16,6 @@ define(
                             label: input.label                    
                         },
                         invokeBody: input.invokeBody,
-                        widgetArgs: input.widgetArgs,
                         buttonAttrs: {
                             disabled: disabled ? null : undefined,
                             type: input.type || "button"

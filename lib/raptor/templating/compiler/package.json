@@ -53,6 +53,12 @@
                 ]
             },
             {   
+                "name": "node",
+                "dependencies": [
+                    {"path": "TemplateCompiler_node.js"}
+                ]
+            },
+            {   
                 "name": "browser",
                 "dependencies": [
                     {"path": "compiler_browser.js"}
