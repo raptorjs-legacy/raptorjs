@@ -42,6 +42,9 @@ describe('widgets module in the browser', function() {
             ready: function(window, done) {
                 var PageWidget = window.require('pages.widgets.PageWidget');
                 window.initWidgets();
+                var document = window.document;
+                var widgets = window.require('raptor/widgets');
+
                 window.$(function() {
                     try
                     {
@@ -53,9 +56,33 @@ describe('widgets module in the browser', function() {
                         expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
                         expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
                         expect(PageWidget.instance.$("#myDiv .mySpan").prop("className")).toEqual("mySpan");    
+
+                        expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
+
+                        expect(PageWidget.instance.getDoc().getWidget('rerenderButton')).toNotEqual(null);
+                        expect(PageWidget.instance.getWidget('rerenderButton')).toNotEqual(null);
+                        expect(document.getElementById('rerenderButton')).toNotEqual(null);
+
+                        //console.error('SimpleWidgetPage: document.body BEFORE rerender: ', document.body.innerHTML);
+
+                        PageWidget.instance.getWidget('rerenderButton').rerender({
+                            label: 'Button 2 Rerendered',
+                            id: 'rerenderButton2'
+                        });
+
+                        //console.error('SimpleWidgetPage: document.body AFTER rerender: ', document.body.innerHTML);
+
+                        expect(PageWidget.instance.getWidget('rerenderButton')).toEqual(null);
+                        expect(document.getElementById('rerenderButton')).toEqual(null);
+                        expect(document.getElementById('rerenderButton2')).toNotEqual(null);
+
+                        expect(widgets.get('rerenderButton')).toEqual(null);
+
+                        expect(widgets.get('rerenderButton2')).toNotEqual(null);
+                        expect(widgets.get('rerenderButton2').getLabel()).toEqual('Button 2 Rerendered');
                     }
                     catch(e) {
-                        console.error('Error: ' + e, e.stack);
+                        done(e);
                     }
                     
                     done();

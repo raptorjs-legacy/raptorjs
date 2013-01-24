@@ -1,6 +1,7 @@
 {
     "includes": [
         { "type": "js", "path": "PageWidget.js" },
-        { "type": "module", "name": "components/widgets/Button" }
+        { "type": "module", "name": "components/widgets/Button" },
+        { "type": "module", "name": "components/widgets/Button-renderer" }
     ]
 }

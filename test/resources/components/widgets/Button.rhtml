@@ -1,10 +1,10 @@
 <c:template 
-    name="widgets/test/Button" 
+    name="components/widgets/Button" 
     xmlns:c="core"
     xmlns:w="widgets"
     params="buttonAttrs,label,id">
     
-    <button w:widget="components.widgets.ButtonWidget" id="$id" c:attrs="buttonAttrs">
+    <button w:widget="components/widgets/ButtonWidget" id="$id" c:attrs="buttonAttrs">
         <c:choose>
             <c:when test="label">
                 ${label}

@@ -1,6 +1,6 @@
 <raptor-taglib>
     <tag>
-        <handler-class>components.widgets.ButtonController</handler-class>
+        <handler-class>components/widgets/ButtonRenderer</handler-class>
         <name>button</name>
         <attribute>
             <name>label</name>

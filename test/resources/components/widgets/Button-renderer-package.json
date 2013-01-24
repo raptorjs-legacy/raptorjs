@@ -1,6 +1,9 @@
 {
     "includes": [
-        {"type": "js", "path": "ButtonController.js"},
+        {"module": "raptor/component-renderer"},
+        {"module": "raptor/templating"},
+        {"module": "raptor/templating/taglibs/widgets"},
+        {"type": "js", "path": "ButtonRenderer.js"},
         {"type": "rhtml", "path": "Button.rhtml"}
     ]
 }
