@@ -19,6 +19,12 @@
         ],
         "extensions": [
             {
+                "name": "raptor/widgets/legacy",
+                "dependencies": [
+                    {"path": "Widget_legacy.js"}
+                ]    
+            },
+            {
                 "name": "server",
                 "dependencies": [
                     {"path": "WidgetsContext_server.js"},
