@@ -26,7 +26,8 @@
         <name>widget</name>
         <handler-class>raptor/templating/taglibs/widgets/WidgetTag</handler-class>
         
-        <attribute name="jsClass" type="string"/>
+        <attribute name="jsClass" type="string" /> <!-- deprecated -->
+        <attribute name="js-class" type="string"/>
         
         <nested-variable name="widget"/>
         
