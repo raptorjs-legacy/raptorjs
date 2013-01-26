@@ -5,7 +5,7 @@ var define = raptor.createDefine(module);
 
 describe('logging module', function() {
 
-    before(function() {
+    beforeEach(function() {
         require('raptor/logging').configure({
             loggers: {
                 'ROOT': {level: 'ERROR'},

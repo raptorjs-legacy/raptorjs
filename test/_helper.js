@@ -10,38 +10,42 @@ raptor.require('raptor/packaging').enableExtension('json.raptor');
 
 resources.addSearchPathDir(files.joinPaths(__dirname, 'resources'));
 
-beforeEach(function() {
-    this.addMatchers({
-        toNotStrictlyEqual: function(expected) {
-            return this.actual !== expected;
-        },
+var matchers = {
+    toNotStrictlyEqual: function(expected) {
+        return this.actual !== expected;
+    },
+    
+    toStrictlyEqual: function(expected) {
+        return this.actual === expected;
+    },
+    
+    toEqualArray: function(expected) {
         
-        toStrictlyEqual: function(expected) {
-            return this.actual === expected;
-        },
+        if (this.actual == expected) return true;
+        if (!this.actual || !expected) return false;
+        if (!Array.isArray(this.actual)) return false;
+        if (!Array.isArray(expected)) return false;
+        if (this.actual.length != expected.length) return false;
         
-        toEqualArray: function(expected) {
-            
-            if (this.actual == expected) return true;
-            if (!this.actual || !expected) return false;
-            if (!Array.isArray(this.actual)) return false;
-            if (!Array.isArray(expected)) return false;
-            if (this.actual.length != expected.length) return false;
-            
 
-            var i=0,
-                len=this.actual.length;
-            
-            
-            for (;i<len; i++) {
-                if (this.actual[i] != expected[i]) {
-                    return false;
-                }
+        var i=0,
+            len=this.actual.length;
+        
+        
+        for (;i<len; i++) {
+            if (this.actual[i] != expected[i]) {
+                return false;
             }
-
-            return true;
         }
-    });
+
+        return true;
+    }
+};
+
+raptor.extend(jasmine.Matchers.prototype, matchers);
+
+jasmine.getEnv().beforeEach(function() {
+    this.addMatchers(matchers);
 });
 
 global.helpers = {};
@@ -233,18 +237,18 @@ getEnv().addReporter({
     }
 });
 
-jasmine.Env.prototype.before = function(beforeFunc) {
-    this.currentSuite.beforeFunc = beforeFunc;
-};
+// jasmine.Env.prototype.before = function(beforeFunc) {
+//     this.currentSuite.beforeFunc = beforeFunc;
+// };
 
-jasmine.Env.prototype.after = function(afterFunc) {
-    this.currentSuite.afterFunc = afterFunc;
-};
+// jasmine.Env.prototype.after = function(afterFunc) {
+//     this.currentSuite.afterFunc = afterFunc; 
+// };
 
-before = function() {
-    jasmine.Env.prototype.before.apply(getEnv(), arguments);
-};
+// before = function() {
+//     jasmine.Env.prototype.before.apply(getEnv(), arguments);
+// };
 
-after = function() {
-    jasmine.Env.prototype.after.apply(getEnv(), arguments);
-};
+// after = function() {
+//     jasmine.Env.prototype.after.apply(getEnv(), arguments);
+// };

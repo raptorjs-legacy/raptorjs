@@ -146,7 +146,7 @@ describe('raptor loader module', function() {
 
     };
     
-    before(function() {
+    beforeEach(function() {
         clearLoaderHistory();
     });
     
