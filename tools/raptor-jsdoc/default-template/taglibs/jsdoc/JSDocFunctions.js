@@ -8,6 +8,10 @@ define(
         var funcs = {
             symbolUrl: function(symbolName) {
                 return jsdocUtil.symbolUrl(symbolName, this);
+            },
+
+            prop: function(name) {
+                return jsdocUtil.getProp(name);
             }
         };
         
