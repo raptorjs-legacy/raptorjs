@@ -74,6 +74,11 @@ public class FileResource extends Resource {
 	public String getFilePath() {
 		return this.file.getAbsolutePath();
 	}
+	
+	@Override
+	public long lastModified() {
+		return this.getFile().lastModified();
+	}
     
 
 }

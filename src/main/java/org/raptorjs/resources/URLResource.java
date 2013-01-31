@@ -95,6 +95,11 @@ public class URLResource extends Resource {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public long lastModified() {
+		return Long.MAX_VALUE;
+	}
     
     
 }

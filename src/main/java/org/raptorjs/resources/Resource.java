@@ -114,5 +114,6 @@ public abstract class Resource {
         this.searchPathEntry = searchPathEntry;
     }
  
+    public abstract long lastModified();
     
 }

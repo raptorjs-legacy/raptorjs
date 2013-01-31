@@ -81,5 +81,8 @@ public class BundleResource extends Resource {
         return true;
     }
     
-    
+    @Override
+    public long lastModified() {
+    	return Long.MAX_VALUE;
+    }
 }
