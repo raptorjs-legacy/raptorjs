@@ -42,7 +42,8 @@
             {   
                 "name": "server",
                 "dependencies": [
-                    {"path": "compiler_server.js"}
+                    {"path": "compiler_server.js"},
+                    {"path": "TemplateCompiler_server.js"}
                 ]
             },
             {   
