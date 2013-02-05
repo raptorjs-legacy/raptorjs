@@ -208,4 +208,41 @@ describe('legacy raptor module', function() {
         expect(extendArgs[0]).toEqual(legacyRaptor);
         expect(extendArgs[1]).toEqual(LegacyClass.prototype);
     });
+
+    it('should support inherits for legacy classes', function() {
+        var myBaseModule = {},
+            extendArgs;
+
+        var LegacySuperClass = function() {
+
+        };
+
+        LegacySuperClass.prototype = {
+            LegacySuperClass: true
+        };
+
+        var LegacySubClass = function() {
+
+        };
+
+
+        legacyRaptor.defineClass('test.inherits.LegacySuperClass', function() {
+            return LegacySuperClass;
+        });
+
+        legacyRaptor.defineClass('test.inherits.LegacySubClass', function() {
+
+            legacyRaptor.inherit(LegacySubClass, 'test.inherits.LegacySuperClass');
+            legacyRaptor.extend(LegacySubClass.prototype, {
+                LegacySubClass: true
+            });
+
+            return LegacySubClass;
+        });
+
+        var returnedLegacySubClass = legacyRaptor.require('test.inherits.LegacySubClass');
+        expect(returnedLegacySubClass).toEqual(LegacySubClass);
+        expect(typeof returnedLegacySubClass.prototype.LegacySubClass).toEqual('boolean');
+        expect(typeof returnedLegacySubClass.prototype.LegacySuperClass).toEqual('boolean');
+    });
 });
