@@ -245,4 +245,22 @@ describe('legacy raptor module', function() {
         expect(typeof returnedLegacySubClass.prototype.LegacySubClass).toEqual('boolean');
         expect(typeof returnedLegacySubClass.prototype.LegacySuperClass).toEqual('boolean');
     });
+
+    it('should return the unnormalized name when clazz.getName() is invoked', function() {
+        var GetNameClass = function() {
+
+        };
+
+        GetNameClass.prototype = {
+            GetNameClass: true
+        };
+
+        legacyRaptor.defineClass('test.GetNameClass', function() {
+            return GetNameClass;
+        });
+
+        var returnedGetNameClass = legacyRaptor.require('test.GetNameClass');
+        expect(returnedGetNameClass).toEqual(GetNameClass);
+        expect(returnedGetNameClass.getName()).toEqual('test.GetNameClass');
+    });
 });
