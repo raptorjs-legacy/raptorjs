@@ -263,4 +263,15 @@ describe('legacy raptor module', function() {
         expect(returnedGetNameClass).toEqual(GetNameClass);
         expect(returnedGetNameClass.getName()).toEqual('test.GetNameClass');
     });
+
+    it('should support "ignoreMissing" argument for raptor.require()', function() {
+        var testIgnoreMissing = {};
+
+        legacyRaptor.define('test.ignoreMissing', function() {
+            return testIgnoreMissing;
+        });
+
+        expect(legacyRaptor.require('test.ignoreMissing', null, null, true)).toEqual(testIgnoreMissing);
+        expect(legacyRaptor.require('test.ignoreMissing-INVALID', null, null, true)).toEqual(null);
+    });
 });
