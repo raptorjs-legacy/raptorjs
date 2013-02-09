@@ -28,10 +28,11 @@
         
         <attribute name="jsClass" type="string" /> <!-- deprecated -->
         <attribute name="js-class" type="string"/>
+        <attribute name="config" type="expressions"/>
         
         <nested-variable name="widget"/>
         
-        <imported-variable target-property="config" expression="data.widgetConfig"/>
+        <imported-variable target-property="_cfg" expression="data.widgetConfig"/>
     </tag>
     
     <tag>
