@@ -53,7 +53,6 @@ describe('widgets module in the browser', function() {
                         expect(PageWidget.instance).toNotEqual(null);
                         expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
                         expect(PageWidget.instance.getDoc().getWidget('button1').getEl().id).toEqual("myButton");
-                        expect(PageWidget.instance.getDoc().getWidget('button1').getRootEl().id).toEqual("myButton");
                         expect(PageWidget.instance.getDoc().getWidget('button1').$().prop("id")).toEqual("myButton");
                         expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
                         expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
