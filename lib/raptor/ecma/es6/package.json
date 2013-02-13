@@ -4,8 +4,13 @@
     "version": "1.0",
     "description": "es6 shim for commonly used helper functions. See http://wiki.ecmascript.org/lib/exe/fetch.php?id=harmony%3Astring_extras&cache=cache&media=harmony:es6libraryextensions-3-28-12.1.pdf",
     "raptor": {
-        "dependencies": [
-            {"path": "es6.js"}
+        "extensions": [
+            {
+                "condition": "!extensions.contains('no-es6')",
+                "dependencies": [
+                    {"path": "es6.js"}
+                ]
+            }
         ]
     }
 

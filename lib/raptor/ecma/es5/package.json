@@ -6,7 +6,7 @@
     "raptor": {
         "extensions": [
             {
-                "name": "browser",
+                "condition": "extensions.contains('browser') && !extensions.contains('no-es5')",
                 "dependencies": [
                     {"path": "es5.js"}
                 ]
