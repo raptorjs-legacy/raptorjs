@@ -49,6 +49,7 @@
     "sub": false,
     "white": false,
     "eqeqeq": false,
+    "latedef": true,
     
     /* Relaxing options: */
     "eqnull": true
