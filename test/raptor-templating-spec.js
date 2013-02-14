@@ -627,6 +627,11 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/template-as-tag.rhtml", {title: "My Page Title"});
         expect(output).toEqual('<div><h1>My Page Title</h1></div>');        
     });
+
+    it("should allow for caching HTML fragments", function() {
+        var output = compileAndRender("/test-templates/caching.rhtml", {});
+        expect(output).toEqual('Count: 0Count: 0Count: 1Count: 2Count: 2Count: 3');
+    });
     
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");

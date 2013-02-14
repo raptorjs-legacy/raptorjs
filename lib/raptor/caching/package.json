@@ -1,0 +1,10 @@
+{
+    "raptor": {
+        "dependencies": [
+            "BaseCache.js",
+            "SimpleCache.js",
+            "SimpleCacheProvider.js",
+            "caching.js"
+        ]
+    }
+}
