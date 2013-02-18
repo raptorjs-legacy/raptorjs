@@ -14,6 +14,7 @@
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
         
         <attribute name="widget" type="string"/>
+        <attribute name="el-id" type="string"/>
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
