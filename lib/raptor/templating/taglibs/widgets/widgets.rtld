@@ -31,9 +31,9 @@
         <attribute name="js-class" type="string"/>
         <attribute name="config" type="expressions"/>
         
-        <nested-variable name="widget"/>
+        <variable name="widget"/>
         
-        <imported-variable target-property="_cfg" expression="data.widgetConfig"/>
+        <import-variable target-property="_cfg" expression="data.widgetConfig"/>
     </tag>
     
     <tag>
