@@ -51,16 +51,16 @@ describe('widgets module in the browser', function() {
                     try
                     {
                         expect(PageWidget.instance).toNotEqual(null);
-                        expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
-                        expect(PageWidget.instance.getDoc().getWidget('button1').getEl().id).toEqual("myButton");
-                        expect(PageWidget.instance.getDoc().getWidget('button1').$().prop("id")).toEqual("myButton");
+                        expect(PageWidget.instance.widgets.getWidget('button1')).toNotEqual(null);
+                        expect(PageWidget.instance.widgets.getWidget('button1').getEl().id).toEqual("myButton");
+                        expect(PageWidget.instance.widgets.getWidget('button1').$().prop("id")).toEqual("myButton");
                         expect(PageWidget.instance.getEl('myDiv').className).toEqual("myDiv");
                         expect(PageWidget.instance.$("#myDiv").prop("className")).toEqual("myDiv");
                         expect(PageWidget.instance.$("#myDiv .mySpan").prop("className")).toEqual("mySpan");    
 
-                        expect(PageWidget.instance.getDoc().getWidget('button1')).toNotEqual(null);
+                        expect(PageWidget.instance.widgets.getWidget('button1')).toNotEqual(null);
 
-                        expect(PageWidget.instance.getDoc().getWidget('rerenderButton')).toNotEqual(null);
+                        expect(PageWidget.instance.widgets.getWidget('rerenderButton')).toNotEqual(null);
                         expect(PageWidget.instance.getWidget('rerenderButton')).toNotEqual(null);
                         expect(document.getElementById('rerenderButton')).toNotEqual(null);
 
