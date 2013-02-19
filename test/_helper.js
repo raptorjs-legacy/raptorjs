@@ -133,7 +133,7 @@ jsdomScripts = function(dependencies, enabledExtensions) {
         return files.fileUrl(path);
     });
     
-    console.log('jsdom scripts: \n', scripts);
+    //console.log('jsdom scripts: \n', scripts);
     return scripts;
 };
 
