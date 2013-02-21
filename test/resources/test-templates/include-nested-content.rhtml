@@ -1,13 +1,13 @@
 <c:template 
     xmlns:c="http://raptorjs.org/templates/core" 
-    params="name,count,includeBody">
+    params="name,count,invokeBody">
 
     <div class="nested">
         <h1>
             Hello $name! You have $count new messages.
         </h1>
         <p>
-            $includeBody
+            ${invokeBody()}
         </p>
     </div>
     
