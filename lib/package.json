@@ -28,17 +28,17 @@
         },
         
         "dependency-types": {
-            "js": {"class": "raptor/packaging/Dependency_js"},
-            "css": {"class": "raptor/packaging/Dependency_css"},
-            "dust": {"class": "raptor/packaging/Dependency_dust"},
-            "less": {"class": "raptor/packaging/Dependency_less"},
-            "4cc": {"class": "raptor/packaging/Dependency_4cc"},
-            "module": {"class": "raptor/packaging/Dependency_module"},
-            "package": {"class": "raptor/packaging/Dependency_package"},
-            "rhtml": {"class": "raptor/packaging/Dependency_rhtml"},
-            "rtld": {"class": "raptor/packaging/Dependency_rtld"},
-            "resource": {"class": "raptor/packaging/Dependency_resource"},
-            "loader-metadata": {"class": "raptor/packaging/Dependency_loader-metadata"} 
+            "js": "raptor/packaging/Dependency_js",
+            "css": "raptor/packaging/Dependency_css",
+            "dust": "raptor/packaging/Dependency_dust",
+            "less": "raptor/packaging/Dependency_less",
+            "4cc": "raptor/packaging/Dependency_4cc",
+            "module": "raptor/packaging/Dependency_module",
+            "package": "raptor/packaging/Dependency_package",
+            "rhtml": "raptor/packaging/Dependency_rhtml",
+            "rtld": "raptor/packaging/Dependency_rtld",
+            "resource": "raptor/packaging/Dependency_resource",
+            "loader-metadata": "raptor/packaging/Dependency_loader-metadata" 
         }
     }
     
