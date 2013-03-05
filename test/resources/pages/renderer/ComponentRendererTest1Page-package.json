@@ -1,6 +1,6 @@
 {
     "dependencies": [
         { "module": "raptor/templating" },
-        { "module": "components/component-renderer/Component1" }
+        { "module": "components/renderer/Component1" }
     ]
 }

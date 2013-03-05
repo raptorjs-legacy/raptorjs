@@ -12,7 +12,10 @@
     ],
     "raptor": {
         "dependencies": [
-            { "module": "raptor/renderer" }
+            { "module": "raptor/render-context" },
+            { "module": "raptor/dom" },
+            "RenderResult.js",
+            "renderer.js"
         ]
     }
 }

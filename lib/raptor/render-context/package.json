@@ -1,6 +1,6 @@
 {
     "type": "raptor-module",
-    "name": "raptor/component-renderer",
+    "name": "raptor/renderer",
     "version": "1.0",
     "description": "Helper module for rendering UI components",
     "homepage": "http://raptorjs.org",

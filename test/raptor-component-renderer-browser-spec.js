@@ -6,25 +6,25 @@ var define = raptor.createDefine(module);
 var jsdomWrapper = helpers.jsdom.jsdomWrapper,
     compileAndRender = helpers.templating.compileAndRender;
 
-describe('raptor/component-renderer module in the browser', function() {
+describe('raptor/renderer module in the browser', function() {
 
 
     it('should allow widgets to be initialized', function() {
 
         jsdomWrapper({
-            html: compileAndRender('/pages/component-renderer/ComponentRendererTest1Page.rhtml'),
+            html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
             require: [
                '/js/jquery-1.8.3.js',
                'raptor',
                'raptor/widgets',
-               'raptor/component-renderer',
+               'raptor/renderer',
                'taglibs/widgets',
-               'pages/component-renderer/ComponentRendererTest1Page',
+               'pages/renderer/ComponentRendererTest1Page',
             ],
             ready: function(window, done) {
                 var require = window.require,
                     document = window.document,
-                    componentRenderer = require('raptor/component-renderer');
+                    componentRenderer = require('raptor/renderer');
 
                 window.initWidgets();
                 window.$(function() {
@@ -37,13 +37,13 @@ describe('raptor/component-renderer module in the browser', function() {
 
                         var renderToDOM = function(method) {
                             componentRenderer.render(
-                                'components/component-renderer/Component1/Component1Renderer',
+                                'components/renderer/Component1/Component1Renderer',
                                 {
                                     id: method
                                 })[method](targetEl);
                         };
 
-                        var Component1Widget = window.require('components/component-renderer/Component1/Component1Widget');
+                        var Component1Widget = window.require('components/renderer/Component1/Component1Widget');
 
                         expect(document.body.childNodes.length).toEqual(2);    
                         renderToDOM("appendTo");
@@ -94,14 +94,14 @@ describe('raptor/component-renderer module in the browser', function() {
     it('should automatically resolve renderer names based on conventions', function() {
 
         jsdomWrapper({
-            html: compileAndRender('/pages/component-renderer/ComponentRendererTest1Page.rhtml'),
+            html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
             require: [
                '/js/jquery-1.8.3.js',
                'raptor',
                'raptor/widgets',
-               'raptor/component-renderer',
+               'raptor/renderer',
                'taglibs/widgets',
-               'pages/component-renderer/ComponentRendererTest1Page',
+               'pages/renderer/ComponentRendererTest1Page',
             ],
             ready: function(window, done) {
                 var require = window.require,
@@ -116,9 +116,9 @@ describe('raptor/component-renderer module in the browser', function() {
                         expect(targetEl).toNotEqual(null);
                         
 
-                        var Component1Widget = window.require('components/component-renderer/Component1/Component1Widget');
+                        var Component1Widget = window.require('components/renderer/Component1/Component1Widget');
                         
-                        require('raptor/component-renderer').render('components/component-renderer/Component1', { id: 'appendTo'}).appendTo(targetEl);
+                        require('raptor/renderer').render('components/renderer/Component1', { id: 'appendTo'}).appendTo(targetEl);
                         expect(targetEl.childNodes.length).toEqual(1);
                         expect(document.getElementById('appendTo').parentNode).toEqual(targetEl);
                         expect(Component1Widget.initOrder).toEqualArray([ 'appendTo' ]);
@@ -141,14 +141,14 @@ describe('raptor/component-renderer module in the browser', function() {
     it('should allow rendering a UI component and getting back the initialized widget', function() {
 
         jsdomWrapper({
-            html: compileAndRender('/pages/component-renderer/ComponentRendererTest1Page.rhtml'),
+            html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
             require: [
                '/js/jquery-1.8.3.js',
                'raptor',
                'raptor/widgets',
-               'raptor/component-renderer',
+               'raptor/renderer',
                'taglibs/widgets',
-               'pages/component-renderer/ComponentRendererTest1Page',
+               'pages/renderer/ComponentRendererTest1Page',
             ],
             ready: function(window, done) {
                 var require = window.require,
@@ -162,10 +162,10 @@ describe('raptor/component-renderer module in the browser', function() {
 
                         expect(targetEl).toNotEqual(null);
                         
-                        var componentRenderer = require('raptor/component-renderer');
+                        var componentRenderer = require('raptor/renderer');
 
-                        var Component1Widget = window.require('components/component-renderer/Component1/Component1Widget');
-                        var component1Widget = componentRenderer.render('components/component-renderer/Component1', { id: 'appendTo'}).appendTo(targetEl).getWidget();
+                        var Component1Widget = window.require('components/renderer/Component1/Component1Widget');
+                        var component1Widget = componentRenderer.render('components/renderer/Component1', { id: 'appendTo'}).appendTo(targetEl).getWidget();
                         expect(component1Widget).toNotEqual(undefined);
                         expect(component1Widget instanceof Component1Widget).toEqual(true);
                         done();

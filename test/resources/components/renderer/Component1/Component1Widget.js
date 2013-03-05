@@ -1,5 +1,5 @@
 define(
-    'components/component-renderer/Component1/Component1Widget',
+    'components/renderer/Component1/Component1Widget',
     function(require) {
         var Component1Widget = function(config) {
             Component1Widget.initOrder.push(config.id);

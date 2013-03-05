@@ -1,6 +1,6 @@
 {
     "includes": [
-        {"module": "raptor/component-renderer"},
+        {"module": "raptor/renderer"},
         {"module": "raptor/templating"},
         {"module": "raptor/templating/taglibs/widgets"},
         {"type": "js", "path": "ButtonRenderer.js"},
