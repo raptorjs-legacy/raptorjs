@@ -12,7 +12,8 @@
     ],
     "raptor": {
         "dependencies": [
-            { "module": "raptor/renderer" }
+            { "module": "raptor/renderer" },
+            "component-renderer.js"
         ]
     }
 }
