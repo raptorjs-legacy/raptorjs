@@ -39,10 +39,5 @@
         
         <attribute name="name" type="string"/>
     </tag>
-    
-    <tag>
-        <name>comment</name>
-        <handler-class>raptor/templating/taglibs/optimizer/CommentTag</handler-class>
-    </tag>
 
 </raptor-taglib>

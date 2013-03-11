@@ -45,5 +45,10 @@
             <class-name>raptor/templating/taglibs/html/HtmlTagTransformer</class-name>
         </transformer>
     </tag>
+
+    <tag>
+        <name>comment</name>
+        <handler-class>raptor/templating/taglibs/html/CommentTag</handler-class>
+    </tag>
     
 </raptor-taglib>
