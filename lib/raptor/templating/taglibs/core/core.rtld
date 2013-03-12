@@ -32,6 +32,12 @@
             <allow-expressions>false</allow-expressions>
         </attribute>
 
+        <attribute>
+            <uri>*</uri>
+            <name>import-functions</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
         <node-class>raptor/templating/taglibs/core/TemplateNode</node-class>
     </tag>
     
