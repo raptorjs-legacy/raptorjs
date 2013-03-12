@@ -167,9 +167,9 @@
 			[
 				"jasmine-node",
 				"--noColor",
-				"raptor-component-renderer-browser-spec.js"
+				"raptor-renderer-browser-spec.js"
 			],
-			"name": "Jasmine Tests - component-renderer (browser)",
+			"name": "Jasmine Tests - renderer (browser)",
 			"working_dir": "${project_path}/test"
 		},
 		{
@@ -241,7 +241,6 @@
 			"Raptor JSDoc (single file)",
 			"Jasmine Tests",
 			"Jasmine Tests (debug)",
-			"Jasmine Tests - component-renderer (browser)",
 			"Jasmine Tests - dev",
 			"Jasmine Tests - files",
 			"Jasmine Tests - legacy",
@@ -249,6 +248,7 @@
 			"Jasmine Tests - objects",
 			"Jasmine Tests - oop",
 			"Jasmine Tests - optimizer",
+			"Jasmine Tests - renderer (browser)",
 			"Jasmine Tests - strings",
 			"Jasmine Tests - templating",
 			"Jasmine Tests - widgets-browser",
