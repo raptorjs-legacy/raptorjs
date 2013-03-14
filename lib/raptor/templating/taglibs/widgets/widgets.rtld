@@ -30,7 +30,8 @@
         <attribute name="jsClass" type="string" /> <!-- deprecated -->
         <attribute name="js-class" type="string"/>
         <attribute name="config" type="expressions"/>
-        
+        <attribute name="id" type="string" target-property="assignedId"/>
+
         <variable name="widget"/>
         
         <import-variable target-property="_cfg" expression="data.widgetConfig"/>

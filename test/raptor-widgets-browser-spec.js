@@ -51,6 +51,8 @@ describe('widgets module in the browser', function() {
                     try
                     {
                         expect(PageWidget.instance).toNotEqual(null);
+                        expect(PageWidget.instance.widgets.getWidget('buttonAssignedId')).toNotEqual(null);
+                        expect(PageWidget.instance.widgets.getWidget('buttonAssignedId2')).toNotEqual(null);
                         expect(PageWidget.instance.widgets.getWidget('button1')).toNotEqual(null);
                         expect(PageWidget.instance.widgets.getWidget('button1').getEl().id).toEqual("myButton");
                         expect(PageWidget.instance.widgets.getWidget('button1').$().prop("id")).toEqual("myButton");
