@@ -12,6 +12,19 @@
         
             Hello World!
             <div w:widget="pages.widgets.PageWidget">
+
+                <button w:widget="components/widgets/ButtonWidget; id='buttonAssignedId'">
+                    buttonAssignedId
+                </button>
+
+                <button>
+                    <w:widget js-class="components/widgets/ButtonWidget" id="buttonAssignedId2">
+                        <button id="${widget.elId()}">
+                            buttonAssignedId2
+                        </button>                        
+                    </w:widget>
+                </button>
+
                 <widgets-test:button label="Button 1" id="myButton" w:id="button1"/>
                 <widgets-test:button>Button 2</widgets-test:button>
                 
