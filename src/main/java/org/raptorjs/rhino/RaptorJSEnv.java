@@ -36,7 +36,7 @@ import org.raptorjs.rhino.commonjs.module.provider.RaptorUrlModuleSourceProvider
 
 
 
-public abstract class RaptorJSEnv {
+public class RaptorJSEnv {
 
     private JavaScriptEngine jsEnv = new JavaScriptEngine();
     private String coreModulesDir = null;
