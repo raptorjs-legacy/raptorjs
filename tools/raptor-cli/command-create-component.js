@@ -16,7 +16,6 @@ module.exports = function(args, config) {
                 throw 'Component name is required';
             }
             
-            console.error(argv);
             if (argv['widget'] === false) {
                 ifWidget = false;
             }
