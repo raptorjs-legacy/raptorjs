@@ -1,0 +1,9 @@
+{
+    "skeleton.component.dir": "skeletons/component",
+    "skeleton.page.dir": "skeletons/page",
+    "skeleton.static-webapp.dir": "skeletons/webapp-static",
+    "skeleton.dynamic-webapp.dir": "skeletons/webapp-dynamic",
+    "command.create component.file": "command-create-component.js",
+    "command.create page.file": "command-create-page.js",
+    "command.create webapp.file": "command-create-webapp.js"
+}

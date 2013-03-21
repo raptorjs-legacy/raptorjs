@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'development';
+require('../tools/raptor-cli/raptor-cli');

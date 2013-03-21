@@ -1,0 +1,12 @@
+<c:template
+    xmlns:c="core"
+    xmlns:w="widgets"
+    name="{longName}"
+    params="name,count">
+    
+    <div class="{shortNameDashSeparated}" w:widget="{longName}/{shortName}Widget">
+        <h1>{longName}</h1>
+        Hello $name! You have $count new messages.
+    </div>
+
+</c:template>

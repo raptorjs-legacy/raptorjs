@@ -1,0 +1,13 @@
+{
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/templating"},
+            {"module": "raptor/templating/taglibs/widgets"},
+            {"module": "raptor/widgets"},
+            "SimpleButtonRenderer.js",
+            "SimpleButton.rhtml",
+            "SimpleButtonWidget.js",
+            "SimpleButton.css"
+        ]
+    }
+}

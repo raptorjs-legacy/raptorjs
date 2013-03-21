@@ -1,0 +1,33 @@
+<c:template
+    xmlns:c="core"
+    xmlns:html="html"
+    xmlns:optimizer="optimizer"
+    xmlns:w="widgets"
+    xmlns:app="app"
+    params="pageOutputPath">
+
+    <optimizer:page name="index" base-path="$pageOutputPath">
+        <dependencies>
+            <module name="raptor"/>
+            <module name="raptor/widgets"/>
+            <module name="ui/buttons/SimpleButton"/>
+        </dependencies>
+    </optimizer:page>    
+
+    <html html:doctype="html">
+        <head>
+            <title>{appName}</title>
+            <optimizer:slot name="head"/>
+            
+        </head>
+        <body>
+            <h1>{appName}</h1>
+            <app:simple-button label="Hello World!"/>
+                        
+            <script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+            <optimizer:slot name="body"/>
+            <w:init-widgets/>
+        </body>
+    </html>
+</c:template>
+

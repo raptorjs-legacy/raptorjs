@@ -1,0 +1,5 @@
+
+<raptor-taglib>
+    <uri>app</uri>
+    <import-taglib path="/ui/buttons/SimpleButton/SimpleButton.rtld"/>
+</raptor-taglib>

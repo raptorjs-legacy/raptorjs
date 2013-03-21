@@ -1,0 +1,7 @@
+<raptor-taglib>
+
+    <tag name="simple-button" renderer="ui/buttons/SimpleButton/SimpleButtonRenderer">
+        <attribute name="label" type="string"/>
+    </tag>
+    
+</raptor-taglib>
