@@ -1,8 +1,7 @@
 {
-    "skeleton.component.dir": "skeletons/component",
-    "skeleton.page.dir": "skeletons/page",
-    "skeleton.static-webapp.dir": "skeletons/webapp-static",
-    "skeleton.dynamic-webapp.dir": "skeletons/webapp-dynamic",
+    "scaffold.component.dir": "scaffolds/component",
+    "scaffold.page.dir": "scaffolds/page",
+    "scaffold.webapp.dir": "scaffolds/webapp",
     "command.create component.file": "command-create-component.js",
     "command.create page.file": "command-create-page.js",
     "command.create webapp.file": "command-create-webapp.js"

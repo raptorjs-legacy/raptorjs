@@ -1,18 +1,12 @@
 var File = require('raptor/files/File'),
     files = require('raptor/files'),
-    path = require('path'),
-    dust = require('dustjs-linkedin');
-
-dust.optimizers.format = function(ctx, node) { return node };
+    path = require('path');
 
 module.exports = function(args, config) {
+    var longName = null;
 
-    var longName;
-
-    var argv = require('optimist')(args)
+    require('optimist')(args)
         .usage('Usage: $0 create page <page-name> [options]\n')
-        .boolean('no-widget')
-        .describe('no-widget', 'Do not generate a widget')
         .check(function(argv) {
             longName = argv._[0];
             if (!longName) {
@@ -21,71 +15,44 @@ module.exports = function(args, config) {
         })
         .argv; 
 
-    var skeletonDir = config["skeleton.page.dir"];
-    if (!skeletonDir) {
-        console.error('"skeleton.page.dir" not defined in raptor config file');
+    var scaffoldDir = config["scaffold.page.dir"];
+    if (!scaffoldDir) {
+        console.error('"scaffold.page.dir" not defined in raptor config file');
         return;
     }
 
-    skeletonDir = new File(skeletonDir);
-    if (!skeletonDir.exists()) {
-        console.error('Invalid value for "skeleton.page.dir". The directory at path "' + skeletonDir.getAbsolutePath() + '" does not exist.');
+    scaffoldDir = new File(scaffoldDir);
+    if (!scaffoldDir.exists()) {
+        console.error('Invalid value for "scaffold.page.dir". The directory at path "' + scaffoldDir.getAbsolutePath() + '" does not exist.');
         return;
     }
 
     var lastSlash = longName.lastIndexOf('/'),
         shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
         shortNameLower = shortName.toLowerCase(),
+        shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
+            return a + '-' + b;
+        }).toLowerCase(),
+        longNameDashSeparated = shortName.replace(/[^a-zA-Z0-9]/g, '-'),
         dirPath = longName,
-        baseDir = config['pages.base.dir'] || process.cwd();
+        baseDir = config['pages.base.dir'] || process.cwd(),
+        outputDir = path.join(baseDir, dirPath);
 
-    require('raptor/files/walker').walk(
-        skeletonDir, 
-        function(file) {
-            if (file.isDirectory() || file.getAbsolutePath() === skeletonDir.getAbsolutePath()) {
-                return;
+    require('./scaffolding').generate(
+        {
+            scaffoldDir: scaffoldDir,
+            outputDir: outputDir,
+            viewModel: {
+                longName: longName,
+                longNameDashSeparated: longNameDashSeparated,
+                shortName: shortName,
+                shortNameLower: shortNameLower,
+                shortNameDashSeparated: shortNameDashSeparated
+            },
+            afterFile: function(outputFile) {
+                
             }
-
-            var inputTemplate = file.readAsString();
-            var templateName = file.getName();
-            var compiled = dust.compile(inputTemplate, templateName, false);
-            dust.loadSource(compiled);
-
-            var outputPath = file.getAbsolutePath().slice(skeletonDir.getAbsolutePath().length + 1);
-            var outputFile = new File(
-                path.join(
-                    baseDir, 
-                    dirPath, 
-                    outputPath.replace(/Skeleton/g, shortName).replace(/skeleton/g, shortNameLower)));
-
-            if (outputFile.exists()) {
-                console.log('Output file "' + outputFile.getAbsolutePath() + '" already exists. Skipping...');
-                return;
-            }
-            
-            var shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
-                return a + '-' + b;
-            }).toLowerCase();
-            
-            var longNameDashSeparated = shortName.replace(/[^a-zA-Z0-9]/g, '-');
-
-            dust.render(
-                templateName, 
-                {
-                    longName: longName,
-                    longNameDashSeparated: longNameDashSeparated,
-                    shortName: shortName,
-                    shortNameLower: shortNameLower,
-                    shortNameDashSeparated: shortNameDashSeparated
-                }, 
-                function(err, out) {
-                    console.log('Writing ' + outputFile.getAbsolutePath() + '...');
-                    outputFile.writeAsString(out);
-                });
-            
-        },
-        this);
-
-    console.log('Page written to "' + path.join(baseDir, dirPath) + '"');
-
-}
+        });
+    
+    console.log('Page written to "' + outputDir + '"');
+};

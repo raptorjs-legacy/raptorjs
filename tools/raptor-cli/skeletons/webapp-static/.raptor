@@ -1,6 +1,0 @@
-{
-    "modules.dir": "modules",
-    "components.base.dir": "modules",
-    "pages.base.dir": "modules/pages",
-    "app.rtld.file": "modules/taglibs/app/app.rtld"
-}

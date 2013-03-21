@@ -4,7 +4,7 @@
     name="{longName}"
     params="name,count">
     
-    <div class="{shortNameDashSeparated}" w:widget="{longName}/{shortName}Widget">
+    <div class="{shortNameDashSeparated}"{?ifWidget} w:widget="{longName}/{shortName}Widget"{/ifWidget}>
         <h1>{longName}</h1>
         Hello $name! You have $count new messages.
     </div>

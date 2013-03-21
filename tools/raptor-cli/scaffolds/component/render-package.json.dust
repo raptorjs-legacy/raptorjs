@@ -2,9 +2,9 @@
     "raptor": {
         "dependencies": [
             { "module": "raptor/renderer" },
-            { "module": "raptor/templating" },
+            { "module": "raptor/templating" },{?ifWidget}
             { "module": "raptor/widgets" },
-            { "module": "raptor/templating/taglibs/widgets" },
+            { "module": "raptor/templating/taglibs/widgets" },{/ifWidget}
             { "module": "{longName}" },
             "{shortName}Renderer.js",
             "{shortName}.rhtml"

@@ -1,7 +1,0 @@
-{
-    "raptor": {
-        "taglibs": [
-            "/taglibs/app/app.rtld"
-        ]
-    }
-}

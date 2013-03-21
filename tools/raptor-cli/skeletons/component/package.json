@@ -1,8 +1,0 @@
-{
-    "raptor": {
-        "dependencies": [
-            "{shortName}Widget.js",
-            "{shortName}.css"
-        ]
-    }
-}

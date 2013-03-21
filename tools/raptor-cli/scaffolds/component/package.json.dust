@@ -1,0 +1,8 @@
+{
+    "raptor": {
+        "dependencies": [{?ifWidget}
+            "{shortName}Widget.js",{/ifWidget}
+            "{shortName}.css"
+        ]
+    }
+}
