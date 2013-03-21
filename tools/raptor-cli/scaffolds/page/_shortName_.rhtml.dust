@@ -10,6 +10,10 @@
         <dependencies>
             <module name="raptor"/>
             <module name="raptor/widgets"/>
+            
+            <!-- Required for asynchronous package loading: -->
+            <module name="raptor/loader"/>
+            <module name="loader-metadata"/>
         </dependencies>
     </optimizer:page>    
 
