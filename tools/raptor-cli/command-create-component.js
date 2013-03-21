@@ -23,7 +23,6 @@ module.exports = function(args, config) {
         })
         .argv; 
 
-    console.error('ifWidget: ', ifWidget);
     var scaffoldDir = config["scaffold.component.dir"];
     if (!scaffoldDir) {
         console.error('"scaffold.component.dir" not defined in raptor config file');
