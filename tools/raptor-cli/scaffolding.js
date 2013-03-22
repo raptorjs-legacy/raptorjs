@@ -54,18 +54,18 @@ exports.generate = function(options) {
                 return false;
             }
 
-            if (outputFile.exists()) {
-                console.log('Output file "' + outputFile.getAbsolutePath() + '" already exists. Skipping...');
-                return;
+            if (!outputFile.exists()) {
+                dust.render(
+                    templateName, 
+                    viewModel, 
+                    function(err, out) {
+                        console.log('Writing ' + outputFile.getAbsolutePath() + '...');
+                        outputFile.writeAsString(out);
+                    });
             }
-            
-            dust.render(
-                templateName, 
-                viewModel, 
-                function(err, out) {
-                    console.log('Writing ' + outputFile.getAbsolutePath() + '...');
-                    outputFile.writeAsString(out);
-                });
+            else {
+                console.log('Output file "' + outputFile.getAbsolutePath() + '" already exists. Skipping...');
+            }
 
             if (afterFile) {
                 afterFile(outputFile);

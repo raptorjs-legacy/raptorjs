@@ -34,15 +34,19 @@ module.exports = function(args, config) {
         return;
     }
 
+    var baseDir = config['components.base.dir'] || process.cwd();
+    var outputDir = path.join(baseDir, longName);
+    var moduleName = config['module.name'];
+    if (moduleName) {
+        longName = moduleName + '/' + longName;
+    }
+    
     var lastSlash = longName.lastIndexOf('/'),
         shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
         shortNameLower = shortName.toLowerCase(),
         shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
             return a + '-' + b;
-        }).toLowerCase(),
-        dirPath = longName,
-        baseDir = config['components.base.dir'] || process.cwd(),
-        outputDir = path.join(baseDir, dirPath);
+        }).toLowerCase();
 
     require('./scaffolding').generate(
         {
@@ -58,13 +62,15 @@ module.exports = function(args, config) {
             afterFile: function(outputFile) {
                 // Register RTLD files in the app.rtld file
                 if (outputFile.getExtension() === 'rtld') {
-                    var appRtldPath = config["app.rtld.file"];
-                    var modulesDir = config["modules.dir"];
+                    var appRtldPath = config["rtld.file"];
+                    
+                    
 
-                    if (appRtldPath && modulesDir) {
+                    if (appRtldPath) {
                         var appRtldFile = new File(appRtldPath);
                         var rtldXml = appRtldFile.readAsString();
-                        var componentRtldPath = outputFile.getAbsolutePath().slice(modulesDir.length);
+                        var componentRtldPath = path.relative(appRtldFile.getParent(), outputFile.getAbsolutePath());
+                        
                         var newTaglibElement = '<import-taglib path="' + componentRtldPath + '"/>';
                         if (rtldXml.indexOf(newTaglibElement) === -1) {
                             console.log('Adding ' + newTaglibElement + ' to "' + appRtldFile.getAbsolutePath() + '"...');
