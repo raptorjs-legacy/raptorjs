@@ -44,7 +44,8 @@ module.exports = function(args, config) {
             viewModel: {
                 appName: appName,
                 ifStatic: isStatic,
-                ifDynamic: !isStatic
+                ifDynamic: !isStatic,
+                webappType: isStatic ? 'static' : 'dynamic'
             },
             afterFile: function(outputFile) {
                 

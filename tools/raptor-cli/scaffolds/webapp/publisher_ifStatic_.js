@@ -10,11 +10,19 @@ var Publisher = function(config) {
 
 Publisher.prototype = {
     publishAllPages: function() {
+        var indexTemplateFile = new File(this.pagesDir, "index.rhtml");
+        if (indexTemplateFile.exists()) {
+            this._writePage(indexTemplateFile);
+        }
+
         require('raptor/files/walker').walk(
             this.pagesDir, 
             function(file) {
-                if (file.isFile() && file.getExtension() === "rhtml" && file.getName().startsWith('index')) {
-                    this._writePage(file);
+                if (file.isDirectory()) {
+                    var templateFile = new File(file, file.getName() + '.rhtml');
+                    if (templateFile.exists()) {
+                        this._writePage(templateFile);
+                    }
                 }
             },
             this);
@@ -22,16 +30,14 @@ Publisher.prototype = {
 
     publishPage: function(pagePath) {
         var pageDir = new File(this.pagesDir, pagePath);
-        var dirFiles = pageDir.listFiles();
-        for (var i=0, len=dirFiles.length; i<len; i++) {
-            var file = dirFiles[i];
-            if (file.getName().startsWith('index-') && file.getName().endsWith('.rhtml')) {
-                this._writePage(file);
-                return;
-            }
+        var templateFile = new File(pageDir, pageDir.getName() + '.rhtml');
+        if (templateFile.exists()) {
+            this._writePage(templateFile);
+            return;
         }
-
-        throw new Error('Invalid page: ' + pagePath);    
+        else {
+            throw new Error('Invalid page: ' + pagePath);        
+        }
     },
 
     _writePage: function(templateFile) {

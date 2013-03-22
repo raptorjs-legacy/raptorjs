@@ -27,28 +27,47 @@ module.exports = function(args, config) {
         return;
     }
 
+    if (longName.startsWith('/')) {
+        longName = longName.substring(1);
+    }
+
+    function dashSeparate(str) {
+        return str.replace(/([a-z])([A-Z])/g, function(match, a, b) {
+            return a + '-' + b;
+        }).toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
+    }
+
+
+    var isStatic = config['webapp.type'] === 'static';
+    var baseDir = config['pages.base.dir'] || process.cwd();
+    var outputDir = longName ? path.join(baseDir, longName) : baseDir;
+
+    if (!longName) {
+        longName = 'index';
+    }
+
     var lastSlash = longName.lastIndexOf('/'),
         shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
         shortNameLower = shortName.toLowerCase(),
-        shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
-            return a + '-' + b;
-        }).toLowerCase(),
-        longNameDashSeparated = shortName.replace(/[^a-zA-Z0-9]/g, '-'),
-        dirPath = longName,
-        baseDir = config['pages.base.dir'] || process.cwd(),
-        outputDir = path.join(baseDir, dirPath);
+        shortNameDashSeparated = dashSeparate(shortName),
+        longNameDashSeparated = dashSeparate(longName),
+        dirPath = longName;
+
+    var viewModel = {
+            longName: longName,
+            longNameDashSeparated: longNameDashSeparated,
+            shortName: shortName,
+            shortNameLower: shortNameLower,
+            shortNameDashSeparated: shortNameDashSeparated
+        };
+
+    console.log(viewModel);
 
     require('./scaffolding').generate(
         {
             scaffoldDir: scaffoldDir,
             outputDir: outputDir,
-            viewModel: {
-                longName: longName,
-                longNameDashSeparated: longNameDashSeparated,
-                shortName: shortName,
-                shortNameLower: shortNameLower,
-                shortNameDashSeparated: shortNameDashSeparated
-            },
+            viewModel: viewModel,
             afterFile: function(outputFile) {
                 
             }

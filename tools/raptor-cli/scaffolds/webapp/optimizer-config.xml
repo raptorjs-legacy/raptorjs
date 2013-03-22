@@ -3,7 +3,7 @@
         <profile>production</profile>
     </params>
     
-    <enable-profile>${profile}</enable-profile>
+    <enable-profile>${~lb}profile}</enable-profile>
     
     <profile name="development">
         <enabled-extensions>jquery,browser,raptor/logging/console,development</enabled-extensions>

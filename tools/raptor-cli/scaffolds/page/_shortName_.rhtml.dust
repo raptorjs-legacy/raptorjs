@@ -6,7 +6,7 @@
     xmlns:app="app"
     params="pageOutputPath">
     
-    <optimizer:page name="{longName}" base-path="$pageOutputPath">
+    <optimizer:page name="{longNameDashSeparated}" base-path="$pageOutputPath">
         <dependencies>
             <module name="raptor"/>
             <module name="raptor/widgets"/>
