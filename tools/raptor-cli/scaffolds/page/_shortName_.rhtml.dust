@@ -13,7 +13,7 @@
             
             <!-- Required for asynchronous package loading: -->
             <module name="raptor/loader"/>
-            <module name="loader-metadata"/>
+            <loader-metadata/>
         </dependencies>
     </optimizer:page>    
 

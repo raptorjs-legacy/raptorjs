@@ -41,7 +41,8 @@
     "xmldom": "~0.1.13",
     "optimist": "~0.3.5",
     "sqwish": "~0.2.0",
-    "dustjs-linkedin": "~1.2.1"
+    "dustjs-linkedin": "~1.2.1",
+    "colorize": "~0.1.0"
   },
   "devDependencies": {
     "jsdom": "0.5.2",

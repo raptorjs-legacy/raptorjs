@@ -2,14 +2,24 @@ var File = require('raptor/files/File'),
     files = require('raptor/files'),
     path = require('path');
 
-module.exports = function(args, config) {
+module.exports = function(args, config, cli) {
     var appName = 'webapp',
         isStatic = false,
+        ifTesting = true,
         outputDir;
 
     require('optimist')(args)
         .usage('Usage: $0 create webapp [app-name] [options]\n')
+        .boolean('static')
+        .describe('static', 'Generate a static, server-less web application')
+        .boolean('no-testing')
+        .describe('no-testing', 'Do not generate code related to testing')
+        .describe('help', 'Show this message')
         .check(function(argv) {
+            if (argv.help) {
+                throw '';
+            }
+            
             appName = argv._[0];
             if (!appName) {
                 outputDir = path.join(process.cwd());
@@ -17,6 +27,10 @@ module.exports = function(args, config) {
             }
             else {
                 outputDir = path.join(process.cwd(), appName);
+            }
+            
+            if (argv.testing === false) {
+                ifTesting = false;
             }
             
             isStatic = argv['static'] === true;
@@ -37,7 +51,7 @@ module.exports = function(args, config) {
 
     
 
-    require('./scaffolding').generate(
+    cli.generate(
         {
             scaffoldDir: scaffoldDir,
             outputDir: outputDir,
@@ -45,12 +59,16 @@ module.exports = function(args, config) {
                 appName: appName,
                 ifStatic: isStatic,
                 ifDynamic: !isStatic,
-                webappType: isStatic ? 'static' : 'dynamic'
+                webappType: isStatic ? 'static' : 'dynamic',
+                ifTesting: ifTesting
             },
             afterFile: function(outputFile) {
                 
             }
         });
-    
-    console.log('Webapp written to "' + outputDir + '"');
+    cli.logSuccess('finished', 'Webapp written to "' + outputDir + '"');
+    cli.log('\nAll that is left is to run the following command:\n#cyan[npm install]');
+    if (isStatic) {
+        cli.log('\nAnd then build your static website using the following command:\n#cyan[node build.js]');
+    }
 };

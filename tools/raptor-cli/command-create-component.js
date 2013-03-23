@@ -2,7 +2,7 @@ var File = require('raptor/files/File'),
     files = require('raptor/files'),
     path = require('path');
 
-module.exports = function(args, config) {
+module.exports = function(args, config, cli) {
     var longName = null,
         ifWidget = true;
 
@@ -10,6 +10,7 @@ module.exports = function(args, config) {
         .usage('Usage: $0 create component <component-name> [options]\n')
         .boolean('no-widget')
         .describe('no-widget', 'Do not generate a widget')
+        .describe('help', 'Show this message')
         .check(function(argv) {
             longName = argv._[0];
             if (!longName) {
@@ -48,7 +49,7 @@ module.exports = function(args, config) {
             return a + '-' + b;
         }).toLowerCase();
 
-    require('./scaffolding').generate(
+    cli.generate(
         {
             scaffoldDir: scaffoldDir,
             outputDir: outputDir,
@@ -73,13 +74,16 @@ module.exports = function(args, config) {
                         
                         var newTaglibElement = '<import-taglib path="' + componentRtldPath + '"/>';
                         if (rtldXml.indexOf(newTaglibElement) === -1) {
-                            console.log('Adding ' + newTaglibElement + ' to "' + appRtldFile.getAbsolutePath() + '"...');
                             rtldXml = rtldXml.replace('</raptor-taglib>', '    ' + newTaglibElement  + '\n</raptor-taglib>');
                             appRtldFile.writeAsString(rtldXml);
+                            cli.logSuccess('update', 'Added ' + newTaglibElement + ' to "' + appRtldFile.getAbsolutePath());
                         }
                     }
                 }
             }
         });
-    console.log('UI component written to "' + outputDir + '"');
+    cli.logSuccess('finished', 'UI component written to "' + outputDir + '"');
+    cli.log('\nAdd the following dependency to your page:\n#cyan[<module name="' + longName + '"/>]');
+    cli.log('Or, to render client-side, add the following instead:\n#cyan[<module name="' + longName + '/render"/>]');
+    cli.log('\nCustom tag usage:\n#cyan[<app:' + shortNameDashSeparated + ' name="Frank" count="30"/>]');
 }

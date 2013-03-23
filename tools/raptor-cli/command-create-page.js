@@ -2,7 +2,7 @@ var File = require('raptor/files/File'),
     files = require('raptor/files'),
     path = require('path');
 
-module.exports = function(args, config) {
+module.exports = function(args, config, cli) {
     var longName = null;
 
     require('optimist')(args)
@@ -23,12 +23,17 @@ module.exports = function(args, config) {
 
     scaffoldDir = new File(scaffoldDir);
     if (!scaffoldDir.exists()) {
-        console.error('Invalid value for "scaffold.page.dir". The directory at path "' + scaffoldDir.getAbsolutePath() + '" does not exist.');
+        cli.logError('error', 'Invalid value for "scaffold.page.dir". The directory at path "' + scaffoldDir.getAbsolutePath() + '" does not exist.');
         return;
     }
 
+    var pagePath = longName;
+
     if (longName.startsWith('/')) {
         longName = longName.substring(1);
+    }
+    else {
+        pagePath = '/' + pagePath;
     }
 
     function dashSeparate(str) {
@@ -46,6 +51,8 @@ module.exports = function(args, config) {
         longName = 'index';
     }
 
+
+
     var lastSlash = longName.lastIndexOf('/'),
         shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
         shortNameLower = shortName.toLowerCase(),
@@ -61,9 +68,7 @@ module.exports = function(args, config) {
             shortNameDashSeparated: shortNameDashSeparated
         };
 
-    console.log(viewModel);
-
-    require('./scaffolding').generate(
+    cli.generate(
         {
             scaffoldDir: scaffoldDir,
             outputDir: outputDir,
@@ -72,6 +77,14 @@ module.exports = function(args, config) {
                 
             }
         });
-    
-    console.log('Page written to "' + outputDir + '"');
+
+
+
+    cli.logSuccess('finished', 'Page written to "' + outputDir + '"');
+
+    var isStatic = config['webapp.type'] === 'static';
+
+    if (isStatic) {
+        cli.log('\nTo build page:\n#cyan[node build.js ' + pagePath + ']');
+    }
 };

@@ -9,9 +9,52 @@ require('raptor/logging').configure({
 
 var files = require('raptor/files'),
     File = require('raptor/files/File'),
-    resources = require('raptor/resources');
+    resources = require('raptor/resources'),
+    Scaffolding = require('./Scaffolding'),
+    console = require('colorize').console;
 
 resources.addSearchPathDir(__dirname);
+
+function log(message) {
+    console.log(message);
+}
+
+function _log(color, label, message, isError) {
+    while(label.length<10) {
+        label = ' ' + label;
+    }
+    var output = '#' + color + '[' + label + '] ' + message;
+
+    if (isError) {
+        console.error(output);    
+    }
+    else {
+        console.log(output);
+    }
+    
+}
+
+function logSuccess(label, message) {
+    _log('green', label, message);
+}
+
+function logWarn(label, message) {
+    _log('yellow', label, message);
+}
+
+function logError(label, message) {
+    _log('red', label, message, true);
+}
+
+var cli = {
+    log: log,
+    logSuccess: logSuccess,
+    logWarn: logWarn,
+    logError: logError
+}
+
+var scaffolding = new Scaffolding(cli);
+cli.generate = scaffolding.generate.bind(scaffolding);
 
 function getUserHome() {
     return new File(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']);
@@ -88,7 +131,7 @@ for (var i=commandArgs.length-1; i>=0; i--) {
         if (i<commandArgs.length-1) {
             optionArgs = commandArgs.slice(i+1).concat(optionArgs);
         }
-        commandFunc(optionArgs, config);
+        commandFunc(optionArgs, config, cli);
         break;
     }
     else {
