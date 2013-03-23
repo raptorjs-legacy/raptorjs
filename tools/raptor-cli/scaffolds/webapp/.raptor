@@ -2,6 +2,6 @@
     "modules.dir": "modules",
     "components.base.dir": "modules",
     "pages.base.dir": "modules/pages",
-    "rtld.file": "modules/taglibs/app/app.rtld",
+    "rtld.file": "modules/app.rtld",
     "webapp.type": "{webappType}"
 }

@@ -78,8 +78,6 @@ module.exports = function(args, config, cli) {
             }
         });
 
-
-
     cli.logSuccess('finished', 'Page written to "' + outputDir + '"');
 
     var isStatic = config['webapp.type'] === 'static';
