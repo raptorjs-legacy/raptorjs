@@ -44,7 +44,7 @@ module.exports = function(args, config, cli) {
 
 
     var isStatic = config['webapp.type'] === 'static';
-    var baseDir = config['pages.base.dir'] || process.cwd();
+    var baseDir = config['pages.dir'] || process.cwd();
     var outputDir = longName ? path.join(baseDir, longName) : baseDir;
 
     if (!longName) {

@@ -38,6 +38,10 @@ function logSuccess(label, message) {
     _log('green', label, message);
 }
 
+function logInfo(label, message) {
+    _log('cyan', label, message);
+}
+
 function logWarn(label, message) {
     _log('yellow', label, message);
 }
@@ -48,6 +52,7 @@ function logError(label, message) {
 
 var cli = {
     log: log,
+    logInfo: logInfo,
     logSuccess: logSuccess,
     logWarn: logWarn,
     logError: logError

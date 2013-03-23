@@ -2,6 +2,21 @@ var File = require('raptor/files/File'),
     files = require('raptor/files'),
     path = require('path');
 
+function getComponentInfo(longName) {
+    var lastSlash = longName.lastIndexOf('/'),
+        shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
+        shortNameLower = shortName.toLowerCase(),
+        shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
+            return a + '-' + b;
+        }).toLowerCase();
+    return {
+        longName: longName,
+        shortName: shortName,
+        shortNameLower: shortNameLower,
+        shortNameDashSeparated: shortNameDashSeparated
+    };
+}
+
 module.exports = function(args, config, cli) {
     var longName = null,
         ifWidget = true;
@@ -35,19 +50,14 @@ module.exports = function(args, config, cli) {
         return;
     }
 
-    var baseDir = config['components.base.dir'] || process.cwd();
+    var baseDir = config['components.dir'] || process.cwd();
     var outputDir = path.join(baseDir, longName);
     var moduleName = config['module.name'];
     if (moduleName) {
         longName = moduleName + '/' + longName;
     }
-    
-    var lastSlash = longName.lastIndexOf('/'),
-        shortName = lastSlash === -1 ? longName : longName.slice(lastSlash+1),
-        shortNameLower = shortName.toLowerCase(),
-        shortNameDashSeparated = shortName.replace(/([a-z])([A-Z])/g, function(match, a, b) {
-            return a + '-' + b;
-        }).toLowerCase();
+
+    var componentInfo = getComponentInfo(longName);
 
     cli.generate(
         {
@@ -55,10 +65,10 @@ module.exports = function(args, config, cli) {
             outputDir: outputDir,
             viewModel: {
                 ifWidget: ifWidget,
-                longName: longName,
-                shortName: shortName,
-                shortNameLower: shortNameLower,
-                shortNameDashSeparated: shortNameDashSeparated
+                longName: componentInfo.longName,
+                shortName: componentInfo.shortName,
+                shortNameLower: componentInfo.shortNameLower,
+                shortNameDashSeparated: componentInfo.shortNameDashSeparated
             },
             afterFile: function(outputFile) {
                 // Register RTLD files in the app.rtld file
@@ -76,7 +86,7 @@ module.exports = function(args, config, cli) {
                         if (rtldXml.indexOf(newTaglibElement) === -1) {
                             rtldXml = rtldXml.replace('</raptor-taglib>', '    ' + newTaglibElement  + '\n</raptor-taglib>');
                             appRtldFile.writeAsString(rtldXml);
-                            cli.logSuccess('update', 'Added ' + newTaglibElement + ' to "' + appRtldFile.getAbsolutePath());
+                            cli.logSuccess('update', 'Added ' + newTaglibElement + ' to "' + appRtldFile.getAbsolutePath()) + '"';
                         }
                     }
                 }
@@ -87,3 +97,5 @@ module.exports = function(args, config, cli) {
     cli.log('Or, to render client-side, add the following instead:\n#cyan[<module name="' + longName + '/render"/>]');
     cli.log('\nCustom tag usage:\n#cyan[<app:' + shortNameDashSeparated + ' name="Frank" count="30"/>]');
 }
+
+module.exports.getComponentInfo = getComponentInfo;

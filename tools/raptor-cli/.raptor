@@ -4,5 +4,6 @@
     "scaffold.webapp.dir": "scaffolds/webapp",
     "command.create component.file": "command-create-component.js",
     "command.create page.file": "command-create-page.js",
-    "command.create webapp.file": "command-create-webapp.js"
+    "command.create webapp.file": "command-create-webapp.js",
+    "command.rename component.file": "command-rename-component.js"
 }

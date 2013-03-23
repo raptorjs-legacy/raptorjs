@@ -1,7 +1,8 @@
 {
     "modules.dir": "modules",
-    "components.base.dir": "modules",
-    "pages.base.dir": "modules/pages",
+    "components.dir": "modules",
+    "pages.dir": "modules/pages",
     "rtld.file": "modules/app.rtld",
-    "webapp.type": "{webappType}"
+    "webapp.type": "{webappType}",
+    "webapp.dir": "."
 }
