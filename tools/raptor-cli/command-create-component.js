@@ -95,7 +95,7 @@ module.exports = function(args, config, cli) {
     cli.logSuccess('finished', 'UI component written to "' + outputDir + '"');
     cli.log('\nAdd the following dependency to your page:\n#cyan[<module name="' + longName + '"/>]');
     cli.log('Or, to render client-side, add the following instead:\n#cyan[<module name="' + longName + '/render"/>]');
-    cli.log('\nCustom tag usage:\n#cyan[<app:' + shortNameDashSeparated + ' name="Frank" count="30"/>]');
+    cli.log('\nCustom tag usage:\n#cyan[<app:' + componentInfo.shortNameDashSeparated + ' name="Frank" count="30"/>]');
 }
 
 module.exports.getComponentInfo = getComponentInfo;
