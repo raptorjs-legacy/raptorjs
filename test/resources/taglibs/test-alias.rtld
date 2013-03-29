@@ -1,0 +1,4 @@
+<raptor-taglib>
+    <uri>test-alias</uri>
+    <import-taglib path="test/test.rtld"/>
+</raptor-taglib>

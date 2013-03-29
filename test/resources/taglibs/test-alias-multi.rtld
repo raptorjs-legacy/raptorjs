@@ -1,0 +1,5 @@
+<raptor-taglib>
+    <uri>test-alias-multi</uri>
+    <uri>test-alias-multi2</uri>
+    <import-taglib path="test/test.rtld"/>
+</raptor-taglib>

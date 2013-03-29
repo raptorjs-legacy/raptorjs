@@ -14,7 +14,8 @@
     "raptor": {
         "taglibs": [
             "/taglibs/test/test.rtld",
-            "widgets-test.rtld"
+            "widgets-test.rtld",
+            "/taglibs/test-alias-multi.rtld"
         ]
     }
     

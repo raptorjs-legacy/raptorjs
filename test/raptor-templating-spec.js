@@ -632,6 +632,11 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/caching.rhtml", {});
         expect(output).toEqual('Count: 0Count: 0Count: 1Count: 2Count: 2Count: 3');
     });
+
+    it("should allow for using templates to render custom tags", function() {
+        var output = compileAndRender("/test-templates/taglib-alias.rhtml", {});
+        expect(output).toEqual('Hello John! adult=trueHello John! adult=trueHello John! adult=true');
+    });
     
     xit("should allow for widgets", function() {
         compileAndLoad("/test-templates/widgets_nested.rhtml");
