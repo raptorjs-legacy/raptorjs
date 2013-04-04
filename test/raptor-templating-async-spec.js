@@ -115,6 +115,29 @@ describe('dev spec', function() {
             done);
     });
 
+    it("should allow for shared and context-specific data providers", function(done) {
+
+        require('raptor/data-providers').register({
+            'sharedData': function(args, deferred) {
+                setTimeout(function() {
+                    deferred.resolve({
+                        name: 'testSharedData'
+                    })
+                }, 100);
+            }
+        });
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-data-providers.rhtml",
+            'testContextDatatestSharedData',
+            [
+                {
+                    'contextData': {delay: 100, data: {name: "testContextData"}}
+                }
+            ],
+            done);
+    });
+
     // it('shows asynchronous test node-style', function(done){
     //     setTimeout(function() {
     //         expect('second').toEqual('second');

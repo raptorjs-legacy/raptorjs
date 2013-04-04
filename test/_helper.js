@@ -107,7 +107,7 @@ var compileAndLoad = function(templatePath, invalid) {
         raptor.forEachEntry(dependencies, function(dependency, config) {
             dataProviders[dependency] = function(args, deferred) {
                 setTimeout(function() {
-                    deferred.resolve({})
+                    deferred.resolve(config.data || {})
                 }, config.delay);
             }
         });
@@ -117,7 +117,6 @@ var compileAndLoad = function(templatePath, invalid) {
             var compiledSrc = compileAndLoad(templatePath);
             var context = require('raptor/templating').createContext();
             context.dataProvider(dataProviders);
-            context.writer.id = "default";
 
             var promise = require("raptor/templating").renderAsync(templatePath, data, context);
             return promise;
