@@ -18,7 +18,7 @@
         <attribute name="var" type="identifier"/>
 
         <variable name="context"/>
-        <variable name-from-attribute="var OR dependency"/>
+        <variable name-from-attribute="var OR dependency|keep"/>
     </tag>
     
 </raptor-taglib>
