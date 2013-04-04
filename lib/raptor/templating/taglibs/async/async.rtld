@@ -1,0 +1,24 @@
+<raptor-taglib>
+    
+    
+    <tlib-version>1.0</tlib-version>
+    
+    <uri>http://raptorjs.org/templates/async</uri>
+    <short-name>async</short-name>
+    <prefix>async</prefix>
+    
+    <tag>
+        
+        <name>fragment</name> 
+
+        <handler-class>raptor/templating/taglibs/async/AsyncFragmentTag</handler-class>
+
+        <attribute name="dependency" type="string" />
+        <attribute pattern="arg-*" type="expression"/>
+        <attribute name="var" type="identifier"/>
+
+        <variable name="context"/>
+        <variable name-from-attribute="var OR dependency"/>
+    </tag>
+    
+</raptor-taglib>

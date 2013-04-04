@@ -137,6 +137,16 @@
 			[
 				"jasmine-node",
 				"--noColor",
+				"raptor-templating-async-spec.js"
+			],
+			"name": "Jasmine Tests - templating-async",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"jasmine-node",
+				"--noColor",
 				"raptor-objects-spec.js"
 			],
 			"name": "Jasmine Tests - objects",
@@ -251,6 +261,7 @@
 			"Jasmine Tests - renderer (browser)",
 			"Jasmine Tests - strings",
 			"Jasmine Tests - templating",
+			"Jasmine Tests - templating-async",
 			"Jasmine Tests - widgets-browser",
 			"JSHint (RaptorJS)",
 			"scratch",

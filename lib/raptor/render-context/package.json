@@ -22,7 +22,8 @@
             {
                 "name": "server",
                 "dependencies": [
-                    "Context_server.js"
+                    "Context_server.js",
+                    {"module": "raptor/render-context/async"}
                 ]
             }
         ]

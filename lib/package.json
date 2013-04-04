@@ -13,6 +13,7 @@
     
     "raptor": {
         "taglibs": [
+            "/raptor/templating/taglibs/async/async.rtld",
             "/raptor/templating/taglibs/caching/caching.rtld",
             "/raptor/templating/taglibs/core/core.rtld",
             "/raptor/templating/taglibs/html/html.rtld",

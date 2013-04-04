@@ -101,10 +101,36 @@ var compileAndLoad = function(templatePath, invalid) {
             
             throw e;
         }
+    },
+    compileAndRenderAsync = function(templatePath, data, dependencies) {
+        var dataProviders = {};
+        raptor.forEachEntry(dependencies, function(dependency, config) {
+            dataProviders[dependency] = function(args, deferred) {
+                setTimeout(function() {
+                    deferred.resolve({})
+                }, config.delay);
+            }
+        });
+
+        try
+        {
+            var compiledSrc = compileAndLoad(templatePath);
+            var context = require('raptor/templating').createContext();
+            context.dataProvider(dataProviders);
+            context.writer.id = "default";
+
+            var promise = require("raptor/templating").renderAsync(templatePath, data, context);
+            return promise;
+        }
+        catch(e) {
+            logger.error(e);
+            throw e;
+        }
     };
 helpers.templating = {
     compileAndLoad: compileAndLoad,
-    compileAndRender: compileAndRender
+    compileAndRender: compileAndRender,
+    compileAndRenderAsync: compileAndRenderAsync
 };
 
 //JSDOM helper functions
