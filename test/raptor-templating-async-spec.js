@@ -102,6 +102,18 @@ describe('dev spec', function() {
             done);
     });
 
+    it("should allow for using macros inside async fragments", function(done) {
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-macros.rhtml",
+            '1 2 3',
+            [
+                {
+                    'D1': {delay: 100}
+                }
+            ],
+            done);
+    });
+
     // it('shows asynchronous test node-style', function(done){
     //     setTimeout(function() {
     //         expect('second').toEqual('second');
