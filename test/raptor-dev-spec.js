@@ -5,11 +5,12 @@ var define = raptor.createDefine(module);
 
 var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndLoad = helpers.templating.compileAndLoad,
-    compileAndRender = helpers.templating.compileAndRender;
+    compileAndRender = helpers.templating.compileAndRender,
+    runAsyncFragmentTests = helpers.templating.runAsyncFragmentTests;
 
 describe('dev spec', function() {
 
-
+    
     xit("should allow for using templates to render custom tags", function() {
         var output = compileAndRender("/test-templates/template-as-tag.rhtml", {title: "My Page Title"});
         expect(output).toEqual('<div><h1>My Page Title</h1></div>');        
