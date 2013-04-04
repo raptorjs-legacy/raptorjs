@@ -6,30 +6,9 @@ var define = raptor.createDefine(module);
 var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndLoad = helpers.templating.compileAndLoad,
     compileAndRender = helpers.templating.compileAndRender,
-    compileAndRenderAsync = helpers.templating.compileAndRenderAsync;
+    compileAndRenderAsync = helpers.templating.compileAndRenderAsync,
+    runAsyncFragmentTests = helpers.templating.runAsyncFragmentTests;
 
-function runAsyncFragmentTests(template, expected, dependencyConfigs, done) {
-    var completed = 0;
-
-    dependencyConfigs.forEach(function(dependencies) {
-        compileAndRenderAsync(
-            template,
-            {},
-            dependencies)
-            .then(
-                function(output) {
-                    console.error('Output for "' + template + '": ' + output);
-                    expect(output).toEqual(expected);
-                    if (++completed === dependencyConfigs.length) {
-                        done();    
-                    }
-                    
-                },
-                function(err) {
-                    done(err);
-                });
-    });
-}
 describe('dev spec', function() {
 
 
@@ -133,6 +112,46 @@ describe('dev spec', function() {
             [
                 {
                     'contextData': {delay: 100, data: {name: "testContextData"}}
+                }
+            ],
+            done);
+    });
+
+    it("should allow for data args", function(done) {
+
+        var users = {
+            "0": {
+                name: "John B. Flowers",
+                occupation: "Clock repairer",
+                gender: "Male"
+            },
+            "1": {
+                name: "Pamela R. Rice",
+                occupation: "Cartographer",
+                gender: "Female"
+            },
+            "2": {
+                name: "Barbara C. Rigsby",
+                occupation: "Enrollment specialist",
+                gender: "Female"
+            },
+            "3": {
+                name: "Anthony J. Ward",
+                occupation: "Clinical laboratory technologist",
+                gender: "Male"
+            }
+        }
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-args.rhtml",
+            '<ul><li><ul><li><b>Name:</b> John B. Flowers</li><li><b>Gender:</b> Male</li><li><b>Occupation:</b> Clock repairer</li></ul></li><li><ul><li><b>Name:</b> Pamela R. Rice</li><li><b>Gender:</b> Female</li><li><b>Occupation:</b> Cartographer</li></ul></li><li><ul><li><b>Name:</b> Barbara C. Rigsby</li><li><b>Gender:</b> Female</li><li><b>Occupation:</b> Enrollment specialist</li></ul></li><li><ul><li><b>Name:</b> Anthony J. Ward</li><li><b>Gender:</b> Male</li><li><b>Occupation:</b> Clinical laboratory technologist</li></ul></li></ul>',
+            [
+                {
+                    'userInfo': {
+                        delay: 100, 
+                        dataFunc: function(args, context) {
+                            return users[args.userId];
+                        }
+                    }
                 }
             ],
             done);

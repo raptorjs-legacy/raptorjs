@@ -14,11 +14,17 @@
         <handler-class>raptor/templating/taglibs/async/AsyncFragmentTag</handler-class>
 
         <attribute name="dependency" type="string" />
-        <attribute pattern="arg-*" type="expression"/>
+        <attribute name="arg" type="expression" preserve-name="true"/>
+        <attribute pattern="arg-*" type="string" preserve-name="true"/>
         <attribute name="var" type="identifier"/>
 
         <variable name="context"/>
         <variable name-from-attribute="var OR dependency|keep"/>
+
+        <transformer>
+            <class-name>raptor/templating/taglibs/async/AsyncFragmentTagTransformer</class-name>
+            <after>raptor/templating/taglibs/core/CoreTagTransformer</after>
+        </transformer>
     </tag>
     
 </raptor-taglib>

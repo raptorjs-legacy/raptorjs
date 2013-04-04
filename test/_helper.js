@@ -107,7 +107,16 @@ var compileAndLoad = function(templatePath, invalid) {
         raptor.forEachEntry(dependencies, function(dependency, config) {
             dataProviders[dependency] = function(args, deferred) {
                 setTimeout(function() {
-                    deferred.resolve(config.data || {})
+                    var data;
+
+                    if (config.dataFunc) {
+                        data = config.dataFunc(args);
+                    }
+                    else {
+                        data = config.data || {};
+                    }
+
+                    deferred.resolve(data);
                 }, config.delay);
             }
         });
@@ -125,11 +134,34 @@ var compileAndLoad = function(templatePath, invalid) {
             logger.error(e);
             throw e;
         }
+    },
+    runAsyncFragmentTests = function(template, expected, dependencyConfigs, done) {
+        var completed = 0;
+
+        dependencyConfigs.forEach(function(dependencies) {
+            compileAndRenderAsync(
+                template,
+                {},
+                dependencies)
+                .then(
+                    function(output) {
+                        console.error('Output for "' + template + '": ' + output);
+                        expect(output).toEqual(expected);
+                        if (++completed === dependencyConfigs.length) {
+                            done();    
+                        }
+                        
+                    },
+                    function(err) {
+                        done(err);
+                    });
+        });
     };
 helpers.templating = {
     compileAndLoad: compileAndLoad,
     compileAndRender: compileAndRender,
-    compileAndRenderAsync: compileAndRenderAsync
+    compileAndRenderAsync: compileAndRenderAsync,
+    runAsyncFragmentTests: runAsyncFragmentTests
 };
 
 //JSDOM helper functions
