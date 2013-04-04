@@ -18,6 +18,7 @@ function runAsyncFragmentTests(template, expected, dependencyConfigs, done) {
             dependencies)
             .then(
                 function(output) {
+                    console.error('Output for "' + template + '": ' + output);
                     expect(output).toEqual(expected);
                     if (++completed === dependencyConfigs.length) {
                         done();    
