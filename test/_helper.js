@@ -105,7 +105,9 @@ var compileAndLoad = function(templatePath, invalid) {
     compileAndRenderAsync = function(templatePath, data, dependencies) {
         var dataProviders = {};
         raptor.forEachEntry(dependencies, function(dependency, config) {
-            dataProviders[dependency] = function(args, deferred) {
+            dataProviders[dependency] = function(args) {
+                var deferred = require('raptor/promises').defer();
+
                 setTimeout(function() {
                     var data;
 
@@ -118,6 +120,8 @@ var compileAndLoad = function(templatePath, invalid) {
 
                     deferred.resolve(data);
                 }, config.delay);
+
+                return deferred.promise;
             }
         });
 

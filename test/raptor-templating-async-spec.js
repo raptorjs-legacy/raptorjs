@@ -97,12 +97,16 @@ describe('dev spec', function() {
     it("should allow for shared and context-specific data providers", function(done) {
 
         require('raptor/data-providers').register({
-            'sharedData': function(args, deferred) {
+            'sharedData': function(args) {
+                var deferred = require('raptor/promises').defer();
+
                 setTimeout(function() {
                     deferred.resolve({
                         name: 'testSharedData'
                     })
                 }, 100);
+
+                return deferred.promise;
             }
         });
 
@@ -148,8 +152,8 @@ describe('dev spec', function() {
                 {
                     'userInfo': {
                         delay: 100, 
-                        dataFunc: function(args, context) {
-                            return users[args.userId];
+                        dataFunc: function(arg) {
+                            return users[arg.userId];
                         }
                     }
                 }
