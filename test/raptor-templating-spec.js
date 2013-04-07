@@ -655,4 +655,9 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/escape-xml-disabled.rhtml", {});
         expect(output).toEqual("<div>< > & <div>< > &</div></div>");
     });
+
+    it("should allow for static properties to be applied to tag handlers", function() {
+        var output = compileAndRender("/test-templates/tag-with-static-props.rhtml", {title: "My Page Title"});
+        expect(output).toEqual('Hello World(string)50(number)Hello Static(string)100(number)');
+    });
 });
