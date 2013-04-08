@@ -161,6 +161,27 @@ describe('dev spec', function() {
             done);
     });
 
+    it("should allow a data provider to be a promise", function(done) {
+
+        var deferred = require('raptor/promises').defer();
+        setTimeout(function() {
+            deferred.resolve('Test promise');
+        }, 200);
+
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-promise.rhtml",
+            'Test promise',
+            [
+                {
+                    'promiseData': {
+                        promise: deferred.promise
+                    }
+                }
+            ],
+            done);
+    });
+
     // it('shows asynchronous test node-style', function(done){
     //     setTimeout(function() {
     //         expect('second').toEqual('second');

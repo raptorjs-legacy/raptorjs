@@ -105,24 +105,30 @@ var compileAndLoad = function(templatePath, invalid) {
     compileAndRenderAsync = function(templatePath, data, dependencies) {
         var dataProviders = {};
         raptor.forEachEntry(dependencies, function(dependency, config) {
-            dataProviders[dependency] = function(args) {
-                var deferred = require('raptor/promises').defer();
-
-                setTimeout(function() {
-                    var data;
-
-                    if (config.dataFunc) {
-                        data = config.dataFunc(args);
-                    }
-                    else {
-                        data = config.data || {};
-                    }
-
-                    deferred.resolve(data);
-                }, config.delay);
-
-                return deferred.promise;
+            if (config.promise) {
+                dataProviders[dependency] = config.promise;
             }
+            else {
+                dataProviders[dependency] = function(args) {
+                    var deferred = require('raptor/promises').defer();
+
+                    setTimeout(function() {
+                        var data;
+
+                        if (config.dataFunc) {
+                            data = config.dataFunc(args);
+                        }
+                        else {
+                            data = config.data || {};
+                        }
+
+                        deferred.resolve(data);
+                    }, config.delay);
+
+                    return deferred.promise;
+                }
+            }
+                
         });
 
         try
