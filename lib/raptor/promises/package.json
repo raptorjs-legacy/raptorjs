@@ -18,9 +18,9 @@
         
         "extensions": [
             {
-                "name": "server",
+                "name": "node",
                 "dependencies": [
-                    "promises_server_q.js"
+                    "promises_node_q.js"
                 ]
             }
         ]
