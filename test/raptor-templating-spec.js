@@ -660,4 +660,9 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/tag-with-static-props.rhtml", {title: "My Page Title"});
         expect(output).toEqual('Hello World(string)50(number)Hello Static(string)100(number)');
     });
+
+    it("should allow for input expressions to be provided to tag handler nodes", function() {
+        var output = compileAndRender("/test-templates/tag-input-expressions.rhtml", {name: "Frank", adult: true});
+        expect(output).toEqual('Hello Frank! adult=true');        
+    });
 });

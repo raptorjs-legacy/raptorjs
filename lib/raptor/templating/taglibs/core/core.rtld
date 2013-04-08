@@ -143,6 +143,11 @@
             <name>replace</name>
             <type>expression</type>
         </attribute>
+
+        <attribute>
+            <name>input</name>
+            <type>expression</type>
+        </attribute>
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>
