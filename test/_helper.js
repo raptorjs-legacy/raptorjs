@@ -1,6 +1,6 @@
 require('jsdom');
 
-var raptor = require('raptor'),
+var raptor = require('../lib/raptor/raptor-main_node.js'),
     files = require('raptor/files'),
     File = require('raptor/files/File'),
     resources = require('raptor/resources'),
