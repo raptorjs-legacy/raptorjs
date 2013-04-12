@@ -3,4 +3,5 @@
 if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'development';
 var path = require('path');
 var fs   = require('fs');
+require('../lib/raptor/raptor-main_node.js');
 require(path.join(__dirname,'../tools/raptor-jsdoc/raptor-jsdoc-app.js')).run();

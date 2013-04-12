@@ -2,8 +2,11 @@
 
 if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'development';
 
+require('../lib/raptor/raptor-main_node.js');
 var path = require('path');
 var rapido = require('rapido').create();
+
+
 rapido.title = 'RaptorJS Command Line Tools';
 rapido.addNodeModulesDir(path.join(__dirname, '../node_modules'));
 rapido.enableStack('raptorjs');
