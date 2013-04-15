@@ -44,6 +44,8 @@ describe('optimizer module', function() {
                     bundleMappings: bundleMappings
                 });
             
+            pageBundles.build();
+
             var includesByKey = {},
                 duplicates = [];
                 
@@ -157,21 +159,22 @@ describe('optimizer module', function() {
             expect(duplicates).toEqualArray([]);
             
             forEach(config.expectedMappings, function(expected) {
-                optimizer.forEachDependency(
-                    expected.include,
-                    config.enabledExtensions,
-                    function(include) {
-                        if (!include.isPackageInclude()) {
-                            var targetBundle = pageBundles.getBundleMappings().getBundleForDependency(include),
+                optimizer.forEachDependency({
+                    dependencies: expected.include,
+                    enabledExtensions: config.enabledExtensions,
+                    handleDependency: function(dependency) {
+                        if (!dependency.isPackageDependency()) {
+                            var targetBundle = pageBundles.getBundleMappings().getBundleForDependency(dependency),
                                 targetBundleName = targetBundle ? targetBundle.getName() : undefined;
                                 
                             if (!targetBundleName && expected.toBundle) {
-                                targetBundleName = "(no bundle for " + include.toString() + ")";
+                                targetBundleName = "(no bundle for " + dependency.toString() + ")";
                             }
                             expect(targetBundleName).toEqual(expected.toBundle);
                         }
                     },
-                    this); 
+                    thisObj: this
+                });
             });
             
             
