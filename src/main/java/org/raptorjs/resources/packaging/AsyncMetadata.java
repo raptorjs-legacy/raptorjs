@@ -48,7 +48,7 @@ public class AsyncMetadata {
         AsyncPackageJSONBuilder jsonBuilder = AsyncPackageJSONBuilder.getInstance();
         
         Iterator<Map.Entry<String, AsyncDependencies>> i = asyncDependenciesByName.entrySet().iterator();
-        out.write("$rloaderMeta={");
+        out.write("$rset('loaderMeta',{");
         while (i.hasNext()) {
             Map.Entry<String, AsyncDependencies> entry = i.next();
             String requireName = entry.getKey();
@@ -64,7 +64,7 @@ public class AsyncMetadata {
                 out.write(",");
             }
         }
-        out.write("};");
+        out.write("});");
     }
 
 	@Override

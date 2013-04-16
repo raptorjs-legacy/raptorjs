@@ -138,6 +138,10 @@ var compileAndLoad = function(templatePath, invalid) {
             context.dataProvider(dataProviders);
 
             var promise = require("raptor/templating").renderAsync(templatePath, data, context);
+            promise.then(function(context) {
+                var output = context.getOutput();
+                console.log('==================================\nOutput (' + templatePath + '):\n----------------------------------\n', output, "\n----------------------------------\n");
+            })
             return promise;
         }
         catch(e) {
@@ -154,8 +158,8 @@ var compileAndLoad = function(templatePath, invalid) {
                 {},
                 dependencies)
                 .then(
-                    function(output) {
-                        console.error('Output for "' + template + '": ' + output);
+                    function(context) {
+                        var output = context.getOutput();
                         expect(output).toEqual(expected);
                         if (++completed === dependencyConfigs.length) {
                             done();    
@@ -185,23 +189,31 @@ require('jsdom').defaultDocumentFeatures = {
 var jsdomOptimizerConfig = require('raptor/optimizer').loadConfigXml(new File(__dirname, 'jsdom-optimizer-config.xml')),
     jsdomOptimizer = require('raptor/optimizer').createPageOptimizer(jsdomOptimizerConfig);
 
-jsdomScripts = function(dependencies, enabledExtensions) {
+function jsdomScripts(dependencies, enabledExtensions) {
     if (!enabledExtensions) {
         enabledExtensions = ['browser', 'jquery', 'raptor/logging/console'];
     }
 
-    var optimizedPage = jsdomOptimizer.optimizePage({
-        dependencies: dependencies,
-        name: 'jsdom',
-        enabledExtensions: enabledExtensions
-    })
+    var deferred = require('raptor/promises').defer();
 
-    var scripts = optimizedPage.getJavaScriptFiles().map(function(path) {
-        return files.fileUrl(path);
-    });
-    
-    //console.log('jsdom scripts: \n', scripts);
-    return scripts;
+    jsdomOptimizer.optimizePage({
+            dependencies: dependencies,
+            name: 'jsdom',
+            enabledExtensions: enabledExtensions
+        })
+        .then(
+            function(optimizedPage) {
+                var scripts = optimizedPage.getJavaScriptFiles().map(function(path) {
+                    return files.fileUrl(path);
+                });
+                // console.log('jsdom scripts: \n', scripts);
+                deferred.resolve(scripts);
+            },
+            function(e) {
+                deferred.reject(e);
+            })
+
+    return deferred.promise;
 };
 
 var jsdomLogger = raptor.require('raptor/logging').logger('jsdomWrapper')
@@ -211,12 +223,16 @@ helpers.jsdom = {
     jsdomWrapper: function(config) {
         
         var html = config.html,
-            scripts = jsdomScripts(config.require),
-            done = false,
+            error = config.error,
+            success = config.success,
             DOMParser = require('xmldom').DOMParser,
             exception;
-        
-        runs(function() {
+
+        if (!error && !success) {
+            throw new Error('"error" and "success" callbacks required');
+        }
+
+        function loadJsdom(scripts) {
             try {
                 require('jsdom').env({
                     html: html,
@@ -229,47 +245,28 @@ helpers.jsdom = {
                     },
                     done: function(errors, window) {
                         if (errors && errors.length) {
-                            console.error('jsdom errors: ', errors);
-                            done = true;
+                            done(errors);
                             return;
                         }
+
                         window.console = console;
                         window.DOMParser = DOMParser;
                         
                         try {
-                            config.ready(window, function(errorMessage) {
-                                done = true;
-                                if (errorMessage) {
-                                    exception = errorMessage;
-                                }
-                            });
+                            success(window);
                         }
                         catch(e) {
-                            exception = e;
-                            //throw raptor.createError(new Error("Error in ready function. Exception: " + e), e);
+                            error(e);
                         }
                     }
                 });
             }
             catch(e) {
-                done = true;
-                exception = e;
+                error(e);
             }
-        });
-        
-        waitsFor(function() {
-            if (exception) {
-                jsdomLogger.error("Error in jsdom test: " + exception, typeof exception !== 'string' ? exception : null);
-                throw exception;
-            }
-            return done === true;
-        }, "jsdom callback", config.timeout || 1000);
-                
-        return {
-            setDone: function() {
-                done = true;
-            }
-        };
+        }
+
+        jsdomScripts(config.require).then(loadJsdom, error);
     }
 };
 

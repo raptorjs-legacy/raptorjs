@@ -8,7 +8,7 @@ var jsdomScripts = helpers.jsdom.jsdomScripts,
 
 describe('XML parsing in the browser', function() {
 
-    it('should allow DOM parsing', function() {
+    it('should allow DOM parsing', function(done) {
         
         
         jsdomWrapper({
@@ -18,7 +18,8 @@ describe('XML parsing in the browser', function() {
                'raptor',
                'raptor/xml/sax'
             ],
-            ready: function(window, done) {
+            error: done,
+            success: function(window) {
                 var sax = require('raptor/xml/sax');
                 var parser = sax.createParser();
                 

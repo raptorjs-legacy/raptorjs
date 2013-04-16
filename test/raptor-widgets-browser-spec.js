@@ -29,7 +29,7 @@ describe('widgets module in the browser', function() {
 //
 //    });
 
-    it('should allow widgets to be initialized', function() {
+    it('should allow widgets to be initialized', function(done) {
 
         jsdomWrapper({
             html: compileAndRender('/pages/widgets/SimpleWidgetPage.rhtml'),
@@ -39,7 +39,8 @@ describe('widgets module in the browser', function() {
                'raptor/widgets',
                'pages/widgets/SimpleWidgetPage'
             ],
-            ready: function(window, done) {
+            error: done,
+            success: function(window) {
                 var PageWidget = window.require('pages.widgets.PageWidget');
                 window.initWidgets();
                 var document = window.document;
