@@ -9,7 +9,7 @@ var jsdomWrapper = helpers.jsdom.jsdomWrapper,
 describe('raptor/renderer module in the browser', function() {
 
 
-    it('should allow widgets to be initialized', function() {
+    it('should allow widgets to be initialized', function(done) {
 
         jsdomWrapper({
             html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
@@ -21,7 +21,8 @@ describe('raptor/renderer module in the browser', function() {
                'taglibs/widgets',
                'pages/renderer/ComponentRendererTest1Page',
             ],
-            ready: function(window, done) {
+            error: done,
+            success: function(window) {
                 var require = window.require,
                     document = window.document,
                     componentRenderer = require('raptor/renderer');
@@ -91,7 +92,7 @@ describe('raptor/renderer module in the browser', function() {
 
     });
 
-    it('should automatically resolve renderer names based on conventions', function() {
+    it('should automatically resolve renderer names based on conventions', function(done) {
 
         jsdomWrapper({
             html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
@@ -103,7 +104,8 @@ describe('raptor/renderer module in the browser', function() {
                'taglibs/widgets',
                'pages/renderer/ComponentRendererTest1Page',
             ],
-            ready: function(window, done) {
+            error: done,
+            success: function(window) {
                 var require = window.require,
                     document = window.document;
 
@@ -138,7 +140,7 @@ describe('raptor/renderer module in the browser', function() {
 
     });
 
-    it('should allow rendering a UI component and getting back the initialized widget', function() {
+    it('should allow rendering a UI component and getting back the initialized widget', function(done) {
 
         jsdomWrapper({
             html: compileAndRender('/pages/renderer/ComponentRendererTest1Page.rhtml'),
@@ -150,7 +152,8 @@ describe('raptor/renderer module in the browser', function() {
                'taglibs/widgets',
                'pages/renderer/ComponentRendererTest1Page',
             ],
-            ready: function(window, done) {
+            error: done,
+            success: function(window) {
                 var require = window.require,
                     document = window.document;
 
