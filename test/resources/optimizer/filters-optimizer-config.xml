@@ -1,0 +1,14 @@
+<optimizer-config>
+
+    <output-dir>build</output-dir>
+    
+    <enabled-extensions>jquery,browser</enabled-extensions>
+    <checksums-enabled>false</checksums-enabled>
+    
+    <filter class-name="test/optimizer/filters/CSSFilter1"/>
+    <filter class-name="test/optimizer/filters/CSSFilter2"/>
+
+    <filter class-name="test/optimizer/filters/JavaScriptFilter1Async"/>
+    <filter class-name="test/optimizer/filters/JavaScriptFilter2Async"/>
+
+</optimizer-config>

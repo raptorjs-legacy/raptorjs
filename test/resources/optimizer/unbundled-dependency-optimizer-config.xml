@@ -1,0 +1,16 @@
+<optimizer-config>
+
+    <output-dir>build</output-dir>
+    
+    <enabled-extensions>jquery,browser</enabled-extensions>
+    <checksums-enabled>false</checksums-enabled>
+    <bundles>
+        <bundle name="bundle1">
+            <module name="test/optimizer/moduleA"/>
+        </bundle>
+        <bundle name="bundle2">
+            <module name="test/optimizer/moduleB"/>
+        </bundle>
+    </bundles>
+
+</optimizer-config>

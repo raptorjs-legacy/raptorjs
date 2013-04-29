@@ -1,0 +1,7 @@
+{
+    "raptor": {
+        "dependencies": [
+            "css-url-filter.css"
+        ]
+    }
+}

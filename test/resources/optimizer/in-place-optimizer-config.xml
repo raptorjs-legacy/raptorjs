@@ -1,0 +1,9 @@
+<optimizer-config>
+
+    <output-dir>build</output-dir>
+    <include-bundle-slot-names>true</include-bundle-slot-names>
+    <enabled-extensions>jquery,browser</enabled-extensions>
+    <checksums-enabled>false</checksums-enabled>
+    <in-place-deployment-enabled>true</in-place-deployment-enabled>
+
+</optimizer-config>

@@ -1,8 +1,8 @@
 <optimizer-config>
-    
-    
-    <raptor-config>{raptor: true}</raptor-config>
+
     <output-dir>dist</output-dir>
+    <checksums-enabled>false</checksums-enabled>
+    <output-dir>build</output-dir>
     
     <pages>
         <page name="page1">
@@ -10,10 +10,10 @@
         <page name="page2" package-manifest="page2-package.json"/>
         <page name="page3">
             <dependencies>
-                <module name="test.optimizer.moduleA"/>
-                <module name="test.optimizer.mixedA"/>
-                <module name="test.optimizer.mixedB"/>
-                <module name="test.optimizer.asyncA"/>
+                <module name="test/optimizer/moduleA"/>
+                <module name="test/optimizer/mixedA"/>
+                <module name="test/optimizer/mixedB"/>
+                <module name="test/optimizer/asyncA"/>
             </dependencies>
         </page>
     </pages>

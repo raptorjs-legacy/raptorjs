@@ -1,10 +1,18 @@
 require('jsdom');
 
-var raptor = require('../lib/raptor/raptor-main_node.js'),
-    files = require('raptor/files'),
-    File = require('raptor/files/File'),
-    resources = require('raptor/resources'),
-    logger = require('raptor/logging').logger('helper');
+var raptor = require('../lib/raptor/raptor-main_node.js');
+
+require('raptor/logging').configure({
+    loggers: {
+        'ROOT': { level: "WARN" },
+        'raptor/optimizer': { level: "DEBUG" }
+    }
+})
+
+var files = require('raptor/files');
+var File = require('raptor/files/File');
+var resources = require('raptor/resources');
+var logger = require('raptor/logging').logger('helper');
 
 raptor.require('raptor/packaging').enableExtension('json.raptor');
 

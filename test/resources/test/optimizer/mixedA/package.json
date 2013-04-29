@@ -1,7 +1,7 @@
 {
     "type": "raptor-module",
-    "name": "test.optimizer.mixedA",
-    "includes": [
+    "name": "test/optimizer/mixedA",
+    "dependencies": [
         {"path": "mixedA.js"},
         {"path": "mixedA.css"}
     ]

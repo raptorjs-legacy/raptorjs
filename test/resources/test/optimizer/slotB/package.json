@@ -1,6 +1,7 @@
 {
-    "name": "test.optimizer.slotB",
-    "includes": [
+    "name": "test/optimizer/slotB",
+    "dependencies": [
+        { "module": "test/optimizer/nestedA", "js-slot": "head2", "css-slot": "body2"},
         {"path": "slotB.js", "slot": "custom-body"},
         {"path": "slotB.css", "slot": "custom-head"}
     ]
