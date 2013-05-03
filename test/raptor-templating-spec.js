@@ -665,4 +665,9 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/tag-input-expressions.rhtml", {name: "Frank", adult: true});
         expect(output).toEqual('Hello Frank! adult=true');        
     });
+
+    it("should allow for using helper objects", function() {
+        var output = compileAndRender("/test-templates/helper-objects.rhtml", {});
+        expect(output).toEqual('Hello WORLD!');
+    });
 });

@@ -1,0 +1,5 @@
+<raptor-taglib>
+    <uri>helper-objects</uri>
+
+    <helper-object class-name="taglibs/helper-objects/TestHelper" />
+</raptor-taglib>

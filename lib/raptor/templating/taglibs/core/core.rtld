@@ -38,6 +38,12 @@
             <allow-expressions>false</allow-expressions>
         </attribute>
 
+        <attribute>
+            <uri>*</uri>
+            <name>import-helper-object</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
         <node-class>raptor/templating/taglibs/core/TemplateNode</node-class>
     </tag>
     
