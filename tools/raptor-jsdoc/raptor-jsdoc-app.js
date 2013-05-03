@@ -143,8 +143,6 @@ exports.run = function() {
         });
         
         require(templateFile.getAbsolutePath()).publish(env.getSymbols(), config, env);
-        
-        console.log('DONE. API documentation successfully written to "' + outputDir + '"');
     }
     catch(e) {
         logger.error("Unable to generate jsdocs: Exception: " + e, e);
