@@ -37,6 +37,7 @@
             "module": "raptor/packaging/Dependency_module",
             "package": "raptor/packaging/Dependency_package",
             "rhtml": "raptor/packaging/Dependency_rhtml",
+            "coffee": "raptor/packaging/Dependency_coffee",
             "rtld": "raptor/packaging/Dependency_rtld",
             "resource": "raptor/packaging/Dependency_resource",
             "loader-metadata": "raptor/packaging/Dependency_loader-metadata" 
