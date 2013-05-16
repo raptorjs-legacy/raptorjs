@@ -33,7 +33,7 @@
                 "dependencies": [
                     {"module": "raptor/xml/dom"},
                     {"module": "raptor/xml/dom-to-sax"},
-                    {"path": "SaxParserDOM.js"}
+                    {"path": "SaxParserDom.js"}
                 ]
             }
         }
