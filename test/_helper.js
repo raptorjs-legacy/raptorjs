@@ -1,6 +1,7 @@
 require('jsdom');
 
 var raptor = require('../lib/raptor/raptor-main_node.js');
+var define = raptor.createDefine(module);
 
 require('raptor/logging').configure({
     loggers: {
@@ -179,11 +180,59 @@ var compileAndLoad = function(templatePath, invalid) {
                     });
         });
     };
+
+var MockWriter = define.Class(
+    {
+        superclass: 'raptor/optimizer/OptimizerFileWriter'
+    },
+    function(require, module, exports) {
+
+        var listeners = require('raptor/listeners');
+
+        function MockWriter(pageOptimizer) {
+            MockWriter.superclass.constructor.apply(this, arguments);
+            this.outputBundleFiles = {};
+            this.outputBundleFilenames = {};
+            listeners.makeObservable(this, MockWriter.prototype, ['fileWritten']);
+        };
+
+        MockWriter.prototype = {
+            writeBundleFile: function(outputFile, code) {
+                this.outputBundleFiles[outputFile.getAbsolutePath()] = code;
+                this.outputBundleFilenames[outputFile.getName()] = code;
+                this.publish('fileWritten', {
+                    file: outputFile,
+                    filename: outputFile.getName(),
+                    code: code
+                })
+            },
+
+            getOutputBundlePaths: function() {
+                var paths = Object.keys(this.outputBundleFiles);
+                paths.sort();
+                return paths;
+            },
+
+            getOutputBundleFilenames: function() {
+                var filenames = Object.keys(this.outputBundleFilenames);
+                filenames.sort();
+                return filenames;
+            },
+
+            getCodeForFilename: function(filename) {
+                return this.outputBundleFilenames[filename];
+            }
+        };
+
+        return MockWriter;
+    });
+
 helpers.templating = {
     compileAndLoad: compileAndLoad,
     compileAndRender: compileAndRender,
     compileAndRenderAsync: compileAndRenderAsync,
-    runAsyncFragmentTests: runAsyncFragmentTests
+    runAsyncFragmentTests: runAsyncFragmentTests,
+    MockWriter: MockWriter
 };
 
 //JSDOM helper functions

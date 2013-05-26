@@ -4,51 +4,7 @@ var raptor = require('raptor');
 var define = raptor.createDefine(module);
 var path = require('path');
 
-var MockWriter = define.Class(
-    {
-        superclass: 'raptor/optimizer/OptimizerFileWriter'
-    },
-    function(require, module, exports) {
 
-        var listeners = require('raptor/listeners');
-
-        function MockWriter(pageOptimizer) {
-            MockWriter.superclass.constructor.apply(this, arguments);
-            this.outputBundleFiles = {};
-            this.outputBundleFilenames = {};
-            listeners.makeObservable(this, MockWriter.prototype, ['fileWritten']);
-        };
-
-        MockWriter.prototype = {
-            writeBundleFile: function(outputFile, code) {
-                this.outputBundleFiles[outputFile.getAbsolutePath()] = code;
-                this.outputBundleFilenames[outputFile.getName()] = code;
-                this.publish('fileWritten', {
-                    file: outputFile,
-                    filename: outputFile.getName(),
-                    code: code
-                })
-            },
-
-            getOutputBundlePaths: function() {
-                var paths = Object.keys(this.outputBundleFiles);
-                paths.sort();
-                return paths;
-            },
-
-            getOutputBundleFilenames: function() {
-                var filenames = Object.keys(this.outputBundleFilenames);
-                filenames.sort();
-                return filenames;
-            },
-
-            getCodeForFilename: function(filename) {
-                return this.outputBundleFilenames[filename];
-            }
-        };
-
-        return MockWriter;
-    });
 
 describe('optimizer module', function() {
     "use strict";
@@ -58,6 +14,7 @@ describe('optimizer module', function() {
         forEach = raptor.forEach,
         compileAndRender = helpers.templating.compileAndRender,
         compileAndRenderAsync = helpers.templating.compileAndRenderAsync,
+        MockWriter = helpers.templating.MockWriter,
         testOptimizer = function(configPath, optimizerOptions, options) {
         
             var optimizer = require('raptor/optimizer');
@@ -252,15 +209,15 @@ describe('optimizer module', function() {
 
         var runCount = 3;
         var runResults = new Array(runCount);
-        var expectedOutput = '<html><head><link rel="stylesheet" type="text/css" href="/static/test.css"></head><body><script type="text/javascript" src="/static/test.js"></script></body></html>';
+        var expectedOutput = '<html><head><link rel="stylesheet" type="text/css" href="/static/optimizer.css"></head><body><script type="text/javascript" src="/static/optimizer.js"></script></body></html>';
         function runComplete() {
             if (--pending === 0) {
                 for (var i=0; i<runCount; i++) {
                     expect(runResults[i]).toEqual(expectedOutput);
                 }
                 
-                expect(writer.getCodeForFilename('test.js')).toEqual('mixedA_js\nmixedB_js');
-                expect(writer.getCodeForFilename('test.css')).toEqual('mixedA_css\nmixedB_css');
+                expect(writer.getCodeForFilename('optimizer.js')).toEqual('mixedA_js\nmixedB_js');
+                expect(writer.getCodeForFilename('optimizer.css')).toEqual('mixedA_css\nmixedB_css');
                 expect(writeFileCount).toEqual(2);
                 done();
             }
@@ -353,6 +310,42 @@ describe('optimizer module', function() {
                 },
                 done: done    
             });
+    });
+
+    it("should allow for optimizer tags in templates with dynamic dependencies", function(done) {
+        var templating = require('raptor/templating');
+        var renderContext = templating.createContext();
+        var configPath = require('raptor/files').joinPaths(__dirname, '/resources/optimizer/project-a/optimizer-config.xml');
+        require('raptor/optimizer').configure(configPath);
+        
+        var writeFileCount = 0;
+
+        var pageOptimizer = require('raptor/optimizer').getDefaultPageOptimizer();
+        var writer = new MockWriter(pageOptimizer);
+        writer.subscribe('fileWritten', function(eventArgs) {
+            writeFileCount++;
+        });
+
+        pageOptimizer.getConfig().setWriter(writer);
+
+        compileAndRenderAsync("/test-templates/optimizer-dynamic.rhtml", {
+            dependency: "test/optimizer/mixedA",
+            mixedBEnabled: false
+        }, renderContext)
+            .then(
+                function(context) {
+                    var output = context.getOutput();
+                    var expectedOutput = '<html><head><link rel="stylesheet" type="text/css" href="/static/optimizer-dynamic.css"></head><body><script type="text/javascript" src="/static/optimizer-dynamic.js"></script></body></html>';
+                    expect(output).toEqual(expectedOutput);
+                    expect(writer.getCodeForFilename('optimizer-dynamic.js')).toEqual('mixedA_js');
+                    expect(writer.getCodeForFilename('optimizer-dynamic.css')).toEqual('mixedA_css');
+                    expect(writeFileCount).toEqual(2);
+                    done();
+                },
+                function(e) {
+                    logger.error(e);
+                    done(e);
+                });
     });
 
 });

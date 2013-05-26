@@ -2,10 +2,10 @@
     xmlns:c="core"
     xmlns:optimizer="optimizer">
     
-    <optimizer:page name="optimizer">
+    <optimizer:page name="optimizer-dynamic">
         <dependencies>
-            <module name="test/optimizer/mixedA"/>
-            <module name="test/optimizer/mixedB"/>
+            <module name="${data.dependency}"/>
+            <module name="test/optimizer/mixedB" c:if="data.mixedBEnabled"/>
         </dependencies>
     </optimizer:page>
     
