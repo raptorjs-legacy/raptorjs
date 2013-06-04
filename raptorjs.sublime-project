@@ -226,7 +226,11 @@
 	"folders":
 	[
 		{
-			"path": "."
+			"path": ".",
+			"follow_symlinks" : true,
+			"folder_exclude_patterns": [
+                "node_modules/rapido/node_modules/raptor"
+            ]
 		}
 	],
 	"settings":

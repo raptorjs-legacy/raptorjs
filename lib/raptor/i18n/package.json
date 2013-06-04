@@ -1,0 +1,21 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/i18n",
+    "version": "1.0",
+    "description": "i18n client module",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Phillip Gates-Idem",
+            "email": "phillip.idem@gmail.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            "i18n.js",
+            "Dictionaries.js",
+            "Dictionary.js"
+        ]
+    }
+}
