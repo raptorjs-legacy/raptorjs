@@ -166,7 +166,7 @@ describe('optimizer module', function() {
 
                     expect(writer.getCodeForFilename('testPage-async-body.js')).toEqual('nestedB_js\nnestedA_js');
                     expect(writer.getCodeForFilename('testPage-async-head.css')).toEqual('nestedB_css\nnestedA_css');
-                    expect(writer.getCodeForFilename('testPage-body.js')).toEqual('mixedA_js\nmoduleA\nasyncA_js\n$rset(\'loaderMeta\',{"test/optimizer/nestedA":{"requires":["test/optimizer/nestedB"],"css":["/testPage-async-head.css"],"js":["/testPage-async-body.js"]},"test/optimizer/nestedB":{"css":["/testPage-async-head.css"],"js":["/testPage-async-body.js"]}});');
+                    expect(writer.getCodeForFilename('testPage-body.js')).toEqual("mixedA_js\nmoduleA\nasyncA_js\n$rset('loaderMeta',{\"test/optimizer/nestedB\":{\"css\":[\"/testPage-async-head.css\"],\"js\":[\"/testPage-async-body.js\"]},\"test/optimizer/nestedA\":{\"requires\":[\"test/optimizer/nestedB\"],\"css\":[\"/testPage-async-head.css\"],\"js\":[\"/testPage-async-body.js\"]}});");
                     expect(writer.getCodeForFilename('testPage-head.css')).toEqual('mixedA_css\nasyncA_css');
                 },
                 done: done    
