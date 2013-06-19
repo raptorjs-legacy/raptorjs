@@ -16,6 +16,13 @@ describe('modules module', function() {
         expect(extensions.getMessage()).toEqual('Test');
     });
     
+    it('should allow module with extension patterns', function() {
+        var extensionPatterns = require('test/extension-patterns');
+        expect(extensionPatterns.env()).toEqual('server');
+        expect(extensionPatterns.getMessage()).toEqual('Test');
+    });
+
+
     it('should allow non-external modules', function() {
         define('test/myLocalModule', function() {
             return {
