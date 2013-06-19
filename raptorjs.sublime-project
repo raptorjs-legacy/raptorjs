@@ -177,6 +177,16 @@
 			[
 				"${project_path}/node_modules/.bin/jasmine-node",
 				"--noColor",
+				"raptor-modules-spec.js"
+			],
+			"name": "Jasmine Tests - modules",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"${project_path}/node_modules/.bin/jasmine-node",
+				"--noColor",
 				"raptor-renderer-browser-spec.js"
 			],
 			"name": "Jasmine Tests - renderer (browser)",
@@ -247,6 +257,7 @@
 			"Jasmine Tests - files",
 			"Jasmine Tests - legacy",
 			"Jasmine Tests - logging",
+			"Jasmine Tests - modules",
 			"Jasmine Tests - objects",
 			"Jasmine Tests - oop",
 			"Jasmine Tests - optimizer",
