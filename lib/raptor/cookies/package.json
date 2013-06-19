@@ -13,19 +13,7 @@
     
     "raptor": {
         "dependencies": [
-            "Cookie.js",
-            "CookieManager.js",
-            "cookies.js"
-        ],
-        
-        "extensions": [
-            {
-                "name": "node",
-                "dependencies": [
-                    "CookieManager_node.js",
-                    "cookies_node.js"
-                ]
-            }
+            { "include-pattern": "\\.*", "extension-pattern": "_([A-Za-z0-9]+)\\." }
         ]
     }
 }
