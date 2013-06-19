@@ -185,7 +185,7 @@ public abstract class ResourceIncluderContext {
     }
     
     public void includeAsyncPackage(String requireName, PackageManifest manifest, IncludeOptions includeOptions) {
-        
+        requireName = requireName.replace('.', '/');
         AsyncInclude asyncInclude = includedAsyncRequiresByName.get(requireName);
         if (asyncInclude == null) {
             asyncInclude = new AsyncInclude(requireName, manifest);
