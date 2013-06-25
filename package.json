@@ -61,5 +61,8 @@
     "raptor-optimizer": "bin/raptor-optimizer",
     "raptor": "bin/raptor"
   },
-  "main": "lib/raptor/raptor-main_node.js"
+  "main": "lib/raptor/raptor-main_node.js",
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  }
 }
