@@ -17,7 +17,10 @@
 package org.raptorjs.resources.packaging;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ResourceIncluder {
@@ -63,6 +66,56 @@ public abstract class ResourceIncluder {
     public void clearCache() {
         this.cachedResourceIncludes.clear();
         this.cachedModuleIncludes.clear();
+    }
+    
+    private void forEachDependencyHelper(PackageManifest packageManifest, IncludeOptions includeOptions, ResourceIncluderContext context, DependencyCallback callback, Set<Dependency> foundDependencies) {
+        List<Dependency> dependencies = packageManifest.getDependencies();
+        if (dependencies != null) {
+            for (Dependency dependency : dependencies) {
+                if (foundDependencies.contains(dependency)) {
+                    continue;
+                }
+                
+                if (dependency.isPackageInclude()) {
+                    DependencyPackage packageInclude = (DependencyPackage) dependency;
+                    PackageManifest childManifest = packageInclude.getPackageManifest(context);
+                    forEachDependencyHelper(childManifest, includeOptions, context, callback, foundDependencies);
+                }
+                else {
+                    callback.dependency(dependency);
+                }
+            }
+        }
+        
+        List<Extension> extensions = packageManifest.getExtensions();
+        if (extensions != null) {
+            for (Extension extension : extensions) {
+                
+                if (context.isExtensionEnabled(extension, includeOptions)) {
+                    dependencies = extension.getDependencies();
+                    for (Dependency dependency : dependencies) {
+                        if (foundDependencies.contains(dependency)) {
+                            continue;
+                        }
+                        
+                        if (dependency.isPackageInclude()) {
+                            DependencyPackage packageInclude = (DependencyPackage) dependency;
+                            PackageManifest childManifest = packageInclude.getPackageManifest(context);
+                            forEachDependencyHelper(childManifest, includeOptions, context, callback, foundDependencies);
+                        }
+                        else {
+                            callback.dependency(dependency);
+                        }
+                    }    
+                }
+            }
+        }
+    }
+    
+    public void forEachDependency(PackageManifest packageManifest, IncludeOptions includeOptions, ResourceIncluderContext context, DependencyCallback callback) {
+
+        Set<Dependency> foundDependencies = new HashSet<Dependency>();
+        forEachDependencyHelper(packageManifest, includeOptions, context, callback, foundDependencies);        
     }
     
 }
