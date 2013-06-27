@@ -45,7 +45,7 @@ public abstract class DependencyPackage extends Dependency {
         context.includeAsyncPackage(this.getAsyncRequireName(), this.getPackageManifest(context), includeOptions);
     }
     
-    protected PackageManifest getPackageManifest(ResourceIncluderContext context) {
+    public PackageManifest getPackageManifest(ResourceIncluderContext context) {
         if (this.packageManifest == null) {
             this.packageManifest = this.resolvePackageManifest(context);
         }
