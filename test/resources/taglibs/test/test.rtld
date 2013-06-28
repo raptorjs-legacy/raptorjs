@@ -91,4 +91,12 @@
         <attribute name="title"/>
     </tag>
 
+    <tag name="tag-with-static-props" handler-class="taglibs/test/TagWithStaticProps">
+        <attribute name="prop1" type="string"/>
+        <attribute name="prop2" type="integer"/>
+    
+        <static-property name="staticProp1" type="string" value="Hello Static"/>
+        <static-property name="staticProp2" type="integer" value="100"/>
+    </tag>
+
 </raptor-taglib>

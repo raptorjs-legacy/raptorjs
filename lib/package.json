@@ -13,6 +13,7 @@
     
     "raptor": {
         "taglibs": [
+            "/raptor/templating/taglibs/async/async.rtld",
             "/raptor/templating/taglibs/caching/caching.rtld",
             "/raptor/templating/taglibs/core/core.rtld",
             "/raptor/templating/taglibs/html/html.rtld",
@@ -36,9 +37,12 @@
             "module": "raptor/packaging/Dependency_module",
             "package": "raptor/packaging/Dependency_package",
             "rhtml": "raptor/packaging/Dependency_rhtml",
+            "coffee": "raptor/packaging/Dependency_coffee",
             "rtld": "raptor/packaging/Dependency_rtld",
             "resource": "raptor/packaging/Dependency_resource",
-            "loader-metadata": "raptor/packaging/Dependency_loader-metadata" 
+            "loader-metadata": "raptor/packaging/Dependency_loader-metadata",
+            "i18n": "raptor/packaging/Dependency_i18n",
+            "i18n-module": "raptor/packaging/Dependency_i18n-module"
         }
     }
     

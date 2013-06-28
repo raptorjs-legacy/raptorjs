@@ -19,12 +19,13 @@
         "extensions": {
             "raptor/logging/console": {
                 "dependencies": [
+                    {"path": "Logger.js"},
                     {"module": "raptor/strings"},
                     {"module": "raptor/objects"},
                     {"module": "raptor/stacktraces"},
-                    {"path": "ConsoleLogger.js"},
+                    {"path": "ConsoleAppender.js"},
                     {"path": "logging.js"}
-                ] 
+                ]
             }
         }
     }

@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/cookies",
+    "version": "1.0",
+    "description": "RaptorJS module to support reading and writing cookies",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            { "include-pattern": "\\.*", "extension-pattern": "_([A-Za-z0-9]+)\\." }
+        ]
+    }
+}

@@ -23,7 +23,8 @@
             {
                 "name": "server",
                 "dependencies": [
-                    {"path": "templating_server.js"}
+                    {"path": "templating_server.js"},
+                    {"module": "raptor/templating/async"}
                 ]
             },
             {

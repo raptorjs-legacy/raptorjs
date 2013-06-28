@@ -1,10 +1,10 @@
 {
     "type": "raptor-module",
-    "name": "test.optimizer.asyncA",
-    "includes": [
-        {"module": "test.optimizer.mixedA", "async": true},
-        {"module": "test.optimizer.nestedA", "async": true},
-        {"module": "test.optimizer.moduleA"},
+    "name": "test/optimizer/asyncA",
+    "dependencies": [
+        {"module": "test/optimizer/nestedA", "async": true},
+        {"module": "test/optimizer/nestedB", "async": true},
+        {"module": "test/optimizer/moduleA"},
         {"path": "asyncA.js"},
         {"path": "asyncA.css"}
     ]

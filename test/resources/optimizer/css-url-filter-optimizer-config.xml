@@ -1,0 +1,7 @@
+<optimizer-config>
+
+    <checksums-enabled>true</checksums-enabled>
+    <output-dir>build</output-dir>
+    <resolve-css-urls>true</resolve-css-urls>
+
+</optimizer-config>

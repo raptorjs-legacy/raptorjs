@@ -7,15 +7,6 @@
     <enable-profile>${profile}</enable-profile>
     
     <profile name="development">
-        <raptor-config>
-        {
-            logging: {
-                loggers: {
-                    'ROOT': {level: 'WARN'}
-                }
-            }
-        }
-        </raptor-config>
         <enabled-extensions>jquery,browser,logging.console,development</enabled-extensions>
         <bundling-enabled>false</bundling-enabled>
         <in-place-deployment-enabled>true</in-place-deployment-enabled>
@@ -31,7 +22,6 @@
         <in-place-deployment-enabled>false</in-place-deployment-enabled>
         <minify-js>true</minify-js>
         <resolve-css-urls>true</resolve-css-urls>
-        <raptor-config>{}</raptor-config>
     </profile>
     
     <output-dir>${outputDir}/static</output-dir>

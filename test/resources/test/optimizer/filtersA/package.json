@@ -1,7 +1,7 @@
 {
     "type": "raptor-module",
-    "name": "test.optimizer.filtersA",
-    "includes": [
+    "name": "test/optimizer/filtersA",
+    "dependencies": [
         {"path": "filtersA.js"},
         {"path": "filtersA.css"}
     ]

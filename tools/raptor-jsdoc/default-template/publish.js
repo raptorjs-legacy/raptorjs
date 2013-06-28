@@ -3,7 +3,8 @@ var raptor = require('raptor'),
     optimizer = require('raptor/optimizer'),
     jsdocUtil = require('jsdoc-util'),
     logger = require('raptor/logging').logger('publish'),
-    File = require('raptor/files/File');
+    File = require('raptor/files/File'),
+    promises = require('raptor/promises');
 
 
 var Publisher = function(symbols, config, env) {
@@ -16,6 +17,7 @@ var Publisher = function(symbols, config, env) {
     this.baseUrl = this.config.baseUrl || "/api";
     jsdocUtil.context = this;
     this.autoCompleteSymbols = [];
+    this.promises = [];
 };
 
 Publisher.prototype = {
@@ -249,6 +251,15 @@ Publisher.prototype = {
         this.writeIndexPage();
         this.symbols.forEachSymbol(this.writeSymbolPage, this);
         this.env.forEachSourceFile(this.writeSourcePage, this);
+
+        promises.all(this.promises)
+            .then(
+                function() {
+                    console.info('DONE. API documentation successfully written to "' + this.outputDir + '"');
+                },
+                function(e) {
+                    logger.error("Unable to publish API docs. Exception: " + e, e);
+                });
     },
 
     calculateChecksum: function(code) {
@@ -280,14 +291,17 @@ Publisher.prototype = {
      
         this.currentOutputDir = outputFile.getParent();
 
-        var html = templating.renderToString("pages/index", {
+        var promise = templating.renderToFile(
+            "pages/index", 
+            {
                 optimizer: this.optimizerEngine,
                 outputDir: this.outputDir,
                 baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
+            outputFile,
             context);
 
-        outputFile.writeAsString(html);
+        this.promises.push(promise);
         
         this.currentOutputDir = null;
     },
@@ -300,16 +314,18 @@ Publisher.prototype = {
         this.currentOutputDir = outputFile.getParent();
         this.currentSymbolName = symbolName;
 
-        var html = templating.renderToString("pages/symbol", {
+        var promise = templating.renderToFile(
+            "pages/symbol", 
+            {
                 symbolName: symbolName,
                 type: type,
                 outputDir: this.outputDir,
                 baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
+            outputFile,
             context);
 
-        outputFile.writeAsString(html);
-        
+        this.promises.push(promise);
         this.currentOutputDir = null;
         this.currentSymbolName = null;
     },
@@ -335,16 +351,19 @@ Publisher.prototype = {
             'json': "sh_javascript_dom"
         };
 
-        var html = templating.renderToString("pages/source", {
+        var promise = templating.renderToFile(
+            "pages/source", 
+            {
                 path: source.relativePath,
                 outputDir: this.outputDir,
                 mode: modes[ext],
                 src: source.file.readAsString(),
                 baseHref: require('path').relative(this.currentOutputDir, this.outputDir.getAbsolutePath())
             },
+            outputFile,
             context);
 
-        outputFile.writeAsString(html);
+        this.promises.push(promise);
         
         this.currentOutputDir = null;
         this.currentOutputFile = null;

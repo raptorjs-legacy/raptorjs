@@ -21,6 +21,7 @@
             {"module": "raptor/json/stringify"},
             {"module": "raptor/xml/utils"},
             {"module": "raptor/xml/sax/object-mapper"},
+            {"module": "raptor/temp"},
             {"path": "Expression.js"},
             {"path": "ExpressionParser.js"},
             {"path": "TypeConverter.js"},

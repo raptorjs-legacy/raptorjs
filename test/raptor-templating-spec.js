@@ -201,7 +201,7 @@ describe('templating module', function() {
         var result;
         
         result = AttributeSplitter.parse(
-            "item in ['one', 'two', 'three']; separator=', '; status-var=loop;  ", 
+            "item in ['one', 'two', 'three']; separator=', '; status-var=loop;  ",
             {
                 each: {
                     type: "custom"
@@ -224,7 +224,7 @@ describe('templating module', function() {
         
         //////
         result = AttributeSplitter.parse(
-            "item in ['one', 'two', 'three']", 
+            "item in ['one', 'two', 'three']",
             {
                 each: {
                     type: "custom"
@@ -243,7 +243,7 @@ describe('templating module', function() {
         
         //////
         result = AttributeSplitter.parse(
-            "each=item in ['one', 'two', 'three']", 
+            "each=item in ['one', 'two', 'three']",
             {
                 each: {
                     type: "custom"
@@ -261,7 +261,7 @@ describe('templating module', function() {
         
         //////
         result = AttributeSplitter.parse(
-            "each=item in (a = [1,2,3])", 
+            "each=item in (a = [1,2,3])",
             {
                 each: {
                     type: "custom"
@@ -515,7 +515,7 @@ describe('templating module', function() {
         
         tryTemplate("/test-templates/errors.rhtml", function(message, errors) {
             var len = errors ? errors.length : -1;
-            expect(len).toEqual(25);    
+            expect(len).toEqual(25);
             
             
         });
@@ -526,19 +526,19 @@ describe('templating module', function() {
     it("should allow static file includes", function() {
 
         var output = compileAndRender("/test-templates/include-resource-static.rhtml", {});
-        expect(output).toEqual('BEGIN Hello World! END');        
+        expect(output).toEqual('BEGIN Hello World! END');
     });
     
     it("should allow HTML pages with inline script", function() {
 
         var output = compileAndRender("/test-templates/inline-script.rhtml", {name: "World"});
-        expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World! <script>$(function() { alert(\'test\'); })</script></body></html>');        
+        expect(output).toEqual('<html><head><title>Optimizer: Server Includes</title></head><body>Hello World! <script>$(function() { alert(\'test\'); })</script></body></html>');
     });
     
     it("should allow CDATA inside templates", function() {
 
         var output = compileAndRender("/test-templates/cdata.rhtml", {name: "World"});
-        expect(output).toEqual('&lt;hello>');        
+        expect(output).toEqual('&lt;hello>');
     });
     
     it("should allow type conversion", function() {
@@ -548,22 +548,22 @@ describe('templating module', function() {
     
     it("should allow for if...else", function() {
         var output = compileAndRender("/test-templates/if-else.rhtml", {});
-        expect(output).toEqual('A , B , C , <div>C</div>');        
+        expect(output).toEqual('A , B , C , <div>C</div>');
     });
     
     it("should allow for expressions and variables inside JavaScript strings", function() {
         var output = compileAndRender("/test-templates/string-expressions.rhtml", {name: "John", count: 10});
-        expect(output).toEqual('Hello JOHN! You have 10 new messages.');        
+        expect(output).toEqual('Hello JOHN! You have 10 new messages.');
     });
     
     it("should allow for simple conditionals", function() {
         var output = compileAndRender("/test-templates/simple-conditionals.rhtml", {name: "John", count: 51});
-        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><div class="#"></div><span class="under;-50\\"></span><input type="checked" checked>Hello John! Over 50');        
+        expect(output).toEqual('<div class="over-50"></div><div></div><div class="over-50"></div><div class="#"></div><span class="under;-50\\"></span><input type="checked" checked>Hello John! Over 50');
     });
     
     it("should allow for conditional attributes", function() {
         var output = compileAndRender("/test-templates/conditional-attributes.rhtml", {});
-        expect(output).toEqual('<div></div><div class="some-class"></div><div></div>');        
+        expect(output).toEqual('<div></div><div class="some-class"></div><div></div>');
     });
     
     it("should allow for dynamic attributes", function() {
@@ -625,7 +625,7 @@ describe('templating module', function() {
 
     it("should allow for using templates to render custom tags", function() {
         var output = compileAndRender("/test-templates/template-as-tag.rhtml", {title: "My Page Title"});
-        expect(output).toEqual('<div><h1>My Page Title</h1></div>');        
+        expect(output).toEqual('<div><h1>My Page Title</h1></div>');
     });
 
     it("should allow for caching HTML fragments", function() {
@@ -644,5 +644,30 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/widgets.rhtml", {});
         console.error(JSON.stringify(output));
         expect(output).toEqual('<div id="one"><div>TRUE</div></div>,<div id="two"><div>TRUE</div></div>');
+    });
+
+    it("should escape XML in text node when enabled", function() {
+        var output = compileAndRender("/test-templates/escape-xml-enabled.rhtml", {});
+        expect(output).toEqual("<div>&lt; > &amp; <div>&lt; > &amp;</div></div>");
+    });
+
+    it("should not escape XML in text node when disabled", function() {
+        var output = compileAndRender("/test-templates/escape-xml-disabled.rhtml", {});
+        expect(output).toEqual("<div>< > & <div>< > &</div></div>");
+    });
+
+    it("should allow for static properties to be applied to tag handlers", function() {
+        var output = compileAndRender("/test-templates/tag-with-static-props.rhtml", {title: "My Page Title"});
+        expect(output).toEqual('Hello World(string)50(number)Hello Static(string)100(number)');
+    });
+
+    it("should allow for input expressions to be provided to tag handler nodes", function() {
+        var output = compileAndRender("/test-templates/tag-input-expressions.rhtml", {name: "Frank", adult: true});
+        expect(output).toEqual('Hello Frank! adult=true');        
+    });
+
+    it("should allow for using helper objects", function() {
+        var output = compileAndRender("/test-templates/helper-objects.rhtml", {});
+        expect(output).toEqual('Hello WORLD!');
     });
 });

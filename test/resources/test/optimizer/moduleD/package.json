@@ -1,7 +1,7 @@
 {
     "type": "raptor-module",
-    "name": "test.optimizer.moduleD",
-    "includes": [
+    "name": "test/optimizer/moduleD",
+    "dependencies": [
         {"path": "moduleD.js"}
     ]
 }

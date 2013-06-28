@@ -38,6 +38,12 @@
             <allow-expressions>false</allow-expressions>
         </attribute>
 
+        <attribute>
+            <uri>*</uri>
+            <name>import-helper-object</name>
+            <allow-expressions>false</allow-expressions>
+        </attribute>
+
         <node-class>raptor/templating/taglibs/core/TemplateNode</node-class>
     </tag>
     
@@ -53,94 +59,99 @@
         <name>*</name> 
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
         
-        <attribute>
+        <attribute uri="core">
             <name>space</name>
             <type>custom</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>whitespace</name>
             <type>custom</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>for</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
 
-        <attribute>
+        <attribute uri="core">
             <name>for-each</name>
             <allow-expressions>false</allow-expressions>
         </attribute>
 
-        <attribute>
+        <attribute uri="core">
             <name>if</name>
             <type>expression</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>else</name>
             <type>empty</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>else-if</name>
             <type>expression</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>attrs</name>
             <type>expression</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>when</name>
             <type>expression</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>with</name>
             <type>custom</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>otherwise</name>
             <type>empty</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>parse-body-text</name>
             <type>boolean</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
 
-        <attribute>
+        <attribute uri="core">
             <name>trim-body-indent</name>
             <type>boolean</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>strip</name>
             <type>boolean</type>
             <allow-expressions>false</allow-expressions>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>bodyContent</name>
             <type>expression</type>
             <deprecated>Use "content" attribute instead. This will be removed in the future.</deprecated>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>content</name>
             <type>expression</type>
         </attribute>
         
-        <attribute>
+        <attribute uri="core">
             <name>replace</name>
+            <type>expression</type>
+        </attribute>
+
+        <attribute uri="core">
+            <name>input</name>
             <type>expression</type>
         </attribute>
         

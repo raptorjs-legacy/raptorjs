@@ -1,0 +1,28 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/promises",
+    "version": "1.0",
+    "description": "Raptor Module: raptor/promises",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Patrick Steele-Idem",
+            "email": "psteeleidem@ebay.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            "promises.js"
+        ],
+        
+        "extensions": [
+            {
+                "name": "node",
+                "dependencies": [
+                    "promises_node_q.js"
+                ]
+            }
+        ]
+    }
+}

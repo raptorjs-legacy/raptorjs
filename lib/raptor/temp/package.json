@@ -1,0 +1,15 @@
+{
+    "raptor": {
+        "dependencies": [
+            "temp.js"
+        ],
+
+        "extensions": {
+            "server": {
+                "dependencies": [
+                    "temp_server.js"
+                ]
+            }
+        }
+    }
+}

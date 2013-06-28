@@ -13,8 +13,10 @@
         <name>*</name> 
         <uri>*</uri> <!-- Register attributes supported by all tags in all namespaces -->
         
-        <attribute name="widget" type="string"/>
-        <attribute name="el-id" type="string"/>
+        <attribute name="widget" type="string" uri="widgets"/>
+        <attribute name="config" type="expression" uri="widgets"/>
+        <attribute name="id" type="string" uri="widgets"/>
+        <attribute name="el-id" type="string" uri="widgets"/>
         
         <!-- Compiler that applies to all tags as well -->
         <transformer>

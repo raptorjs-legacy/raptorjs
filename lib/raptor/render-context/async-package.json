@@ -1,0 +1,10 @@
+{
+
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/promises"},
+            {"module": "raptor/data-providers"},
+            "Context_async.js"
+        ]
+    }
+}

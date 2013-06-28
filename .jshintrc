@@ -25,6 +25,8 @@
         "JavaAdapter"
     ],
 
+    "globals": { "define": true },
+
     "node" : true,
     "es5" : false,
     "browser" : true,
@@ -52,5 +54,6 @@
     "latedef": true,
     
     /* Relaxing options: */
-    "eqnull": true
+    "eqnull": true,
+    "boss": true
 }

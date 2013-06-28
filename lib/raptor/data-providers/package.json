@@ -1,0 +1,10 @@
+{
+
+    "raptor": {
+        "dependencies": [
+            {"module": "raptor/promises"},
+            "DataProviders.js",
+            "data-providers.js"
+        ]
+    }
+}

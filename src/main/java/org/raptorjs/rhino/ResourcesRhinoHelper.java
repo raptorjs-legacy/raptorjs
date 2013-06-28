@@ -21,6 +21,7 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 import org.raptorjs.resources.Resource;
 import org.raptorjs.resources.ResourceManager;
+import org.raptorjs.resources.ResourcesListener;
 import org.raptorjs.resources.ResourceManager.ResourceCallback;
 import org.raptorjs.resources.WatchListener;
 
@@ -34,6 +35,17 @@ public class ResourcesRhinoHelper {
     public Resource findResource(String path) {
         Resource resource = this.resourceManager.findResource(path);
         return resource;
+    }
+    
+    public void onResourcesModified(Function callback, Scriptable thisObj) {
+        final WatchListener listener = this.createWatchListener(callback, thisObj);
+        this.resourceManager.addListener(new ResourcesListener() {
+            
+            @Override
+            public void onResourcesModified() {
+                listener.notifyModified(null);
+            }
+        });
     }
     
     public void forEachResource(String path, Function callback, Scriptable thisObj) {

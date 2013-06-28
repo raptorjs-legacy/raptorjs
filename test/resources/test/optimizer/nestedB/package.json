@@ -1,7 +1,7 @@
 {
     "type": "raptor-module",
-    "name": "test.optimizer.nestedB",
-    "includes": [
+    "name": "test/optimizer/nestedB",
+    "dependencies": [
         {"path": "nestedB.js"},
         {"path": "nestedB.css"}
     ]
