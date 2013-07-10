@@ -16,7 +16,7 @@ MockContext.prototype = {
     }
 };
 
-var now = new Date(2013, 0, 1, 0, 0, 0, 0).getTime();
+var now = 1357027200000; //new Date(2013, 0, 1, 0, 0, 0, 0).getTime();
 
 require('raptor/cookies/CookieManager').prototype._now = function() {
     return now;
@@ -43,6 +43,6 @@ describe('config module', function() {
         var cookieBrowserCommitCode = cookieManager.getBrowserCommitCode();
 
         
-        expect(cookieBrowserCommitCode).toEqual('document.cookie="hello=world;path=/;expires=Fri, 11 Jan 2013 07:00:00 GMT";document.cookie="ping=pong;path=/;expires=Wed, 16 Jan 2013 07:00:00 GMT;secure";');
+        expect(cookieBrowserCommitCode).toEqual('document.cookie="hello=world;path=/;expires=Fri, 11 Jan 2013 08:00:00 GMT";document.cookie="ping=pong;path=/;expires=Wed, 16 Jan 2013 08:00:00 GMT;secure";');
      });
 });
