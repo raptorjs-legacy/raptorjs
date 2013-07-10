@@ -205,7 +205,7 @@
 		{
 			"cmd":
 			[
-				"jshint",
+				"${project_path}/node_modules/.bin/jshint",
 				"${project_path}/lib"
 			],
 			"name": "JSHint (RaptorJS)",

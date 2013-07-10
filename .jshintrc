@@ -10,14 +10,13 @@
         "waits",
         "waitsFor",
         "runs",
-        "raptor",
         "$rset",
         "$radd",
         "$rget",
         "$renv",
         "$rwidgets",
-        "$",
         "define",
+        "$",
         "require",
         "dust",
         "__rhinoHelpers",
@@ -25,8 +24,7 @@
         "JavaAdapter"
     ],
 
-    "globals": { "define": true },
-
+    "globals": { "define": true, "raptor": true, "$rwidgets": true },
     "node" : true,
     "es5" : false,
     "browser" : true,
