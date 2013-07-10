@@ -16,7 +16,7 @@ MockContext.prototype = {
     }
 };
 
-var now = new Date(2013, 0, 1).getTime();
+var now = new Date(2013, 0, 1, 0, 0, 0, 0).getTime();
 
 require('raptor/cookies/CookieManager').prototype._now = function() {
     return now;
