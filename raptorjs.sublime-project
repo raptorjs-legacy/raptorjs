@@ -187,6 +187,16 @@
 			[
 				"${project_path}/node_modules/.bin/jasmine-node",
 				"--noColor",
+				"raptor-cookies-spec.js"
+			],
+			"name": "Jasmine Tests - cookies",
+			"working_dir": "${project_path}/test"
+		},
+		{
+			"cmd":
+			[
+				"${project_path}/node_modules/.bin/jasmine-node",
+				"--noColor",
 				"raptor-renderer-browser-spec.js"
 			],
 			"name": "Jasmine Tests - renderer (browser)",
@@ -253,6 +263,7 @@
 			"Raptor JSDoc (single file)",
 			"Jasmine Tests",
 			"Jasmine Tests (debug)",
+			"Jasmine Tests - cookies",
 			"Jasmine Tests - dev",
 			"Jasmine Tests - files",
 			"Jasmine Tests - legacy",
