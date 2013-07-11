@@ -52,7 +52,7 @@
   "devDependencies": {
     "jsdom": "~0.6.5",
     "xmlhttprequest": ">= 0.3.0",
-    "jshint": ">= 0.7.0",
+    "jshint": "~2.1.4",
     "jasmine-node": "~1.5.0"
   },
   "license": "Apache License v2.0",
