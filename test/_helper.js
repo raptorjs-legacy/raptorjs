@@ -9,13 +9,14 @@ require('raptor/logging').configure({
         'raptor/optimizer': { level: "DEBUG" }
     }
 })
-
+var path = require('path');
 var files = require('raptor/files');
 var File = require('raptor/files/File');
 var resources = require('raptor/resources');
 var logger = require('raptor/logging').logger('helper');
 
 raptor.require('raptor/packaging').enableExtension('json.raptor');
+// require('raptor/templating/compiler').setWorkDir(path.join(__dirname, 'work'));
 
 resources.addSearchPathDir(files.joinPaths(__dirname, 'resources'));
 

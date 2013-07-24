@@ -670,4 +670,9 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/helper-objects.rhtml", {});
         expect(output).toEqual('Hello WORLD!');
     });
+
+    it("should allow for using layouts", function() {
+        var output = compileAndRender("/test-templates/layout-use.rhtml", {});
+        expect(output).toEqual('<div>BODY CONTENT</div>FOOTER CONTENT<h1>HEADER CONTENT</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>VALUE HEADER</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>DEFAULT TITLE</h1><div>BODY CONTENT</div>FOOTER CONTENT');
+    });
 });
