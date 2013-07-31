@@ -106,7 +106,7 @@ public abstract class ResourceIncluderContext {
             return extension.checkCondition(this.raptorJSEnv, this.getScriptableExtensionsCollection(packageIncludeOptions));            
         }
         else {
-            String[] extensionParts = extension.getName().split("\\s*[_\\-,|]\\s*");
+            String[] extensionParts = extension.getName().split("\\s*[,|]\\s*");
             for (String extensionPart : extensionParts) {
                 if (!(defaultPackageExtensions.contains(extensionPart) || (packageIncludeOptions != null && packageIncludeOptions.isModuleExtensionEnabled(extensionPart)))) {
                     return false; 

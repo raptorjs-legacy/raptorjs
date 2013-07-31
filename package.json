@@ -1,6 +1,6 @@
 {
   "name": "raptor",
-  "version": "2.4.14",
+  "version": "2.4.17",
   "description": "RaptorJS provides an AMD module loader that works in Node, Rhino and the web browser. It also includes various sub-modules to support building optimized web applications.",
   "keywords": [
     "AMD",
@@ -46,7 +46,7 @@
     "rapido": ">=0.2.2",
     "rapido-raptorjs": "0.3.0-SNAPSHOT",
     "coffee-script": ">=1.4.0",
-    "q": "~0.9.3",
+    "q": "~0.9.6",
     "cookie": "~0.1.0",
     "minimatch": "0.2.x"
   },
