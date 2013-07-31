@@ -21,7 +21,8 @@
                 "dependencies": [
                     {"path": "packaging_server.js"},
                     {"path": "ExtensionCollection.js"},
-                    {"path": "PackageManifest.js"}
+                    {"path": "PackageManifest.js"},
+                    {"path": "DependencyWalker.js"}
                 ]
             },
             "rhino": {
