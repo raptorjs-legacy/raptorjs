@@ -44,7 +44,7 @@
     "dustjs-linkedin": "~1.2.1",
     "dustjs-helpers": "~1.1.1",
     "rapido": ">=0.2.2",
-    "rapido-raptorjs": "0.3.0-SNAPSHOT",
+    "rapido-raptorjs": "~0.3.3",
     "coffee-script": ">=1.4.0",
     "q": "~0.9.6",
     "cookie": "~0.1.0",
