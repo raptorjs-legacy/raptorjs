@@ -17,6 +17,7 @@
         <attribute name="arg" type="expression" preserve-name="true"/>
         <attribute pattern="arg-*" type="string" preserve-name="true"/>
         <attribute name="var" type="identifier"/>
+        <attribute name="timeout" type="integer" />
 
         <variable name="context"/>
         <variable name-from-attribute="var OR dependency|keep"/>
