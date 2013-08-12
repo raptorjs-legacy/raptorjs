@@ -38,7 +38,7 @@ describe('packaging module', function() {
                 pending = dependencies.length;
 
             function readRawDictionary(dependency, i) {
-                i18n._readRawDictionary(dependency.getI18nResource(), 'sp', function(err, rawDictionary) {
+                i18n.readI18nResource(dependency.getI18nResource(), 'sp', function(err, rawDictionary) {
                     pending--;
 
                     expect(rawDictionary).toEqual(expected[i]);
