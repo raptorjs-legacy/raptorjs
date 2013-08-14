@@ -44,7 +44,7 @@ describe('packaging module', function() {
             dependency = PackageManifest.createDependency(dependencyConfig);
 
         expect(dependency.constructor).toEqual(Dependency_i18n);
-        expect(dependency.type).toEqual('i18n.json');
+        expect(dependency.type).toEqual('i18n');
         expect(dependency.path).toEqual('SomeThing.i18n.json');
     });
 
