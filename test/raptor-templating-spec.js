@@ -675,4 +675,10 @@ describe('templating module', function() {
         var output = compileAndRender("/test-templates/layout-use.rhtml", {});
         expect(output).toEqual('<div>BODY CONTENT</div>FOOTER CONTENT<h1>HEADER CONTENT</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>VALUE HEADER</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>DEFAULT TITLE</h1><div>BODY CONTENT</div>FOOTER CONTENT');
     });
+
+    it("should expose the template resource associated with a rendered template", function() {
+        var output = require('raptor/templating').renderToString("/test-templates/template-info", {});
+        var templateFilePath = require('path').join(__dirname, 'resources/test-templates/template-info.rhtml');
+        expect(output).toEqual('/test-templates/template-info.rhtml,/test-templates/template-info,' + templateFilePath);
+    });    
 });
