@@ -35,7 +35,6 @@
             "css": "raptor/packaging/Dependency_css",
             "dust": "raptor/packaging/Dependency_dust",
             "less": "raptor/packaging/Dependency_less",
-            "4cc": "raptor/packaging/Dependency_4cc",
             "module": "raptor/packaging/Dependency_module",
             "package": "raptor/packaging/Dependency_package",
             "rhtml": "raptor/packaging/Dependency_rhtml",
