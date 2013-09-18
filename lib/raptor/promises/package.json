@@ -20,7 +20,14 @@
             {
                 "name": "node",
                 "dependencies": [
-                    "promises_node_q.js"
+                    "promises_q.js"
+                ]
+            },
+            {
+                "name": "browser",
+                "dependencies": [
+                    "thirdparty/q_amd.js",
+                    "promises_q.js"
                 ]
             }
         ]
