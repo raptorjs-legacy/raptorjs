@@ -24,7 +24,7 @@
         "JavaAdapter"
     ],
 
-    "globals": { "define": true, "raptor": true, "$rwidgets": true },
+    "globals": { "define": true, "raptor": true, "$rwidgets": true, "raptorNoConflict": true, "raptorDefine": true, "raptorRequire": true },
     "node" : true,
     "es5" : false,
     "browser" : true,
