@@ -13,7 +13,7 @@ var path = require('path');
 var files = require('raptor/files');
 var File = require('raptor/files/File');
 var resources = require('raptor/resources');
-var logger = require('raptor/logging').logger('helper');
+var logger = require('raptor/logging').logger('_helper');
 
 raptor.require('raptor/packaging').enableExtension('json.raptor');
 // require('raptor/templating/compiler').setWorkDir(path.join(__dirname, 'work'));
@@ -88,7 +88,7 @@ var compileAndLoad = function(templatePath, invalid) {
         }
         catch(e) {
             if (!invalid) {
-                logger.error(e);
+                logger.error('Unable to compile and render', templatePath, e);
             }
             
             throw e;
@@ -106,7 +106,7 @@ var compileAndLoad = function(templatePath, invalid) {
         }
         catch(e) {
             if (!invalid) {
-                logger.error(e);
+                logger.error('Unable to compile and render', templatePath, e);
             }
             
             throw e;
