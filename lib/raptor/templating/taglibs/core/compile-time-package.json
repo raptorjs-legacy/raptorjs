@@ -13,6 +13,7 @@
     
     "raptor": { 
         "dependencies": [
+            {"type": "js", "path": "AssignNode.js"},
             {"type": "js", "path": "CoreTagTransformer.js"},
             {"type": "js", "path": "ElseTagTransformer.js"},
             {"type": "js", "path": "CoreTextTransformer.js"},
@@ -29,6 +30,7 @@
             {"type": "js", "path": "DefNode.js"},
             {"type": "js", "path": "IncludeNode.js"},
             {"type": "js", "path": "OtherwiseNode.js"},
+            {"type": "js", "path": "VarNode.js"},
             {"type": "js", "path": "WhenNode.js"},
             {"type": "js", "path": "WithNode.js"},
             {"type": "rtld", "path": "core.rtld"}
