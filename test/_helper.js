@@ -58,7 +58,7 @@ jasmine.getEnv().beforeEach(function() {
     this.addMatchers(matchers);
 });
 
-global.helpers = {};
+global.helpers = module.exports = {};
 
 //Templating helper functions
 var compileAndLoad = function(templatePath, invalid) {
@@ -159,27 +159,57 @@ var compileAndLoad = function(templatePath, invalid) {
             throw e;
         }
     },
-    runAsyncFragmentTests = function(template, expected, dependencyConfigs, done) {
+    runAsyncFragmentTests = function(template, expected, options, done) {
         var completed = 0;
 
-        dependencyConfigs.forEach(function(dependencies) {
+        var dependencyConfigs;
+        var templateData;
+
+        if (Array.isArray(options)) {
+            dependencyConfigs = options;
+            options = null;
+        }
+        else {
+            dependencyConfigs = options.dependencies;
+            templateData = options.templateData;
+        }
+
+        if (dependencyConfigs) {
+            dependencyConfigs.forEach(function(dependencies) {
+                compileAndRenderAsync(
+                    template,
+                    templateData,
+                    dependencies)
+                    .then(
+                        function(context) {
+                            var output = context.getOutput();
+                            expect(output).toEqual(expected);
+                            if (++completed === dependencyConfigs.length) {
+                                done();    
+                            }
+                            
+                        },
+                        function(err) {
+                            done(err);
+                        });
+            });
+        }
+        else {
             compileAndRenderAsync(
                 template,
-                {},
-                dependencies)
+                templateData,
+                options.dependencies || {})
                 .then(
                     function(context) {
                         var output = context.getOutput();
                         expect(output).toEqual(expected);
-                        if (++completed === dependencyConfigs.length) {
-                            done();    
-                        }
-                        
+                        done();
                     },
                     function(err) {
                         done(err);
                     });
-        });
+        }
+        
     };
 
 var MockWriter = define.Class(
@@ -195,7 +225,7 @@ var MockWriter = define.Class(
             this.outputBundleFiles = {};
             this.outputBundleFilenames = {};
             listeners.makeObservable(this, MockWriter.prototype, ['fileWritten']);
-        };
+        }
 
         MockWriter.prototype = {
             writeBundleFile: function(outputFile, code) {
@@ -205,7 +235,7 @@ var MockWriter = define.Class(
                     file: outputFile,
                     filename: outputFile.getName(),
                     code: code
-                })
+                });
             },
 
             getOutputBundlePaths: function() {
@@ -269,12 +299,12 @@ function jsdomScripts(dependencies, enabledExtensions) {
             },
             function(e) {
                 deferred.reject(e);
-            })
+            });
 
     return deferred.promise;
 };
 
-var jsdomLogger = raptor.require('raptor/logging').logger('jsdomWrapper')
+var jsdomLogger = raptor.require('raptor/logging').logger('jsdomWrapper');
 
 helpers.jsdom = {
     jsdomScripts : jsdomScripts,

@@ -46,7 +46,7 @@
     "rapido": ">=0.2.2",
     "rapido-raptorjs": "~0.3.3",
     "coffee-script": ">=1.4.0",
-    "q": "~0.9.6",
+    "q": "~0.9.7",
     "cookie": "~0.1.0",
     "minimatch": "0.2.x",
     "path-filters": "~1.0.5"
