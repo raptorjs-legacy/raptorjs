@@ -17,14 +17,13 @@
         "$rwidgets",
         "define",
         "$",
-        "require",
         "dust",
         "__rhinoHelpers",
         "Packages",
         "JavaAdapter"
     ],
 
-    "globals": { "define": true, "raptor": true, "$rwidgets": true, "raptorNoConflict": true, "raptorDefine": true, "raptorRequire": true },
+    "globals": { "define": true, "raptor": true, "$rwidgets": true, "raptorNoConflict": true, "raptorDefine": true, "raptorRequire": true},
     "node" : true,
     "es5" : false,
     "browser" : true,
