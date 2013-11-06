@@ -182,6 +182,101 @@ describe('dev spec', function() {
             done);
     });
 
+    it("should allow beginAsyncFragment to return a promise with a non-null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    deferred.resolve('B');
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    context.write('B');
+                                    deferred.resolve();
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                context.write('B');
+
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    deferred.resolve();
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value that is immediately resolved", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                context.write('B');
+
+                                var deferred = require('raptor/promises').defer();
+                                deferred.resolve();
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
     // it('shows asynchronous test node-style', function(done){
     //     setTimeout(function() {
     //         expect('second').toEqual('second');
