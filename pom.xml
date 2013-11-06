@@ -17,11 +17,11 @@
 	<distributionManagement>
 		<repository>
 			<id>raptor.releases</id>
-			<url>http://nxraptor/content/repositories/releases/</url>
+			<url>http://nxraptor/content/repositories/raptor2-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>raptor.snapshots</id>
-			<url>http://nxraptor/content/repositories/snapshots/</url>
+			<url>http://nxraptor/content/repositories/raptor2-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -29,7 +29,7 @@
 	<repositories>
 		<repository>
 			<id>raptor.releases</id>
-			<url>http://nxraptor/content/repositories/releases/</url>
+			<url>http://nxraptor/content/repositories/raptor2-releases/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -41,7 +41,7 @@
 		</repository>
 		<repository>
 			<id>raptor.snapshots</id>
-			<url>http://nxraptor/content/repositories/snapshots/</url>
+			<url>http://nxraptor/content/repositories/raptor2-snapshots/</url>
 			<releases>
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
