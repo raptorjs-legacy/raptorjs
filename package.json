@@ -1,6 +1,6 @@
 {
   "name": "raptor",
-  "version": "2.6.2-SNAPSHOT",
+  "version": "2.6.3-SNAPSHOT",
   "description": "RaptorJS provides an AMD module loader that works in Node, Rhino and the web browser. It also includes various sub-modules to support building optimized web applications.",
   "keywords": [
     "AMD",
@@ -22,6 +22,7 @@
   "author": "Patrick Steele-Idem <psteeleidem@ebay.com>",
   "contributors": [
     "Patrick Steele-Idem <psteeleidem@ebay.com>",
+    "Phillip Gates-Idem <phillip.idem@gmail.com>",
     "Richard Heisterberg <rheisterberg@ebay.com>",
     "Neeraj Khanna <nkhanna@ebay.com>"
   ],
