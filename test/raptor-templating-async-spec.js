@@ -2,6 +2,7 @@ require('./_helper.js');
 
 var raptor = require('raptor');
 var define = raptor.createDefine(module);
+var promises = require('raptor/promises');
 
 var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndLoad = helpers.templating.compileAndLoad,
@@ -9,7 +10,7 @@ var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndRenderAsync = helpers.templating.compileAndRenderAsync,
     runAsyncFragmentTests = helpers.templating.runAsyncFragmentTests;
 
-describe('dev spec', function() {
+describe('raptor templates async', function() {
 
 
 
@@ -271,6 +272,44 @@ describe('dev spec', function() {
                                 return deferred.promise;
                             });
                         }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow functions that return promises as data providers", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-function-data-provider.rhtml",
+            'Hello John',
+            {
+                templateData: {
+                    userInfo: function() {
+                        var deferred = promises.defer();
+                        setTimeout(function() {
+                            deferred.resolve({
+                                name: 'John'
+                            });
+                        }, 1000);
+                        return deferred.promise;
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow functions that return non-promises as data providers", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-function-data-provider.rhtml",
+            'Hello John',
+            {
+                templateData: {
+                    userInfo: function() {
+                        return {
+                            name: 'John'
+                        };
                     }
                 }
             },
