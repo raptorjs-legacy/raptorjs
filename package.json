@@ -67,5 +67,6 @@
   "main": "lib/raptor/raptor-main_node.js",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
-  }
+  },
+  "ebay": {}
 }
