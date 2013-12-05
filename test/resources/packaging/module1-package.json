@@ -1,0 +1,18 @@
+{
+    "raptor": {
+        "dependencies": [
+            "SomeFile1.js",
+            {"module": "packaging/module2"}
+        ],
+
+        "extensions": {
+            "browser": {
+                "dependencies": ["SomeFile_browser.css"]
+            },
+
+            "jquery": {
+                "dependencies": ["SomeFile_jquery.css"]
+            }
+        }
+    }
+}

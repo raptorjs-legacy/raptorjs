@@ -10,10 +10,10 @@ var logger = require('raptor/logging').logger('raptor-dev-spec'),
     runAsyncFragmentTests = helpers.templating.runAsyncFragmentTests,
     MockWriter = helpers.templating.MockWriter;
 
-describe('dev spec', function() {
+xdescribe('dev spec', function() {
 
-    xit("should allow for using templates to render custom tags", function() {
-        var output = compileAndRender("/test-templates/template-as-tag.rhtml", {title: "My Page Title"});
-        expect(output).toEqual('<div><h1>My Page Title</h1></div>');        
+    it("should allow for using layouts", function() {
+        var output = compileAndRender("/test-templates/layout-use.rhtml", {});
+        expect(output).toEqual('<div>BODY CONTENT</div>FOOTER CONTENT<h1>HEADER CONTENT</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>VALUE HEADER</h1><div>BODY CONTENT</div>FOOTER CONTENT<h1>DEFAULT TITLE</h1><div>BODY CONTENT</div>FOOTER CONTENT');
     });
 });

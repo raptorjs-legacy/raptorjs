@@ -1,2 +1,3 @@
 lib/raptor/ecma/es5
 lib/raptor/ecma/es6
+lib/raptor/promises/thirdparty

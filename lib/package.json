@@ -18,14 +18,16 @@
             "/raptor/templating/taglibs/core/core.rtld",
             "/raptor/templating/taglibs/html/html.rtld",
             "/raptor/templating/taglibs/optimizer/optimizer.rtld",
-            "/raptor/templating/taglibs/widgets/widgets.rtld"
+            "/raptor/templating/taglibs/widgets/widgets.rtld",
+            "/raptor/templating/taglibs/layout/layout.rtld"
         ],
         
         "module-mappings": {
             "taglibs/core/compile-time": "/raptor/templating/taglibs/core/compile-time-package.json",
             "taglibs/html/compile-time": "/raptor/templating/taglibs/html/compile-time-package.json",
             "taglibs/widgets/compile-time": "/raptor/templating/taglibs/widgets/compile-time-package.json",
-            "taglibs/widgets": "/raptor/templating/taglibs/widgets/package.json"
+            "taglibs/widgets": "/raptor/templating/taglibs/widgets/package.json",
+            "taglibs/layout": "/raptor/templating/taglibs/layout/package.json"
         },
         
         "dependency-types": {
@@ -33,7 +35,6 @@
             "css": "raptor/packaging/Dependency_css",
             "dust": "raptor/packaging/Dependency_dust",
             "less": "raptor/packaging/Dependency_less",
-            "4cc": "raptor/packaging/Dependency_4cc",
             "module": "raptor/packaging/Dependency_module",
             "package": "raptor/packaging/Dependency_package",
             "rhtml": "raptor/packaging/Dependency_rhtml",
@@ -42,6 +43,7 @@
             "resource": "raptor/packaging/Dependency_resource",
             "loader-metadata": "raptor/packaging/Dependency_loader-metadata",
             "i18n": "raptor/packaging/Dependency_i18n",
+            "i18n.json": "raptor/packaging/Dependency_i18n",
             "i18n-module": "raptor/packaging/Dependency_i18n-module"
         }
     }

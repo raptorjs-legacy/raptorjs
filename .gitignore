@@ -1,4 +1,3 @@
-dist
 build
 target
 */.settings/com.springsource.server.ide.jdt.core.prefs
@@ -20,3 +19,4 @@ MANIFEST.MF
 /node_modules
 /raptorjs.sublime-workspace
 /ebay.log
+/test/work

@@ -16,6 +16,36 @@
             "i18n.js",
             "Dictionaries.js",
             "Dictionary.js"
+        ],
+
+        "extensions": [
+            {
+                "name": "browser",
+                "dependencies": [
+                    "i18n_browser.js"
+                ]
+            },
+
+            {
+                "name": "rhino",
+                "dependencies": [
+                    "i18n_rhino.js"
+                ]
+            },
+
+            {
+                "name": "server",
+                "dependencies": [
+                    "i18n_server.js"
+                ]
+            },
+
+            {
+                "name": "node",
+                "dependencies": [
+                    "i18n_node.js"
+                ]
+            }
         ]
     }
 }

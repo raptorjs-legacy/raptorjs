@@ -55,9 +55,11 @@ define.Class(
 define.Class(
     'test.classes.Ostrich2',
     'test.classes.Bird',
-    function(require) {
+    ['super'],
+    function($super, require) {
+
         var Ostrich = function() {
-            Ostrich.superclass.constructor.call(this, 'ostrich');
+            $super.constructor.call(this, 'ostrich');
         };
         
         Ostrich.prototype = {
@@ -70,7 +72,7 @@ define.Class(
             },
             
             toString: function() {
-                return Ostrich.superclass.toString.call(this);
+                return $super.toString.call(this);
             }
         };
         

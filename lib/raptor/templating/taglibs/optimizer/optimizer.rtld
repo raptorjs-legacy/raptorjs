@@ -57,4 +57,13 @@
         <attribute name="name" type="string"/>
     </tag>
 
+    <tag renderer="raptor/templating/taglibs/optimizer/ImgTag"
+        dynamic-attributes="true">
+        <name>img</name>
+        
+        <attribute name="src" type="string"/>
+        <attribute name="optimizer" type="expression"/>
+        <import-variable target-property="templateInfo" expression="templateInfo"/>
+    </tag>
+
 </raptor-taglib>

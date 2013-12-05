@@ -1,0 +1,8 @@
+{
+    "raptor": {
+        "dependencies": [
+            "SomeFile3.js",
+            {"module": "packaging/module1"}
+        ]
+    }
+}

@@ -13,13 +13,15 @@
 
         <handler-class>raptor/templating/taglibs/async/AsyncFragmentTag</handler-class>
 
-        <attribute name="dependency" type="string" />
+        <attribute name="dependency" type="string" target-property="dataProvider" deprecated="Use 'data-provider' instead"/>
+        <attribute name="data-provider" type="string" />
         <attribute name="arg" type="expression" preserve-name="true"/>
         <attribute pattern="arg-*" type="string" preserve-name="true"/>
         <attribute name="var" type="identifier"/>
+        <attribute name="timeout" type="integer" />
 
         <variable name="context"/>
-        <variable name-from-attribute="var OR dependency|keep"/>
+        <variable name-from-attribute="var OR dependency OR data-provider|keep"/>
 
         <transformer>
             <class-name>raptor/templating/taglibs/async/AsyncFragmentTagTransformer</class-name>

@@ -1,0 +1,15 @@
+{
+    "raptor": {
+        "serverLoad": true,
+        "dependencies": [
+        ],
+        "extensions": [
+            {
+                "name": "server",
+                "dependencies": [
+                    "ImgTag_server.js"
+                ]
+            }
+        ]
+    }
+}

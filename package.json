@@ -1,6 +1,6 @@
 {
   "name": "raptor",
-  "version": "2.4.5",
+  "version": "2.6.4-SNAPSHOT",
   "description": "RaptorJS provides an AMD module loader that works in Node, Rhino and the web browser. It also includes various sub-modules to support building optimized web applications.",
   "keywords": [
     "AMD",
@@ -22,6 +22,7 @@
   "author": "Patrick Steele-Idem <psteeleidem@ebay.com>",
   "contributors": [
     "Patrick Steele-Idem <psteeleidem@ebay.com>",
+    "Phillip Gates-Idem <phillip.idem@gmail.com>",
     "Richard Heisterberg <rheisterberg@ebay.com>",
     "Neeraj Khanna <nkhanna@ebay.com>"
   ],
@@ -42,17 +43,19 @@
     "optimist": "~0.3.5",
     "sqwish": "~0.2.0",
     "dustjs-linkedin": "~1.2.1",
+    "dustjs-helpers": "~1.1.1",
     "rapido": ">=0.2.2",
-    "rapido-raptorjs": ">=0.2.3",
+    "rapido-raptorjs": "~0.3.3",
     "coffee-script": ">=1.4.0",
-    "q": "~0.9.3",
+    "q": "~0.9.7",
     "cookie": "~0.1.0",
-    "minimatch": "0.2.x"
+    "minimatch": "0.2.x",
+    "path-filters": "~1.0.5"
   },
   "devDependencies": {
     "jsdom": "~0.6.5",
     "xmlhttprequest": ">= 0.3.0",
-    "jshint": ">= 0.7.0",
+    "jshint": "~2.1.4",
     "jasmine-node": "~1.5.0"
   },
   "license": "Apache License v2.0",
@@ -64,5 +67,6 @@
   "main": "lib/raptor/raptor-main_node.js",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
-  }
+  },
+  "ebay": {}
 }

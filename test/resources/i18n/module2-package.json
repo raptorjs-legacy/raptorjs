@@ -1,0 +1,7 @@
+{
+    "raptor": {
+        "dependencies": [
+            "module2.i18n.json"
+        ]
+    }
+}

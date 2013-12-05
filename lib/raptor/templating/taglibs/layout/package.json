@@ -1,0 +1,9 @@
+{
+    "raptor": {
+        "dependencies": [
+            "UseTag.js",
+            "PutTag.js",
+            "PlaceholderTag.js"
+        ]
+    }
+}

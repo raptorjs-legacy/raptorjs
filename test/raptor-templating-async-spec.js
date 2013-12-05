@@ -2,6 +2,7 @@ require('./_helper.js');
 
 var raptor = require('raptor');
 var define = raptor.createDefine(module);
+var promises = require('raptor/promises');
 
 var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndLoad = helpers.templating.compileAndLoad,
@@ -9,7 +10,7 @@ var logger = require('raptor/logging').logger('raptor-dev-spec'),
     compileAndRenderAsync = helpers.templating.compileAndRenderAsync,
     runAsyncFragmentTests = helpers.templating.runAsyncFragmentTests;
 
-describe('dev spec', function() {
+describe('raptor templates async', function() {
 
 
 
@@ -179,6 +180,139 @@ describe('dev spec', function() {
                     }
                 }
             ],
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a non-null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    deferred.resolve('B');
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    context.write('B');
+                                    deferred.resolve();
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                context.write('B');
+
+                                var deferred = require('raptor/promises').defer();
+                                setTimeout(function() {
+                                    deferred.resolve();
+                                }, 200);
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow beginAsyncFragment to return a promise with a null resolved value that is immediately resolved", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/beginAsyncFragment.rhtml",
+            'ABC',
+            {
+                templateData: {
+                    helper: {
+                        beginAsyncFragment: function(context) {
+                            context.beginAsyncFragment(function(context) {
+                                context.write('B');
+
+                                var deferred = require('raptor/promises').defer();
+                                deferred.resolve();
+                                return deferred.promise;
+                            });
+                        }
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow functions that return promises as data providers", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-function-data-provider.rhtml",
+            'Hello John',
+            {
+                templateData: {
+                    userInfo: function() {
+                        var deferred = promises.defer();
+                        setTimeout(function() {
+                            deferred.resolve({
+                                name: 'John'
+                            });
+                        }, 1000);
+                        return deferred.promise;
+                    }
+                }
+            },
+            done);
+    });
+
+    it("should allow functions that return non-promises as data providers", function(done) {
+
+        runAsyncFragmentTests(
+            "/test-templates/async-fragment-function-data-provider.rhtml",
+            'Hello John',
+            {
+                templateData: {
+                    userInfo: function() {
+                        return {
+                            name: 'John'
+                        };
+                    }
+                }
+            },
             done);
     });
 
