@@ -1,5 +1,6 @@
 {
     "raptor": {
+        "serverLoad": true,
         "dependencies": [
         ],
         "extensions": [
