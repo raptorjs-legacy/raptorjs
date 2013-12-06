@@ -117,7 +117,7 @@ public class PackageManifestJSONLoader {
     private void deserializeExtension(PackageManifest manifest, Extension extension, ObjectNode node) {
         TextNode conditionNode = (TextNode) node.get("condition");
         if (conditionNode != null) {
-            Condition condition = new Condition(conditionNode.getValueAsText(), manifest.getPackagePath() != null ? manifest.getPackagePath() + "/" + extension.getName() : null);
+            Condition condition = new Condition(conditionNode.asText(), manifest.getPackagePath() != null ? manifest.getPackagePath() + "/" + extension.getName() : null);
             extension.setCondition(condition);
         }
         
