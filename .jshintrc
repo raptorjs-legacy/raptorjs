@@ -49,7 +49,7 @@
     "white": false,
     "eqeqeq": false,
     "latedef": true,
-    "unused": "vars",
+    /*"unused": "vars",*/
     
     /* Relaxing options: */
     "eqnull": true,
