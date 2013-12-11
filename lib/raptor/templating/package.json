@@ -32,6 +32,12 @@
                 "dependencies": [
                     {"path": "templating_rhino.js"}
                 ]
+            },
+            {
+                "name": "browser",
+                "dependencies": [
+                    {"path": "templating_browser.js"}
+                ]
             }
         ]
     }
