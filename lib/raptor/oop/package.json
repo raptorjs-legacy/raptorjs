@@ -1,0 +1,19 @@
+{
+    "type": "raptor-module",
+    "name": "raptor/oop",
+    "version": "1.0",
+    "description": "Module for supporting classical inheritance",
+    "homepage": "http://raptorjs.org",
+    "authors": [
+        {
+            "name": "Phillip Gates-Idem",
+            "email": "phillip.idem@gmail.com"
+        }
+    ],
+    
+    "raptor": {
+        "dependencies": [
+            {"path": "oop.js"}
+        ]
+    }
+}
