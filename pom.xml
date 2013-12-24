@@ -18,11 +18,11 @@
 	<distributionManagement>
 		<repository>
 			<id>raptor.releases</id>
-			<url>ebaycentral/content/repositories/releases/</url>
+			<url>http://ebaycentral/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>raptor.snapshots</id>
-			<url>ebaycentral/content/repositories/snapshots/</url>
+			<url>http://ebaycentral/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -30,7 +30,7 @@
 	<repositories>
 		<repository>
 			<id>raptor.releases</id>
-			<url>ebaycentral/content/repositories/releases/</url>
+			<url>http://ebaycentral/content/repositories/releases/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -42,7 +42,7 @@
 		</repository>
 		<repository>
 			<id>raptor.snapshots</id>
-			<url>ebaycentral/content/repositories/snapshots/</url>
+			<url>http://ebaycentral/content/repositories/snapshots/</url>
 			<releases>
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -54,7 +54,7 @@
 		</repository>
 		<repository>
 			<id>raptor.thirdparty</id>
-			<url>ebaycentral/content/repositories/thirdparty/</url>
+			<url>http://ebaycentral/content/repositories/thirdparty/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -70,7 +70,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>raptor.plugins</id>
-			<url>ebaycentral/content/repositories/plugins/</url>
+			<url>http://ebaycentral/content/repositories/plugins/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -82,7 +82,7 @@
 		</pluginRepository>
 		<pluginRepository>
 			<id>raptor.releases</id>
-			<url>ebaycentral/content/repositories/releases/</url>
+			<url>http://ebaycentral/content/repositories/releases/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
