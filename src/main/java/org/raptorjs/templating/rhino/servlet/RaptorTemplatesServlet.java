@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class RaptorTemplatesServlet extends HttpServlet {
-    
-    private final transient Log log = LogFactory.getLog(RaptorTemplatesServlet.class);
+   
+    private final transient Logger log = LogManager.getLogger(RaptorTemplatesServlet.class);
     /**
      * 
      */

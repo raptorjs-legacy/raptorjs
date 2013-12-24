@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- POM Information about the Project -->
 	<modelVersion>4.0.0</modelVersion>
@@ -7,21 +8,21 @@
 	<version>2.3.2-SNAPSHOT</version>
 	<!-- Packing Type is bundle for OSGI Library Bundle -->
 	<packaging>bundle</packaging>
-    
-    <scm>
-        <connection>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</connection>
-        <url>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</url>
-        <developerConnection>scm:git:git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</developerConnection>
-    </scm>
-    
+
+	<scm>
+		<connection>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</connection>
+		<url>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</url>
+		<developerConnection>scm:git:git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</developerConnection>
+	</scm>
+
 	<distributionManagement>
 		<repository>
 			<id>raptor.releases</id>
-			<url>http://nxraptor/content/repositories/raptor2-releases/</url>
+			<url>ebaycentral/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>raptor.snapshots</id>
-			<url>http://nxraptor/content/repositories/raptor2-snapshots/</url>
+			<url>ebaycentral/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -29,7 +30,7 @@
 	<repositories>
 		<repository>
 			<id>raptor.releases</id>
-			<url>http://nxraptor/content/repositories/raptor2-releases/</url>
+			<url>ebaycentral/content/repositories/releases/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -41,7 +42,7 @@
 		</repository>
 		<repository>
 			<id>raptor.snapshots</id>
-			<url>http://nxraptor/content/repositories/raptor2-snapshots/</url>
+			<url>ebaycentral/content/repositories/snapshots/</url>
 			<releases>
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -53,7 +54,7 @@
 		</repository>
 		<repository>
 			<id>raptor.thirdparty</id>
-			<url>http://nxraptor/content/repositories/thirdparty/</url>
+			<url>ebaycentral/content/repositories/thirdparty/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -69,7 +70,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>raptor.plugins</id>
-			<url>http://nxraptor/content/repositories/plugins/</url>
+			<url>ebaycentral/content/repositories/plugins/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -81,7 +82,7 @@
 		</pluginRepository>
 		<pluginRepository>
 			<id>raptor.releases</id>
-			<url>http://nxraptor/content/repositories/releases/</url>
+			<url>ebaycentral/content/repositories/releases/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -95,9 +96,10 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-servlet_3.0_spec</artifactId>
-			<version>1.0</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -120,16 +122,16 @@
 			<version>1.7.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.logging</artifactId>
-			<version>1.1.1</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.13</version>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- Build Configration -->
@@ -138,29 +140,29 @@
 		<!-- Inherit configuration needed for plugins -->
 		<pluginManagement>
 			<plugins>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.6</version>
-                    <executions>
-                        <execution>
-                            <id>copy-resources</id>
-                            <!-- here the phase you need -->
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${basedir}/target/classes/META-INF/resources</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <directory>lib</directory>
-                                        <filtering>false</filtering>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>copy-resources</id>
+							<!-- here the phase you need -->
+							<phase>validate</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${basedir}/target/classes/META-INF/resources</outputDirectory>
+								<resources>
+									<resource>
+										<directory>lib</directory>
+										<filtering>false</filtering>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 
 				<!-- Apache Maven Compiler Plugin -->
 				<plugin>
@@ -184,40 +186,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.3.5</version>
-					<extensions>true</extensions>
-					<configuration>
-						<instructions>
-							<Include-Resource>{maven-resources}</Include-Resource>
-						</instructions>
-					</configuration>
-					<executions>
-						<execution>
-							<id>bundle-manifest</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>manifest</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>bundle-install</id>
-							<phase>install</phase>
-							<goals>
-								<goal>install</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>bundle-deploy</id>
-							<phase>deploy</phase>
-							<goals>
-								<goal>deploy</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.9</version>
@@ -225,8 +193,6 @@
 						<forkMode>pertest</forkMode>
 					</configuration>
 				</plugin>
-                
-				
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
@@ -241,21 +207,21 @@
 						</execution>
 					</executions>
 				</plugin>
-                <plugin>
-                    <groupId>bat.crimea.ua</groupId>
-                    <artifactId>maven-increment-plugin</artifactId>
-                    <version>1.20</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
-                        <branchName>RAPTOR-${project.version}</branchName>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                    </configuration>
-                </plugin>
+				<plugin>
+					<groupId>bat.crimea.ua</groupId>
+					<artifactId>maven-increment-plugin</artifactId>
+					<version>1.20</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.2.1</version>
+					<configuration>
+						<tagNameFormat>RELEASE-@{project.version}</tagNameFormat>
+						<branchName>RAPTOR-${project.version}</branchName>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
@@ -266,83 +232,87 @@
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.1</version>
 				</plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <inherited>true</inherited>
-                    <version>2.1.2.ebay</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <!--
-                <plugin>
-                    <groupId>com.ebay.osgi.build</groupId>
-                    <artifactId>dependency-version-validator</artifactId>
-                    <version>1.0.0</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>validate-dependencies</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                -->
-                <plugin>
-                    <groupId>com.ebay.osgi.build</groupId>
-                    <artifactId>maven-scm-build-info</artifactId>
-                    <version>1.0.4</version>
-                    <executions>
-                        <execution>
-                            <id>build-info</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>addscminfo</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.0</version>
-                    <executions>
-                        <execution>
-                            <id>generate-build-number</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>create-timestamp</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<inherited>true</inherited>
+					<version>2.1.2</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>1.0</version>
+					<executions>
+						<execution>
+							<id>generate-build-number</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>create-timestamp</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
 		<plugins>
-            
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/resources/META-INF</directory>
-                            <includes>
-                                <include>MANIFEST.MF</include>
-                            </includes>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-                
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.5</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Include-Resource>{maven-resources}</Include-Resource>
+					</instructions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>bundle-install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>bundle-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src/main/resources/META-INF</directory>
+							<includes>
+								<include>MANIFEST.MF</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
@@ -375,7 +345,7 @@
 					<manifestLocation>src/main/resources/META-INF</manifestLocation>
 					<!-- Manifest Headers which need to customized during manifest generation -->
 					<instructions>
-                        <Bundle-SymbolicName>org.raptorjs.raptorjs-core</Bundle-SymbolicName>
+						<Bundle-SymbolicName>org.raptorjs.raptorjs-core</Bundle-SymbolicName>
 						<Export-Package>
 							org.raptorjs.rhino,
 							org.raptorjs.templating.rhino,
@@ -383,16 +353,16 @@
 							org.raptorjs.resources,
 							org.raptorjs.resources.osgi,
 							org.raptorjs.resources.packaging
-                        </Export-Package>
-                        <_nouses>true</_nouses>
+						</Export-Package>
+						<_nouses>true</_nouses>
 						<Import-Package>
 							*,
 							org.mozilla.javascript,
 							javax.el;version="2.0";resolution:=optional,
-                        </Import-Package>
+						</Import-Package>
 						<X-Raptor-Resource-Search-Path>
 							/META-INF/resources
-                        </X-Raptor-Resource-Search-Path>
+						</X-Raptor-Resource-Search-Path>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -424,182 +394,168 @@
 			</plugin>
 		</plugins>
 	</build>
-    
-    <profiles>
-        <profile>
-            <id>default-plugins</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.ebay.osgi.build</groupId>
-                        <artifactId>maven-scm-build-info</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.ebay.osgi.build</groupId>
-                        <artifactId>dependency-version-validator</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-manifest-to-target-for-gep</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${basedir}/src/main/resources/META-INF</directory>
-                                            <includes>
-                                                <include>MANIFEST.MF</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- sample command test: mvn process-sources release:branch -PcreateReleaseBranch 
-                -DdryRun=true -DpushChanges=false real: mvn process-sources release:branch 
-                -PcreateReleaseBranch -->
-            <id>createReleaseBranch</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- breaks the project version into majorVersion, minorVersion, 
-                        incrementalVersion, etc. -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                    </plugin>
-                    <!-- adds one to the minor version and saves the value in 
-                        nextMinorVersion property -->
-                    <plugin>
-                        <groupId>bat.crimea.ua</groupId>
-                        <artifactId>maven-increment-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>increment-version</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>touch</goal>
-                                </goals>
-                                <configuration>
-                                    <values>
-                                        <valueItem>
-                                            <value>${parsedVersion.minorVersion}</value>
-                                            <valueClassName>java.lang.Integer</valueClassName>
-                                            <incrementValue>1</incrementValue>
-                                            <outputPropertyName>nextMinorVersion</outputPropertyName>
-                                        </valueItem>
-                                    </values>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- perform the branch creation itself -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <!--  Example:
-                                current version = 1.1.0-SNAPSHOT
-                                    ==> release branch name = RELEASE-1.1.X
-                                    ==> release branch version = 1.1.0-SNAPSHOT
-                                    ==> next development version: 1.1.1-SNAPSHOT
-                            -->
-                            <branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
-                            <developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- sample command test: mvn process-sources release:prepare -PperformRelease 
-                -DdryRun=true -DpushChanges=false real: mvn process-sources release:prepare 
-                -PperformRelease -->
-            <id>performRelease</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- breaks the project version into majorVersion, minorVersion, 
-                        incrementalVersion, etc. -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                    </plugin>
-                    <!-- adds one to the increment version and saves the value 
-                        in nextIncrementalVersion property -->
-                    <plugin>
-                    <groupId>bat.crimea.ua</groupId>
-                    <artifactId>maven-increment-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>increment-version</id>
-                            <phase>process-sources</phase>
-                            <goals>
-                                <goal>touch</goal>
-                            </goals>
-                            <configuration>
-                                <values>
-                                    <valueItem>
-                                        <value>${parsedVersion.incrementalVersion}</value>
-                                        <valueClassName>java.lang.Integer</valueClassName>
-                                        <incrementValue>1</incrementValue>
-                                        <outputPropertyName>nextIncrementalVersion</outputPropertyName>
-                                    </valueItem>
-                                </values>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                    <!-- perform the branch creation itself -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <!--  Example:
-                                current version on release branch = 1.1.0-SNAPSHOT
-                                    ==> release tag = 0.5.0-RELEASE-TAG
-                                    ==> release version = 0.5.0-RELEASE
-                                    ==> next version on release branch = 0.5.1-SNAPSHOT
-                            -->
-                            <releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-RELEASE</releaseVersion>
-                            <developmentVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${nextIncrementalVersion}-SNAPSHOT</developmentVersion>
-                            <tagNameFormat>@{project.version}-TAG</tagNameFormat>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
+	<profiles>
+		<profile>
+			<id>default-plugins</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>buildnumber-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-manifest-to-target-for-gep</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/META-INF</directory>
+											<includes>
+												<include>MANIFEST.MF</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- sample command test: mvn process-sources release:branch -PcreateReleaseBranch 
+				-DdryRun=true -DpushChanges=false real: mvn process-sources release:branch 
+				-PcreateReleaseBranch -->
+			<id>createReleaseBranch</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- breaks the project version into majorVersion, minorVersion, incrementalVersion, 
+						etc. -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+					</plugin>
+					<!-- adds one to the minor version and saves the value in nextMinorVersion 
+						property -->
+					<plugin>
+						<groupId>bat.crimea.ua</groupId>
+						<artifactId>maven-increment-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>increment-version</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>touch</goal>
+								</goals>
+								<configuration>
+									<values>
+										<valueItem>
+											<value>${parsedVersion.minorVersion}</value>
+											<valueClassName>java.lang.Integer</valueClassName>
+											<incrementValue>1</incrementValue>
+											<outputPropertyName>nextMinorVersion</outputPropertyName>
+										</valueItem>
+									</values>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- perform the branch creation itself -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<!-- Example: current version = 1.1.0-SNAPSHOT ==> release branch 
+								name = RELEASE-1.1.X ==> release branch version = 1.1.0-SNAPSHOT ==> next 
+								development version: 1.1.1-SNAPSHOT -->
+							<branchName>RELEASE-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.X</branchName>
+							<developmentVersion>${parsedVersion.majorVersion}.${nextMinorVersion}.0-SNAPSHOT</developmentVersion>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- sample command test: mvn process-sources release:prepare -PperformRelease 
+				-DdryRun=true -DpushChanges=false real: mvn process-sources release:prepare 
+				-PperformRelease -->
+			<id>performRelease</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- breaks the project version into majorVersion, minorVersion, incrementalVersion, 
+						etc. -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+					</plugin>
+					<!-- adds one to the increment version and saves the value in nextIncrementalVersion 
+						property -->
+					<plugin>
+						<groupId>bat.crimea.ua</groupId>
+						<artifactId>maven-increment-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>increment-version</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>touch</goal>
+								</goals>
+								<configuration>
+									<values>
+										<valueItem>
+											<value>${parsedVersion.incrementalVersion}</value>
+											<valueClassName>java.lang.Integer</valueClassName>
+											<incrementValue>1</incrementValue>
+											<outputPropertyName>nextIncrementalVersion</outputPropertyName>
+										</valueItem>
+									</values>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- perform the branch creation itself -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<!-- Example: current version on release branch = 1.1.0-SNAPSHOT ==> 
+								release tag = 0.5.0-RELEASE-TAG ==> release version = 0.5.0-RELEASE ==> next 
+								version on release branch = 0.5.1-SNAPSHOT -->
+							<releaseVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-RELEASE</releaseVersion>
+							<developmentVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${nextIncrementalVersion}-SNAPSHOT</developmentVersion>
+							<tagNameFormat>@{project.version}-TAG</tagNameFormat>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
