@@ -1,13 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>com.ebay.platform</groupId>
+        <artifactId>platform-root</artifactId>
+        <version>2.0.0-RELEASE</version>
+    </parent>
 
 	<!-- POM Information about the Project -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.raptorjs</groupId>
 	<artifactId>raptorjs-core</artifactId>
 	<version>2.3.2</version>
-	<!-- Packing Type is bundle for OSGI Library Bundle -->
-	<packaging>bundle</packaging>
+
+    <!--
+    <packaging>bundle</packaging>
+    -->
 
 	<scm>
 		<connection>scm:git:git://git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</connection>
@@ -15,6 +23,7 @@
 		<developerConnection>scm:git:git@github.scm.corp.ebay.com:Raptor/RaptorJSOpenSource.git</developerConnection>
 	</scm>
 
+    <!--
 	<distributionManagement>
 		<repository>
 			<id>raptor.releases</id>
@@ -26,7 +35,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<!-- Configuration of repositories for dependency resolution -->
 	<repositories>
 		<repository>
 			<id>raptor.releases</id>
@@ -66,7 +74,6 @@
 		</repository>
 	</repositories>
 
-	<!-- Configuration of Repositories for Maven Plugins -->
 	<pluginRepositories>
 		<pluginRepository>
 			<id>raptor.plugins</id>
@@ -92,45 +99,60 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</pluginRepository>
-	</pluginRepositories>
+    </pluginRepositories>
+    -->
 
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
+            <!--
 			<version>3.0.1</version>
-			<scope>provided</scope>
+            <scope>provided</scope>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>4.3.0</version>
+            <artifactId>org.osgi.core</artifactId>
+            <!--
+            <version>4.3.0</version>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-			<version>4.3.0</version>
+            <artifactId>org.osgi.compendium</artifactId>
+            <!--
+            <version>4.3.0</version>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.10</version>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <!--
+            <version>1.9.10</version>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>org.mozilla.javascript</groupId>
-			<artifactId>com.springsource.org.mozilla.javascript</artifactId>
-			<version>1.7.4</version>
+            <artifactId>com.springsource.org.mozilla.javascript</artifactId>
+            <!--
+            <version>1.7.4</version>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.13</version>
+            <artifactId>log4j</artifactId>
+            <!--
+            <version>1.2.13</version>
+            -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+            <artifactId>junit</artifactId>
+            <!--
 			<version>4.10</version>
-			<scope>test</scope>
+            <scope>test</scope>
+            -->
 		</dependency>
 	</dependencies>
 
@@ -164,7 +186,7 @@
 					</executions>
 				</plugin>
 
-				<!-- Apache Maven Compiler Plugin -->
+                <!--
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -259,7 +281,8 @@
 							</goals>
 						</execution>
 					</executions>
-				</plugin>
+                </plugin>
+                -->
 			</plugins>
 		</pluginManagement>
 
