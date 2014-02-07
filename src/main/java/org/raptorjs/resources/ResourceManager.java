@@ -70,6 +70,11 @@ public class ResourceManager {
         this.notifyResourcesModified();
     }
     
+    public synchronized void addSearchPathEntry(int index, SearchPathEntry searchPathEntry) {
+       searchPathEntries.add(index, searchPathEntry);
+       this.notifyResourcesModified();
+   }
+    
     public synchronized void removeSearchPathEntry(SearchPathEntry searchPathEntry) {
         searchPathEntries.remove(searchPathEntry);
         this.notifyResourcesModified();

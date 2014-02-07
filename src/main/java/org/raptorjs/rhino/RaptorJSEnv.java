@@ -66,7 +66,7 @@ public class RaptorJSEnv {
         
         this.raptor = (ScriptableObject) this.getJavaScriptEngine().invokeMethod(globalScope, "require", "raptor");
         injectDefineScript.setRaptor(raptor);
-        this.resourceManager.addSearchPathEntry(new ClasspathSearchPathEntry(RaptorJSEnv.class, "/META-INF/resources"));
+        this.resourceManager.addSearchPathEntry(0, new ClasspathSearchPathEntry(RaptorJSEnv.class, "/META-INF/resources"));
         
         this.rhinoHelpers = this.createRhinoHelpers();
         jsEnv.setGlobal("__rhinoHelpers", this.rhinoHelpers);

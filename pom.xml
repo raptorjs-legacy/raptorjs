@@ -14,7 +14,7 @@
 	<version>2.3.2</version>
 
     <!--
-    <packaging>bundle</packaging>
+	<packaging>bundle</packaging>
     -->
 
 	<scm>
@@ -261,10 +261,10 @@
 					<version>2.1.2</version>
 					<executions>
 						<execution>
-							<phase>package</phase>
-							<goals>
+						<phase>package</phase>
+						<goals>
 								<goal>jar</goal>
-							</goals>
+						</goals>
 						</execution>
 					</executions>
 				</plugin>
