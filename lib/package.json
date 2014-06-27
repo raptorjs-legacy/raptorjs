@@ -31,7 +31,9 @@
         },
         
         "dependency-types": {
-            "js": "raptor/packaging/Dependency_js",
+            "js" : "raptor/packaging/Dependency_server-js",
+            "client-js" : "raptor/packaging/Dependency_client-js",
+            "server-js" : "raptor/packaging/Dependency_server-js",
             "css": "raptor/packaging/Dependency_css",
             "dust": "raptor/packaging/Dependency_dust",
             "less": "raptor/packaging/Dependency_less",
