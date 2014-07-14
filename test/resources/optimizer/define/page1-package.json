@@ -1,0 +1,8 @@
+{
+    "raptor": {
+        "dependencies": [
+            { "type": "define", "path": "foo.js", "name": "foo"},
+            { "type": "define", "path": "bar.js" }
+        ]
+    }
+}

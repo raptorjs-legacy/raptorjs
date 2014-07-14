@@ -44,7 +44,8 @@
             "loader-metadata": "raptor/packaging/Dependency_loader-metadata",
             "i18n": "raptor/packaging/Dependency_i18n",
             "i18n.json": "raptor/packaging/Dependency_i18n",
-            "i18n-module": "raptor/packaging/Dependency_i18n-module"
+            "i18n-module": "raptor/packaging/Dependency_i18n-module",
+            "define": "raptor/packaging/Dependency_define"
         }
     }
     

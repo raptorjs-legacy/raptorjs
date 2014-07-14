@@ -251,7 +251,7 @@ var MockWriter = define.Class(
             },
 
             getCodeForFilename: function(filename) {
-                return this.outputBundleFilenames[filename];
+                return this.outputBundleFilenames[filename]||this.outputBundleFiles[filename];
             }
         };
 
