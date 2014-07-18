@@ -22,6 +22,7 @@
         <attribute name="optimizer" type="expression"/>
         <attribute name="dependencies" type="expression"/>
         <attribute name="enabled-extensions" type="expression"/>
+        <attribute name="wait-for" type="expression"/>
         <variable name="_dependenciesParent"/>
     </tag>
 
